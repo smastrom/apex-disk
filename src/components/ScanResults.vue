@@ -12,16 +12,23 @@ Example:
 <script setup lang="ts">
 import ListItem from './ListItem.vue'
 
-import { ref, reactive, watch, computed } from 'vue'
+import { ref, reactive, watch, computed, inject, type Ref } from 'vue'
 import { PhCaretLeft, PhCaretRight } from '@phosphor-icons/vue'
 import { useVirtualList } from '@vueuse/core'
 
 import { useTranslations } from '@/lib/useTranslations'
+import { useViewTransition } from '@/lib/useViewTransition'
 import { formatBytes } from '@/lib/format'
+import { SETTINGS_KEY } from '@/stores/settings'
 
+import type { SettingsStore } from '@/stores/settings'
 import type { FolderInfo } from '@/types/structures'
 
 const { t } = useTranslations()
+const { withTransition } = useViewTransition()
+const storeRef = inject<Ref<SettingsStore | null>>(SETTINGS_KEY)
+
+const navDirection = ref<1 | -1>(1)
 
 const props = defineProps<{
    folders: FolderInfo[]
@@ -37,6 +44,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
    (e: 'start-scan'): void
+   (e: 'abort'): void
 }>()
 
 interface NavEntry {
@@ -47,6 +55,10 @@ interface NavEntry {
 const backStack = ref<NavEntry[]>([])
 const forwardStack = ref<NavEntry[]>([])
 const current = ref<NavEntry>({ items: [], label: '' })
+
+// Map instead of Set: Map.get(key) tracks per-key, not ITERATE_KEY.
+// This means only the toggled ListItem re-renders, not the entire list.
+const selectedMap = reactive(new Map<string, boolean>())
 
 // Flat path→size index built once on scan, gives O(1) size lookup
 const sizeIndex = new Map<string, number>()
@@ -67,19 +79,32 @@ watch(
          backStack.value = []
          forwardStack.value = []
          current.value = { items: folders, label: '' }
+      } else {
+         sizeIndex.clear()
+         backStack.value = []
+         forwardStack.value = []
+         current.value = { items: [], label: '' }
+         selectedMap.clear()
       }
    },
    { immediate: true }
 )
 
+const showZeroByteFolders = computed(
+   () => storeRef?.value?.settings?.value?.showZeroByteFolders ?? false,
+)
+
+const displayedItems = computed(() => {
+   const items = current.value.items
+   if (showZeroByteFolders.value) return items
+   return items.filter((item) => item.is_file || item.size > 0)
+})
+
 const { list: virtualList, containerProps, wrapperProps } = useVirtualList(
-   computed(() => current.value.items),
+   displayedItems,
    { itemHeight: 56, overscan: 10 },
 )
 
-// Map instead of Set: Map.get(key) tracks per-key, not ITERATE_KEY.
-// This means only the toggled ListItem re-renders, not the entire list.
-const selectedMap = reactive(new Map<string, boolean>())
 const selectedSize = computed(() => {
    let total = 0
    for (const [path] of selectedMap) total += sizeIndex.get(path) ?? 0
@@ -93,21 +118,30 @@ function toggleSelect(path: string) {
 
 function goInto(item: FolderInfo) {
    if (item.is_file) return
-   backStack.value = [...backStack.value, { ...current.value }]
-   forwardStack.value = []
-   current.value = { items: item.children, label: item.name }
+   navDirection.value = 1
+   withTransition(async () => {
+      backStack.value = [...backStack.value, { ...current.value }]
+      forwardStack.value = []
+      current.value = { items: item.children, label: item.name }
+   })
 }
 
 function goBack() {
    if (backStack.value.length === 0) return
-   forwardStack.value = [...forwardStack.value, { ...current.value }]
-   current.value = backStack.value.pop()!
+   navDirection.value = -1
+   withTransition(async () => {
+      forwardStack.value = [...forwardStack.value, { ...current.value }]
+      current.value = backStack.value.pop()!
+   })
 }
 
 function goForward() {
    if (forwardStack.value.length === 0) return
-   backStack.value = [...backStack.value, { ...current.value }]
-   current.value = forwardStack.value.pop()!
+   navDirection.value = 1
+   withTransition(async () => {
+      backStack.value = [...backStack.value, { ...current.value }]
+      current.value = forwardStack.value.pop()!
+   })
 }
 
 function onDeleteClick() {
@@ -115,7 +149,7 @@ function onDeleteClick() {
 }
 
 function onAbort() {
-   // Logic to be implemented later
+   emit('abort')
 }
 </script>
 
@@ -154,8 +188,12 @@ function onAbort() {
                {{ t('ScanResults', 'abort') }}
             </button>
          </nav>
-         <div class="ScanResults-list" v-bind="containerProps">
-            <div v-bind="wrapperProps">
+         <div
+            class="ScanResults-listWrap"
+            :style="{ '--nav-direction': navDirection }"
+         >
+            <div class="ScanResults-list" v-bind="containerProps">
+               <div v-bind="wrapperProps">
                <ListItem
                   v-for="item in virtualList"
                   :key="item.data.path"
@@ -165,6 +203,7 @@ function onAbort() {
                   @select="() => toggleSelect(item.data.path)"
                   @navigate="() => goInto(item.data)"
                />
+               </div>
             </div>
          </div>
       </div>
@@ -288,6 +327,14 @@ function onAbort() {
 
 .ScanResults-abortBtn:hover {
    opacity: 0.75;
+}
+
+.ScanResults-listWrap {
+   flex: 1;
+   min-height: 0;
+   display: flex;
+   flex-direction: column;
+   view-transition-name: list-view;
 }
 
 .ScanResults-list {

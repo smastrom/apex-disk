@@ -45,6 +45,7 @@ watch(
 const folders = ref<FolderInfo[]>([])
 const loading = ref(false)
 const activeView = ref('scan')
+const aborted = ref(false)
 const progress = ref<ScanProgress>({
    current: 0,
    total: 1,
@@ -55,6 +56,7 @@ const progress = ref<ScanProgress>({
 let unlistenProgress: (() => void) | null = null
 
 async function loadFolders() {
+   aborted.value = false
    loading.value = true
    progress.value = { current: 0, total: 1, folder: '', size: 0 }
 
@@ -63,14 +65,22 @@ async function loadFolders() {
    })
 
    try {
-      folders.value = await invoke<FolderInfo[]>('get_user_folders')
+      const result = await invoke<FolderInfo[]>('get_user_folders')
+      if (!aborted.value) folders.value = result
    } catch (error) {
-      console.error('Error loading folders:', error)
+      if (!aborted.value) console.error('Error loading folders:', error)
    } finally {
       unlistenProgress?.()
       unlistenProgress = null
       loading.value = false
    }
+}
+
+function onAbort() {
+   aborted.value = true
+   folders.value = []
+   loading.value = false
+   progress.value = { current: 0, total: 1, folder: '', size: 0 }
 }
 
 function onSelectView(view: string) {
@@ -90,5 +100,6 @@ onUnmounted(() => {
       :active-view="activeView"
       @select-view="onSelectView"
       @start-scan="loadFolders"
+      @abort="onAbort"
    />
 </template>
