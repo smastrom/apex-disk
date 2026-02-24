@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    macos_disk_lens_lib::run()
+    mac_user_lens_lib::run()
 }

@@ -1,7 +1,3 @@
-# macOS Disk Lens
+# Mac User Lens
 
-macOS Disk Lens is a tool that helps you easily identify and get rid of big, unused files and folders in seconds.
-
-### Initial Brainstorm
-
-- App should not be resizable
+Mac User Lens is a tool that helps you easily identify and get rid of big, unused files and folders in seconds.

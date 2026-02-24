@@ -1,8 +1,8 @@
 [package]
-name = "macos-disk-lens"
+name = "mac-user-lens"
 version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "Tool to easily identify and get rid of big, unused files and folders in seconds."
+authors = ["smastrom"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -11,7 +11,7 @@ edition = "2021"
 # The `_lib` suffix may seem redundant but it is necessary
 # to make the lib name unique and wouldn't conflict with the bin name.
 # This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
-name = "macos_disk_lens_lib"
+name = "mac_user_lens_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
@@ -24,3 +24,4 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tauri-plugin-os = "2"
 dirs = "5.0"
+walkdir = "2"
