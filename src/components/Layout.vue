@@ -16,41 +16,41 @@ Example:
 -->
 
 <script setup lang="ts">
-import Header from "./Header.vue";
-import ScanResults from "./ScanResults.vue";
-import SettingsView from "./SettingsView.vue";
-import FooterMenu from "./FooterMenu.vue";
+import Header from './Header.vue'
+import ScanResults from './ScanResults.vue'
+import SettingsView from './SettingsView.vue'
+import FooterMenu from './FooterMenu.vue'
 
 import { useTranslations } from '@/lib/useTranslations'
 
-import type { FolderInfo } from "@/types/structures";
+import type { FolderInfo } from '@/types/structures'
 
 const { t } = useTranslations()
 
 defineProps<{
-   folders: FolderInfo[];
-   loading: boolean;
+   folders: FolderInfo[]
+   loading: boolean
    progress: {
-      current: number;
-      total: number;
-      folder: string;
-      size: number;
-      scanning?: string;
-   };
-   activeView?: string;
-}>();
+      current: number
+      total: number
+      folder: string
+      size: number
+      scanning?: string
+   }
+   activeView?: string
+}>()
 
 defineEmits<{
-   (e: "select-view", view: string): void;
-   (e: "start-scan"): void;
-   (e: "abort"): void;
-}>();
+   (e: 'select-view', view: string): void
+   (e: 'start-scan'): void
+   (e: 'abort'): void
+}>()
 </script>
 
 <template>
    <div class="Layout-root">
-         <Header v-if="activeView !== 'scan'" />
-      <div class="Layout-main">
+      <Header v-if="activeView !== 'scan'" />
+      <div class="Layout-main" :style="{ 'padding-top': activeView === 'scan' ? '24px' : '0' }">
          <ScanResults
             v-show="activeView === 'scan'"
             :folders="folders"
@@ -65,15 +65,20 @@ defineEmits<{
             </div>
             <div v-else-if="activeView !== 'scan'" key="other" class="Layout-overlay">
                <main class="Layout-placeholder">
-                  <p>{{ activeView === "donate" ? t('Layout', 'donateComingSoon') : "" }}</p>
+                  <p>
+                     {{
+                        activeView === 'informations'
+                           ? t('Layout', 'informationsComingSoon')
+                           : activeView === 'donate'
+                             ? t('Layout', 'donateComingSoon')
+                             : ''
+                     }}
+                  </p>
                </main>
             </div>
          </Transition>
       </div>
-      <FooterMenu
-         :active-view="activeView"
-         @select-view="$emit('select-view', $event)"
-      />
+      <FooterMenu :active-view="activeView" @select-view="$emit('select-view', $event)" />
    </div>
 </template>
 

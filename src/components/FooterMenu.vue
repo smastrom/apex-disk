@@ -1,7 +1,7 @@
 <!--
 FooterMenu
 
-Purpose: Bottom navigation bar with Scan, Settings, Donate buttons. Mobile-app style footer.
+Purpose: Bottom navigation bar with Scan, Settings, Informations, Donate buttons. Mobile-app style footer.
 
 Props: activeView (string?), emit: select-view
 
@@ -10,7 +10,7 @@ Example:
 -->
 
 <script setup lang="ts">
-import { PhMagnifyingGlass, PhGear, PhHeart } from '@phosphor-icons/vue'
+import { PhMagnifyingGlass, PhGear, PhInfo, PhHeart } from '@phosphor-icons/vue'
 
 import { useTranslations } from '@/lib/useTranslations'
 
@@ -42,6 +42,14 @@ const emit = defineEmits<{
       >
          <PhGear :size="24" weight="regular" />
          <span>{{ t('FooterMenu', 'settings') }}</span>
+      </button>
+      <button
+         class="FooterMenu-btn"
+         :class="{ 'FooterMenu-btn--active': activeView === 'informations' }"
+         @click="emit('select-view', 'informations')"
+      >
+         <PhInfo :size="24" weight="regular" />
+         <span>{{ t('FooterMenu', 'informations') }}</span>
       </button>
       <button
          class="FooterMenu-btn"
