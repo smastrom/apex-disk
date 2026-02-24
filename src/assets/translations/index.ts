@@ -1,19 +1,21 @@
 import { global } from './global'
 import { Header } from './Header'
+import { Layout } from './Layout'
+import { ListItem } from './ListItem'
 import { MainView } from './MainView'
 import { SettingsView } from './SettingsView'
 import { FooterMenu } from './FooterMenu'
-import { Layout } from './Layout'
 
 import type { Language } from '@/types/settings'
 
 export const translations = {
    global,
    Header,
+   Layout,
+   ListItem,
    MainView,
    SettingsView,
    FooterMenu,
-   Layout,
 } as const
 
 export type TranslationModule = keyof typeof translations
