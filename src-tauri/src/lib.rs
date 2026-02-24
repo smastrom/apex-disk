@@ -33,8 +33,9 @@ fn sort_children(children: &mut [FolderInfo]) {
     children.sort_unstable_by(|a, b| b.size.cmp(&a.size).then_with(|| a.name.cmp(&b.name)));
 }
 
-/// Builds the folder subtree for a single directory using walkdir (iterative, no recursion).
-/// Returns a FolderInfo with all descendants populated.
+/// Recursively builds the folder tree with parallelism at every directory level.
+/// Rayon's work-stealing scheduler naturally balances I/O across cores --
+/// threads that finish small directories steal subtasks from large ones like Library.
 fn build_folder_tree(root: &Path) -> FolderInfo {
     let name = root
         .file_name()
@@ -42,85 +43,63 @@ fn build_folder_tree(root: &Path) -> FolderInfo {
         .unwrap_or("Unknown")
         .to_string();
 
-    struct StackEntry {
-        depth: usize,
-        info: FolderInfo,
-    }
+    let entries = match std::fs::read_dir(root) {
+        Ok(rd) => rd,
+        Err(_) => {
+            return FolderInfo {
+                name,
+                path: root.to_string_lossy().into_owned(),
+                size: 0,
+                icon: None,
+                children: Vec::new(),
+                is_file: false,
+            };
+        }
+    };
 
-    let mut stack: Vec<StackEntry> = vec![StackEntry {
-        depth: 0,
-        info: FolderInfo {
-            name,
-            path: root.to_string_lossy().into_owned(),
-            size: 0,
-            icon: None,
-            children: Vec::new(),
-            is_file: false,
-        },
-    }];
+    let mut files: Vec<FolderInfo> = Vec::new();
+    let mut dir_paths: Vec<std::path::PathBuf> = Vec::new();
+    let mut file_size = 0u64;
 
-    for entry in walkdir::WalkDir::new(root)
-        .min_depth(1)
-        .follow_links(false)
-        .into_iter()
-        .filter_entry(|e| !e.file_type().is_symlink())
-        .filter_map(|e| e.ok())
-    {
-        let depth = entry.depth();
-        let ft = entry.file_type();
+    for entry in entries.filter_map(|e| e.ok()) {
+        let ft = match entry.file_type() {
+            Ok(ft) if !ft.is_symlink() => ft,
+            _ => continue,
+        };
 
-        if ft.is_dir() {
-            while stack.last().is_some_and(|e| e.depth >= depth) {
-                let StackEntry { mut info, .. } = stack.pop().unwrap();
-                sort_children(&mut info.children);
-                if let Some(parent) = stack.last_mut() {
-                    parent.info.size += info.size;
-                    parent.info.children.push(info);
-                }
-            }
-
-            let child_name = entry.file_name().to_str().unwrap_or("Unknown").to_string();
-
-            stack.push(StackEntry {
-                depth,
-                info: FolderInfo {
-                    name: child_name,
-                    path: entry.path().to_string_lossy().into_owned(),
-                    size: 0,
-                    icon: None,
-                    children: Vec::new(),
-                    is_file: false,
-                },
+        if ft.is_file() {
+            let size = entry.metadata().map(|m| m.len()).unwrap_or(0);
+            file_size += size;
+            files.push(FolderInfo {
+                name: entry.file_name().to_string_lossy().into_owned(),
+                path: entry.path().to_string_lossy().into_owned(),
+                size,
+                icon: None,
+                children: Vec::new(),
+                is_file: true,
             });
-        } else if ft.is_file() {
-            let file_size = entry.metadata().map(|m| m.len()).unwrap_or(0);
-            if let Some(parent) = stack.last_mut() {
-                parent.info.size += file_size;
-                parent.info.children.push(FolderInfo {
-                    name: entry.file_name().to_str().unwrap_or("Unknown").to_string(),
-                    path: entry.path().to_string_lossy().into_owned(),
-                    size: file_size,
-                    icon: None,
-                    children: Vec::new(),
-                    is_file: true,
-                });
-            }
+        } else if ft.is_dir() {
+            dir_paths.push(entry.path());
         }
     }
 
-    // Unwind remaining stack
-    while stack.len() > 1 {
-        let StackEntry { mut info, .. } = stack.pop().unwrap();
-        sort_children(&mut info.children);
-        if let Some(parent) = stack.last_mut() {
-            parent.info.size += info.size;
-            parent.info.children.push(info);
-        }
-    }
+    let dir_children: Vec<FolderInfo> =
+        dir_paths.par_iter().map(|p| build_folder_tree(p)).collect();
 
-    let mut root_info = stack.pop().unwrap().info;
-    sort_children(&mut root_info.children);
-    root_info
+    let dir_size: u64 = dir_children.iter().map(|c| c.size).sum();
+
+    let mut children = files;
+    children.extend(dir_children);
+    sort_children(&mut children);
+
+    FolderInfo {
+        name,
+        path: root.to_string_lossy().into_owned(),
+        size: file_size + dir_size,
+        icon: None,
+        children,
+        is_file: false,
+    }
 }
 
 /// Scans top-level folders in parallel for I/O concurrency, then builds each subtree.
