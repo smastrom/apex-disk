@@ -14,7 +14,7 @@ import ListItem from './ListItem.vue'
 
 import { ref, reactive, watch, computed, inject, type Ref } from 'vue'
 import { PhCaretLeft, PhCaretRight } from '@phosphor-icons/vue'
-import { useVirtualList } from '@vueuse/core'
+import { useVirtualizer } from '@tanstack/vue-virtual'
 
 import { useTranslations } from '@/lib/useTranslations'
 import { useViewTransition } from '@/lib/useViewTransition'
@@ -100,9 +100,15 @@ const displayedItems = computed(() => {
    return items.filter((item) => item.is_file || item.size > 0)
 })
 
-const { list: virtualList, containerProps, wrapperProps } = useVirtualList(
-   displayedItems,
-   { itemHeight: 56, overscan: 10 },
+const parentRef = ref<HTMLElement | null>(null)
+const rowVirtualizer = useVirtualizer(
+   computed(() => ({
+      count: displayedItems.value.length,
+      getScrollElement: () => parentRef.value,
+      estimateSize: () => 64,
+      overscan: 10,
+      getItemKey: (index: number) => displayedItems.value[index]?.path ?? index,
+   })),
 )
 
 const selectedSize = computed(() => {
@@ -192,17 +198,31 @@ function onAbort() {
             class="ScanResults-listWrap"
             :style="{ '--nav-direction': navDirection }"
          >
-            <div class="ScanResults-list" v-bind="containerProps">
-               <div v-bind="wrapperProps">
-               <ListItem
-                  v-for="item in virtualList"
-                  :key="item.data.path"
-                  :item="item.data"
-                  :selected="!!selectedMap.get(item.data.path)"
-                  :format-bytes="formatBytes"
-                  @select="() => toggleSelect(item.data.path)"
-                  @navigate="() => goInto(item.data)"
-               />
+            <div ref="parentRef" class="ScanResults-list ScanResults-listScroll">
+               <div
+                  class="ScanResults-listInner"
+                  :style="{ height: rowVirtualizer.getTotalSize() + 'px' }"
+               >
+                  <div
+                     v-for="virtualRow in rowVirtualizer.getVirtualItems()"
+                     :key="String(virtualRow.key)"
+                     class="ScanResults-listItem"
+                     :style="{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        transform: `translateY(${virtualRow.start}px)`,
+                     }"
+                  >
+                     <ListItem
+                        :item="displayedItems[virtualRow.index]"
+                        :selected="!!selectedMap.get(displayedItems[virtualRow.index].path)"
+                        :format-bytes="formatBytes"
+                        @select="() => toggleSelect(displayedItems[virtualRow.index].path)"
+                        @navigate="() => goInto(displayedItems[virtualRow.index])"
+                     />
+                  </div>
                </div>
             </div>
          </div>
@@ -349,6 +369,19 @@ function onAbort() {
 .ScanResults-list {
    flex: 1;
    min-height: 0;
+}
+
+.ScanResults-listScroll {
+   overflow: auto;
+}
+
+.ScanResults-listInner {
+   position: relative;
+   width: 100%;
+}
+
+.ScanResults-listItem {
+   will-change: transform;
 }
 
 .ScanResults-footer {
