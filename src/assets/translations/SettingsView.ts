@@ -1,0 +1,26 @@
+export const SettingsView = {
+   en: {
+      loadingSettings: 'Loading settings…',
+      language: 'Language',
+      themeColor: 'Theme Color',
+      showHiddenFiles: 'Show hidden files',
+      showZeroByteFiles: 'Show 0 B files',
+      languageEn: 'English',
+      languageIt: 'Italiano',
+      themeOceanic: 'Oceanic Blue',
+      themeLight: 'Light',
+      themeDark: 'Dark',
+   },
+   it: {
+      loadingSettings: 'Caricamento impostazioni…',
+      language: 'Lingua',
+      themeColor: 'Tema colore',
+      showHiddenFiles: 'Mostra file nascosti',
+      showZeroByteFiles: 'Mostra file da 0 B',
+      languageEn: 'English',
+      languageIt: 'Italiano',
+      themeOceanic: 'Blu oceanico',
+      themeLight: 'Chiaro',
+      themeDark: 'Scuro',
+   },
+} as const
