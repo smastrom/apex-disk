@@ -54,6 +54,16 @@ function toggleZeroByteFiles() {
    if (store.value && settings.value)
       store.value.setShowZeroByteFiles(!settings.value.showZeroByteFiles)
 }
+
+function toggleZeroByteFolders() {
+   if (store.value && settings.value)
+      store.value.setShowZeroByteFolders(!settings.value.showZeroByteFolders)
+}
+
+function toggleAnimations() {
+   if (store.value && settings.value)
+      store.value.setEnableAnimations(!settings.value.enableAnimations)
+}
 </script>
 
 <template>
@@ -110,6 +120,30 @@ function toggleZeroByteFiles() {
                   :class="{ 'SettingsToggle--on': settings.showZeroByteFiles }"
                   :aria-pressed="settings.showZeroByteFiles"
                   @click="toggleZeroByteFiles"
+               >
+                  <span class="SettingsToggle-knob" aria-hidden="true" />
+               </button>
+            </div>
+            <div class="SettingsGroup-row">
+               <span class="SettingsGroup-label">{{ t('SettingsView', 'showZeroByteFolders') }}</span>
+               <button
+                  type="button"
+                  class="SettingsToggle"
+                  :class="{ 'SettingsToggle--on': settings.showZeroByteFolders }"
+                  :aria-pressed="settings.showZeroByteFolders"
+                  @click="toggleZeroByteFolders"
+               >
+                  <span class="SettingsToggle-knob" aria-hidden="true" />
+               </button>
+            </div>
+            <div class="SettingsGroup-row">
+               <span class="SettingsGroup-label">{{ t('SettingsView', 'enableAnimations') }}</span>
+               <button
+                  type="button"
+                  class="SettingsToggle"
+                  :class="{ 'SettingsToggle--on': settings.enableAnimations }"
+                  :aria-pressed="settings.enableAnimations"
+                  @click="toggleAnimations"
                >
                   <span class="SettingsToggle-knob" aria-hidden="true" />
                </button>
