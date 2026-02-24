@@ -9,11 +9,15 @@ Example:
  <Header />
 -->
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useTranslations } from '@/lib/useTranslations'
+
+const { t } = useTranslations()
+</script>
 
 <template>
    <header class="Header-root">
-      <h1 class="Header-title">Mac Disk Lens</h1>
+      <h1 class="Header-title">{{ t('Header', 'title') }}</h1>
    </header>
 </template>
 

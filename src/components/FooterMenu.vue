@@ -10,19 +10,19 @@ Example:
 -->
 
 <script setup lang="ts">
-import { PhMagnifyingGlass, PhGear, PhHeart } from "@phosphor-icons/vue";
+import { PhMagnifyingGlass, PhGear, PhHeart } from '@phosphor-icons/vue'
+
+import { useTranslations } from '@/lib/useTranslations'
+
+const { t } = useTranslations()
 
 defineProps<{
-   activeView?: string;
-}>();
+   activeView?: string
+}>()
 
 const emit = defineEmits<{
-   (e: "select-view", view: string): void;
-}>();
-
-function select(view: string) {
-   emit("select-view", view);
-}
+   (e: 'select-view', view: string): void
+}>()
 </script>
 
 <template>
@@ -30,26 +30,26 @@ function select(view: string) {
       <button
          class="FooterMenu-btn"
          :class="{ 'FooterMenu-btn--active': activeView === 'scan' }"
-         @click="select('scan')"
+         @click="emit('select-view', 'scan')"
       >
          <PhMagnifyingGlass :size="24" weight="regular" />
-         <span>Scan</span>
+         <span>{{ t('FooterMenu', 'scan') }}</span>
       </button>
       <button
          class="FooterMenu-btn"
          :class="{ 'FooterMenu-btn--active': activeView === 'settings' }"
-         @click="select('settings')"
+         @click="emit('select-view', 'settings')"
       >
          <PhGear :size="24" weight="regular" />
-         <span>Settings</span>
+         <span>{{ t('FooterMenu', 'settings') }}</span>
       </button>
       <button
          class="FooterMenu-btn"
          :class="{ 'FooterMenu-btn--active': activeView === 'donate' }"
-         @click="select('donate')"
+         @click="emit('select-view', 'donate')"
       >
          <PhHeart :size="24" weight="regular" />
-         <span>Donate</span>
+         <span>{{ t('FooterMenu', 'donate') }}</span>
       </button>
    </footer>
 </template>

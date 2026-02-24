@@ -10,7 +10,11 @@ Example:
 -->
 
 <script setup lang="ts">
+import { useTranslations } from '@/lib/useTranslations'
+
 import type { FolderInfo } from "@/types/structures";
+
+const { t } = useTranslations()
 
 defineProps<{
    folders: FolderInfo[];
@@ -32,15 +36,15 @@ const emit = defineEmits<{
 <template>
    <main class="MainView-root">
       <div v-if="loading" class="MainView-loading">
-         <p>Scanning… {{ progress.current }} of {{ progress.total }}</p>
+         <p>{{ t('MainView', 'scanning', { current: progress.current, total: progress.total }) }}</p>
       </div>
       <div v-else-if="folders.length === 0" class="MainView-empty">
-         <p>No data yet. Start a scan to explore your disk.</p>
-         <button class="MainView-scanBtn" @click="emit('start-scan')">Start Scan</button>
+         <p>{{ t('MainView', 'noDataYet') }}</p>
+         <button class="MainView-scanBtn" @click="emit('start-scan')">{{ t('MainView', 'startScan') }}</button>
       </div>
       <div v-else class="MainView-content">
          <!-- Folder tree will be implemented here -->
-         <p class="MainView-placeholder">{{ folders.length }} folders loaded</p>
+         <p class="MainView-placeholder">{{ t('MainView', 'foldersLoaded', { count: folders.length }) }}</p>
       </div>
    </main>
 </template>

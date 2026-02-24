@@ -1,54 +1,85 @@
 <script setup lang="ts">
-import { ref, onUnmounted } from "vue";
-import { invoke } from "@tauri-apps/api/core";
-import { listen } from "@tauri-apps/api/event";
+import Layout from '@/components/Layout.vue'
 
-import Layout from "@/components/Layout.vue";
+import { ref, shallowRef, provide, onMounted, onUnmounted, watch } from 'vue'
+import { invoke } from '@tauri-apps/api/core'
+import { listen } from '@tauri-apps/api/event'
 
-import type { FolderInfo, ScanProgress } from "@/types/structures";
+import { createSettingsStore, SETTINGS_KEY } from '@/stores/settings'
 
-import "@/assets/css/theme.css";
-import "@/assets/css/global.css";
-import "@/assets/css/reset.css";
+import type { SettingsStore } from '@/stores/settings'
+import type { FolderInfo, ScanProgress } from '@/types/structures'
 
-const folders = ref<FolderInfo[]>([]);
-const loading = ref(false);
-const activeView = ref("scan");
+import '@/assets/css/theme.css'
+import '@/assets/css/global.css'
+import '@/assets/css/reset.css'
+import '@/assets/css/classes.css'
+
+const settingsStore = shallowRef<SettingsStore | null>(null)
+provide(SETTINGS_KEY, settingsStore)
+
+function applyTheme(theme: string) {
+   if (theme === 'oceanic') {
+      document.documentElement.removeAttribute('data-theme')
+   } else {
+      document.documentElement.setAttribute('data-theme', theme)
+   }
+}
+
+onMounted(async () => {
+   try {
+      settingsStore.value = await createSettingsStore()
+      applyTheme(settingsStore.value!.getThemeColor())
+   } catch (err) {
+      console.error('Failed to load settings:', err)
+   }
+})
+
+watch(
+   () => settingsStore.value?.getThemeColor(),
+   (theme) => {
+      if (theme) applyTheme(theme)
+   }
+)
+
+const folders = ref<FolderInfo[]>([])
+const loading = ref(false)
+const activeView = ref('scan')
 const progress = ref<ScanProgress>({
    current: 0,
    total: 1,
-   folder: "",
+   folder: '',
    size: 0,
-});
+})
 
-let unlistenProgress: (() => void) | null = null;
+let unlistenProgress: (() => void) | null = null
 
 async function loadFolders() {
-   loading.value = true;
-   progress.value = { current: 0, total: 1, folder: "", size: 0 };
+   loading.value = true
+   progress.value = { current: 0, total: 1, folder: '', size: 0 }
 
-   unlistenProgress = await listen<ScanProgress>("folder-scan-progress", (event) => {
-      progress.value = event.payload;
-   });
+   unlistenProgress = await listen<ScanProgress>('folder-scan-progress', (event) => {
+      progress.value = event.payload
+   })
 
    try {
-      folders.value = await invoke<FolderInfo[]>("get_user_folders");
+      folders.value = await invoke<FolderInfo[]>('get_user_folders')
    } catch (error) {
-      console.error("Error loading folders:", error);
+      console.error('Error loading folders:', error)
    } finally {
-      unlistenProgress?.();
-      unlistenProgress = null;
-      loading.value = false;
+      unlistenProgress?.()
+      unlistenProgress = null
+      loading.value = false
    }
 }
 
 function onSelectView(view: string) {
-   activeView.value = view;
+   activeView.value = view
 }
 
 onUnmounted(() => {
-   unlistenProgress?.();
-});
+   unlistenProgress?.()
+})
 </script>
 
 <template>

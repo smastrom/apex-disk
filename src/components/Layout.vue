@@ -18,9 +18,14 @@ Example:
 <script setup lang="ts">
 import Header from "./Header.vue";
 import MainView from "./MainView.vue";
+import SettingsView from "./SettingsView.vue";
 import FooterMenu from "./FooterMenu.vue";
 
+import { useTranslations } from '@/lib/useTranslations'
+
 import type { FolderInfo } from "@/types/structures";
+
+const { t } = useTranslations()
 
 defineProps<{
    folders: FolderInfo[];
@@ -45,11 +50,16 @@ defineEmits<{
    <div class="Layout-root">
       <Header />
       <MainView
+         v-if="activeView === 'scan'"
          :folders="folders"
          :loading="loading"
          :progress="progress"
          @start-scan="$emit('start-scan')"
       />
+      <SettingsView v-else-if="activeView === 'settings'" />
+      <main v-else class="Layout-placeholder">
+         <p>{{ activeView === "donate" ? t('Layout', 'donateComingSoon') : "" }}</p>
+      </main>
       <FooterMenu
          :active-view="activeView"
          @select-view="$emit('select-view', $event)"
@@ -63,5 +73,18 @@ defineEmits<{
    flex-direction: column;
    min-height: 100vh;
    background: var(--color-bg);
+}
+
+.Layout-placeholder {
+   flex: 1;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding: var(--spacing-md);
+}
+
+.Layout-placeholder p {
+   color: var(--color-text-muted);
+   margin: 0;
 }
 </style>

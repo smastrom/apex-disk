@@ -1,4 +1,4 @@
-# Mac Disk Lens — Agent Guidelines
+# Mac User Lens — Agent Guidelines
 
 This document defines code style and conventions. **Always follow these rules** when editing this codebase.
 
@@ -131,7 +131,9 @@ Sort imports in this order, with a **blank line between each group**:
 1. **Components** (local `.vue` / component imports)
 2. **External modules** (Vue first, then 3rd-party like `@tauri-apps/`)
 3. **Internal modules** (`@/` paths or relative `./utils/...`)
-4. **Other** (JSON, assets, CSS)
+4. **Constants** (`import { SETTINGS_KEY } from "@/stores/settings";`, `import { DEFAULT_SETTINGS } from "@/types/settings";`)
+5. **Types** (`import type { SettingsStore } from "@/stores/settings";`, `import type { FolderInfo } from "@/types/structures";`)
+6. **Other** (JSON, assets, CSS)
 
 ```ts
 import FolderNode from "@/components/FolderNode.vue";
@@ -152,6 +154,21 @@ import "@/assets/css/reset.css";
 - Add comments **only when necessary**
 - Prefer **function declarations** over `const fn = () => {}`
 - **Prefer `interface`** over `type` when possible (see File creation for placement rules)
+
+#### Variables
+
+- **Avoid declaring many variables just to shorten names** — prefer using the expression directly. Do not introduce `const s = x`, `const curr = y` etc. only to save a few characters.
+
+```ts
+// ❌ BAD — extra variables for shortening
+const s = store.value;
+const curr = settings.value ?? s?.settings.value;
+if (s && curr) s.setShowHiddenFiles(!curr.showHiddenFiles);
+
+// ✅ GOOD — use the expression directly
+if (store.value && settings.value)
+  store.value.setShowHiddenFiles(!settings.value.showHiddenFiles);
+```
 
 #### JSDoc
 
@@ -276,5 +293,77 @@ use rayon::prelude::*;
 
 use crate::FolderInfo;
 ```
+
+---
+
+## Project details
+
+### Translations
+
+Translations are stored in `src/assets/translations/`. The active language comes from the settings store (`settings.language`).
+
+#### File structure
+
+- **`global.ts`** — Strings shared across multiple components (e.g. `appName`, `scan`, `settings`, `donate`)
+- **Component-named files** — One file per component: `Header.ts`, `MainView.ts`, `SettingsView.ts`, `FooterMenu.ts`, `Layout.ts`
+- **`index.ts`** — Exports `translations` and `createT(lang)`
+
+#### Translation file format
+
+Each file exports an object with `en` and `it` keys (matching `Language` in `src/types/settings.ts`):
+
+```ts
+// SettingsView.ts
+export const SettingsView = {
+   en: { loadingSettings: 'Loading settings…', language: 'Language', ... },
+   it: { loadingSettings: 'Caricamento impostazioni…', language: 'Lingua', ... },
+} as const
+```
+
+#### Usage in components
+
+1. Import `useTranslations` from `@/lib/useTranslations`
+2. Call `const { t } = useTranslations()`
+3. Use `t(module, key)` or `t(module, key, vars)` for interpolation
+
+```vue
+<script setup lang="ts">
+import { useTranslations } from "@/lib/useTranslations";
+
+const { t } = useTranslations();
+</script>
+
+<template>
+  <p>
+    {{
+      t("MainView", "scanning", {
+        current: progress.current,
+        total: progress.total,
+      })
+    }}
+  </p>
+</template>
+```
+
+#### Interpolation
+
+Use `{{varName}}` in translation strings. Pass variables as the third argument:
+
+```ts
+// MainView.ts: scanning: 'Scanning… {{current}} of {{total}}'
+t("MainView", "scanning", { current: 1, total: 10 }); // → "Scanning… 1 of 10"
+```
+
+#### Adding a new language
+
+1. Add the language to `Language` in `src/types/settings.ts`
+2. Add the locale key to every translation file (e.g. `de: { ... }`)
+3. Update `createT` in `index.ts` if the type needs to change
+
+#### Adding translations for a new component
+
+1. Create `src/assets/translations/ComponentName.ts` with `en` and `it` keys
+2. Import and add it to `translations` in `index.ts`
+3. Use `t('ComponentName', 'key')` in the component
 
 ---
