@@ -71,7 +71,8 @@ defineEmits<{
 .Layout-root {
    display: flex;
    flex-direction: column;
-   min-height: 100vh;
+   height: 100vh;
+   overflow: hidden;
    background: var(--color-bg);
 }
 
