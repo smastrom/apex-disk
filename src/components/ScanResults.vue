@@ -1,20 +1,20 @@
 <!--
-MainView
+ScanResults
 
-Purpose: Main content area. Folder/file list with navigation, selection, and Delete button.
+Purpose: Main content area. Folder/file list with back/forward navigation, selection, and Delete button.
 
 Props: folders (FolderInfo[]), loading (boolean), progress (ScanProgress)
 
 Example:
- <MainView :folders="folders" :loading="loading" :progress="progress" @start-scan="loadFolders" />
+ <ScanResults :folders="folders" :loading="loading" :progress="progress" @start-scan="loadFolders" />
 -->
 
 <script setup lang="ts">
 import ListItem from './ListItem.vue'
 
 import { ref, reactive, watch, computed } from 'vue'
-
-import { PhCaretLeft, PhCaretRight, PhFolder } from '@phosphor-icons/vue'
+import { PhCaretLeft, PhCaretRight } from '@phosphor-icons/vue'
+import { useVirtualList } from '@vueuse/core'
 
 import { useTranslations } from '@/lib/useTranslations'
 import { formatBytes } from '@/lib/format'
@@ -46,7 +46,7 @@ interface NavEntry {
 
 const backStack = ref<NavEntry[]>([])
 const forwardStack = ref<NavEntry[]>([])
-const current = ref<NavEntry>({ items: [], label: 'start' })
+const current = ref<NavEntry>({ items: [], label: '' })
 
 // Flat path→size index built once on scan, gives O(1) size lookup
 const sizeIndex = new Map<string, number>()
@@ -66,10 +66,15 @@ watch(
          buildSizeIndex(folders)
          backStack.value = []
          forwardStack.value = []
-         current.value = { items: folders, label: t('MainView', 'rootLabel') }
+         current.value = { items: folders, label: '' }
       }
    },
    { immediate: true }
+)
+
+const { list: virtualList, containerProps, wrapperProps } = useVirtualList(
+   computed(() => current.value.items),
+   { itemHeight: 56, overscan: 10 },
 )
 
 // Map instead of Set: Map.get(key) tracks per-key, not ITERATE_KEY.
@@ -96,48 +101,39 @@ function goInto(item: FolderInfo) {
 function goBack() {
    if (backStack.value.length === 0) return
    forwardStack.value = [...forwardStack.value, { ...current.value }]
-   const prev = backStack.value.pop()!
-   current.value = prev
+   current.value = backStack.value.pop()!
 }
 
 function goForward() {
    if (forwardStack.value.length === 0) return
    backStack.value = [...backStack.value, { ...current.value }]
-   const next = forwardStack.value.pop()!
-   current.value = next
-}
-
-function startOver() {
-   if (props.folders.length === 0) return
-   backStack.value = []
-   forwardStack.value = []
-   current.value = { items: props.folders, label: t('MainView', 'rootLabel') }
+   current.value = forwardStack.value.pop()!
 }
 
 function onDeleteClick() {
    // Logic to be implemented later
 }
+
+function onAbort() {
+   // Logic to be implemented later
+}
 </script>
 
 <template>
-   <main class="MainView-root">
-      <div v-if="loading" class="MainView-loading">
-         <p>{{ t('MainView', 'scanning', { current: progress.current, total: progress.total }) }}</p>
+   <main class="ScanResults-root">
+      <div v-if="loading" class="ScanResults-loading">
+         <p>{{ t('ScanResults', 'scanning', { current: progress.current, total: progress.total }) }}</p>
       </div>
-      <div v-else-if="folders.length === 0" class="MainView-empty">
-         <p>{{ t('MainView', 'noDataYet') }}</p>
-         <button class="MainView-scanBtn" @click="emit('start-scan')">{{ t('MainView', 'startScan') }}</button>
+      <div v-else-if="folders.length === 0" class="ScanResults-empty">
+         <p>{{ t('ScanResults', 'noDataYet') }}</p>
+         <button class="ScanResults-scanBtn" @click="emit('start-scan')">{{ t('ScanResults', 'startScan') }}</button>
       </div>
-      <div v-else class="MainView-content">
-         <nav class="MainView-nav">
-            <button type="button" class="MainView-navLink" @click="startOver">
-               <PhCaretLeft :size="18" weight="regular" />
-               {{ t('MainView', 'startOver') }}
-            </button>
-            <div class="MainView-navControls">
+      <div v-else class="ScanResults-content">
+         <nav class="ScanResults-nav">
+            <div class="ScanResults-navControls">
                <button
                   type="button"
-                  class="MainView-navBtn"
+                  class="ScanResults-navBtn"
                   :disabled="backStack.length === 0"
                   aria-label="Back"
                   @click="goBack"
@@ -146,46 +142,47 @@ function onDeleteClick() {
                </button>
                <button
                   type="button"
-                  class="MainView-navBtn"
+                  class="ScanResults-navBtn"
                   :disabled="forwardStack.length === 0"
                   aria-label="Forward"
                   @click="goForward"
                >
                   <PhCaretRight :size="18" weight="regular" />
                </button>
-               <span class="MainView-navLabel">
-                  <PhFolder :size="16" weight="regular" class="MainView-navIcon" />
-                  {{ current.label }}
-               </span>
             </div>
+            <button type="button" class="ScanResults-abortBtn" @click="onAbort">
+               {{ t('ScanResults', 'abort') }}
+            </button>
          </nav>
-         <div class="MainView-list">
-            <ListItem
-               v-for="item in current.items"
-               :key="item.path"
-               :item="item"
-               :selected="!!selectedMap.get(item.path)"
-               :format-bytes="formatBytes"
-               @select="() => toggleSelect(item.path)"
-               @navigate="() => goInto(item)"
-            />
+         <div class="ScanResults-list" v-bind="containerProps">
+            <div v-bind="wrapperProps">
+               <ListItem
+                  v-for="item in virtualList"
+                  :key="item.data.path"
+                  :item="item.data"
+                  :selected="!!selectedMap.get(item.data.path)"
+                  :format-bytes="formatBytes"
+                  @select="() => toggleSelect(item.data.path)"
+                  @navigate="() => goInto(item.data)"
+               />
+            </div>
          </div>
       </div>
-      <div v-if="folders.length > 0" class="MainView-footer">
+      <div v-if="folders.length > 0" class="ScanResults-footer">
          <button
             type="button"
-            class="MainView-deleteBtn"
+            class="ScanResults-deleteBtn"
             :disabled="selectedMap.size === 0"
             @click="onDeleteClick"
          >
-            {{ t('MainView', 'deleteSize', { size: formatBytes(selectedSize) }) }}
+            {{ t('ScanResults', 'deleteSize', { size: formatBytes(selectedSize) }) }}
          </button>
       </div>
    </main>
 </template>
 
 <style scoped>
-.MainView-root {
+.ScanResults-root {
    position: relative;
    flex: 1;
    display: flex;
@@ -194,9 +191,9 @@ function onDeleteClick() {
    background: var(--color-bg);
 }
 
-.MainView-loading,
-.MainView-empty,
-.MainView-content {
+.ScanResults-loading,
+.ScanResults-empty,
+.ScanResults-content {
    flex: 1;
    display: flex;
    flex-direction: column;
@@ -206,19 +203,19 @@ function onDeleteClick() {
    width: 100%;
 }
 
-.MainView-empty {
+.ScanResults-empty {
    align-items: center;
    justify-content: center;
    gap: var(--spacing-md);
 }
 
-.MainView-empty p,
-.MainView-loading p {
+.ScanResults-empty p,
+.ScanResults-loading p {
    color: var(--color-text-muted);
    margin: 0;
 }
 
-.MainView-scanBtn {
+.ScanResults-scanBtn {
    padding: var(--spacing-sm) var(--spacing-lg);
    font-size: 0.95rem;
    font-weight: 600;
@@ -230,55 +227,38 @@ function onDeleteClick() {
    transition: background 0.15s;
 }
 
-.MainView-scanBtn:hover {
+.ScanResults-scanBtn:hover {
    background: var(--color-accent-hover);
 }
 
-.MainView-content {
+.ScanResults-content {
    padding: 0;
    min-height: 0;
    overflow: hidden;
    padding-bottom: var(--delete-footer-height);
 }
 
-.MainView-nav {
+.ScanResults-nav {
    flex-shrink: 0;
    display: flex;
-   flex-direction: column;
-   gap: var(--spacing-sm);
+   align-items: center;
+   justify-content: space-between;
    padding: var(--spacing-md);
    border-bottom: 1px solid var(--color-surface);
 }
 
-.MainView-navLink {
-   display: flex;
-   align-items: center;
-   gap: var(--spacing-xs);
-   padding: 0;
-   font-size: 0.875rem;
-   color: var(--color-accent);
-   background: none;
-   border: none;
-   cursor: pointer;
-}
-
-.MainView-navLink:hover {
-   text-decoration: underline;
-}
-
-.MainView-navControls {
+.ScanResults-navControls {
    display: flex;
    align-items: center;
    gap: var(--spacing-sm);
 }
 
-.MainView-navBtn {
+.ScanResults-navBtn {
    display: flex;
    align-items: center;
    justify-content: center;
    width: 32px;
    height: 28px;
-   font-size: 0.875rem;
    color: var(--color-text);
    background: var(--color-surface);
    border: none;
@@ -287,37 +267,35 @@ function onDeleteClick() {
    transition: background 0.15s;
 }
 
-.MainView-navBtn:hover:not(:disabled) {
+.ScanResults-navBtn:hover:not(:disabled) {
    background: var(--color-surface-hover);
 }
 
-.MainView-navBtn:disabled {
+.ScanResults-navBtn:disabled {
    opacity: 0.5;
    cursor: not-allowed;
 }
 
-.MainView-navLabel {
-   display: flex;
-   align-items: center;
-   gap: var(--spacing-xs);
+.ScanResults-abortBtn {
+   padding: 0;
    font-size: 0.875rem;
-   color: var(--color-text-muted);
+   font-weight: 500;
+   color: #ff3b30;
+   background: none;
+   border: none;
+   cursor: pointer;
 }
 
-.MainView-navIcon {
-   flex-shrink: 0;
-   color: var(--color-accent);
+.ScanResults-abortBtn:hover {
+   opacity: 0.75;
 }
 
-.MainView-list {
+.ScanResults-list {
    flex: 1;
    min-height: 0;
-   overflow-y: auto;
-   padding: var(--spacing-sm);
-   padding-bottom: var(--spacing-lg);
 }
 
-.MainView-footer {
+.ScanResults-footer {
    position: absolute;
    bottom: 0;
    left: 0;
@@ -327,7 +305,7 @@ function onDeleteClick() {
    background: var(--color-bg-elevated);
 }
 
-.MainView-deleteBtn {
+.ScanResults-deleteBtn {
    width: 100%;
    padding: var(--spacing-md) var(--spacing-lg);
    font-size: 0.9375rem;
@@ -340,11 +318,11 @@ function onDeleteClick() {
    transition: background 0.15s;
 }
 
-.MainView-deleteBtn:hover:not(:disabled) {
+.ScanResults-deleteBtn:hover:not(:disabled) {
    background: var(--color-accent-hover);
 }
 
-.MainView-deleteBtn:disabled {
+.ScanResults-deleteBtn:disabled {
    opacity: 0.5;
    cursor: not-allowed;
 }

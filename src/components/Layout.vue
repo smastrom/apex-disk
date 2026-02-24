@@ -17,7 +17,7 @@ Example:
 
 <script setup lang="ts">
 import Header from "./Header.vue";
-import MainView from "./MainView.vue";
+import ScanResults from "./ScanResults.vue";
 import SettingsView from "./SettingsView.vue";
 import FooterMenu from "./FooterMenu.vue";
 
@@ -49,7 +49,7 @@ defineEmits<{
 <template>
    <div class="Layout-root">
       <Header />
-      <MainView
+      <ScanResults
          v-if="activeView === 'scan'"
          :folders="folders"
          :loading="loading"

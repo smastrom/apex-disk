@@ -2,7 +2,7 @@ import { global } from './global'
 import { Header } from './Header'
 import { Layout } from './Layout'
 import { ListItem } from './ListItem'
-import { MainView } from './MainView'
+import { ScanResults } from './ScanResults'
 import { SettingsView } from './SettingsView'
 import { FooterMenu } from './FooterMenu'
 
@@ -13,7 +13,7 @@ export const translations = {
    Header,
    Layout,
    ListItem,
-   MainView,
+   ScanResults,
    SettingsView,
    FooterMenu,
 } as const
