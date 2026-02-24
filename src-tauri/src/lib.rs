@@ -33,6 +33,11 @@ fn sort_children(children: &mut [FolderInfo]) {
     children.sort_unstable_by(|a, b| b.size.cmp(&a.size).then_with(|| a.name.cmp(&b.name)));
 }
 
+/// Max file entries kept per directory. We still count ALL file sizes for
+/// accuracy, but only retain the N largest as tree entries to avoid millions
+/// of allocations and a massive IPC payload.
+const MAX_FILES_PER_DIR: usize = 50;
+
 /// Recursively builds the folder tree with parallelism at every directory level.
 /// Rayon's work-stealing scheduler naturally balances I/O across cores --
 /// threads that finish small directories steal subtasks from large ones like Library.
@@ -57,7 +62,8 @@ fn build_folder_tree(root: &Path) -> FolderInfo {
         }
     };
 
-    let mut files: Vec<FolderInfo> = Vec::new();
+    // Lightweight tuple: only allocate the filename, defer path construction
+    let mut file_entries: Vec<(String, u64)> = Vec::new();
     let mut dir_paths: Vec<std::path::PathBuf> = Vec::new();
     let mut file_size = 0u64;
 
@@ -70,18 +76,29 @@ fn build_folder_tree(root: &Path) -> FolderInfo {
         if ft.is_file() {
             let size = entry.metadata().map(|m| m.len()).unwrap_or(0);
             file_size += size;
-            files.push(FolderInfo {
-                name: entry.file_name().to_string_lossy().into_owned(),
-                path: entry.path().to_string_lossy().into_owned(),
-                size,
-                icon: None,
-                children: Vec::new(),
-                is_file: true,
-            });
+            file_entries.push((entry.file_name().to_string_lossy().into_owned(), size));
         } else if ft.is_dir() {
             dir_paths.push(entry.path());
         }
     }
+
+    // Keep only the N largest files -- avoids millions of FolderInfo allocations
+    file_entries.sort_unstable_by(|a, b| b.1.cmp(&a.1));
+    file_entries.truncate(MAX_FILES_PER_DIR);
+
+    // Build FolderInfo + path string only for the files we keep
+    let root_path = root.to_string_lossy();
+    let files: Vec<FolderInfo> = file_entries
+        .into_iter()
+        .map(|(fname, size)| FolderInfo {
+            path: format!("{}/{}", root_path, fname),
+            name: fname,
+            size,
+            icon: None,
+            children: Vec::new(),
+            is_file: true,
+        })
+        .collect();
 
     let dir_children: Vec<FolderInfo> =
         dir_paths.par_iter().map(|p| build_folder_tree(p)).collect();
@@ -94,7 +111,7 @@ fn build_folder_tree(root: &Path) -> FolderInfo {
 
     FolderInfo {
         name,
-        path: root.to_string_lossy().into_owned(),
+        path: root_path.into_owned(),
         size: file_size + dir_size,
         icon: None,
         children,
