@@ -30,6 +30,8 @@ const { t } = useTranslations()
    padding: 0 var(--spacing-md);
    background: var(--color-bg-elevated);
    flex-shrink: 0;
+   border-bottom: 1px solid var(--color-accent-bg);
+   box-shadow: 0 1px 12px var(--color-accent-bg);
 }
 
 .Header-title {
@@ -37,5 +39,6 @@ const { t } = useTranslations()
    font-weight: 600;
    color: var(--color-text);
    margin: 0;
+   text-shadow: var(--glow-text);
 }
 </style>

@@ -76,20 +76,28 @@ const emit = defineEmits<{
    gap: var(--spacing-md);
    padding: var(--spacing-sm) var(--spacing-md);
    min-height: 56px;
+   margin: 0 var(--spacing-sm);
+   border-radius: 8px;
+   border: 1px solid transparent;
+   transition: background 0.2s, border-color 0.2s;
 }
 
 .ListItem-root--folder {
    cursor: pointer;
-   border-radius: 8px;
-   transition: background 0.15s;
 }
 
 .ListItem-root:hover {
-   background: var(--color-surface-hover);
+   background: var(--color-accent-bg-hover);
+   border-color: var(--color-border);
 }
 
 .ListItem-root--selected {
-   background: var(--color-surface-hover);
+   background: var(--color-accent-bg);
+   border-color: var(--color-border);
+}
+
+.ListItem-root--selected:hover {
+   background: var(--color-accent-bg);
 }
 
 .ListItem-check {
@@ -102,10 +110,12 @@ const emit = defineEmits<{
    border: none;
    cursor: pointer;
    color: var(--color-text-dim);
+   transition: filter 0.2s;
 }
 
 .ListItem-check--selected .ListItem-checkFilled {
    color: var(--color-accent);
+   filter: drop-shadow(0 0 4px var(--color-accent-glow));
 }
 
 .ListItem-checkEmpty {

@@ -22,6 +22,18 @@
    --color-text-muted: #8fb4c4;
    --color-text-dim: #5a8a9e;
 
+   /* Glow system */
+   --color-accent-glow: rgba(91, 163, 184, 0.45);
+   --color-accent-bg: rgba(91, 163, 184, 0.12);
+   --color-accent-bg-hover: rgba(91, 163, 184, 0.06);
+   --color-border: #152d45;
+   --glow-sm: 0 0 8px var(--color-accent-glow);
+   --glow-md: 0 0 14px var(--color-accent-glow);
+   --glow-lg: 0 0 24px var(--color-accent-glow);
+   --glow-ring: 0 0 0 1px var(--color-accent-glow);
+   --glow-inset: inset 0 1px 8px var(--color-accent-glow);
+   --glow-text: 0 0 12px var(--color-accent-glow);
+
    /* Spacing */
    --spacing-xs: 4px;
    --spacing-sm: 8px;
@@ -47,6 +59,10 @@
    --color-text: #1d1d1f;
    --color-text-muted: #6e6e73;
    --color-text-dim: #86868b;
+   --color-accent-glow: rgba(0, 122, 255, 0.3);
+   --color-accent-bg: rgba(0, 122, 255, 0.08);
+   --color-accent-bg-hover: rgba(0, 122, 255, 0.04);
+   --color-border: #e0e0e5;
 }
 
 /* Theme: dark (macOS dark mode) */
@@ -60,6 +76,10 @@
    --color-text: #f5f5f7;
    --color-text-muted: #98989d;
    --color-text-dim: #636366;
+   --color-accent-glow: rgba(10, 132, 255, 0.4);
+   --color-accent-bg: rgba(10, 132, 255, 0.12);
+   --color-accent-bg-hover: rgba(10, 132, 255, 0.06);
+   --color-border: #353537;
 }
 
 /* Theme: Tokyo Night */
@@ -73,6 +93,10 @@
    --color-text: #c0caf5;
    --color-text-muted: #565f89;
    --color-text-dim: #414868;
+   --color-accent-glow: rgba(122, 162, 247, 0.4);
+   --color-accent-bg: rgba(122, 162, 247, 0.12);
+   --color-accent-bg-hover: rgba(122, 162, 247, 0.06);
+   --color-border: #2d2e48;
 }
 
 /* Theme: Ayu Dark */
@@ -86,6 +110,10 @@
    --color-text: #bfbdb6;
    --color-text-muted: #5c6773;
    --color-text-dim: #3d4752;
+   --color-accent-glow: rgba(230, 180, 80, 0.4);
+   --color-accent-bg: rgba(230, 180, 80, 0.12);
+   --color-accent-bg-hover: rgba(230, 180, 80, 0.06);
+   --color-border: #1a2129;
 }
 
 /* Theme: Ayu Mirage */
@@ -99,6 +127,10 @@
    --color-text: #cccac2;
    --color-text-muted: #607080;
    --color-text-dim: #4a5566;
+   --color-accent-glow: rgba(255, 204, 102, 0.4);
+   --color-accent-bg: rgba(255, 204, 102, 0.12);
+   --color-accent-bg-hover: rgba(255, 204, 102, 0.06);
+   --color-border: #2d3440;
 }
 
 /* Theme: Dracula */
@@ -112,6 +144,10 @@
    --color-text: #f8f8f2;
    --color-text-muted: #6272a4;
    --color-text-dim: #4d5880;
+   --color-accent-glow: rgba(189, 147, 249, 0.4);
+   --color-accent-bg: rgba(189, 147, 249, 0.12);
+   --color-accent-bg-hover: rgba(189, 147, 249, 0.06);
+   --color-border: #3a3c52;
 }
 
 /* Theme: Catppuccin Mocha */
@@ -125,6 +161,10 @@
    --color-text: #cdd6f4;
    --color-text-muted: #6c7086;
    --color-text-dim: #585b70;
+   --color-accent-glow: rgba(203, 166, 247, 0.4);
+   --color-accent-bg: rgba(203, 166, 247, 0.12);
+   --color-accent-bg-hover: rgba(203, 166, 247, 0.06);
+   --color-border: #2d3048;
 }
 
 /* Theme: Gruvbox */
@@ -138,6 +178,10 @@
    --color-text: #ebdbb2;
    --color-text-muted: #928374;
    --color-text-dim: #7c6f64;
+   --color-accent-glow: rgba(250, 189, 47, 0.4);
+   --color-accent-bg: rgba(250, 189, 47, 0.12);
+   --color-accent-bg-hover: rgba(250, 189, 47, 0.06);
+   --color-border: #484442;
 }
 
 /* Theme: Nord */
@@ -151,6 +195,10 @@
    --color-text: #eceff4;
    --color-text-muted: #7b88a0;
    --color-text-dim: #606e85;
+   --color-accent-glow: rgba(136, 192, 208, 0.4);
+   --color-accent-bg: rgba(136, 192, 208, 0.12);
+   --color-accent-bg-hover: rgba(136, 192, 208, 0.06);
+   --color-border: #444d5f;
 }
 
 /* Theme: Solarized Dark */
@@ -164,6 +212,10 @@
    --color-text: #839496;
    --color-text-muted: #657b83;
    --color-text-dim: #4a6570;
+   --color-accent-glow: rgba(38, 139, 210, 0.4);
+   --color-accent-bg: rgba(38, 139, 210, 0.12);
+   --color-accent-bg-hover: rgba(38, 139, 210, 0.06);
+   --color-border: #0f4050;
 }
 
 /* Theme: One Dark */
@@ -177,6 +229,10 @@
    --color-text: #abb2bf;
    --color-text-muted: #5c6370;
    --color-text-dim: #4b5263;
+   --color-accent-glow: rgba(97, 175, 239, 0.4);
+   --color-accent-bg: rgba(97, 175, 239, 0.12);
+   --color-accent-bg-hover: rgba(97, 175, 239, 0.06);
+   --color-border: #353b45;
 }
 
 /* Theme: Kanagawa */
@@ -190,4 +246,8 @@
    --color-text: #dcd7ba;
    --color-text-muted: #727169;
    --color-text-dim: #54546d;
+   --color-accent-glow: rgba(126, 156, 216, 0.4);
+   --color-accent-bg: rgba(126, 156, 216, 0.12);
+   --color-accent-bg-hover: rgba(126, 156, 216, 0.06);
+   --color-border: #333342;
 }

@@ -263,11 +263,19 @@ function onAbort() {
    border: none;
    border-radius: 6px;
    cursor: pointer;
-   transition: background 0.15s;
+   box-shadow: var(--glow-md);
+   transition: background 0.2s, box-shadow 0.3s, transform 0.15s;
 }
 
 .ScanResults-scanBtn:hover {
    background: var(--color-accent-hover);
+   box-shadow: var(--glow-lg);
+   transform: translateY(-1px);
+}
+
+.ScanResults-scanBtn:active {
+   transform: translateY(0);
+   box-shadow: var(--glow-sm);
 }
 
 .ScanResults-content {
@@ -283,7 +291,7 @@ function onAbort() {
    align-items: center;
    justify-content: space-between;
    padding: var(--spacing-md);
-   border-bottom: 1px solid var(--color-surface);
+   border-bottom: 1px solid var(--color-accent-bg);
 }
 
 .ScanResults-navControls {
@@ -303,11 +311,12 @@ function onAbort() {
    border: none;
    border-radius: 6px;
    cursor: pointer;
-   transition: background 0.15s;
+   transition: background 0.2s, box-shadow 0.25s;
 }
 
 .ScanResults-navBtn:hover:not(:disabled) {
    background: var(--color-surface-hover);
+   box-shadow: var(--glow-sm);
 }
 
 .ScanResults-navBtn:disabled {
@@ -348,8 +357,9 @@ function onAbort() {
    left: 0;
    right: 0;
    padding: var(--spacing-md);
-   border-top: 1px solid var(--color-surface);
+   border-top: 1px solid var(--color-accent-bg);
    background: var(--color-bg-elevated);
+   box-shadow: 0 -2px 16px var(--color-accent-bg);
 }
 
 .ScanResults-deleteBtn {
@@ -362,15 +372,24 @@ function onAbort() {
    border: none;
    border-radius: 8px;
    cursor: pointer;
-   transition: background 0.15s;
+   box-shadow: var(--glow-md);
+   transition: background 0.2s, box-shadow 0.3s, transform 0.15s;
 }
 
 .ScanResults-deleteBtn:hover:not(:disabled) {
    background: var(--color-accent-hover);
+   box-shadow: var(--glow-lg);
+   transform: translateY(-1px);
+}
+
+.ScanResults-deleteBtn:active:not(:disabled) {
+   transform: translateY(0);
+   box-shadow: var(--glow-sm);
 }
 
 .ScanResults-deleteBtn:disabled {
    opacity: 0.5;
    cursor: not-allowed;
+   box-shadow: none;
 }
 </style>

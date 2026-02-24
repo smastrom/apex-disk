@@ -71,6 +71,8 @@ const emit = defineEmits<{
    padding: 0 var(--spacing-md);
    background: var(--color-bg-elevated);
    flex-shrink: 0;
+   border-top: 1px solid var(--color-accent-bg);
+   box-shadow: 0 -1px 12px var(--color-accent-bg);
 }
 
 .FooterMenu-btn {
@@ -80,7 +82,8 @@ const emit = defineEmits<{
    gap: var(--spacing-xs);
    padding: var(--spacing-sm) var(--spacing-md);
    color: var(--color-text-muted);
-   transition: color 0.15s;
+   border-radius: 8px;
+   transition: color 0.2s, text-shadow 0.3s;
 }
 
 .FooterMenu-btn:hover {
@@ -89,6 +92,14 @@ const emit = defineEmits<{
 
 .FooterMenu-btn--active {
    color: var(--color-accent);
+
+   :deep(svg) {
+      filter: drop-shadow(0 0 6px var(--color-accent-glow));
+   }
+}
+
+.FooterMenu-btn--active span {
+   text-shadow: 0 0 8px var(--color-accent-glow);
 }
 
 .FooterMenu-btn span {
