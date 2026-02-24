@@ -1,0 +1,36 @@
+/* Mac Disk Lens — Theme variables (oceanic blue palette) */
+
+:root {
+   /* Primary oceanic palette */
+   --ocean-deep: #0a1628;
+   --ocean-dark: #0d2137;
+   --ocean-mid: #1a3a52;
+   --ocean-teal: #2d5a6f;
+   --ocean-light: #3d7a94;
+   --ocean-surface: #5ba3b8;
+   --ocean-foam: #7ec8d4;
+   --ocean-mist: #a8dce8;
+
+   /* Semantic colors */
+   --color-bg: var(--ocean-deep);
+   --color-bg-elevated: var(--ocean-dark);
+   --color-surface: var(--ocean-mid);
+   --color-surface-hover: var(--ocean-teal);
+   --color-accent: var(--ocean-surface);
+   --color-accent-hover: var(--ocean-foam);
+   --color-text: #e8f4f8;
+   --color-text-muted: #8fb4c4;
+   --color-text-dim: #5a8a9e;
+
+   /* Spacing */
+   --spacing-xs: 4px;
+   --spacing-sm: 8px;
+   --spacing-md: 16px;
+   --spacing-lg: 24px;
+   --spacing-xl: 32px;
+
+   /* Layout */
+   --header-height: 56px;
+   --footer-height: 64px;
+   --content-max-width: 600px;
+}

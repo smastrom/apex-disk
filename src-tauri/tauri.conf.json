@@ -13,11 +13,11 @@
     "windows": [
       {
         "title": "Mac User Lens",
-        "width": 800,
-        "height": 600,
+        "width": 415,
+        "height": 725,
         "resizable": true,
         "fullscreen": false,
-        "titleBarStyle": "Overlay",
+        "titleBarStyle": "Transparent",
         "center": true
       }
     ],

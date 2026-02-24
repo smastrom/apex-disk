@@ -52,6 +52,7 @@ This document defines code style and conventions. **Always follow these rules** 
 
 ### Package / development
 
+- **Use pnpm** as package manager.
 - **Do not propose to launch dev servers** when testing implementations. The dev server is always running when the agent is working for the human.
 - **Do not install any npm package** unless explicitly asked.
 

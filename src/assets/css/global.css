@@ -1,0 +1,16 @@
+/* Mac Disk Lens — Global styles */
+
+html {
+   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+   font-size: 16px;
+   line-height: 1.5;
+   color: var(--color-text);
+   background: var(--color-bg);
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+   margin: 0;
+   min-height: 100vh;
+}
