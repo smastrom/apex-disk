@@ -17,10 +17,15 @@ export interface SettingsStore {
    setThemeColor: (theme: ThemeColor) => Promise<void>
    setShowHiddenFiles: (value: boolean) => Promise<void>
    setShowZeroByteFiles: (value: boolean) => Promise<void>
+   setShowZeroByteFolders: (value: boolean) => Promise<void>
+   setEnableAnimations: (value: boolean) => Promise<void>
    load: () => Promise<void>
 }
 
-function createStoreFromSettings(settings: Ref<AppSettings>, persist: () => Promise<void>): SettingsStore {
+function createStoreFromSettings(
+   settings: Ref<AppSettings>,
+   persist: () => Promise<void>
+): SettingsStore {
    return {
       settings,
       getThemeColor: () => settings.value.themeColor,
@@ -38,6 +43,14 @@ function createStoreFromSettings(settings: Ref<AppSettings>, persist: () => Prom
       },
       setShowZeroByteFiles: async (value) => {
          settings.value = { ...settings.value, showZeroByteFiles: value }
+         await persist()
+      },
+      setShowZeroByteFolders: async (value) => {
+         settings.value = { ...settings.value, showZeroByteFolders: value }
+         await persist()
+      },
+      setEnableAnimations: async (value) => {
+         settings.value = { ...settings.value, enableAnimations: value }
          await persist()
       },
       load: async () => {},
