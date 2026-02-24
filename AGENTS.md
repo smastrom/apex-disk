@@ -30,6 +30,11 @@ This document defines code style and conventions. **Always follow these rules** 
   - **Domain-specific** → new file (e.g. `src/lib/format.ts` for `formatBytes`, `formatDuration`)
 - **Do not hesitate to create new files** in `src/lib/` when a function is reusable but not generic enough for `utils.ts`
 
+### Constants
+
+- **Module-local constants**: Define in the same file when used only within that module
+- **Shared constants**: If the scope extends beyond the module where they are declared, define them in `src/lib/constants.ts`
+
 ### Vue components
 
 - **Prefer splitting big components** into smaller ones using a "blocks" logic: each sub-component handles a distinct UI block
