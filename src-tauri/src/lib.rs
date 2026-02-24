@@ -1,8 +1,10 @@
-use rayon::prelude::*;
+use tauri::Emitter;
+
 use std::path::Path;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
-use tauri::Emitter;
+
+use rayon::prelude::*;
 
 #[tauri::command]
 fn greet(name: &str) -> String {

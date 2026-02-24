@@ -4,6 +4,8 @@ import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 import FolderNode from './components/FolderNode.vue'
 
+import '@/assets/css/reset.css'
+
 interface FolderInfo {
    name: string
    path: string
@@ -116,7 +118,9 @@ onUnmounted(() => {
          <div class="tree-header">
             <h2>User Folders (sorted by size)</h2>
             <div class="tree-header-right">
-               <span v-if="scanDuration !== null" class="scan-duration">{{ (scanDuration / 1000).toFixed(2) }}s</span>
+               <span v-if="scanDuration !== null" class="scan-duration"
+                  >{{ (scanDuration / 1000).toFixed(2) }}s</span
+               >
                <button class="scan-btn small" @click="loadFolders">Rescan</button>
             </div>
          </div>
