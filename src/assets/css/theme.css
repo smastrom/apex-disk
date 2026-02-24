@@ -61,3 +61,133 @@
    --color-text-muted: #98989d;
    --color-text-dim: #636366;
 }
+
+/* Theme: Tokyo Night */
+[data-theme='tokyo-night'] {
+   --color-bg: #1a1b2e;
+   --color-bg-elevated: #24253a;
+   --color-surface: #2f3050;
+   --color-surface-hover: #3d3f6a;
+   --color-accent: #7aa2f7;
+   --color-accent-hover: #89b4fa;
+   --color-text: #c0caf5;
+   --color-text-muted: #565f89;
+   --color-text-dim: #414868;
+}
+
+/* Theme: Ayu Dark */
+[data-theme='ayu-dark'] {
+   --color-bg: #0d1017;
+   --color-bg-elevated: #13191f;
+   --color-surface: #1c2530;
+   --color-surface-hover: #253340;
+   --color-accent: #e6b450;
+   --color-accent-hover: #f0c060;
+   --color-text: #bfbdb6;
+   --color-text-muted: #5c6773;
+   --color-text-dim: #3d4752;
+}
+
+/* Theme: Ayu Mirage */
+[data-theme='ayu-mirage'] {
+   --color-bg: #1f2430;
+   --color-bg-elevated: #242b38;
+   --color-surface: #2d3446;
+   --color-surface-hover: #3a4358;
+   --color-accent: #ffcc66;
+   --color-accent-hover: #ffd580;
+   --color-text: #cccac2;
+   --color-text-muted: #607080;
+   --color-text-dim: #4a5566;
+}
+
+/* Theme: Dracula */
+[data-theme='dracula'] {
+   --color-bg: #282a36;
+   --color-bg-elevated: #313344;
+   --color-surface: #383a4e;
+   --color-surface-hover: #44475a;
+   --color-accent: #bd93f9;
+   --color-accent-hover: #cfa4ff;
+   --color-text: #f8f8f2;
+   --color-text-muted: #6272a4;
+   --color-text-dim: #4d5880;
+}
+
+/* Theme: Catppuccin Mocha */
+[data-theme='catppuccin'] {
+   --color-bg: #1e1e2e;
+   --color-bg-elevated: #24273a;
+   --color-surface: #313244;
+   --color-surface-hover: #45475a;
+   --color-accent: #cba6f7;
+   --color-accent-hover: #d3b4ff;
+   --color-text: #cdd6f4;
+   --color-text-muted: #6c7086;
+   --color-text-dim: #585b70;
+}
+
+/* Theme: Gruvbox */
+[data-theme='gruvbox'] {
+   --color-bg: #282828;
+   --color-bg-elevated: #3c3836;
+   --color-surface: #504945;
+   --color-surface-hover: #665c54;
+   --color-accent: #fabd2f;
+   --color-accent-hover: #ffd866;
+   --color-text: #ebdbb2;
+   --color-text-muted: #928374;
+   --color-text-dim: #7c6f64;
+}
+
+/* Theme: Nord */
+[data-theme='nord'] {
+   --color-bg: #2e3440;
+   --color-bg-elevated: #3b4252;
+   --color-surface: #434c5e;
+   --color-surface-hover: #4c566a;
+   --color-accent: #88c0d0;
+   --color-accent-hover: #8fbcbb;
+   --color-text: #eceff4;
+   --color-text-muted: #7b88a0;
+   --color-text-dim: #606e85;
+}
+
+/* Theme: Solarized Dark */
+[data-theme='solarized'] {
+   --color-bg: #002b36;
+   --color-bg-elevated: #073642;
+   --color-surface: #0d3d4e;
+   --color-surface-hover: #1a4d5e;
+   --color-accent: #268bd2;
+   --color-accent-hover: #2aa198;
+   --color-text: #839496;
+   --color-text-muted: #657b83;
+   --color-text-dim: #4a6570;
+}
+
+/* Theme: One Dark */
+[data-theme='one-dark'] {
+   --color-bg: #282c34;
+   --color-bg-elevated: #2c313a;
+   --color-surface: #383e4a;
+   --color-surface-hover: #404756;
+   --color-accent: #61afef;
+   --color-accent-hover: #89c5ff;
+   --color-text: #abb2bf;
+   --color-text-muted: #5c6370;
+   --color-text-dim: #4b5263;
+}
+
+/* Theme: Kanagawa */
+[data-theme='kanagawa'] {
+   --color-bg: #1f1f28;
+   --color-bg-elevated: #2a2a37;
+   --color-surface: #363646;
+   --color-surface-hover: #54546d;
+   --color-accent: #7e9cd8;
+   --color-accent-hover: #9cb5e8;
+   --color-text: #dcd7ba;
+   --color-text-muted: #727169;
+   --color-text-dim: #54546d;
+}

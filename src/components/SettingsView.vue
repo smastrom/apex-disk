@@ -33,6 +33,16 @@ const themeOptions = computed(() => [
    { value: 'oceanic' as ThemeColor, label: t('SettingsView', 'themeOceanic') },
    { value: 'light' as ThemeColor, label: t('SettingsView', 'themeLight') },
    { value: 'dark' as ThemeColor, label: t('SettingsView', 'themeDark') },
+   { value: 'tokyo-night' as ThemeColor, label: t('SettingsView', 'themeTokyoNight') },
+   { value: 'ayu-dark' as ThemeColor, label: t('SettingsView', 'themeAyuDark') },
+   { value: 'ayu-mirage' as ThemeColor, label: t('SettingsView', 'themeAyuMirage') },
+   { value: 'dracula' as ThemeColor, label: t('SettingsView', 'themeDracula') },
+   { value: 'catppuccin' as ThemeColor, label: t('SettingsView', 'themeCatppuccin') },
+   { value: 'gruvbox' as ThemeColor, label: t('SettingsView', 'themeGruvbox') },
+   { value: 'nord' as ThemeColor, label: t('SettingsView', 'themeNord') },
+   { value: 'solarized' as ThemeColor, label: t('SettingsView', 'themeSolarized') },
+   { value: 'one-dark' as ThemeColor, label: t('SettingsView', 'themeOneDark') },
+   { value: 'kanagawa' as ThemeColor, label: t('SettingsView', 'themeKanagawa') },
 ])
 
 function toggleHiddenFiles() {
