@@ -1,0 +1,106 @@
+/*! minireset.css v0.0.6 | MIT License | github.com/jgthms/minireset.css */
+html,
+body,
+p,
+ol,
+ul,
+li,
+dl,
+dt,
+dd,
+blockquote,
+figure,
+fieldset,
+legend,
+textarea,
+pre,
+iframe,
+hr,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+   margin: 0;
+   padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+   font-size: 100%;
+   font-weight: normal;
+   line-height: normal;
+}
+
+ul {
+   list-style: none;
+}
+
+button,
+input,
+select {
+   margin: 0;
+}
+
+html {
+   box-sizing: border-box;
+   scroll-behavior: smooth;
+}
+
+*,
+*::before,
+*::after {
+   box-sizing: inherit;
+}
+
+img,
+video {
+   height: auto;
+   max-width: 100%;
+}
+
+iframe {
+   border: 0;
+}
+
+table {
+   border-collapse: collapse;
+   border-spacing: 0;
+}
+
+td,
+th {
+   padding: 0;
+}
+
+button {
+   border: none;
+   background: none;
+   padding: 0;
+   margin: 0;
+   font: inherit;
+   color: inherit;
+   cursor: pointer;
+}
+
+a {
+   color: inherit;
+   text-decoration: none;
+}
+
+input[type='search'] {
+   -webkit-appearance: textfield;
+   outline: none;
+}
+
+input[type='search']::-webkit-search-decoration,
+input[type='search']::-webkit-search-cancel-button,
+input[type='search']::-webkit-search-results-button,
+input[type='search']::-webkit-search-results-decoration {
+   display: none;
+}
