@@ -15,6 +15,7 @@ export type ThemeColor =
    | 'nord'
    | 'solarized'
    | 'one-dark'
+   | 'deep-purple'
    | 'kanagawa'
 
 /** App settings persisted to disk. */

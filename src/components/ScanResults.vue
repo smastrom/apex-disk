@@ -291,7 +291,7 @@ function onAbort() {
    align-items: center;
    justify-content: space-between;
    padding: var(--spacing-md);
-   border-bottom: 1px solid var(--color-accent-bg);
+   border-bottom: 1px solid var(--color-bg);
 }
 
 .ScanResults-navControls {
@@ -357,9 +357,9 @@ function onAbort() {
    left: 0;
    right: 0;
    padding: var(--spacing-md);
-   border-top: 1px solid var(--color-accent-bg);
+   border-top: 1px solid var(--color-bg);
    background: var(--color-bg-elevated);
-   box-shadow: 0 -2px 16px var(--color-accent-bg);
+   box-shadow: 0 -2px 16px var(--color-bg);
 }
 
 .ScanResults-deleteBtn {

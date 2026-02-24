@@ -49,8 +49,8 @@ defineEmits<{
 
 <template>
    <div class="Layout-root">
-      <Header v-if="activeView !== 'scan'" />
-      <div class="Layout-main" :style="{ 'padding-top': activeView === 'scan' ? '24px' : '0' }">
+      <Header />
+      <div class="Layout-main">
          <ScanResults
             v-show="activeView === 'scan'"
             :folders="folders"

@@ -59,7 +59,11 @@ const emit = defineEmits<{
       <div class="ListItem-info">
          <span class="ListItem-name">{{ item.name }}</span>
          <span v-if="!item.is_file" class="ListItem-count">
-            {{ item.children.length === 1 ? t('ListItem', 'itemOne') : t('ListItem', 'itemsCount', { count: item.children.length }) }}
+            {{
+               item.children.length === 1
+                  ? t('ListItem', 'itemOne')
+                  : t('ListItem', 'itemsCount', { count: item.children.length })
+            }}
          </span>
       </div>
       <div class="ListItem-meta">
@@ -73,13 +77,15 @@ const emit = defineEmits<{
 .ListItem-root {
    display: flex;
    align-items: center;
-   gap: var(--spacing-md);
+   gap: var(--spacing-sm);
    padding: var(--spacing-sm) var(--spacing-md);
    min-height: 56px;
-   margin: 0 var(--spacing-sm);
+   margin: 4px var(--spacing-sm);
    border-radius: 8px;
    border: 1px solid transparent;
-   transition: background 0.2s, border-color 0.2s;
+   transition:
+      background 0.2s,
+      border-color 0.2s;
 }
 
 .ListItem-root--folder {
@@ -88,12 +94,12 @@ const emit = defineEmits<{
 
 .ListItem-root:hover {
    background: var(--color-accent-bg-hover);
-   border-color: var(--color-border);
+   border-color: var(--color-accent-glow);
 }
 
 .ListItem-root--selected {
    background: var(--color-accent-bg);
-   border-color: var(--color-border);
+   border-color: var(--color-accent-glow);
 }
 
 .ListItem-root--selected:hover {
@@ -139,7 +145,7 @@ const emit = defineEmits<{
    min-width: 0;
    display: flex;
    flex-direction: column;
-   gap: 2px;
+   gap: 4px;
 }
 
 .ListItem-name {

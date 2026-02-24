@@ -42,6 +42,7 @@ const themeOptions = computed(() => [
    { value: 'nord' as ThemeColor, label: t('SettingsView', 'themeNord') },
    { value: 'solarized' as ThemeColor, label: t('SettingsView', 'themeSolarized') },
    { value: 'one-dark' as ThemeColor, label: t('SettingsView', 'themeOneDark') },
+   { value: 'deep-purple' as ThemeColor, label: t('SettingsView', 'themeDeepPurple') },
    { value: 'kanagawa' as ThemeColor, label: t('SettingsView', 'themeKanagawa') },
 ])
 

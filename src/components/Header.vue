@@ -30,8 +30,8 @@ const { t } = useTranslations()
    padding: 0 var(--spacing-md);
    background: var(--color-bg-elevated);
    flex-shrink: 0;
-   border-bottom: 1px solid var(--color-accent-bg);
-   box-shadow: 0 1px 12px var(--color-accent-bg);
+   border-bottom: 1px solid var(--color-bg);
+   box-shadow: 0 1px 12px var(--color-bg);
 }
 
 .Header-title {

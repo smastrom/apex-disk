@@ -21,6 +21,7 @@ export const SettingsView = {
       themeNord: 'Nord',
       themeSolarized: 'Solarized Dark',
       themeOneDark: 'One Dark',
+      themeDeepPurple: 'Deep Purple',
       themeKanagawa: 'Kanagawa',
    },
    it: {
@@ -45,6 +46,7 @@ export const SettingsView = {
       themeNord: 'Nord',
       themeSolarized: 'Solarized Scuro',
       themeOneDark: 'One Dark',
+      themeDeepPurple: 'Deep Purple',
       themeKanagawa: 'Kanagawa',
    },
 } as const

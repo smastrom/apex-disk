@@ -235,6 +235,23 @@
    --color-border: #353b45;
 }
 
+/* Theme: Deep Purple */
+[data-theme='deep-purple'] {
+   --color-bg: #08060e;
+   --color-bg-elevated: #0f0c18;
+   --color-surface: #181324;
+   --color-surface-hover: #211b30;
+   --color-accent: #a855f7;
+   --color-accent-hover: #c084fc;
+   --color-text: #f0eaf8;
+   --color-text-muted: #8878a8;
+   --color-text-dim: #5c4f75;
+   --color-accent-glow: rgba(168, 85, 247, 0.4);
+   --color-accent-bg: rgba(168, 85, 247, 0.12);
+   --color-accent-bg-hover: rgba(168, 85, 247, 0.06);
+   --color-border: #1a1526;
+}
+
 /* Theme: Kanagawa */
 [data-theme='kanagawa'] {
    --color-bg: #1f1f28;
