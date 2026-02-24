@@ -1,4 +1,7 @@
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+use rayon::prelude::*;
+use std::path::Path;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::{Arc, Mutex};
 use tauri::Emitter;
 
 #[tauri::command]
@@ -12,8 +15,8 @@ pub struct FolderInfo {
     pub path: String,
     pub size: u64,
     pub icon: Option<String>,
-    /// Child folders, sorted by size descending. Enables recursive navigation.
     pub children: Vec<FolderInfo>,
+    pub is_file: bool,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Clone)]
@@ -26,32 +29,37 @@ struct FolderScanProgress {
     scanning: Option<String>,
 }
 
-/// Builds the full folder tree in a single filesystem pass to avoid redundant I/O.
-/// Uses a stack to accumulate sizes and construct the tree as we walk depth-first.
-fn get_user_folders_sync_with_progress(app: tauri::AppHandle) -> Result<Vec<FolderInfo>, String> {
-    let user_dir = dirs::home_dir().ok_or("Unable to determine user directory")?;
+fn sort_children(children: &mut [FolderInfo]) {
+    children.sort_unstable_by(|a, b| b.size.cmp(&a.size).then_with(|| a.name.cmp(&b.name)));
+}
 
-    // Count top-level dirs for progress
-    let total = std::fs::read_dir(&user_dir)
-        .map_err(|e| format!("Failed to read user directory: {}", e))?
-        .filter_map(|e| e.ok())
-        .filter(|e| {
-            let ft = e.file_type().ok();
-            e.path().is_dir() && ft.map(|f| !f.is_symlink()).unwrap_or(false)
-        })
-        .count();
+/// Builds the folder subtree for a single directory using walkdir (iterative, no recursion).
+/// Returns a FolderInfo with all descendants populated.
+fn build_folder_tree(root: &Path) -> FolderInfo {
+    let name = root
+        .file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or("Unknown")
+        .to_string();
 
-    #[derive(Clone)]
     struct StackEntry {
         depth: usize,
         info: FolderInfo,
     }
 
-    let mut stack: Vec<StackEntry> = Vec::new();
-    let mut roots: Vec<FolderInfo> = Vec::new();
-    let mut roots_completed = 0usize;
+    let mut stack: Vec<StackEntry> = vec![StackEntry {
+        depth: 0,
+        info: FolderInfo {
+            name,
+            path: root.to_string_lossy().into_owned(),
+            size: 0,
+            icon: None,
+            children: Vec::new(),
+            is_file: false,
+        },
+    }];
 
-    for entry in walkdir::WalkDir::new(&user_dir)
+    for entry in walkdir::WalkDir::new(root)
         .min_depth(1)
         .follow_links(false)
         .into_iter()
@@ -59,94 +67,111 @@ fn get_user_folders_sync_with_progress(app: tauri::AppHandle) -> Result<Vec<Fold
         .filter_map(|e| e.ok())
     {
         let depth = entry.depth();
-        let path = entry.path().to_path_buf();
-        let is_dir = entry.file_type().is_dir();
-        let is_symlink = entry.file_type().is_symlink();
+        let ft = entry.file_type();
 
-        if is_dir && !is_symlink {
-            // Pop finished directories (we've exited them — depth decreased or sibling)
+        if ft.is_dir() {
             while stack.last().is_some_and(|e| e.depth >= depth) {
-                let StackEntry { info, .. } = stack.pop().unwrap();
+                let StackEntry { mut info, .. } = stack.pop().unwrap();
+                sort_children(&mut info.children);
                 if let Some(parent) = stack.last_mut() {
                     parent.info.size += info.size;
                     parent.info.children.push(info);
-                    parent
-                        .info
-                        .children
-                        .sort_by(|a, b| b.size.cmp(&a.size).then_with(|| a.name.cmp(&b.name)));
-                } else {
-                    let (name, size) = (info.name.clone(), info.size);
-                    roots.push(info);
-                    roots_completed += 1;
-                    let _ = app.emit(
-                        "folder-scan-progress",
-                        &FolderScanProgress {
-                            current: roots_completed,
-                            total,
-                            folder: name,
-                            size,
-                            scanning: None,
-                        },
-                    );
                 }
             }
 
-            let name = path
-                .file_name()
-                .and_then(|n| n.to_str())
-                .unwrap_or("Unknown")
-                .to_string();
+            let child_name = entry.file_name().to_str().unwrap_or("Unknown").to_string();
 
             stack.push(StackEntry {
                 depth,
                 info: FolderInfo {
-                    name,
-                    path: path.to_string_lossy().to_string(),
+                    name: child_name,
+                    path: entry.path().to_string_lossy().into_owned(),
                     size: 0,
                     icon: None,
                     children: Vec::new(),
+                    is_file: false,
                 },
             });
-        } else if entry.file_type().is_file() && !is_symlink {
+        } else if ft.is_file() {
+            let file_size = entry.metadata().map(|m| m.len()).unwrap_or(0);
             if let Some(parent) = stack.last_mut() {
-                parent.info.size += entry.metadata().map(|m| m.len()).unwrap_or(0);
+                parent.info.size += file_size;
+                parent.info.children.push(FolderInfo {
+                    name: entry.file_name().to_str().unwrap_or("Unknown").to_string(),
+                    path: entry.path().to_string_lossy().into_owned(),
+                    size: file_size,
+                    icon: None,
+                    children: Vec::new(),
+                    is_file: true,
+                });
             }
         }
     }
 
-    // Pop remaining stack (in case walk ended inside a dir)
-    while let Some(StackEntry { info, .. }) = stack.pop() {
+    // Unwind remaining stack
+    while stack.len() > 1 {
+        let StackEntry { mut info, .. } = stack.pop().unwrap();
+        sort_children(&mut info.children);
         if let Some(parent) = stack.last_mut() {
             parent.info.size += info.size;
             parent.info.children.push(info);
-            parent
-                .info
-                .children
-                .sort_by(|a, b| b.size.cmp(&a.size).then_with(|| a.name.cmp(&b.name)));
-        } else {
-            let (name, size) = (info.name.clone(), info.size);
-            roots.push(info);
-            roots_completed += 1;
-            let _ = app.emit(
-                "folder-scan-progress",
-                &FolderScanProgress {
-                    current: roots_completed,
-                    total,
-                    folder: name,
-                    size,
-                    scanning: None,
-                },
-            );
         }
     }
 
-    roots.sort_by(|a, b| b.size.cmp(&a.size).then_with(|| a.name.cmp(&b.name)));
-
-    Ok(roots)
+    let mut root_info = stack.pop().unwrap().info;
+    sort_children(&mut root_info.children);
+    root_info
 }
 
-/// Runs the heavy disk I/O in a background thread so the UI stays responsive.
-/// Emits `folder-scan-progress` events as each folder is scanned for real-time progress.
+/// Scans top-level folders in parallel for I/O concurrency, then builds each subtree.
+fn get_user_folders_sync_with_progress(app: tauri::AppHandle) -> Result<Vec<FolderInfo>, String> {
+    let user_dir = dirs::home_dir().ok_or("Unable to determine user directory")?;
+
+    let mut folder_paths: Vec<std::path::PathBuf> = Vec::new();
+    for entry in
+        std::fs::read_dir(&user_dir).map_err(|e| format!("Failed to read user directory: {}", e))?
+    {
+        let entry = entry.map_err(|e| format!("Failed to read directory entry: {}", e))?;
+        let is_dir_not_symlink = entry
+            .file_type()
+            .map(|ft| ft.is_dir() && !ft.is_symlink())
+            .unwrap_or(false);
+        if is_dir_not_symlink {
+            folder_paths.push(entry.path());
+        }
+    }
+
+    let total = folder_paths.len();
+    let completed = AtomicUsize::new(0);
+    let app_ref = Arc::new(Mutex::new(app));
+
+    let mut folders: Vec<FolderInfo> = folder_paths
+        .into_par_iter()
+        .map(|path| {
+            let info = build_folder_tree(&path);
+
+            let cur = completed.fetch_add(1, Ordering::Relaxed) + 1;
+            if let Ok(guard) = app_ref.lock() {
+                let _ = guard.emit(
+                    "folder-scan-progress",
+                    &FolderScanProgress {
+                        current: cur,
+                        total,
+                        folder: info.name.clone(),
+                        size: info.size,
+                        scanning: None,
+                    },
+                );
+            }
+
+            info
+        })
+        .collect();
+
+    sort_children(&mut folders);
+    Ok(folders)
+}
+
 #[tauri::command]
 async fn get_user_folders(app: tauri::AppHandle) -> Result<Vec<FolderInfo>, String> {
     tauri::async_runtime::spawn_blocking(move || get_user_folders_sync_with_progress(app))

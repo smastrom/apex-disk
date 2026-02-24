@@ -10,6 +10,7 @@ interface FolderInfo {
    size: number
    icon?: string
    children: FolderInfo[]
+   is_file: boolean
 }
 
 interface ScanProgress {
@@ -207,15 +208,26 @@ onUnmounted(() => unlistenProgress?.())
    display: inline-block;
 }
 
+.folder-icon {
+   font-size: 0.85rem;
+   flex-shrink: 0;
+}
+
 .folder-name {
    flex: 1;
    overflow: hidden;
    text-overflow: ellipsis;
+   white-space: nowrap;
+}
+
+.folder-row.is-file .folder-name {
+   color: #555;
 }
 
 .folder-size {
    font-size: 0.85rem;
    color: #888;
+   flex-shrink: 0;
 }
 </style>
 
