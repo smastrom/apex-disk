@@ -2,18 +2,27 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
+import FolderNode from './components/FolderNode.vue'
+
+interface FolderInfo {
+   name: string
+   path: string
+   size: number
+   icon?: string
+   children: FolderInfo[]
+}
 
 interface ScanProgress {
    current: number
    total: number
    folder: string
    size: number
-   /** Folder currently being scanned (shown when a large folder takes a long time) */
    scanning?: string
 }
 
-const folders = ref<any[]>([])
+const folders = ref<FolderInfo[]>([])
 const loading = ref(false)
+const expandedPaths = ref<Set<string>>(new Set())
 const progress = ref<ScanProgress>({
    current: 0,
    total: 1,
@@ -25,20 +34,15 @@ let unlistenProgress: (() => void) | null = null
 
 async function loadFolders() {
    loading.value = true
-   progress.value = {
-      current: 0,
-      total: 1,
-      folder: '',
-      size: 0,
-      scanning: undefined,
-   }
+   expandedPaths.value = new Set()
+   progress.value = { current: 0, total: 1, folder: '', size: 0 }
 
    unlistenProgress = await listen<ScanProgress>('folder-scan-progress', (event) => {
       progress.value = event.payload
    })
 
    try {
-      folders.value = await invoke('get_user_folders')
+      folders.value = await invoke<FolderInfo[]>('get_user_folders')
    } catch (error) {
       console.error('Error loading folders:', error)
    } finally {
@@ -48,13 +52,12 @@ async function loadFolders() {
    }
 }
 
-onMounted(() => {
-   loadFolders()
-})
-
-onUnmounted(() => {
-   unlistenProgress?.()
-})
+function toggleExpand(path: string) {
+   const next = new Set(expandedPaths.value)
+   if (next.has(path)) next.delete(path)
+   else next.add(path)
+   expandedPaths.value = next
+}
 
 function formatBytes(bytes: number) {
    if (bytes === 0) return '0 Bytes'
@@ -63,11 +66,13 @@ function formatBytes(bytes: number) {
    const i = Math.floor(Math.log(bytes) / Math.log(k))
    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
+
+onMounted(() => loadFolders())
+onUnmounted(() => unlistenProgress?.())
 </script>
 
 <template>
    <main class="container">
-      <!-- Folder list with real progress -->
       <div v-if="loading" class="loader">
          <div class="progress-bar">
             <div
@@ -83,13 +88,19 @@ function formatBytes(bytes: number) {
             Last: {{ progress.folder }} — {{ formatBytes(progress.size) }}
          </p>
       </div>
-      <div v-else>
+      <div v-else class="tree-container">
          <h2>User Folders (sorted by size)</h2>
-         <ul>
-            <li v-for="(folder, index) in folders" :key="index">
-               <strong>{{ folder.name }}</strong> - {{ formatBytes(folder.size) }}<br />
-               Path: {{ folder.path }}
-            </li>
+         <p class="tree-hint">Click a folder to expand and navigate into it</p>
+         <ul class="folder-tree">
+            <FolderNode
+               v-for="folder in folders"
+               :key="folder.path"
+               :folder="folder"
+               :depth="0"
+               :expanded-paths="expandedPaths"
+               :format-bytes="formatBytes"
+               :toggle-expand="toggleExpand"
+            />
          </ul>
       </div>
    </main>
@@ -138,6 +149,73 @@ function formatBytes(bytes: number) {
    font-size: 0.8rem;
    color: #888;
    margin: 0;
+}
+
+.tree-container {
+   text-align: left;
+   max-width: 600px;
+   margin: 0 auto;
+}
+
+.tree-hint {
+   font-size: 0.85rem;
+   color: #666;
+   margin: 0 0 1rem 0;
+}
+
+.folder-tree {
+   list-style: none;
+   padding: 0;
+   margin: 0;
+}
+
+.folder-children {
+   list-style: none;
+   padding: 0;
+   margin: 0;
+}
+
+.folder-item {
+   margin: 0;
+}
+
+.folder-row {
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+   padding: 4px 8px;
+   cursor: default;
+   border-radius: 4px;
+}
+
+.folder-row.expandable {
+   cursor: pointer;
+}
+
+.folder-row.expandable:hover {
+   background: rgba(100, 108, 255, 0.1);
+}
+
+.folder-arrow {
+   width: 12px;
+   font-size: 0.7rem;
+   color: #666;
+}
+
+.folder-arrow-placeholder {
+   width: 12px;
+   display: inline-block;
+}
+
+.folder-name {
+   flex: 1;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+.folder-size {
+   font-size: 0.85rem;
+   color: #888;
 }
 </style>
 
