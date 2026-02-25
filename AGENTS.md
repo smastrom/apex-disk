@@ -61,6 +61,12 @@ This document defines code style and conventions. **Always follow these rules** 
 - **Do not propose to launch dev servers** when testing implementations. The dev server is always running when the agent is working for the human.
 - **Do not install any npm package** unless explicitly asked.
 
+### Commits
+
+- **Do not use Conventional Commits** — no prefixes like `feat:`, `fix:`, `refactor:`, `docs:`, etc.
+- Use the project’s existing nomenclature: **imperative verb + short description** (e.g. *Add protected system folders*, *Fix window drag region*, *Improve default settings*, *Move animations to their own settings group*).
+- Keep the first line concise; add a body or scope after a colon when useful (e.g. *Fix abort, view switch lag, layout jumps, and startup crash*).
+
 ---
 
 ### Vue
@@ -75,7 +81,7 @@ Above each component, add a comment block with:
 - **Props**: List of props with types
 - **Example**: Minimal usage snippet (how to use the component in a parent)
 
-The format, blank lines, and structure below must be respected exactly. The Example shows template usage; use kebab-case for prop bindings in templates (e.g. `:expanded-paths`, not `:expandedPaths`).
+The format, blank lines, and structure below must be respected exactly. The Example shows template usage; use camelCase for prop bindings in templates (e.g. `:expandedPaths`, not `:expanded-paths`).
 
 ```vue
 <!--
@@ -89,9 +95,9 @@ Example:
    <FolderNode
       :folder="item"
       :depth="0"
-      :expanded-paths="paths"
-      :format-bytes="fmt"
-      :toggle-expand="toggle"
+      :expandedPaths="paths"
+      :formatBytes="fmt"
+      :toggleExpand="toggle"
    />
 -->
 
@@ -123,8 +129,9 @@ Example:
 #### Props and component usage
 
 - **Prop definitions**: Always camelCase (e.g. `expandedPaths`, `formatBytes`)
-- **Prop bindings in templates**: Use kebab-case (e.g. `:expanded-paths`, `:format-bytes`) — matches Vue/HTML convention
+- **Prop bindings in templates**: Use camelCase (e.g. `:expandedPaths`, `:formatBytes`) — JSX-like convention
 - **Component tags**: Use PascalCase (e.g. `<FolderNode />`, not `<folder-node />`)
+- **Emits**: Use kebab-case (e.g. `emit('select-item')`, not `emit('selectItem')`)
 - **Never use snake_case** for props or component names (e.g. `expanded_paths` is wrong)
 
 ---

@@ -3,6 +3,8 @@ import { Header } from './Header'
 import { Layout } from './Layout'
 import { ListItem } from './ListItem'
 import { DiskUsageProgress } from './DiskUsageProgress'
+import { ScanSplashScreen } from './ScanSplashScreen'
+import { ScanLoadingView } from './ScanLoadingView'
 import { ScanResults } from './ScanResults'
 import { SettingsView } from './SettingsView'
 import { FooterMenu } from './FooterMenu'
@@ -15,6 +17,8 @@ export const translations = {
    Header,
    Layout,
    ListItem,
+   ScanSplashScreen,
+   ScanLoadingView,
    ScanResults,
    SettingsView,
    FooterMenu,

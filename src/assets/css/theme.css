@@ -12,6 +12,7 @@
    --ocean-mist: #a8dce8;
 
    /* Semantic colors */
+   --color-on-accent: #fff;
    --color-bg: var(--ocean-deep);
    --color-bg-elevated: var(--ocean-dark);
    --color-surface: var(--ocean-mid);
