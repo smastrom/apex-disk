@@ -32,7 +32,7 @@ const deletedSummary = ref<{ count: number; size: number } | null>(null)
 const diskUsageRef = ref<InstanceType<typeof ScanViewDiskUsage> | null>(null)
 const resultsListRef = ref<InstanceType<typeof ScanResultsList> | null>(null)
 
-const props = defineProps<{
+defineProps<{
    folders: FolderInfo[]
    loading: boolean
    progress: ScanProgress
