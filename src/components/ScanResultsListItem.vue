@@ -40,48 +40,56 @@ const emit = defineEmits<{
 
 <template>
    <div
-      class="ListItem-root"
-      :class="{ 'ListItem-root--selected': selected, 'ListItem-root--folder': !item.is_file }"
+      class="ScanResultsListItem-root"
+      :class="{
+         'ScanResultsListItem-root--selected': selected,
+         'ScanResultsListItem-root--folder': !item.is_file,
+      }"
       @click="!item.is_file && emit('navigate')"
    >
       <button
          type="button"
-         class="ListItem-check"
+         class="ScanResultsListItem-check"
          :class="{
-            'ListItem-check--selected': selected,
-            'ListItem-check--disabled': selectable === false,
+            'ScanResultsListItem-check--selected': selected,
+            'ScanResultsListItem-check--disabled': selectable === false,
          }"
          :aria-pressed="selected"
          :disabled="selectable === false"
          :aria-disabled="selectable === false"
          @click.stop="selectable !== false && emit('select')"
       >
-         <PhCircle v-if="!selected" :size="22" weight="regular" class="ListItem-checkEmpty" />
-         <PhCheckCircle v-else :size="22" weight="fill" class="ListItem-checkFilled" />
+         <PhCircle
+            v-if="!selected"
+            :size="22"
+            weight="regular"
+            class="ScanResultsListItem-checkEmpty"
+         />
+         <PhCheckCircle v-else :size="22" weight="fill" class="ScanResultsListItem-checkFilled" />
       </button>
-      <div class="ListItem-icon">
+      <div class="ScanResultsListItem-icon">
          <PhFolder v-if="!item.is_file" :size="28" weight="regular" />
          <PhFile v-else :size="28" weight="regular" />
       </div>
-      <div class="ListItem-info">
-         <span class="ListItem-name">{{ item.name }}</span>
-         <span v-if="!item.is_file" class="ListItem-count">
+      <div class="ScanResultsListItem-info">
+         <span class="ScanResultsListItem-name">{{ item.name }}</span>
+         <span v-if="!item.is_file" class="ScanResultsListItem-count">
             {{
                item.children.length === 1
-                  ? t('ListItem', 'itemOne')
-                  : t('ListItem', 'itemsCount', { count: item.children.length })
+                  ? t('ScanResultsListItem', 'itemOne')
+                  : t('ScanResultsListItem', 'itemsCount', { count: item.children.length })
             }}
          </span>
       </div>
-      <div class="ListItem-meta">
-         <span class="ListItem-size">{{ formatBytes(item.size) }}</span>
-         <PhCaretRight v-if="!item.is_file" :size="18" weight="regular" class="ListItem-chevron" />
+      <div class="ScanResultsListItem-meta">
+         <span class="ScanResultsListItem-size">{{ formatBytes(item.size) }}</span>
+         <PhCaretRight v-if="!item.is_file" :size="18" weight="regular" class="ScanResultsListItem-chevron" />
       </div>
    </div>
 </template>
 
 <style scoped>
-.ListItem-root {
+.ScanResultsListItem-root {
    display: flex;
    align-items: center;
    gap: var(--spacing-sm);
@@ -98,11 +106,11 @@ const emit = defineEmits<{
    }
 }
 
-.ListItem-root--folder {
+.ScanResultsListItem-root--folder {
    cursor: pointer;
 }
 
-.ListItem-root--selected {
+.ScanResultsListItem-root--selected {
    background: var(--color-accent-bg);
 
    &:hover {
@@ -110,7 +118,7 @@ const emit = defineEmits<{
    }
 }
 
-.ListItem-check {
+.ScanResultsListItem-check {
    flex-shrink: 0;
    display: flex;
    align-items: center;
@@ -123,21 +131,21 @@ const emit = defineEmits<{
    transition: filter 0.2s;
 }
 
-.ListItem-check--selected .ListItem-checkFilled {
+.ScanResultsListItem-check--selected .ScanResultsListItem-checkFilled {
    color: var(--color-accent);
    filter: drop-shadow(0 0 4px var(--color-accent-glow));
 }
 
-.ListItem-check--disabled {
+.ScanResultsListItem-check--disabled {
    opacity: 0.5;
    cursor: not-allowed;
 }
 
-.ListItem-checkEmpty {
+.ScanResultsListItem-checkEmpty {
    color: var(--color-text-dim);
 }
 
-.ListItem-icon {
+.ScanResultsListItem-icon {
    flex-shrink: 0;
    display: flex;
    align-items: center;
@@ -149,7 +157,7 @@ const emit = defineEmits<{
    color: var(--color-accent);
 }
 
-.ListItem-info {
+.ScanResultsListItem-info {
    flex: 1;
    min-width: 0;
    display: flex;
@@ -157,7 +165,7 @@ const emit = defineEmits<{
    gap: var(--spacing-xs);
 }
 
-.ListItem-name {
+.ScanResultsListItem-name {
    font-size: 0.9375rem;
    font-weight: 500;
    color: var(--color-text);
@@ -166,24 +174,24 @@ const emit = defineEmits<{
    text-overflow: ellipsis;
 }
 
-.ListItem-count {
+.ScanResultsListItem-count {
    font-size: 0.8125rem;
    color: var(--color-text-muted);
 }
 
-.ListItem-meta {
+.ScanResultsListItem-meta {
    flex-shrink: 0;
    display: flex;
    align-items: center;
    gap: var(--spacing-xs);
 }
 
-.ListItem-size {
+.ScanResultsListItem-size {
    font-size: 0.875rem;
    color: var(--color-text-muted);
 }
 
-.ListItem-chevron {
+.ScanResultsListItem-chevron {
    color: var(--color-text-dim);
 }
 </style>

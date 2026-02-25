@@ -1,12 +1,12 @@
 <!--
-ScanLoadingView
+ScanResultsLoadingView
 
 Purpose: Active scan view showing disk/user context, live scan progress, and detailed scan metadata while scanning.
 
 Props: progress ({ current: number; total: number; folder: string; size: number; scanned_size_total: number })
 
 Example:
- <ScanLoadingView :progress="progress" @abort="onAbort" />
+ <ScanResultsLoadingView :progress="progress" @abort="onAbort" />
 -->
 
 <script setup lang="ts">
@@ -50,56 +50,56 @@ onUnmounted(() => {
 </script>
 
 <template>
-   <section class="ScanLoadingView-root">
-      <div class="ScanLoadingView-progressBlock">
-         <div class="ScanLoadingView-progressHeader">
-            <span class="ScanLoadingView-spinnerWrap">
+   <section class="ScanResultsLoadingView-root">
+      <div class="ScanResultsLoadingView-progressBlock">
+         <div class="ScanResultsLoadingView-progressHeader">
+            <span class="ScanResultsLoadingView-spinnerWrap">
                <Spinner :size="18" />
             </span>
-            <p class="ScanLoadingView-progressTitle">
+            <p class="ScanResultsLoadingView-progressTitle">
                {{
-                  t('ScanLoadingView', 'scanning', {
+                  t('ScanResultsLoadingView', 'scanning', {
                      current: progress.current,
                      total: progress.total,
                   })
                }}
             </p>
-            <p class="ScanLoadingView-elapsed">
-               {{ t('ScanLoadingView', 'elapsed', { seconds: elapsedSeconds }) }}
+            <p class="ScanResultsLoadingView-elapsed">
+               {{ t('ScanResultsLoadingView', 'elapsed', { seconds: elapsedSeconds }) }}
             </p>
          </div>
-         <div class="ScanLoadingView-barWrap">
-            <div class="ScanLoadingView-barMain" :style="{ width: percent + '%' }" />
+         <div class="ScanResultsLoadingView-barWrap">
+            <div class="ScanResultsLoadingView-barMain" :style="{ width: percent + '%' }" />
          </div>
       </div>
 
-      <div class="ScanLoadingView-stats">
+      <div class="ScanResultsLoadingView-stats">
          <p>
-            <span>{{ t('ScanLoadingView', 'stage') }}</span>
+            <span>{{ t('ScanResultsLoadingView', 'stage') }}</span>
             <strong>{{ percent.toFixed(1) }}%</strong>
          </p>
          <p>
-            <span>{{ t('ScanLoadingView', 'scannedSize') }}</span>
+            <span>{{ t('ScanResultsLoadingView', 'scannedSize') }}</span>
             <strong>{{ formatBytes(progress.scanned_size_total) }}</strong>
          </p>
          <p>
-            <span>{{ t('ScanLoadingView', 'currentPath') }}</span>
-            <strong class="ScanLoadingView-currentPath" :title="progress.folder || ''">
-               {{ progress.folder || t('ScanLoadingView', 'preparing') }}
+            <span>{{ t('ScanResultsLoadingView', 'currentPath') }}</span>
+            <strong class="ScanResultsLoadingView-currentPath" :title="progress.folder || ''">
+               {{ progress.folder || t('ScanResultsLoadingView', 'preparing') }}
             </strong>
          </p>
       </div>
 
-      <p class="ScanLoadingView-estimate">{{ t('ScanLoadingView', 'estimate') }}</p>
+      <p class="ScanResultsLoadingView-estimate">{{ t('ScanResultsLoadingView', 'estimate') }}</p>
 
-      <button type="button" class="ScanLoadingView-abortBtn" @click="emit('abort')">
-         {{ t('ScanLoadingView', 'abort') }}
+      <button type="button" class="ScanResultsLoadingView-abortBtn" @click="emit('abort')">
+         {{ t('ScanResultsLoadingView', 'abort') }}
       </button>
    </section>
 </template>
 
 <style scoped>
-.ScanLoadingView-root {
+.ScanResultsLoadingView-root {
    flex: 1;
    display: flex;
    flex-direction: column;
@@ -111,28 +111,28 @@ onUnmounted(() => {
    padding: var(--spacing-lg) var(--spacing-md);
 }
 
-.ScanLoadingView-progressBlock {
+.ScanResultsLoadingView-progressBlock {
    display: flex;
    flex-direction: column;
    gap: var(--spacing-sm);
 }
 
-.ScanLoadingView-progressHeader {
+.ScanResultsLoadingView-progressHeader {
    display: flex;
    align-items: center;
    justify-content: space-between;
    gap: 10px;
 }
 
-.ScanLoadingView-spinnerWrap {
+.ScanResultsLoadingView-spinnerWrap {
    display: flex;
 }
 
-.ScanLoadingView-spinnerWrap :deep(.Spinner-root) {
+.ScanResultsLoadingView-spinnerWrap :deep(.Spinner-root) {
    color: var(--color-accent);
 }
 
-.ScanLoadingView-progressTitle {
+.ScanResultsLoadingView-progressTitle {
    margin: 0;
    font-size: 0.875rem;
    font-weight: 500;
@@ -140,14 +140,14 @@ onUnmounted(() => {
    flex: 1;
 }
 
-.ScanLoadingView-elapsed {
+.ScanResultsLoadingView-elapsed {
    margin: 0;
    font-size: 0.75rem;
    color: var(--color-text-muted);
    flex-shrink: 0;
 }
 
-.ScanLoadingView-barWrap {
+.ScanResultsLoadingView-barWrap {
    position: relative;
    width: 100%;
    height: 6px;
@@ -157,14 +157,14 @@ onUnmounted(() => {
    border: 1px solid var(--color-border);
 }
 
-.ScanLoadingView-barMain {
+.ScanResultsLoadingView-barMain {
    height: 100%;
    background: var(--color-accent);
    border-radius: 3px;
    transition: width 0.25s ease;
 }
 
-.ScanLoadingView-stats {
+.ScanResultsLoadingView-stats {
    display: flex;
    flex-direction: column;
    gap: var(--spacing-xs);
@@ -194,7 +194,7 @@ onUnmounted(() => {
    }
 }
 
-.ScanLoadingView-currentPath {
+.ScanResultsLoadingView-currentPath {
    max-width: min(65%, 220px);
    overflow: hidden;
    text-overflow: ellipsis;
@@ -202,13 +202,13 @@ onUnmounted(() => {
    display: block;
 }
 
-.ScanLoadingView-estimate {
+.ScanResultsLoadingView-estimate {
    margin: 0;
    font-size: 0.75rem;
    color: var(--color-text-muted);
 }
 
-.ScanLoadingView-abortBtn {
+.ScanResultsLoadingView-abortBtn {
    align-self: flex-start;
    padding: 0;
    font-size: 0.875rem;

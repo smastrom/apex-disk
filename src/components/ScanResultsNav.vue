@@ -80,10 +80,10 @@ const emit = defineEmits<{
             :disabled="resetDisabled"
             @click="emit('reset')"
          >
-            {{ t('ScanResults', 'resetSelection') }}
+            {{ t('ScanResultsList', 'resetSelection') }}
          </button>
          <button type="button" class="ScanResultsNav-abortBtn" @click="emit('abort')">
-            {{ t('ScanResults', 'abort') }}
+            {{ t('ScanResultsList', 'abort') }}
          </button>
       </div>
    </nav>

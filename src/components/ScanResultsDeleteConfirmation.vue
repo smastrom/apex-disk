@@ -1,12 +1,12 @@
 <!--
-ScanResultsDeleteComplete
+ScanResultsDeleteConfirmation
 
 Purpose: Post-delete screen. Shows resume (items count, size freed) and Scan again button.
 
 Props: deletedSummary ({ count: number, size: number } | null)
 
 Example:
- <ScanResultsDeleteComplete :deletedSummary="summary" @scan-again="onScanAgain" />
+ <ScanResultsDeleteConfirmation :deletedSummary="summary" @scan-again="onScanAgain" />
 -->
 
 <script setup lang="ts">
@@ -27,15 +27,15 @@ defineEmits<{
 </script>
 
 <template>
-   <div class="ScanResultsDeleteComplete-root">
-      <div class="ScanResultsDeleteComplete-content">
-         <PhCheckCircle :size="48" weight="fill" class="ScanResultsDeleteComplete-icon" />
-         <h2 class="ScanResultsDeleteComplete-title">
-            {{ t('ScanResultsDeleteComplete', 'title') }}
+   <div class="ScanResultsDeleteConfirmation-root">
+      <div class="ScanResultsDeleteConfirmation-content">
+         <PhCheckCircle :size="48" weight="fill" class="ScanResultsDeleteConfirmation-icon" />
+         <h2 class="ScanResultsDeleteConfirmation-title">
+            {{ t('ScanResultsDeleteConfirmation', 'title') }}
          </h2>
-         <p v-if="deletedSummary" class="ScanResultsDeleteComplete-resume">
+         <p v-if="deletedSummary" class="ScanResultsDeleteConfirmation-resume">
             {{
-               t('ScanResultsDeleteComplete', 'resume', {
+               t('ScanResultsDeleteConfirmation', 'resume', {
                   count: deletedSummary.count,
                   size: formatBytes(deletedSummary.size),
                })
@@ -43,18 +43,18 @@ defineEmits<{
          </p>
          <button
             type="button"
-            class="ScanResultsDeleteComplete-scanBtn"
+            class="ScanResultsDeleteConfirmation-scanBtn"
             @click="$emit('scan-again')"
          >
             <PhMagnifyingGlass :size="18" weight="regular" />
-            {{ t('ScanResultsDeleteComplete', 'scanAgain') }}
+            {{ t('ScanResultsDeleteConfirmation', 'scanAgain') }}
          </button>
       </div>
    </div>
 </template>
 
 <style scoped>
-.ScanResultsDeleteComplete-root {
+.ScanResultsDeleteConfirmation-root {
    flex: 1;
    display: flex;
    flex-direction: column;
@@ -65,7 +65,7 @@ defineEmits<{
    background: var(--color-bg);
 }
 
-.ScanResultsDeleteComplete-content {
+.ScanResultsDeleteConfirmation-content {
    display: flex;
    flex-direction: column;
    align-items: center;
@@ -74,12 +74,12 @@ defineEmits<{
    width: 100%;
 }
 
-.ScanResultsDeleteComplete-icon {
+.ScanResultsDeleteConfirmation-icon {
    color: var(--color-accent);
    flex-shrink: 0;
 }
 
-.ScanResultsDeleteComplete-title {
+.ScanResultsDeleteConfirmation-title {
    margin: 0;
    font-size: 1.25rem;
    font-weight: 600;
@@ -87,14 +87,14 @@ defineEmits<{
    text-align: center;
 }
 
-.ScanResultsDeleteComplete-resume {
+.ScanResultsDeleteConfirmation-resume {
    margin: 0;
    font-size: 0.9375rem;
    color: var(--color-text-muted);
    text-align: center;
 }
 
-.ScanResultsDeleteComplete-scanBtn {
+.ScanResultsDeleteConfirmation-scanBtn {
    display: flex;
    align-items: center;
    justify-content: center;

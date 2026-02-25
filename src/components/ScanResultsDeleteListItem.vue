@@ -31,28 +31,33 @@ const emit = defineEmits<{
 </script>
 
 <template>
-   <div class="ScanResultsDeleteItem-root" @click="emit('toggle')">
+   <div class="ScanResultsDeleteListItem-root" @click="emit('toggle')">
       <button
          type="button"
-         class="ScanResultsDeleteItem-check"
-         :class="{ 'ScanResultsDeleteItem-check--selected': selected }"
+         class="ScanResultsDeleteListItem-check"
+         :class="{ 'ScanResultsDeleteListItem-check--selected': selected }"
          :aria-pressed="selected"
          @click.stop="emit('toggle')"
       >
-         <PhCircle v-if="!selected" :size="16" weight="regular" class="ScanResultsDeleteItem-checkEmpty" />
-         <PhCheckCircle v-else :size="16" weight="fill" class="ScanResultsDeleteItem-checkFilled" />
+         <PhCircle
+            v-if="!selected"
+            :size="16"
+            weight="regular"
+            class="ScanResultsDeleteListItem-checkEmpty"
+         />
+         <PhCheckCircle v-else :size="16" weight="fill" class="ScanResultsDeleteListItem-checkFilled" />
       </button>
-      <div class="ScanResultsDeleteItem-icon">
+      <div class="ScanResultsDeleteListItem-icon">
          <PhFolder v-if="!item.is_file" :size="18" weight="regular" />
          <PhFile v-else :size="18" weight="regular" />
       </div>
-      <span class="ScanResultsDeleteItem-name">{{ item.name }}</span>
-      <span class="ScanResultsDeleteItem-size">{{ formatBytes(item.size) }}</span>
+      <span class="ScanResultsDeleteListItem-name">{{ item.name }}</span>
+      <span class="ScanResultsDeleteListItem-size">{{ formatBytes(item.size) }}</span>
    </div>
 </template>
 
 <style scoped>
-.ScanResultsDeleteItem-root {
+.ScanResultsDeleteListItem-root {
    display: flex;
    align-items: center;
    gap: var(--spacing-xs);
@@ -67,7 +72,7 @@ const emit = defineEmits<{
    }
 }
 
-.ScanResultsDeleteItem-check {
+.ScanResultsDeleteListItem-check {
    flex-shrink: 0;
    display: flex;
    align-items: center;
@@ -79,15 +84,15 @@ const emit = defineEmits<{
    color: var(--color-text-dim);
 }
 
-.ScanResultsDeleteItem-check--selected .ScanResultsDeleteItem-checkFilled {
+.ScanResultsDeleteListItem-check--selected .ScanResultsDeleteListItem-checkFilled {
    color: var(--color-accent);
 }
 
-.ScanResultsDeleteItem-checkEmpty {
+.ScanResultsDeleteListItem-checkEmpty {
    color: var(--color-text-dim);
 }
 
-.ScanResultsDeleteItem-icon {
+.ScanResultsDeleteListItem-icon {
    flex-shrink: 0;
    display: flex;
    align-items: center;
@@ -99,7 +104,7 @@ const emit = defineEmits<{
    color: var(--color-accent);
 }
 
-.ScanResultsDeleteItem-name {
+.ScanResultsDeleteListItem-name {
    flex: 1;
    min-width: 0;
    font-size: 0.8125rem;
@@ -110,7 +115,7 @@ const emit = defineEmits<{
    text-overflow: ellipsis;
 }
 
-.ScanResultsDeleteItem-size {
+.ScanResultsDeleteListItem-size {
    flex-shrink: 0;
    font-size: 0.75rem;
    color: var(--color-text-muted);

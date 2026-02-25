@@ -1,4 +1,4 @@
-export const ScanSplashScreen = {
+export const ScanViewInitial = {
    en: {
       warningTitle: 'Important notice',
       warningBody:

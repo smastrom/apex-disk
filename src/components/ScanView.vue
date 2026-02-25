@@ -1,7 +1,7 @@
 <!--
 ScanView
 
-Purpose: Common scan shell. Always shows DiskUsageProgress at top; body switches between ScanResults, ScanResultsDelete, or ScanResultsDeleteComplete.
+Purpose: Common scan shell. Always shows ScanViewDiskUsage at top; body switches between ScanResults, ScanResultsDelete, or ScanResultsDeleteConfirmation.
 
 Props: folders (FolderInfo[]), loading (boolean), progress (ScanProgress)
 
@@ -16,10 +16,10 @@ Example:
 -->
 
 <script setup lang="ts">
-import DiskUsageProgress from './DiskUsageProgress.vue'
-import ScanResults from './ScanResults.vue'
-import ScanResultsDelete from './ScanResultsDelete.vue'
-import ScanResultsDeleteComplete from './ScanResultsDeleteComplete.vue'
+import ScanViewDiskUsage from './ScanViewDiskUsage.vue'
+import ScanResultsDeleteList from './ScanResultsDeleteList.vue'
+import ScanResultsDeleteConfirmation from './ScanResultsDeleteConfirmation.vue'
+import ScanResultsList from './ScanResultsList.vue'
 
 import { ref } from 'vue'
 
@@ -66,8 +66,8 @@ function onScanAgain() {
 
 <template>
    <main class="ScanView-root">
-      <DiskUsageProgress :selectedSize="selectedSize" />
-      <ScanResults
+      <ScanViewDiskUsage :selectedSize="selectedSize" />
+      <ScanResultsList
          v-show="viewState === 'results'"
          class="ScanView-body"
          :folders="folders"
@@ -78,16 +78,16 @@ function onScanAgain() {
          @update:selectedSize="onSelectedSizeUpdate"
          @review="onReview"
       />
-      <ScanResultsDelete
-         v-show="viewState === 'delete'"
+      <ScanResultsDeleteList
+         v-if="viewState === 'delete'"
          class="ScanView-body"
          :items="deleteItems"
-         :active="viewState === 'delete'"
+         :active="true"
          @back="viewState = 'results'"
          @update:selectedSize="onSelectedSizeUpdate"
          @complete="onDeleteComplete"
       />
-      <ScanResultsDeleteComplete
+      <ScanResultsDeleteConfirmation
          v-if="viewState === 'deleteComplete'"
          class="ScanView-body"
          :deletedSummary="deletedSummary"

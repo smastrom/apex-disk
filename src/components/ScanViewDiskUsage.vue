@@ -1,12 +1,12 @@
 <!--
-DiskUsageProgress
+ScanViewDiskUsage
 
 Purpose: Progress bar showing current disk usage (home volume). Shows "new free" in accent when items are selected for delete.
 
 Props: selectedSize (number?)
 
 Example:
- <DiskUsageProgress :selectedSize="selectedSize" />
+ <ScanViewDiskUsage :selectedSize="selectedSize" />
 -->
 
 <script setup lang="ts">
@@ -71,44 +71,44 @@ async function openHomeInFinder() {
 </script>
 
 <template>
-   <div v-if="usage" class="DiskUsageProgress-root">
-      <div class="DiskUsageProgress-header">
-         <span class="DiskUsageProgress-volume">
-            <PhHardDrive :size="14" weight="regular" class="DiskUsageProgress-volumeIcon" />
+   <div v-if="usage" class="ScanViewDiskUsage-root">
+      <div class="ScanViewDiskUsage-header">
+         <span class="ScanViewDiskUsage-volume">
+            <PhHardDrive :size="14" weight="regular" class="ScanViewDiskUsage-volumeIcon" />
             {{ usage.volume_name }}
          </span>
          <button
             type="button"
-            class="DiskUsageProgress-userBadge"
+            class="ScanViewDiskUsage-userBadge"
             @click="openHomeInFinder"
          >
             {{ usage.user_name }}
          </button>
       </div>
-      <div class="DiskUsageProgress-infoRow">
-         <span class="DiskUsageProgress-info">
-            <span class="DiskUsageProgress-label">{{ t('DiskUsageProgress', 'total') }}</span>
-            <span class="DiskUsageProgress-value">{{ formatBytes(usage.total) }}</span>
+      <div class="ScanViewDiskUsage-infoRow">
+         <span class="ScanViewDiskUsage-info">
+            <span class="ScanViewDiskUsage-label">{{ t('ScanViewDiskUsage', 'total') }}</span>
+            <span class="ScanViewDiskUsage-value">{{ formatBytes(usage.total) }}</span>
          </span>
-         <span class="DiskUsageProgress-info">
-            <span class="DiskUsageProgress-label">{{ t('DiskUsageProgress', 'free') }}</span>
-            <span class="DiskUsageProgress-value">{{ formatBytes(usage.free) }}</span>
+         <span class="ScanViewDiskUsage-info">
+            <span class="ScanViewDiskUsage-label">{{ t('ScanViewDiskUsage', 'free') }}</span>
+            <span class="ScanViewDiskUsage-value">{{ formatBytes(usage.free) }}</span>
          </span>
-         <span v-if="newFreeSpace !== null" class="DiskUsageProgress-info DiskUsageProgress-newFree">
-            <span class="DiskUsageProgress-label">{{ t('DiskUsageProgress', 'newFree') }}</span>
-            <span class="DiskUsageProgress-value DiskUsageProgress-newFreeValue">
+         <span v-if="newFreeSpace !== null" class="ScanViewDiskUsage-info ScanViewDiskUsage-newFree">
+            <span class="ScanViewDiskUsage-label">{{ t('ScanViewDiskUsage', 'newFree') }}</span>
+            <span class="ScanViewDiskUsage-value ScanViewDiskUsage-newFreeValue">
                {{ formatBytes(newFreeSpace) }}
             </span>
          </span>
       </div>
-      <div class="DiskUsageProgress-barWrap">
+      <div class="ScanViewDiskUsage-barWrap">
          <div
             v-if="props.selectedSize && props.selectedSize > 0"
-            class="DiskUsageProgress-barLighter"
+            class="ScanViewDiskUsage-barLighter"
             :style="{ width: lighterBarPercent + '%' }"
          />
          <div
-            class="DiskUsageProgress-barMain"
+            class="ScanViewDiskUsage-barMain"
             :style="{ width: mainBarPercent + '%' }"
          />
       </div>
@@ -116,7 +116,7 @@ async function openHomeInFinder() {
 </template>
 
 <style scoped>
-.DiskUsageProgress-root {
+.ScanViewDiskUsage-root {
    flex-shrink: 0;
    padding: var(--spacing-sm) var(--spacing-md);
    background: var(--color-bg-elevated);
@@ -126,14 +126,14 @@ async function openHomeInFinder() {
    width: 100%;
 }
 
-.DiskUsageProgress-header {
+.ScanViewDiskUsage-header {
    display: flex;
    justify-content: space-between;
    align-items: center;
    margin-bottom: var(--spacing-sm);
 }
 
-.DiskUsageProgress-volume {
+.ScanViewDiskUsage-volume {
    display: flex;
    align-items: center;
    gap: 6px;
@@ -142,13 +142,13 @@ async function openHomeInFinder() {
    color: var(--color-text);
 }
 
-.DiskUsageProgress-volumeIcon {
+.ScanViewDiskUsage-volumeIcon {
    flex-shrink: 0;
    color: var(--color-text-muted);
    opacity: 0.85;
 }
 
-.DiskUsageProgress-userBadge {
+.ScanViewDiskUsage-userBadge {
    font-size: 0.75rem;
    font-weight: 600;
    color: var(--color-text);
@@ -164,40 +164,40 @@ async function openHomeInFinder() {
    }
 }
 
-.DiskUsageProgress-infoRow {
+.ScanViewDiskUsage-infoRow {
    display: flex;
    justify-content: space-between;
    align-items: center;
    font-size: 0.8125rem;
 }
 
-.DiskUsageProgress-info {
+.ScanViewDiskUsage-info {
    display: flex;
    align-items: center;
    gap: var(--spacing-xs);
 }
 
-.DiskUsageProgress-label {
+.ScanViewDiskUsage-label {
    color: var(--color-text-muted);
 }
 
-.DiskUsageProgress-value {
+.ScanViewDiskUsage-value {
    color: var(--color-text);
    font-weight: 500;
 }
 
-.DiskUsageProgress-newFree {
-   .DiskUsageProgress-label {
+.ScanViewDiskUsage-newFree {
+   .ScanViewDiskUsage-label {
       color: var(--color-accent);
    }
 }
 
-.DiskUsageProgress-newFreeValue {
+.ScanViewDiskUsage-newFreeValue {
    color: var(--color-accent);
    font-weight: 600;
 }
 
-.DiskUsageProgress-barWrap {
+.ScanViewDiskUsage-barWrap {
    position: relative;
    margin-top: var(--spacing-sm);
    height: 10px;
@@ -207,7 +207,7 @@ async function openHomeInFinder() {
    box-shadow: var(--glow-inset);
 }
 
-.DiskUsageProgress-barLighter {
+.ScanViewDiskUsage-barLighter {
    position: absolute;
    left: 0;
    top: 0;
@@ -218,7 +218,7 @@ async function openHomeInFinder() {
    z-index: 0;
 }
 
-.DiskUsageProgress-barMain {
+.ScanViewDiskUsage-barMain {
    position: absolute;
    left: 0;
    top: 0;

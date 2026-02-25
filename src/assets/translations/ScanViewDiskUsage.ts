@@ -1,4 +1,4 @@
-export const DiskUsageProgress = {
+export const ScanViewDiskUsage = {
    en: {
       total: 'Total',
       free: 'Free',

@@ -1,4 +1,4 @@
-export const ScanResultsDeleteComplete = {
+export const ScanResultsDeleteConfirmation = {
    en: {
       title: 'Delete complete',
       resume: '{{count}} items deleted, {{size}} freed',

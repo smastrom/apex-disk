@@ -10,7 +10,7 @@ Example:
 -->
 
 <script setup lang="ts">
-import ScanResultsDeleteItem from './ScanResultsDeleteItem.vue'
+import ScanResultsDeleteListItem from './ScanResultsDeleteListItem.vue'
 import ScanResultsNav from './ScanResultsNav.vue'
 
 import { ref, shallowRef, watch, computed, onUnmounted } from 'vue'
@@ -122,20 +122,20 @@ function onDeleteClick() {
 </script>
 
 <template>
-   <div class="ScanResultsDelete-root">
+   <div class="ScanResultsDeleteList-root">
       <ScanResultsNav
          :showForward="false"
          :backDisabled="false"
-         :pathLabel="t('ScanResultsDelete', 'navTitle')"
+         :pathLabel="t('ScanResultsDeleteList', 'navTitle')"
          :showActions="false"
          @back="emit('back')"
       />
       <div
-         class="ScanResultsDelete-listWrap"
-         :class="{ 'ScanResultsDelete-listWrap--deleting': deleting }"
+         class="ScanResultsDeleteList-listWrap"
+         :class="{ 'ScanResultsDeleteList-listWrap--deleting': deleting }"
       >
-         <div class="ScanResultsDelete-list ScanResultsDelete-listScroll">
-            <ScanResultsDeleteItem
+         <div class="ScanResultsDeleteList-list ScanResultsDeleteList-listScroll">
+            <ScanResultsDeleteListItem
                v-for="item in items"
                :key="item.path"
                :item="item"
@@ -145,29 +145,27 @@ function onDeleteClick() {
             />
          </div>
       </div>
-      <div class="ScanResultsDelete-footer">
+      <div class="ScanResultsDeleteList-footer">
          <button
             type="button"
-            class="ScanResultsDelete-deleteBtn"
+            class="ScanResultsDeleteList-deleteBtn"
             :disabled="countdownRemaining > 0 || checkedCount === 0 || deleting"
             @click="onDeleteClick"
          >
-            <Spinner v-if="deleting" :size="18" class="ScanResultsDelete-spinner" />
+            <Spinner v-if="deleting" :size="18" class="ScanResultsDeleteList-spinner" />
             <PhTrash v-else :size="18" weight="bold" />
-            <span v-if="!deleting"
-               >{{
-                  selectedSize > 0
-                     ? t('ScanResultsDelete', 'deleteSize', { size: formatBytes(selectedSize) })
-                     : t('ScanResultsDelete', 'delete')
-               }}</span
-            >
+            <span v-if="!deleting">{{
+               selectedSize > 0
+                  ? t('ScanResultsDeleteList', 'deleteSize', { size: formatBytes(selectedSize) })
+                  : t('ScanResultsDeleteList', 'delete')
+            }}</span>
          </button>
       </div>
    </div>
 </template>
 
 <style scoped>
-.ScanResultsDelete-root {
+.ScanResultsDeleteList-root {
    position: relative;
    flex: 1;
    display: flex;
@@ -180,7 +178,7 @@ function onDeleteClick() {
    width: 100%;
 }
 
-.ScanResultsDelete-listWrap {
+.ScanResultsDeleteList-listWrap {
    flex: 1;
    min-height: 0;
    display: flex;
@@ -188,21 +186,21 @@ function onDeleteClick() {
    transition: opacity 0.25s;
 }
 
-.ScanResultsDelete-listWrap--deleting {
+.ScanResultsDeleteList-listWrap--deleting {
    opacity: 0.5;
    pointer-events: none;
 }
 
-.ScanResultsDelete-list {
+.ScanResultsDeleteList-list {
    flex: 1;
    min-height: 0;
 }
 
-.ScanResultsDelete-listScroll {
+.ScanResultsDeleteList-listScroll {
    overflow: auto;
 }
 
-.ScanResultsDelete-footer {
+.ScanResultsDeleteList-footer {
    flex-shrink: 0;
    padding: var(--spacing-md);
    border-top: 1px solid var(--color-bg);
@@ -210,7 +208,7 @@ function onDeleteClick() {
    box-shadow: 0 -2px 16px var(--color-bg);
 }
 
-.ScanResultsDelete-deleteBtn {
+.ScanResultsDeleteList-deleteBtn {
    width: 100%;
    display: flex;
    align-items: center;
@@ -236,7 +234,7 @@ function onDeleteClick() {
    }
 }
 
-.ScanResultsDelete-spinner {
+.ScanResultsDeleteList-spinner {
    color: #fff;
 }
 </style>

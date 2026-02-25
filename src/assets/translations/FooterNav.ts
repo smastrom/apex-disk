@@ -1,4 +1,4 @@
-export const FooterMenu = {
+export const FooterNav = {
    en: {
       scan: 'Scan',
       settings: 'Settings',

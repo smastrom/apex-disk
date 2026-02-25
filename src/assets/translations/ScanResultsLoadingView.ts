@@ -15,7 +15,7 @@ export const ScanResultsLoadingView = {
       scannedSize: 'Dimensione analizzata',
       currentPath: 'Cartella corrente',
       stage: 'Avanzamento',
-      estimate: 'Dischi molto grandi possono richiedere diversi minuti.',
+      estimate: 'I dischi molto grandi possono richiedere diversi minuti.',
       preparing: 'Preparazione scansione...',
       abort: 'Annulla',
    },

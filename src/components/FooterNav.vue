@@ -1,12 +1,12 @@
 <!--
-FooterMenu
+FooterNav
 
 Purpose: Bottom navigation bar with Scan, Settings, Informations, Donate buttons. Mobile-app style footer.
 
 Props: activeView (string?), emit: select-view
 
 Example:
- <FooterMenu :activeView="activeView" @select-view="onSelect" />
+ <FooterNav :activeView="activeView" @select-view="onSelect" />
 -->
 
 <script setup lang="ts">
@@ -36,40 +36,40 @@ async function onDonateClick() {
 </script>
 
 <template>
-   <footer class="FooterMenu-root">
+   <footer class="FooterNav-root">
       <button
-         class="FooterMenu-btn"
-         :class="{ 'FooterMenu-btn--active': activeView === 'scan' }"
+         class="FooterNav-btn"
+         :class="{ 'FooterNav-btn--active': activeView === 'scan' }"
          @click="emit('select-view', 'scan')"
       >
          <PhMagnifyingGlass :size="24" weight="regular" />
-         <span>{{ t('FooterMenu', 'scan') }}</span>
+         <span>{{ t('FooterNav', 'scan') }}</span>
       </button>
       <button
-         class="FooterMenu-btn"
-         :class="{ 'FooterMenu-btn--active': activeView === 'settings' }"
+         class="FooterNav-btn"
+         :class="{ 'FooterNav-btn--active': activeView === 'settings' }"
          @click="emit('select-view', 'settings')"
       >
          <PhGear :size="24" weight="regular" />
-         <span>{{ t('FooterMenu', 'settings') }}</span>
+         <span>{{ t('FooterNav', 'settings') }}</span>
       </button>
       <button
-         class="FooterMenu-btn"
-         :class="{ 'FooterMenu-btn--active': activeView === 'informations' }"
+         class="FooterNav-btn"
+         :class="{ 'FooterNav-btn--active': activeView === 'informations' }"
          @click="emit('select-view', 'informations')"
       >
          <PhInfo :size="24" weight="regular" />
-         <span>{{ t('FooterMenu', 'informations') }}</span>
+         <span>{{ t('FooterNav', 'informations') }}</span>
       </button>
-      <button class="FooterMenu-btn" @click="onDonateClick">
+      <button class="FooterNav-btn" @click="onDonateClick">
          <PhHeart :size="24" weight="regular" />
-         <span>{{ t('FooterMenu', 'donate') }}</span>
+         <span>{{ t('FooterNav', 'donate') }}</span>
       </button>
    </footer>
 </template>
 
 <style scoped>
-.FooterMenu-root {
+.FooterNav-root {
    height: var(--footer-height);
    display: flex;
    align-items: center;
@@ -80,7 +80,7 @@ async function onDonateClick() {
    box-shadow: 0 -1px 12px var(--color-bg);
 }
 
-.FooterMenu-btn {
+.FooterNav-btn {
    flex: 1;
    min-width: 0;
    display: flex;
@@ -98,18 +98,6 @@ async function onDonateClick() {
       color: var(--color-text);
    }
 
-   &--active {
-      color: var(--color-accent);
-
-      :deep(svg) {
-         filter: drop-shadow(0 0 6px var(--color-accent-glow));
-      }
-
-      span {
-         text-shadow: 0 0 8px var(--color-accent-glow);
-      }
-   }
-
    span {
       font-size: 0.75rem;
       font-weight: 500;
@@ -119,6 +107,18 @@ async function onDonateClick() {
       text-overflow: ellipsis;
       white-space: nowrap;
       text-align: center;
+   }
+}
+
+.FooterNav-btn--active {
+   color: var(--color-accent);
+
+   :deep(svg) {
+      filter: drop-shadow(0 0 6px var(--color-accent-glow));
+   }
+
+   span {
+      text-shadow: 0 0 8px var(--color-accent-glow);
    }
 }
 </style>

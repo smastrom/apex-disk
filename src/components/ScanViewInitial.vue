@@ -1,12 +1,12 @@
 <!--
-ScanSplashScreen
+ScanViewInitial
 
 Purpose: Pre-scan view with a safety notice and CTA to start scanning.
 
 Props: none
 
 Example:
- <ScanSplashScreen @start-scan="loadFolders" />
+ <ScanViewInitial @start-scan="loadFolders" />
 -->
 
 <script setup lang="ts">
@@ -22,24 +22,24 @@ const emit = defineEmits<{
 </script>
 
 <template>
-   <section class="ScanSplashScreen-root">
-      <div class="ScanSplashScreen-notice">
-         <p class="ScanSplashScreen-noticeTitle">
+   <section class="ScanViewInitial-root">
+      <div class="ScanViewInitial-notice">
+         <p class="ScanViewInitial-noticeTitle">
             <PhShieldWarning :size="16" weight="regular" />
-            {{ t('ScanSplashScreen', 'warningTitle') }}
+            {{ t('ScanViewInitial', 'warningTitle') }}
          </p>
-         <p class="ScanSplashScreen-noticeBody">{{ t('ScanSplashScreen', 'warningBody') }}</p>
+         <p class="ScanViewInitial-noticeBody">{{ t('ScanViewInitial', 'warningBody') }}</p>
       </div>
 
-      <button type="button" class="ScanSplashScreen-scanBtn" @click="emit('start-scan')">
+      <button type="button" class="ScanViewInitial-scanBtn" @click="emit('start-scan')">
          <PhPlay :size="18" weight="regular" />
-         {{ t('ScanSplashScreen', 'startScan') }}
+         {{ t('ScanViewInitial', 'startScan') }}
       </button>
    </section>
 </template>
 
 <style scoped>
-.ScanSplashScreen-root {
+.ScanViewInitial-root {
    flex: 1;
    display: flex;
    flex-direction: column;
@@ -51,14 +51,14 @@ const emit = defineEmits<{
    padding: var(--spacing-lg) var(--spacing-md);
 }
 
-.ScanSplashScreen-notice {
+.ScanViewInitial-notice {
    border: 1px solid var(--color-border);
    border-radius: 8px;
    padding: var(--spacing-md);
    background: var(--color-bg-elevated);
 }
 
-.ScanSplashScreen-noticeTitle {
+.ScanViewInitial-noticeTitle {
    display: flex;
    align-items: center;
    gap: 8px;
@@ -68,14 +68,14 @@ const emit = defineEmits<{
    color: var(--color-text-muted);
 }
 
-.ScanSplashScreen-noticeBody {
+.ScanViewInitial-noticeBody {
    margin: 0;
    font-size: 0.8125rem;
    line-height: 1.5;
    color: var(--color-text-muted);
 }
 
-.ScanSplashScreen-scanBtn {
+.ScanViewInitial-scanBtn {
    display: inline-flex;
    align-items: center;
    justify-content: center;

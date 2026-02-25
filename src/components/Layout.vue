@@ -19,7 +19,7 @@ Example:
 import Header from './Header.vue'
 import ScanView from './ScanView.vue'
 import SettingsView from './SettingsView.vue'
-import FooterMenu from './FooterMenu.vue'
+import FooterNav from './FooterNav.vue'
 
 import { useTranslations } from '@/lib/useTranslations'
 
@@ -73,7 +73,7 @@ defineEmits<{
             </div>
          </Transition>
       </div>
-      <FooterMenu :activeView="activeView" @select-view="$emit('select-view', $event)" />
+      <FooterNav :activeView="activeView" @select-view="$emit('select-view', $event)" />
    </div>
 </template>
 

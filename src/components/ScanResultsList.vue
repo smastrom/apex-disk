@@ -10,10 +10,10 @@ Example:
 -->
 
 <script setup lang="ts">
-import ListItem from './ListItem.vue'
-import ScanLoadingView from './ScanLoadingView.vue'
+import ScanResultsListItem from './ScanResultsListItem.vue'
+import ScanResultsLoadingView from './ScanResultsLoadingView.vue'
 import ScanResultsNav from './ScanResultsNav.vue'
-import ScanSplashScreen from './ScanSplashScreen.vue'
+import ScanViewInitial from './ScanViewInitial.vue'
 
 import { ref, reactive, watch, computed, inject, type Ref } from 'vue'
 import { PhTrash } from '@phosphor-icons/vue'
@@ -221,10 +221,10 @@ function onAbort() {
 </script>
 
 <template>
-   <div class="ScanResults-root">
-      <ScanLoadingView v-if="loading" :progress="progress" @abort="onAbort" />
-      <ScanSplashScreen v-else-if="folders.length === 0" @start-scan="emit('start-scan')" />
-      <div v-else class="ScanResults-content">
+   <div class="ScanResultsList-root">
+      <ScanResultsLoadingView v-if="loading" :progress="progress" @abort="onAbort" />
+      <ScanViewInitial v-else-if="folders.length === 0" @start-scan="emit('start-scan')" />
+      <div v-else class="ScanResultsList-content">
          <ScanResultsNav
             :showForward="true"
             :backDisabled="backStack.length === 0"
@@ -238,16 +238,16 @@ function onAbort() {
             @reset="selectedMap.clear()"
             @abort="onAbort"
          />
-         <div class="ScanResults-listWrap" :style="{ '--nav-direction': navDirection }">
-            <div ref="parentRef" class="ScanResults-list ScanResults-listScroll">
+         <div class="ScanResultsList-listWrap" :style="{ '--nav-direction': navDirection }">
+            <div ref="parentRef" class="ScanResultsList-list ScanResultsList-listScroll">
                <div
-                  class="ScanResults-listInner"
+                  class="ScanResultsList-listInner"
                   :style="{ height: rowVirtualizer.getTotalSize() + 'px' }"
                >
                   <div
                      v-for="virtualRow in rowVirtualizer.getVirtualItems()"
                      :key="String(virtualRow.key)"
-                     class="ScanResults-listItem"
+                     class="ScanResultsList-listItem"
                      :style="{
                         position: 'absolute',
                         top: 0,
@@ -256,7 +256,7 @@ function onAbort() {
                         transform: `translateY(${virtualRow.start}px)`,
                      }"
                   >
-                     <ListItem
+                     <ScanResultsListItem
                         :item="displayedItems[virtualRow.index]"
                         :selected="isSelectedForUI(displayedItems[virtualRow.index].path)"
                         :selectable="!displayedItems[virtualRow.index].is_protected"
@@ -269,22 +269,22 @@ function onAbort() {
             </div>
          </div>
       </div>
-      <div v-if="!loading && folders.length > 0" class="ScanResults-footer">
+      <div v-if="!loading && folders.length > 0" class="ScanResultsList-footer">
          <button
             type="button"
-            class="ScanResults-deleteBtn"
+            class="ScanResultsList-deleteBtn"
             :disabled="selectedMap.size === 0"
             @click="onReviewClick"
          >
             <PhTrash :size="18" weight="bold" />
-            <span>{{ t('ScanResults', 'reviewSize', { size: formatBytes(selectedSize) }) }}</span>
+            <span>{{ t('ScanResultsList', 'reviewSize', { size: formatBytes(selectedSize) }) }}</span>
          </button>
       </div>
    </div>
 </template>
 
 <style scoped>
-.ScanResults-root {
+.ScanResultsList-root {
    position: relative;
    flex: 1;
    display: flex;
@@ -293,7 +293,7 @@ function onAbort() {
    background: var(--color-bg);
 }
 
-.ScanResults-content {
+.ScanResultsList-content {
    flex: 1;
    display: flex;
    flex-direction: column;
@@ -306,7 +306,7 @@ function onAbort() {
    padding-bottom: var(--delete-footer-height);
 }
 
-.ScanResults-listWrap {
+.ScanResultsList-listWrap {
    flex: 1;
    min-height: 0;
    display: flex;
@@ -314,25 +314,25 @@ function onAbort() {
    view-transition-name: list-view;
 }
 
-.ScanResults-list {
+.ScanResultsList-list {
    flex: 1;
    min-height: 0;
 }
 
-.ScanResults-listScroll {
+.ScanResultsList-listScroll {
    overflow: auto;
 }
 
-.ScanResults-listInner {
+.ScanResultsList-listInner {
    position: relative;
    width: 100%;
 }
 
-.ScanResults-listItem {
+.ScanResultsList-listItem {
    will-change: transform;
 }
 
-.ScanResults-footer {
+.ScanResultsList-footer {
    position: absolute;
    bottom: 0;
    left: 0;
@@ -343,7 +343,7 @@ function onAbort() {
    box-shadow: 0 -2px 16px var(--color-bg);
 }
 
-.ScanResults-deleteBtn {
+.ScanResultsList-deleteBtn {
    width: 100%;
    display: flex;
    align-items: center;
