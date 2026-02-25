@@ -10,6 +10,7 @@ Example:
 -->
 
 <script setup lang="ts">
+import DiskUsageProgress from './DiskUsageProgress.vue'
 import ListItem from './ListItem.vue'
 
 import { ref, reactive, watch, computed, inject, type Ref } from 'vue'
@@ -161,6 +162,7 @@ function onAbort() {
 
 <template>
    <main class="ScanResults-root">
+      <DiskUsageProgress :selected-size="selectedSize" />
       <div v-if="loading" class="ScanResults-loading">
          <p>{{ t('ScanResults', 'scanning', { current: progress.current, total: progress.total }) }}</p>
       </div>

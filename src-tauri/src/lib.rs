@@ -1,10 +1,14 @@
 use tauri::Emitter;
 
 use std::path::Path;
+#[cfg(unix)]
+use std::path::PathBuf;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 
 use rayon::prelude::*;
+#[cfg(unix)]
+use nix::sys::statvfs;
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -170,6 +174,92 @@ fn get_user_folders_sync_with_progress(app: tauri::AppHandle) -> Result<Vec<Fold
     Ok(folders)
 }
 
+#[cfg(target_os = "macos")]
+fn get_volume_name(path: &Path) -> String {
+    use std::process::Command;
+
+    fn parse_volume_name(stdout: &str) -> Option<String> {
+        for line in stdout.lines() {
+            if let Some(name) = line.trim_start().strip_prefix("Volume Name:") {
+                let name = name.trim();
+                let display = if name.ends_with(" - Data") {
+                    name.strip_suffix(" - Data").unwrap_or(name)
+                } else {
+                    name
+                };
+                return Some(display.to_string());
+            }
+        }
+        None
+    }
+
+    let paths: Vec<&str> = path
+        .to_str()
+        .into_iter()
+        .chain(["/System/Volumes/Data", "/"])
+        .filter(|s| !s.is_empty())
+        .collect();
+
+    for p in paths {
+        if let Ok(o) = Command::new("/usr/sbin/diskutil").args(["info", p]).output() {
+            if o.status.success() {
+                let stdout = String::from_utf8_lossy(&o.stdout);
+                if let Some(name) = parse_volume_name(&stdout) {
+                    return name;
+                }
+            }
+        }
+    }
+    "Startup Disk".to_string()
+}
+
+#[cfg(not(target_os = "macos"))]
+fn get_volume_name(_path: &Path) -> String {
+    "Disk".to_string()
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct DiskUsage {
+    pub total: u64,
+    pub free: u64,
+    pub volume_name: String,
+    pub user_name: String,
+    pub home_path: String,
+}
+
+#[tauri::command]
+fn get_disk_usage() -> Result<DiskUsage, String> {
+    #[cfg(unix)]
+    {
+        let home: PathBuf = dirs::home_dir().ok_or("Unable to determine home directory")?;
+        let vfs = statvfs::statvfs(&home).map_err(|e| format!("Failed to get disk stats: {}", e))?;
+        let block_size = vfs.fragment_size() as u64;
+        let total = vfs.blocks() as u64 * block_size;
+        let free = vfs.blocks_available() as u64 * block_size;
+
+        let user_name = home
+            .file_name()
+            .map(|s| s.to_string_lossy().into_owned())
+            .unwrap_or_else(|| std::env::var("USER").unwrap_or_else(|_| "User".to_string()));
+
+        let volume_name = get_volume_name(&home);
+        let home_path = home.to_string_lossy().into_owned();
+
+        Ok(DiskUsage {
+            total,
+            free,
+            volume_name,
+            user_name,
+            home_path,
+        })
+    }
+
+    #[cfg(not(unix))]
+    {
+        Err("Disk usage is only supported on Unix".to_string())
+    }
+}
+
 #[tauri::command]
 async fn get_user_folders(app: tauri::AppHandle) -> Result<Vec<FolderInfo>, String> {
     tauri::async_runtime::spawn_blocking(move || get_user_folders_sync_with_progress(app))
@@ -183,7 +273,7 @@ pub fn run() {
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::default().build())
-        .invoke_handler(tauri::generate_handler![greet, get_user_folders])
+        .invoke_handler(tauri::generate_handler![greet, get_disk_usage, get_user_folders])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

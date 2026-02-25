@@ -2,6 +2,7 @@ import { global } from './global'
 import { Header } from './Header'
 import { Layout } from './Layout'
 import { ListItem } from './ListItem'
+import { DiskUsageProgress } from './DiskUsageProgress'
 import { ScanResults } from './ScanResults'
 import { SettingsView } from './SettingsView'
 import { FooterMenu } from './FooterMenu'
@@ -10,6 +11,7 @@ import type { Language } from '@/types/settings'
 
 export const translations = {
    global,
+   DiskUsageProgress,
    Header,
    Layout,
    ListItem,
