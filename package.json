@@ -4,15 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vue-tsc --noEmit && vite build",
-    "clean": "cargo clean --manifest-path src-tauri/Cargo.toml",
-    "dev": "vite",
+    "build": "tauri build --target universal-apple-darwin",
+    "clean:all": "rm -rf dist && rm -rf target && cargo clean --manifest-path src-tauri/Cargo.toml",
+    "dev": "tauri dev",
     "fmt": "oxfmt --write",
     "fmt:check": "oxfmt --check",
-    "preview": "vite preview",
     "tauri": "tauri",
-    "tauri:build": "tauri build --target universal-apple-darwin",
-    "test": "node tests/smoke.js"
+    "test": "node tests/index.js",
+    "vite:build": "vue-tsc --noEmit && vite build"
   },
   "dependencies": {
     "@phosphor-icons/vue": "^2.2.1",
