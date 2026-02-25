@@ -10,14 +10,14 @@ Example:
    :folders="folders"
    :loading="loading"
    :progress="progress"
-   :active-view="activeView"
+   :activeView="activeView"
    @select-view="onSelectView"
  />
 -->
 
 <script setup lang="ts">
 import Header from './Header.vue'
-import ScanResults from './ScanResults.vue'
+import ScanView from './ScanView.vue'
 import SettingsView from './SettingsView.vue'
 import FooterMenu from './FooterMenu.vue'
 
@@ -57,7 +57,7 @@ defineEmits<{
 
       <Header />
       <div class="Layout-main">
-         <ScanResults
+         <ScanView
             v-show="activeView === 'scan'"
             :folders="folders"
             :loading="loading"
@@ -84,7 +84,7 @@ defineEmits<{
             </div>
          </Transition>
       </div>
-      <FooterMenu :active-view="activeView" @select-view="$emit('select-view', $event)" />
+      <FooterMenu :activeView="activeView" @select-view="$emit('select-view', $event)" />
    </div>
 </template>
 

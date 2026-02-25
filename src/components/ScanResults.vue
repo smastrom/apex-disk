@@ -10,8 +10,9 @@ Example:
 -->
 
 <script setup lang="ts">
-import DiskUsageProgress from './DiskUsageProgress.vue'
 import ListItem from './ListItem.vue'
+import ScanLoadingView from './ScanLoadingView.vue'
+import ScanSplashScreen from './ScanSplashScreen.vue'
 
 import { ref, reactive, watch, computed, inject, type Ref } from 'vue'
 import { PhCaretLeft, PhCaretRight } from '@phosphor-icons/vue'
@@ -46,6 +47,7 @@ const props = defineProps<{
 const emit = defineEmits<{
    (e: 'start-scan'): void
    (e: 'abort'): void
+   (e: 'update:selectedSize', value: number): void
 }>()
 
 interface NavEntry {
@@ -92,7 +94,7 @@ watch(
 )
 
 const showZeroByteFolders = computed(
-   () => storeRef?.value?.settings?.value?.showZeroByteFolders ?? false,
+   () => storeRef?.value?.settings?.value?.showZeroByteFolders ?? false
 )
 
 const displayedItems = computed(() => {
@@ -109,7 +111,7 @@ const rowVirtualizer = useVirtualizer(
       estimateSize: () => 64,
       overscan: 10,
       getItemKey: (index: number) => displayedItems.value[index]?.path ?? index,
-   })),
+   }))
 )
 
 const selectedSize = computed(() => {
@@ -117,6 +119,8 @@ const selectedSize = computed(() => {
    for (const [path] of selectedMap) total += sizeIndex.get(path) ?? 0
    return total
 })
+
+watch(selectedSize, (size) => emit('update:selectedSize', size), { immediate: true })
 
 function toggleSelect(item: FolderInfo) {
    if (item.is_protected) return
@@ -162,15 +166,9 @@ function onAbort() {
 </script>
 
 <template>
-   <main class="ScanResults-root">
-      <DiskUsageProgress :selected-size="selectedSize" />
-      <div v-if="loading" class="ScanResults-loading">
-         <p>{{ t('ScanResults', 'scanning', { current: progress.current, total: progress.total }) }}</p>
-      </div>
-      <div v-else-if="folders.length === 0" class="ScanResults-empty">
-         <p>{{ t('ScanResults', 'noDataYet') }}</p>
-         <button class="ScanResults-scanBtn" @click="emit('start-scan')">{{ t('ScanResults', 'startScan') }}</button>
-      </div>
+   <div class="ScanResults-root">
+      <ScanLoadingView v-if="loading" :progress="progress" @abort="onAbort" />
+      <ScanSplashScreen v-else-if="folders.length === 0" @start-scan="emit('start-scan')" />
       <div v-else class="ScanResults-content">
          <nav class="ScanResults-nav">
             <div class="ScanResults-navControls">
@@ -207,10 +205,7 @@ function onAbort() {
                </button>
             </div>
          </nav>
-         <div
-            class="ScanResults-listWrap"
-            :style="{ '--nav-direction': navDirection }"
-         >
+         <div class="ScanResults-listWrap" :style="{ '--nav-direction': navDirection }">
             <div ref="parentRef" class="ScanResults-list ScanResults-listScroll">
                <div
                   class="ScanResults-listInner"
@@ -232,7 +227,7 @@ function onAbort() {
                         :item="displayedItems[virtualRow.index]"
                         :selected="!!selectedMap.get(displayedItems[virtualRow.index].path)"
                         :selectable="!displayedItems[virtualRow.index].is_protected"
-                        :format-bytes="formatBytes"
+                        :formatBytes="formatBytes"
                         @select="() => toggleSelect(displayedItems[virtualRow.index])"
                         @navigate="() => goInto(displayedItems[virtualRow.index])"
                      />
@@ -241,17 +236,21 @@ function onAbort() {
             </div>
          </div>
       </div>
-      <div v-if="folders.length > 0" class="ScanResults-footer">
+      <div v-if="!loading && folders.length > 0" class="ScanResults-footer">
          <button
             type="button"
             class="ScanResults-deleteBtn"
             :disabled="selectedMap.size === 0"
             @click="onDeleteClick"
          >
-            {{ t('ScanResults', 'deleteSize', { size: formatBytes(selectedSize) }) }}
+            {{
+               selectedMap.size === 0
+                  ? t('ScanResults', 'delete')
+                  : t('ScanResults', 'deleteSize', { size: formatBytes(selectedSize) })
+            }}
          </button>
       </div>
-   </main>
+   </div>
 </template>
 
 <style scoped>
@@ -264,8 +263,6 @@ function onAbort() {
    background: var(--color-bg);
 }
 
-.ScanResults-loading,
-.ScanResults-empty,
 .ScanResults-content {
    flex: 1;
    display: flex;
@@ -274,42 +271,6 @@ function onAbort() {
    max-width: var(--content-max-width);
    margin: 0 auto;
    width: 100%;
-}
-
-.ScanResults-empty {
-   align-items: center;
-   justify-content: center;
-   gap: var(--spacing-md);
-}
-
-.ScanResults-empty p,
-.ScanResults-loading p {
-   color: var(--color-text-muted);
-   margin: 0;
-}
-
-.ScanResults-scanBtn {
-   padding: var(--spacing-sm) var(--spacing-lg);
-   font-size: 0.95rem;
-   font-weight: 600;
-   color: var(--color-bg);
-   background: var(--color-accent);
-   border: none;
-   border-radius: 6px;
-   cursor: pointer;
-   box-shadow: var(--glow-md);
-   transition: background 0.2s, box-shadow 0.3s, transform 0.15s;
-}
-
-.ScanResults-scanBtn:hover {
-   background: var(--color-accent-hover);
-   box-shadow: var(--glow-lg);
-   transform: translateY(-1px);
-}
-
-.ScanResults-scanBtn:active {
-   transform: translateY(0);
-   box-shadow: var(--glow-sm);
 }
 
 .ScanResults-content {
@@ -351,7 +312,9 @@ function onAbort() {
    border: none;
    border-radius: 6px;
    cursor: pointer;
-   transition: background 0.2s, box-shadow 0.25s;
+   transition:
+      background 0.2s,
+      box-shadow 0.25s;
 }
 
 .ScanResults-navBtn:hover:not(:disabled) {
@@ -440,13 +403,16 @@ function onAbort() {
    padding: var(--spacing-md) var(--spacing-lg);
    font-size: 0.9375rem;
    font-weight: 600;
-   color: #fff;
+   color: var(--color-on-accent);
    background: var(--color-accent);
    border: none;
    border-radius: 8px;
    cursor: pointer;
    box-shadow: var(--glow-md);
-   transition: background 0.2s, box-shadow 0.3s, transform 0.15s;
+   transition:
+      background 0.2s,
+      box-shadow 0.3s,
+      transform 0.15s;
 }
 
 .ScanResults-deleteBtn:hover:not(:disabled) {
