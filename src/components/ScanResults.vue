@@ -16,7 +16,6 @@ import ScanSplashScreen from './ScanSplashScreen.vue'
 
 import { ref, reactive, watch, computed, inject, type Ref } from 'vue'
 import { PhCaretLeft, PhCaretRight, PhFolder, PhTrash } from '@phosphor-icons/vue'
-import { openPath } from '@tauri-apps/plugin-opener'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 
 import { useTranslations } from '@/lib/useTranslations'
@@ -192,16 +191,6 @@ function goForward() {
    })
 }
 
-async function openCurrentInFinder() {
-   const path = current.value.path
-   if (!path) return
-   try {
-      await openPath(path)
-   } catch (err) {
-      console.error('Failed to open folder in Finder:', err)
-   }
-}
-
 function onDeleteClick() {
    showDeleteResults.value = true
 }
@@ -237,17 +226,10 @@ function onAbort() {
                   <PhCaretRight :size="18" weight="regular" />
                </button>
             </div>
-            <button
-               type="button"
-               class="ScanResults-navPath"
-               :title="current.path"
-               :aria-label="t('ScanResults', 'openInFinder')"
-               :disabled="!current.path"
-               @click.stop="openCurrentInFinder"
-            >
+            <div class="ScanResults-navPath" :title="current.path">
                <PhFolder :size="16" weight="regular" class="ScanResults-navPathIcon" />
                <span class="ScanResults-navPathText">{{ displayPath }}</span>
-            </button>
+            </div>
             <div class="ScanResults-navActions">
                <button
                   type="button"
@@ -301,11 +283,7 @@ function onAbort() {
             @click="onDeleteClick"
          >
             <PhTrash :size="18" weight="bold" />
-            {{
-               selectedMap.size === 0
-                  ? t('ScanResults', 'delete')
-                  : t('ScanResults', 'deleteSize', { size: formatBytes(selectedSize) })
-            }}
+            <span>{{ t('ScanResults', 'reviewSize', { size: formatBytes(selectedSize) }) }}</span>
          </button>
       </div>
    </div>
@@ -391,37 +369,7 @@ function onAbort() {
    padding: var(--spacing-xs) 0;
    font-size: 0.8125rem;
    color: var(--color-text-muted);
-   background: none;
-   border: none;
-   border-radius: 0;
-   cursor: pointer;
    text-align: left;
-   position: relative;
-
-   &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 1px;
-      background: var(--color-accent);
-      transform: scaleX(0);
-      transition: transform 0.2s ease;
-      pointer-events: none;
-   }
-
-   &:hover {
-      color: var(--color-text);
-   }
-
-   &:hover:not(:disabled)::after {
-      transform: scaleX(1);
-   }
-
-   &:disabled {
-      cursor: default;
-   }
 }
 
 .ScanResults-navPathIcon {
@@ -508,6 +456,10 @@ function onAbort() {
 
 .ScanResults-deleteBtn {
    width: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 0.5rem;
    padding: var(--spacing-md) var(--spacing-lg);
    font-size: 0.9375rem;
    font-weight: 600;

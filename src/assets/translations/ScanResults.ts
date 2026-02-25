@@ -6,9 +6,9 @@ export const ScanResults = {
       foldersLoaded: '{{count}} folders loaded',
       delete: 'Delete',
       deleteSize: 'Delete ({{size}})',
+      reviewSize: 'Review ({{size}})',
       resetSelection: 'Reset',
       abort: 'Abort',
-      openInFinder: 'Open folder in Finder',
    },
    it: {
       scanning: 'Scansione… {{current}} di {{total}}',
@@ -17,8 +17,8 @@ export const ScanResults = {
       foldersLoaded: '{{count}} cartelle caricate',
       delete: 'Elimina',
       deleteSize: 'Elimina ({{size}})',
+      reviewSize: 'Rivedi ({{size}})',
       resetSelection: 'Resetta',
       abort: 'Annulla',
-      openInFinder: 'Apri cartella nel Finder',
    },
 } as const
