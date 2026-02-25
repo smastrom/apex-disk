@@ -78,7 +78,7 @@ const emit = defineEmits<{
    display: flex;
    align-items: center;
    gap: var(--spacing-sm);
-   padding: var(--spacing-sm) var(--spacing-md);
+   padding: var(--spacing-sm);
    min-height: 56px;
    margin: 4px var(--spacing-sm);
    border-radius: 8px;

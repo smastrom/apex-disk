@@ -9,6 +9,16 @@ html {
    background: var(--color-bg);
    -webkit-font-smoothing: antialiased;
    -moz-osx-font-smoothing: grayscale;
+   -webkit-tap-highlight-color: transparent;
+   -webkit-touch-callout: none;
+   -webkit-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+   -webkit-overflow-scrolling: touch;
+   -webkit-text-size-adjust: 100%;
+   -webkit-text-size-adjust: 100%;
+   cursor: default;
 }
 
 body {

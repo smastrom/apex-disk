@@ -49,6 +49,12 @@ defineEmits<{
 
 <template>
    <div class="Layout-root">
+      <!-- Drag region for the window -->
+      <div
+         data-tauri-drag-region
+         style="position: absolute; top: 0; left: 0; width: 100%; height: 30px"
+      ></div>
+
       <Header />
       <div class="Layout-main">
          <ScanResults
