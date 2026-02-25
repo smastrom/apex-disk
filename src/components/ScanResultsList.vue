@@ -15,7 +15,7 @@ import ScanResultsLoadingView from './ScanResultsLoadingView.vue'
 import ScanResultsNav from './ScanResultsNav.vue'
 import ScanViewInitial from './ScanViewInitial.vue'
 
-import { ref, reactive, watch, watchEffect, shallowRef, computed, inject, type Ref } from 'vue'
+import { ref, reactive, watch, watchEffect, shallowRef, computed, inject, nextTick, type Ref } from 'vue'
 import { PhTrash } from '@phosphor-icons/vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 
@@ -121,6 +121,14 @@ const displayedItems = computed(() => {
 })
 
 const parentRef = ref<HTMLElement | null>(null)
+
+watch(
+   () => current.value.path,
+   () => {
+      nextTick(() => parentRef.value?.scrollTo(0, 0))
+   }
+)
+
 const rowVirtualizer = useVirtualizer(
    computed(() => ({
       count: displayedItems.value.length,
