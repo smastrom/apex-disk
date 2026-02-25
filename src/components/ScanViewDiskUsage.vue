@@ -80,12 +80,8 @@ async function openHomeInFinder() {
             <PhHardDrive :size="14" weight="regular" class="ScanViewDiskUsage-volumeIcon" />
             {{ usage.volume_name }}
          </span>
-         <button
-            type="button"
-            class="ScanViewDiskUsage-userBadge"
-            @click="openHomeInFinder"
-         >
-            {{ usage.user_name }}
+         <button type="button" class="ScanViewDiskUsage-userBadge" @click="openHomeInFinder">
+            /{{ usage.user_name }}
          </button>
       </div>
       <div class="ScanViewDiskUsage-infoRow">
@@ -97,7 +93,10 @@ async function openHomeInFinder() {
             <span class="ScanViewDiskUsage-label">{{ t('ScanViewDiskUsage', 'free') }}</span>
             <span class="ScanViewDiskUsage-value">{{ formatBytes(usage.free) }}</span>
          </span>
-         <span v-if="newFreeSpace !== null" class="ScanViewDiskUsage-info ScanViewDiskUsage-newFree">
+         <span
+            v-if="newFreeSpace !== null"
+            class="ScanViewDiskUsage-info ScanViewDiskUsage-newFree"
+         >
             <span class="ScanViewDiskUsage-label">{{ t('ScanViewDiskUsage', 'newFree') }}</span>
             <span class="ScanViewDiskUsage-value ScanViewDiskUsage-newFreeValue">
                {{ formatBytes(newFreeSpace) }}
@@ -110,10 +109,7 @@ async function openHomeInFinder() {
             class="ScanViewDiskUsage-barLighter"
             :style="{ width: lighterBarPercent + '%' }"
          />
-         <div
-            class="ScanViewDiskUsage-barMain"
-            :style="{ width: mainBarPercent + '%' }"
-         />
+         <div class="ScanViewDiskUsage-barMain" :style="{ width: mainBarPercent + '%' }" />
       </div>
    </div>
 </template>
