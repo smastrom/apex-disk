@@ -1,3 +1,4 @@
+mod delete;
 mod safe_folders;
 
 use tauri::Emitter;
@@ -291,7 +292,12 @@ pub fn run() {
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::default().build())
-        .invoke_handler(tauri::generate_handler![greet, get_disk_usage, get_user_folders])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            get_disk_usage,
+            get_user_folders,
+            delete::delete_paths,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
