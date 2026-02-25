@@ -15,4 +15,5 @@ export const PROTECTED_FOLDER_NAMES = [
    'Music',
    'Pictures',
    'Public',
+   'Application Support',
 ] as const

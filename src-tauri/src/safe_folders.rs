@@ -25,6 +25,7 @@ pub const PROTECTED_RELATIVE_PATHS: &[&str] = &[
     "Music",
     "Pictures",
     "Public",
+    "Application Support",
 ];
 
 /// Returns true if the given path is exactly one of the protected parent folders.
