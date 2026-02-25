@@ -93,20 +93,20 @@ const emit = defineEmits<{
    box-sizing: border-box;
    transition: background 0.2s;
 
-   &--folder {
-      cursor: pointer;
-   }
-
    &:hover {
       background: var(--color-accent-bg-hover);
    }
+}
 
-   &--selected {
+.ListItem-root--folder {
+   cursor: pointer;
+}
+
+.ListItem-root--selected {
+   background: var(--color-accent-bg);
+
+   &:hover {
       background: var(--color-accent-bg);
-
-      &:hover {
-         background: var(--color-accent-bg);
-      }
    }
 }
 
@@ -121,18 +121,16 @@ const emit = defineEmits<{
    cursor: pointer;
    color: var(--color-text-dim);
    transition: filter 0.2s;
+}
 
-   &--selected {
-      .ListItem-checkFilled {
-         color: var(--color-accent);
-         filter: drop-shadow(0 0 4px var(--color-accent-glow));
-      }
-   }
+.ListItem-check--selected .ListItem-checkFilled {
+   color: var(--color-accent);
+   filter: drop-shadow(0 0 4px var(--color-accent-glow));
+}
 
-   &--disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-   }
+.ListItem-check--disabled {
+   opacity: 0.5;
+   cursor: not-allowed;
 }
 
 .ListItem-checkEmpty {

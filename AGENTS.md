@@ -237,6 +237,40 @@ const progress = { current: 0, total: 1, folder: "" };
 - Add a **blank line** between any selector declaration
 - Use **CSS nesting**
 - **Always use nesting** for pseudo selectors and any other child selector; use **`&`** for pseudo and state-modifier selectors (e.g. `:disabled`, `:hover`, `:focus`)
+- **Never use `&--modifier` to construct BEM modifier class names** — this is SASS-style and does not belong in native CSS. Always write BEM modifier selectors as explicit, full class names at the top level.
+
+```css
+/* ❌ BAD — SASS-style modifier nesting */
+.ListItem-check {
+   cursor: pointer;
+
+   &--selected {
+      .ListItem-checkFilled {
+         color: var(--color-accent);
+      }
+   }
+
+   &--disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+   }
+}
+
+/* ✅ GOOD — explicit full class names */
+.ListItem-check {
+   cursor: pointer;
+}
+
+.ListItem-check--selected .ListItem-checkFilled {
+   color: var(--color-accent);
+}
+
+.ListItem-check--disabled {
+   opacity: 0.5;
+   cursor: not-allowed;
+}
+```
+
 - **Never** nest different selectors under the same root-level media query
 - Media queries must be **nested under the selector**, not at the root
 
