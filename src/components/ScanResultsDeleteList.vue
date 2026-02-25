@@ -69,7 +69,7 @@ onUnmounted(() => {
 })
 
 const emit = defineEmits<{
-   (e: 'back'): void
+   (e: 'back', checkedPaths: string[]): void
    (e: 'update:selectedSize', value: number): void
    (e: 'complete', items: DeleteListItem[]): void
 }>()
@@ -115,6 +115,11 @@ function toggle(path: string) {
    checkedMapRef.value = next
 }
 
+function getCheckedPaths(): string[] {
+   const map = checkedMapRef.value
+   return props.items.filter((item) => map.get(item.path)).map((item) => item.path)
+}
+
 const deleteReady = computed(() => countdownRemaining.value <= 0)
 
 async function onDeleteClick() {
@@ -145,7 +150,7 @@ async function onDeleteClick() {
          :backDisabled="false"
          :pathLabel="t('ScanResultsDeleteList', 'navTitle')"
          :showActions="false"
-         @back="emit('back')"
+         @back="emit('back', getCheckedPaths())"
       />
       <div
          class="ScanResultsDeleteList-listWrap"

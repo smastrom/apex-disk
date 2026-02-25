@@ -206,6 +206,14 @@ function toggleSelect(item: FolderInfo) {
    else selectedMap.set(item.path, true)
 }
 
+/** Replaces selection with the given paths (e.g. after returning from DeleteList). */
+function setSelectedPaths(paths: Set<string>) {
+   selectedMap.clear()
+   for (const path of paths) selectedMap.set(path, true)
+}
+
+defineExpose({ setSelectedPaths })
+
 function goInto(item: FolderInfo) {
    if (item.is_file) return
    navDirection.value = 1
