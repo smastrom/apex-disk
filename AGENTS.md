@@ -64,8 +64,8 @@ This document defines code style and conventions. **Always follow these rules** 
 ### Commits
 
 - **Do not use Conventional Commits** — no prefixes like `feat:`, `fix:`, `refactor:`, `docs:`, etc.
-- Use the project’s existing nomenclature: **imperative verb + short description** (e.g. *Add protected system folders*, *Fix window drag region*, *Improve default settings*, *Move animations to their own settings group*).
-- Keep the first line concise; add a body or scope after a colon when useful (e.g. *Fix abort, view switch lag, layout jumps, and startup crash*).
+- Use the project’s existing nomenclature: **imperative verb + short description** (e.g. _Add protected system folders_, _Fix window drag region_, _Improve default settings_, _Move animations to their own settings group_).
+- Keep the first line concise; add a body or scope after a colon when useful (e.g. _Fix abort, view switch lag, layout jumps, and startup crash_).
 
 ---
 
@@ -167,6 +167,11 @@ import "@/assets/css/reset.css";
 - Prefer **function declarations** over `const fn = () => {}`
 - **Prefer `interface`** over `type` when possible (see File creation for placement rules)
 
+#### Function return types
+
+- **Avoid** typing the return type after `()`; prefer casting the return value with `as` when declaring it
+- If the return type is obvious and the same as the sole parameter (e.g. `(x: string): string`), omit the return type
+
 #### Variables
 
 - **Avoid declaring many variables just to shorten names** — prefer using the expression directly. Do not introduce `const s = x`, `const curr = y` etc. only to save a few characters.
@@ -231,8 +236,31 @@ const progress = { current: 0, total: 1, folder: "" };
 
 - Add a **blank line** between any selector declaration
 - Use **CSS nesting**
+- **Always use nesting** for pseudo selectors and any other child selector; use **`&`** for pseudo and state-modifier selectors (e.g. `:disabled`, `:hover`, `:focus`)
 - **Never** nest different selectors under the same root-level media query
 - Media queries must be **nested under the selector**, not at the root
+
+```css
+/* ❌ BAD */
+.DeleteResults-cancelBtn {
+  flex: 1;
+}
+
+.DeleteResults-cancelBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ✅ GOOD */
+.DeleteResults-cancelBtn {
+  flex: 1;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+```
 
 ```css
 /* ✅ GOOD */
