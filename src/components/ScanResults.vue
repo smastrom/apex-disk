@@ -114,9 +114,23 @@ const rowVirtualizer = useVirtualizer(
    }))
 )
 
+/** True if any key in selectedMap is a strict ancestor of path (path is inside that folder). */
+function hasSelectedAncestor(path: string): boolean {
+   let dir = path
+   for (;;) {
+      const slash = dir.lastIndexOf('/')
+      if (slash <= 0) return false
+      dir = dir.slice(0, slash)
+      if (selectedMap.get(dir)) return true
+   }
+}
+
 const selectedSize = computed(() => {
    let total = 0
-   for (const [path] of selectedMap) total += sizeIndex.get(path) ?? 0
+   for (const [path] of selectedMap) {
+      if (hasSelectedAncestor(path)) continue
+      total += sizeIndex.get(path) ?? 0
+   }
    return total
 })
 

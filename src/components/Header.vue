@@ -16,7 +16,7 @@ const { t } = useTranslations()
 </script>
 
 <template>
-   <header class="Header-root">
+   <header class="Header-root" data-tauri-drag-region>
       <h1 class="Header-title">{{ t('Header', 'title') }}</h1>
    </header>
 </template>

@@ -47,7 +47,10 @@ const emit = defineEmits<{
       <button
          type="button"
          class="ListItem-check"
-         :class="{ 'ListItem-check--selected': selected, 'ListItem-check--disabled': selectable === false }"
+         :class="{
+            'ListItem-check--selected': selected,
+            'ListItem-check--disabled': selectable === false,
+         }"
          :aria-pressed="selected"
          :disabled="selectable === false"
          :aria-disabled="selectable === false"
@@ -86,10 +89,9 @@ const emit = defineEmits<{
    min-height: 56px;
    margin: 4px var(--spacing-sm);
    border-radius: 8px;
-   border: 1px solid transparent;
-   transition:
-      background 0.2s,
-      border-color 0.2s;
+   /* border: 1px solid transparent; */
+   transition: background 0.2s; /* ,
+      border-color 0.2s; */
 }
 
 .ListItem-root--folder {
@@ -98,12 +100,12 @@ const emit = defineEmits<{
 
 .ListItem-root:hover {
    background: var(--color-accent-bg-hover);
-   border-color: var(--color-accent-glow);
+   /* border-color: var(--color-accent-glow); */
 }
 
 .ListItem-root--selected {
    background: var(--color-accent-bg);
-   border-color: var(--color-accent-glow);
+   /* border-color: var(--color-accent-glow); */
 }
 
 .ListItem-root--selected:hover {

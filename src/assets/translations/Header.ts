@@ -1,8 +1,8 @@
 export const Header = {
    en: {
-      title: 'Mac User Lens',
+      title: 'macOS User Lens',
    },
    it: {
-      title: 'Mac User Lens',
+      title: 'macOS User Lens',
    },
 } as const
