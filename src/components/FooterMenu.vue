@@ -11,7 +11,9 @@ Example:
 
 <script setup lang="ts">
 import { PhMagnifyingGlass, PhGear, PhInfo, PhHeart } from '@phosphor-icons/vue'
+import { openUrl } from '@tauri-apps/plugin-opener'
 
+import { DONATE_URL } from '@/lib/constants'
 import { useTranslations } from '@/lib/useTranslations'
 
 const { t } = useTranslations()
@@ -23,6 +25,14 @@ defineProps<{
 const emit = defineEmits<{
    (e: 'select-view', view: string): void
 }>()
+
+async function onDonateClick() {
+   try {
+      await openUrl(DONATE_URL)
+   } catch (err) {
+      console.error('Failed to open donate URL:', err)
+   }
+}
 </script>
 
 <template>
@@ -53,8 +63,7 @@ const emit = defineEmits<{
       </button>
       <button
          class="FooterMenu-btn"
-         :class="{ 'FooterMenu-btn--active': activeView === 'donate' }"
-         @click="emit('select-view', 'donate')"
+         @click="onDonateClick"
       >
          <PhHeart :size="24" weight="regular" />
          <span>{{ t('FooterMenu', 'donate') }}</span>
