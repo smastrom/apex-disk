@@ -137,6 +137,9 @@ function toggleAnimations() {
                   <span class="SettingsToggle-knob" aria-hidden="true" />
                </button>
             </div>
+         </section>
+
+         <section class="SettingsGroup">
             <div class="SettingsGroup-row">
                <span class="SettingsGroup-label">{{ t('SettingsView', 'enableAnimations') }}</span>
                <button
