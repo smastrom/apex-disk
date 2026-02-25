@@ -10,7 +10,7 @@ Example:
    :item="folder"
    :selected="selectedPaths.has(folder.path)"
    :selectable="!folder.is_protected"
-   :format-bytes="formatBytes"
+   :formatBytes="formatBytes"
    @select="toggleSelect"
    @navigate="goInto"
  />

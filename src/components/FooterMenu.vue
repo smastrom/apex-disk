@@ -6,7 +6,7 @@ Purpose: Bottom navigation bar with Scan, Settings, Informations, Donate buttons
 Props: activeView (string?), emit: select-view
 
 Example:
- <FooterMenu :active-view="activeView" @select-view="onSelect" />
+ <FooterMenu :activeView="activeView" @select-view="onSelect" />
 -->
 
 <script setup lang="ts">

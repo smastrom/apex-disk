@@ -6,7 +6,7 @@ Purpose: Progress bar showing current disk usage (home volume). Shows "new free"
 Props: selectedSize (number?)
 
 Example:
- <DiskUsageProgress :selected-size="selectedSize" />
+ <DiskUsageProgress :selectedSize="selectedSize" />
 -->
 
 <script setup lang="ts">
