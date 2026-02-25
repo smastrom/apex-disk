@@ -1,12 +1,12 @@
 <!--
-ScanResults
+ScanResultsList
 
 Purpose: Main content area. Folder/file list with back/forward navigation, selection, and Delete button.
 
 Props: folders (FolderInfo[]), loading (boolean), progress (ScanProgress)
 
 Example:
- <ScanResults :folders="folders" :loading="loading" :progress="progress" @start-scan="loadFolders" />
+ <ScanResultsList :folders="folders" :loading="loading" :progress="progress" @start-scan="loadFolders" />
 -->
 
 <script setup lang="ts">
@@ -19,9 +19,10 @@ import { ref, reactive, watch, watchEffect, shallowRef, computed, inject, type R
 import { PhTrash } from '@phosphor-icons/vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 
+import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/useTranslations'
 import { useViewTransition } from '@/lib/useViewTransition'
-import { formatBytes } from '@/lib/format'
+
 import { SETTINGS_KEY } from '@/stores/settings'
 
 import type { SettingsStore } from '@/stores/settings'

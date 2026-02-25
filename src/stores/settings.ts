@@ -2,6 +2,7 @@ import { load } from '@tauri-apps/plugin-store'
 import { ref, type Ref } from 'vue'
 
 import { getSystemLanguage } from '@/lib/systemDefaults'
+
 import { DEFAULT_SETTINGS } from '@/types/settings'
 
 import type { AppSettings, ThemeColor, Language } from '@/types/settings'

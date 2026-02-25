@@ -1,12 +1,12 @@
 <!--
-ScanResultsDeleteItem
+ScanResultsDeleteListItem
 
 Purpose: Compact list row for delete review. Checkbox (default on), icon, name, size.
 
 Props: item (DeleteListItem), selected (boolean), formatBytes (fn)
 
 Example:
- <ScanResultsDeleteItem
+ <ScanResultsDeleteListItem
    :item="entry"
    :selected="checkedSet.has(entry.path)"
    :formatBytes="formatBytes"

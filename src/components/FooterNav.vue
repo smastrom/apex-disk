@@ -13,8 +13,9 @@ Example:
 import { PhMagnifyingGlass, PhGear, PhInfo, PhHeart } from '@phosphor-icons/vue'
 import { openUrl } from '@tauri-apps/plugin-opener'
 
-import { DONATE_URL } from '@/lib/constants'
 import { useTranslations } from '@/lib/useTranslations'
+
+import { DONATE_URL } from '@/lib/constants'
 
 const { t } = useTranslations()
 

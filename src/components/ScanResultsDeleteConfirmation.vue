@@ -12,8 +12,8 @@ Example:
 <script setup lang="ts">
 import { PhCheckCircle, PhMagnifyingGlass } from '@phosphor-icons/vue'
 
-import { useTranslations } from '@/lib/useTranslations'
 import { formatBytes } from '@/lib/format'
+import { useTranslations } from '@/lib/useTranslations'
 
 const { t } = useTranslations()
 

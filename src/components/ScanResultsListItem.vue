@@ -1,14 +1,15 @@
 <!--
-ListItem
+ScanResultsListItem
 
 Purpose: Single row for folder or file. Selection circle, icon, name, item count (folders), size, nav chevron (folders).
 
-Props: item (FolderInfo), selected (boolean), selectable (boolean?), formatBytes (fn)
+Props: item (FolderInfo), selected (boolean), someSelected (boolean?), selectable (boolean?), formatBytes (fn)
 
 Example:
- <ListItem
+ <ScanResultsListItem
    :item="folder"
    :selected="selectedPaths.has(folder.path)"
+   :someSelected="someSelectedPaths.has(folder.path)"
    :selectable="!folder.is_protected"
    :formatBytes="formatBytes"
    @select="toggleSelect"

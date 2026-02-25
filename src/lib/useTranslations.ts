@@ -1,6 +1,7 @@
 import { inject, computed, type Ref } from 'vue'
 
 import { createT } from '@/assets/translations'
+
 import { SETTINGS_KEY } from '@/stores/settings'
 
 import type { TranslationModule } from '@/assets/translations'

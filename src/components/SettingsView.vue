@@ -15,6 +15,7 @@ import { PhCaretDown } from '@phosphor-icons/vue'
 import { inject, computed, type Ref } from 'vue'
 
 import { useTranslations } from '@/lib/useTranslations'
+
 import { SETTINGS_KEY } from '@/stores/settings'
 
 import type { SettingsStore } from '@/stores/settings'
