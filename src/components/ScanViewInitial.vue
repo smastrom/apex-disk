@@ -10,7 +10,7 @@ Example:
 -->
 
 <script setup lang="ts">
-import { PhPlay, PhShieldWarning } from '@phosphor-icons/vue'
+import { PhMagnifyingGlass, PhShieldWarning } from '@phosphor-icons/vue'
 
 import { useTranslations } from '@/lib/useTranslations'
 
@@ -32,7 +32,7 @@ const emit = defineEmits<{
       </div>
 
       <button type="button" class="ScanViewInitial-scanBtn" @click="emit('start-scan')">
-         <PhPlay :size="18" weight="regular" />
+         <PhMagnifyingGlass :size="18" weight="regular" />
          {{ t('ScanViewInitial', 'startScan') }}
       </button>
    </section>
