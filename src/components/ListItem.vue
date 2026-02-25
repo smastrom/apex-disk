@@ -3,12 +3,13 @@ ListItem
 
 Purpose: Single row for folder or file. Selection circle, icon, name, item count (folders), size, nav chevron (folders).
 
-Props: item (FolderInfo), selected (boolean), formatBytes (fn)
+Props: item (FolderInfo), selected (boolean), selectable (boolean?), formatBytes (fn)
 
 Example:
  <ListItem
    :item="folder"
    :selected="selectedPaths.has(folder.path)"
+   :selectable="!folder.is_protected"
    :format-bytes="formatBytes"
    @select="toggleSelect"
    @navigate="goInto"
@@ -27,6 +28,7 @@ const { t } = useTranslations()
 defineProps<{
    item: FolderInfo
    selected: boolean
+   selectable?: boolean
    formatBytes: (bytes: number) => string
 }>()
 
@@ -45,9 +47,11 @@ const emit = defineEmits<{
       <button
          type="button"
          class="ListItem-check"
-         :class="{ 'ListItem-check--selected': selected }"
+         :class="{ 'ListItem-check--selected': selected, 'ListItem-check--disabled': selectable === false }"
          :aria-pressed="selected"
-         @click.stop="emit('select')"
+         :disabled="selectable === false"
+         :aria-disabled="selectable === false"
+         @click.stop="selectable !== false && emit('select')"
       >
          <PhCircle v-if="!selected" :size="22" weight="regular" class="ListItem-checkEmpty" />
          <PhCheckCircle v-else :size="22" weight="fill" class="ListItem-checkFilled" />
@@ -122,6 +126,11 @@ const emit = defineEmits<{
 .ListItem-check--selected .ListItem-checkFilled {
    color: var(--color-accent);
    filter: drop-shadow(0 0 4px var(--color-accent-glow));
+}
+
+.ListItem-check--disabled {
+   opacity: 0.5;
+   cursor: not-allowed;
 }
 
 .ListItem-checkEmpty {

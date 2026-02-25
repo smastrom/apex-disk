@@ -372,3 +372,21 @@ t("MainView", "scanning", { current: 1, total: 10 }); // → "Scanning… 1 of 1
 3. Use `t('ComponentName', 'key')` in the component
 
 ---
+
+### Safe / protected folders
+
+Standard macOS home directory folders (Applications, Desktop, Documents, Downloads, Library, Movies, Music, Pictures, Public) cannot be selected or deleted. Their contents (e.g. Library/Application Support, files in Desktop) remain selectable.
+
+#### Constants
+
+- **Rust**: `src-tauri/src/safe_folders.rs` — `PROTECTED_RELATIVE_PATHS` (paths relative to home)
+- **Frontend**: `src/lib/constants.ts` — `PROTECTED_FOLDER_NAMES` (must match Rust for reference)
+
+To add or remove protected folders: edit both files. Only the exact folders in the list are protected, not their descendants.
+
+#### Implementation
+
+- **Rust**: `FolderInfo.is_protected` is set when building the tree; `safe_folders::is_path_protected()` checks exact path match. Future delete command must reject protected paths.
+- **Frontend**: `ListItem` receives `selectable={!item.is_protected}`; `toggleSelect` ignores protected items.
+
+---

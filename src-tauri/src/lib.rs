@@ -1,3 +1,5 @@
+mod safe_folders;
+
 use tauri::Emitter;
 
 use std::path::Path;
@@ -23,6 +25,7 @@ pub struct FolderInfo {
     pub icon: Option<String>,
     pub children: Vec<FolderInfo>,
     pub is_file: bool,
+    pub is_protected: bool,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Clone)]
@@ -47,7 +50,7 @@ const MAX_FILES_PER_DIR: usize = 50;
 /// Recursively builds the folder tree with parallelism at every directory level.
 /// Rayon's work-stealing scheduler naturally balances I/O across cores --
 /// threads that finish small directories steal subtasks from large ones like Library.
-fn build_folder_tree(root: &Path) -> FolderInfo {
+fn build_folder_tree(root: &Path, home: &Path) -> FolderInfo {
     let name = root
         .file_name()
         .and_then(|n| n.to_str())
@@ -57,13 +60,16 @@ fn build_folder_tree(root: &Path) -> FolderInfo {
     let entries = match std::fs::read_dir(root) {
         Ok(rd) => rd,
         Err(_) => {
+            let path = root.to_string_lossy().into_owned();
+            let is_protected = safe_folders::is_path_protected(root, home);
             return FolderInfo {
                 name,
-                path: root.to_string_lossy().into_owned(),
+                path,
                 size: 0,
                 icon: None,
                 children: Vec::new(),
                 is_file: false,
+                is_protected,
             };
         }
     };
@@ -94,20 +100,27 @@ fn build_folder_tree(root: &Path) -> FolderInfo {
 
     // Build FolderInfo + path string only for the files we keep
     let root_path = root.to_string_lossy();
+    let is_root_protected = safe_folders::is_path_protected(root, home);
     let files: Vec<FolderInfo> = file_entries
         .into_iter()
-        .map(|(fname, size)| FolderInfo {
-            path: format!("{}/{}", root_path, fname),
-            name: fname,
-            size,
-            icon: None,
-            children: Vec::new(),
-            is_file: true,
+        .map(|(fname, size)| {
+            let path = format!("{}/{}", root_path, fname);
+            let file_path = Path::new(&path);
+            let is_protected = safe_folders::is_path_protected(file_path, home);
+            FolderInfo {
+                path,
+                name: fname,
+                size,
+                icon: None,
+                children: Vec::new(),
+                is_file: true,
+                is_protected,
+            }
         })
         .collect();
 
     let dir_children: Vec<FolderInfo> =
-        dir_paths.par_iter().map(|p| build_folder_tree(p)).collect();
+        dir_paths.par_iter().map(|p| build_folder_tree(p, home)).collect();
 
     let dir_size: u64 = dir_children.iter().map(|c| c.size).sum();
 
@@ -122,6 +135,7 @@ fn build_folder_tree(root: &Path) -> FolderInfo {
         icon: None,
         children,
         is_file: false,
+        is_protected: is_root_protected,
     }
 }
 
@@ -150,7 +164,7 @@ fn get_user_folders_sync_with_progress(app: tauri::AppHandle) -> Result<Vec<Fold
     let mut folders: Vec<FolderInfo> = folder_paths
         .into_par_iter()
         .map(|path| {
-            let info = build_folder_tree(&path);
+            let info = build_folder_tree(&path, &user_dir);
 
             let cur = completed.fetch_add(1, Ordering::Relaxed) + 1;
             if let Ok(guard) = app_ref.lock() {

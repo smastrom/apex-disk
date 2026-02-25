@@ -118,9 +118,10 @@ const selectedSize = computed(() => {
    return total
 })
 
-function toggleSelect(path: string) {
-   if (selectedMap.get(path)) selectedMap.delete(path)
-   else selectedMap.set(path, true)
+function toggleSelect(item: FolderInfo) {
+   if (item.is_protected) return
+   if (selectedMap.get(item.path)) selectedMap.delete(item.path)
+   else selectedMap.set(item.path, true)
 }
 
 function goInto(item: FolderInfo) {
@@ -230,8 +231,9 @@ function onAbort() {
                      <ListItem
                         :item="displayedItems[virtualRow.index]"
                         :selected="!!selectedMap.get(displayedItems[virtualRow.index].path)"
+                        :selectable="!displayedItems[virtualRow.index].is_protected"
                         :format-bytes="formatBytes"
-                        @select="() => toggleSelect(displayedItems[virtualRow.index].path)"
+                        @select="() => toggleSelect(displayedItems[virtualRow.index])"
                         @navigate="() => goInto(displayedItems[virtualRow.index])"
                      />
                   </div>

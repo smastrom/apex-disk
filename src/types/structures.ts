@@ -6,6 +6,7 @@ export interface FolderInfo {
    icon?: string;
    children: FolderInfo[];
    is_file: boolean;
+   is_protected: boolean;
 }
 
 /** Scan progress event payload from Tauri. */
