@@ -1,6 +1,7 @@
 import { load } from '@tauri-apps/plugin-store'
 import { ref, type Ref } from 'vue'
 
+import { getSystemLanguage } from '@/lib/systemDefaults'
 import { DEFAULT_SETTINGS } from '@/types/settings'
 
 import type { AppSettings, ThemeColor, Language } from '@/types/settings'
@@ -69,8 +70,10 @@ export async function createSettingsStore(): Promise<SettingsStore> {
          ),
       ])
       const raw = (await store.get('app')) as Partial<AppSettings> | null
+      const systemLanguage = await getSystemLanguage()
       const settings = ref<AppSettings>({
          ...DEFAULT_SETTINGS,
+         language: raw?.language ?? systemLanguage,
          ...(raw && typeof raw === 'object' ? raw : {}),
       })
 
@@ -84,12 +87,21 @@ export async function createSettingsStore(): Promise<SettingsStore> {
          await store.reload()
          const raw = (await store.get('app')) as Partial<AppSettings> | null
          if (raw && typeof raw === 'object') {
-            settings.value = { ...DEFAULT_SETTINGS, ...raw }
+            const systemLanguage = await getSystemLanguage()
+            settings.value = {
+               ...DEFAULT_SETTINGS,
+               language: raw.language ?? systemLanguage,
+               ...raw,
+            }
          }
       }
       return result
    } catch {
-      const settings = ref<AppSettings>({ ...DEFAULT_SETTINGS })
+      const systemLanguage = await getSystemLanguage()
+      const settings = ref<AppSettings>({
+         ...DEFAULT_SETTINGS,
+         language: systemLanguage,
+      })
       return createStoreFromSettings(settings, async () => {})
    }
 }
