@@ -51,6 +51,7 @@ const progress = ref<ScanProgress>({
    total: 1,
    folder: '',
    size: 0,
+   scanned_size_total: 0,
 })
 
 let unlistenProgress: (() => void) | null = null
@@ -58,7 +59,7 @@ let unlistenProgress: (() => void) | null = null
 async function loadFolders() {
    aborted.value = false
    loading.value = true
-   progress.value = { current: 0, total: 1, folder: '', size: 0 }
+   progress.value = { current: 0, total: 1, folder: '', size: 0, scanned_size_total: 0 }
 
    unlistenProgress = await listen<ScanProgress>('folder-scan-progress', (event) => {
       progress.value = event.payload
@@ -80,7 +81,7 @@ function onAbort() {
    aborted.value = true
    folders.value = []
    loading.value = false
-   progress.value = { current: 0, total: 1, folder: '', size: 0 }
+   progress.value = { current: 0, total: 1, folder: '', size: 0, scanned_size_total: 0 }
 }
 
 function onSelectView(view: string) {

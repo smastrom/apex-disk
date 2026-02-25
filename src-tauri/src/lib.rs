@@ -5,7 +5,7 @@ use tauri::Emitter;
 use std::path::Path;
 #[cfg(unix)]
 use std::path::PathBuf;
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicUsize, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 
 use rayon::prelude::*;
@@ -34,6 +34,7 @@ struct FolderScanProgress {
     total: usize,
     folder: String,
     size: u64,
+    scanned_size_total: u64,
     #[serde(skip_serializing_if = "Option::is_none")]
     scanning: Option<String>,
 }
@@ -159,6 +160,7 @@ fn get_user_folders_sync_with_progress(app: tauri::AppHandle) -> Result<Vec<Fold
 
     let total = folder_paths.len();
     let completed = AtomicUsize::new(0);
+    let scanned_size_total = AtomicU64::new(0);
     let app_ref = Arc::new(Mutex::new(app));
 
     let mut folders: Vec<FolderInfo> = folder_paths
@@ -167,6 +169,7 @@ fn get_user_folders_sync_with_progress(app: tauri::AppHandle) -> Result<Vec<Fold
             let info = build_folder_tree(&path, &user_dir);
 
             let cur = completed.fetch_add(1, Ordering::Relaxed) + 1;
+            let total_size = scanned_size_total.fetch_add(info.size, Ordering::Relaxed) + info.size;
             if let Ok(guard) = app_ref.lock() {
                 let _ = guard.emit(
                     "folder-scan-progress",
@@ -175,6 +178,7 @@ fn get_user_folders_sync_with_progress(app: tauri::AppHandle) -> Result<Vec<Fold
                         total,
                         folder: info.name.clone(),
                         size: info.size,
+                        scanned_size_total: total_size,
                         scanning: None,
                     },
                 );

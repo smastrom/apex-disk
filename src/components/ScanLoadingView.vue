@@ -3,7 +3,7 @@ ScanLoadingView
 
 Purpose: Active scan view showing disk/user context, live scan progress, and detailed scan metadata while scanning.
 
-Props: progress ({ current: number; total: number; folder: string; size: number })
+Props: progress ({ current: number; total: number; folder: string; size: number; scanned_size_total: number })
 
 Example:
  <ScanLoadingView :progress="progress" @abort="onAbort" />
@@ -28,6 +28,7 @@ const props = defineProps<{
       total: number
       folder: string
       size: number
+      scanned_size_total: number
    }
 }>()
 
@@ -92,7 +93,7 @@ onUnmounted(() => {
          </p>
          <p>
             <span>{{ t('ScanLoadingView', 'scannedSize') }}</span>
-            <strong>{{ formatBytes(progress.size) }}</strong>
+            <strong>{{ formatBytes(progress.scanned_size_total) }}</strong>
          </p>
          <p>
             <span>{{ t('ScanLoadingView', 'currentPath') }}</span>

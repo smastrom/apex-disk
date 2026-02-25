@@ -41,6 +41,7 @@ const props = defineProps<{
       total: number
       folder: string
       size: number
+      scanned_size_total: number
       scanning?: string
    }
 }>()
