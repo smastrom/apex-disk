@@ -14,29 +14,21 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 import Spinner from './Spinner.vue'
 
-import { getDiskUsage } from '@/lib/disk'
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/useTranslations'
 
-import type { DiskUsage } from '@/lib/disk'
+import type { ScanProgress } from '@/types/structures'
 
 const { t } = useTranslations()
 
 const props = defineProps<{
-   progress: {
-      current: number
-      total: number
-      folder: string
-      size: number
-      scanned_size_total: number
-   }
+   progress: ScanProgress
 }>()
 
 const emit = defineEmits<{
    (e: 'abort'): void
 }>()
 
-const usage = ref<DiskUsage | null>(null)
 const elapsedSeconds = ref(0)
 let elapsedInterval: ReturnType<typeof setInterval> | null = null
 
@@ -45,16 +37,11 @@ const percent = computed(() => {
    return Math.max(0, Math.min(100, (props.progress.current / props.progress.total) * 100))
 })
 
-onMounted(async () => {
+onMounted(() => {
    elapsedSeconds.value = 0
    elapsedInterval = setInterval(() => {
       elapsedSeconds.value += 1
    }, 1000)
-   try {
-      usage.value = await getDiskUsage()
-   } catch (err) {
-      console.error('Failed to get disk usage:', err)
-   }
 })
 
 onUnmounted(() => {
@@ -124,38 +111,6 @@ onUnmounted(() => {
    padding: var(--spacing-lg) var(--spacing-md);
 }
 
-.ScanLoadingView-diskInfo {
-   display: flex;
-   align-items: center;
-   gap: 6px;
-   font-size: 0.875rem;
-   font-weight: 600;
-   color: var(--color-text);
-}
-
-.ScanLoadingView-diskIcon {
-   color: var(--color-text-muted);
-}
-
-.ScanLoadingView-userBadge {
-   display: inline-flex;
-   align-items: center;
-   gap: 6px;
-   font-size: 0.75rem;
-   font-weight: 500;
-   color: var(--color-text-muted);
-   background: var(--color-surface);
-   padding: 4px 10px;
-   border-radius: 6px;
-   border: 1px solid var(--color-border);
-   cursor: pointer;
-}
-
-.ScanLoadingView-userBadge:hover {
-   background: var(--color-surface-hover);
-   color: var(--color-text);
-}
-
 .ScanLoadingView-progressBlock {
    display: flex;
    flex-direction: column;
@@ -217,26 +172,26 @@ onUnmounted(() => {
    border: 1px solid var(--color-border);
    border-radius: 8px;
    background: var(--color-bg-elevated);
-}
 
-.ScanLoadingView-stats p {
-   display: flex;
-   justify-content: space-between;
-   align-items: flex-start;
-   gap: var(--spacing-sm);
-   margin: 0;
-   font-size: 0.8125rem;
-}
+   p {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--spacing-sm);
+      margin: 0;
+      font-size: 0.8125rem;
+   }
 
-.ScanLoadingView-stats span {
-   color: var(--color-text-muted);
-}
+   span {
+      color: var(--color-text-muted);
+   }
 
-.ScanLoadingView-stats strong {
-   max-width: 65%;
-   color: var(--color-text);
-   text-align: right;
-   overflow-wrap: anywhere;
+   strong {
+      max-width: 65%;
+      color: var(--color-text);
+      text-align: right;
+      overflow-wrap: anywhere;
+   }
 }
 
 .ScanLoadingView-currentPath {
@@ -263,9 +218,9 @@ onUnmounted(() => {
    border: none;
    cursor: pointer;
    margin-top: var(--spacing-md);
-}
 
-.ScanLoadingView-abortBtn:hover {
-   opacity: 0.75;
+   &:hover {
+      opacity: 0.75;
+   }
 }
 </style>

@@ -23,20 +23,14 @@ import FooterMenu from './FooterMenu.vue'
 
 import { useTranslations } from '@/lib/useTranslations'
 
-import type { FolderInfo } from '@/types/structures'
+import type { FolderInfo, ScanProgress } from '@/types/structures'
 
 const { t } = useTranslations()
 
 defineProps<{
    folders: FolderInfo[]
    loading: boolean
-   progress: {
-      current: number
-      total: number
-      folder: string
-      size: number
-      scanning?: string
-   }
+   progress: ScanProgress
    activeView?: string
 }>()
 
@@ -115,11 +109,11 @@ defineEmits<{
    align-items: center;
    justify-content: center;
    padding: var(--spacing-md);
-}
 
-.Layout-placeholder p {
-   color: var(--color-text-muted);
-   margin: 0;
+   p {
+      color: var(--color-text-muted);
+      margin: 0;
+   }
 }
 
 .Layout-fade-enter-active,

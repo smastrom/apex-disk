@@ -10,29 +10,24 @@ Example:
 -->
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
 import { PhHardDrive } from '@phosphor-icons/vue'
-import { invoke } from '@tauri-apps/api/core'
+
+import { ref, computed, onMounted } from 'vue'
 import { openPath } from '@tauri-apps/plugin-opener'
 
+import { getDiskUsage } from '@/lib/disk'
 import { useTranslations } from '@/lib/useTranslations'
 import { formatBytes } from '@/lib/format'
 
-const { t } = useTranslations()
+import type { DiskUsage } from '@/lib/disk'
 
-interface DiskUsage {
-   total: number
-   free: number
-   volume_name: string
-   user_name: string
-   home_path: string
-}
+const { t } = useTranslations()
 
 const usage = ref<DiskUsage | null>(null)
 
 onMounted(async () => {
    try {
-      usage.value = await invoke<DiskUsage>('get_disk_usage')
+      usage.value = await getDiskUsage()
    } catch (err) {
       console.error('Failed to get disk usage:', err)
    }
@@ -163,10 +158,10 @@ async function openHomeInFinder() {
    border: none;
    cursor: pointer;
    transition: background 0.2s ease;
-}
 
-.DiskUsageProgress-userBadge:hover {
-   background: var(--color-surface-hover);
+   &:hover {
+      background: var(--color-surface-hover);
+   }
 }
 
 .DiskUsageProgress-infoRow {
@@ -191,12 +186,14 @@ async function openHomeInFinder() {
    font-weight: 500;
 }
 
-.DiskUsageProgress-newFree .DiskUsageProgress-label {
-   color: var(--color-accent);
+.DiskUsageProgress-newFree {
+   .DiskUsageProgress-label {
+      color: var(--color-accent);
+   }
 }
 
 .DiskUsageProgress-newFreeValue {
-   color: var(--color-accent) !important;
+   color: var(--color-accent);
    font-weight: 600;
 }
 

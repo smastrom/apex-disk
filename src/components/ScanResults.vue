@@ -25,7 +25,7 @@ import { formatBytes } from '@/lib/format'
 import { SETTINGS_KEY } from '@/stores/settings'
 
 import type { SettingsStore } from '@/stores/settings'
-import type { FolderInfo } from '@/types/structures'
+import type { FolderInfo, ScanProgress } from '@/types/structures'
 
 const { t } = useTranslations()
 const { withTransition } = useViewTransition()
@@ -36,14 +36,7 @@ const navDirection = ref<1 | -1>(1)
 const props = defineProps<{
    folders: FolderInfo[]
    loading: boolean
-   progress: {
-      current: number
-      total: number
-      folder: string
-      size: number
-      scanned_size_total: number
-      scanning?: string
-   }
+   progress: ScanProgress
 }>()
 
 const emit = defineEmits<{
@@ -377,16 +370,16 @@ function onAbort() {
    transition:
       background 0.2s,
       box-shadow 0.25s;
-}
 
-.ScanResults-navBtn:hover:not(:disabled) {
-   background: var(--color-surface-hover);
-   box-shadow: var(--glow-sm);
-}
+   &:hover:not(:disabled) {
+      background: var(--color-surface-hover);
+      box-shadow: var(--glow-sm);
+   }
 
-.ScanResults-navBtn:disabled {
-   opacity: 0.5;
-   cursor: not-allowed;
+   &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+   }
 }
 
 .ScanResults-navPath {
@@ -404,31 +397,31 @@ function onAbort() {
    cursor: pointer;
    text-align: left;
    position: relative;
-}
 
-.ScanResults-navPath::after {
-   content: '';
-   position: absolute;
-   left: 0;
-   right: 0;
-   bottom: 0;
-   height: 1px;
-   background: var(--color-accent);
-   transform: scaleX(0);
-   transition: transform 0.2s ease;
-   pointer-events: none;
-}
+   &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: var(--color-accent);
+      transform: scaleX(0);
+      transition: transform 0.2s ease;
+      pointer-events: none;
+   }
 
-.ScanResults-navPath:hover {
-   color: var(--color-text);
-}
+   &:hover {
+      color: var(--color-text);
+   }
 
-.ScanResults-navPath:hover:not(:disabled)::after {
-   transform: scaleX(1);
-}
+   &:hover:not(:disabled)::after {
+      transform: scaleX(1);
+   }
 
-.ScanResults-navPath:disabled {
-   cursor: default;
+   &:disabled {
+      cursor: default;
+   }
 }
 
 .ScanResults-navPathIcon {
@@ -450,16 +443,16 @@ function onAbort() {
    background: none;
    border: none;
    cursor: pointer;
-}
 
-.ScanResults-resetBtn:hover:not(:disabled) {
-   color: var(--color-text);
-   opacity: 0.85;
-}
+   &:hover:not(:disabled) {
+      color: var(--color-text);
+      opacity: 0.85;
+   }
 
-.ScanResults-resetBtn:disabled {
-   opacity: 0.5;
-   cursor: not-allowed;
+   &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+   }
 }
 
 .ScanResults-abortBtn {
@@ -470,10 +463,10 @@ function onAbort() {
    background: none;
    border: none;
    cursor: pointer;
-}
 
-.ScanResults-abortBtn:hover {
-   opacity: 0.75;
+   &:hover {
+      opacity: 0.75;
+   }
 }
 
 .ScanResults-listWrap {
@@ -528,22 +521,22 @@ function onAbort() {
       background 0.2s,
       box-shadow 0.3s,
       transform 0.15s;
-}
 
-.ScanResults-deleteBtn:hover:not(:disabled) {
-   background: var(--color-accent-hover);
-   box-shadow: var(--glow-lg);
-   transform: translateY(-1px);
-}
+   &:hover:not(:disabled) {
+      background: var(--color-accent-hover);
+      box-shadow: var(--glow-lg);
+      transform: translateY(-1px);
+   }
 
-.ScanResults-deleteBtn:active:not(:disabled) {
-   transform: translateY(0);
-   box-shadow: var(--glow-sm);
-}
+   &:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: var(--glow-sm);
+   }
 
-.ScanResults-deleteBtn:disabled {
-   opacity: 0.5;
-   cursor: not-allowed;
-   box-shadow: none;
+   &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+   }
 }
 </style>

@@ -1,3 +1,14 @@
+<!--
+App
+
+Purpose: Root application component. Bootstraps the settings store, manages scan state, and renders the app shell.
+
+Props: none
+
+Example:
+ <App />
+-->
+
 <script setup lang="ts">
 import Layout from '@/components/Layout.vue'
 

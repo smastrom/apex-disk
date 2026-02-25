@@ -91,27 +91,23 @@ const emit = defineEmits<{
    margin: calc(var(--spacing-sm) / 2) var(--spacing-sm);
    border-radius: 8px;
    box-sizing: border-box;
-   /* border: 1px solid transparent; */
-   transition: background 0.2s; /* ,
-      border-color 0.2s; */
-}
+   transition: background 0.2s;
 
-.ListItem-root--folder {
-   cursor: pointer;
-}
+   &--folder {
+      cursor: pointer;
+   }
 
-.ListItem-root:hover {
-   background: var(--color-accent-bg-hover);
-   /* border-color: var(--color-accent-glow); */
-}
+   &:hover {
+      background: var(--color-accent-bg-hover);
+   }
 
-.ListItem-root--selected {
-   background: var(--color-accent-bg);
-   /* border-color: var(--color-accent-glow); */
-}
+   &--selected {
+      background: var(--color-accent-bg);
 
-.ListItem-root--selected:hover {
-   background: var(--color-accent-bg);
+      &:hover {
+         background: var(--color-accent-bg);
+      }
+   }
 }
 
 .ListItem-check {
@@ -125,16 +121,18 @@ const emit = defineEmits<{
    cursor: pointer;
    color: var(--color-text-dim);
    transition: filter 0.2s;
-}
 
-.ListItem-check--selected .ListItem-checkFilled {
-   color: var(--color-accent);
-   filter: drop-shadow(0 0 4px var(--color-accent-glow));
-}
+   &--selected {
+      .ListItem-checkFilled {
+         color: var(--color-accent);
+         filter: drop-shadow(0 0 4px var(--color-accent-glow));
+      }
+   }
 
-.ListItem-check--disabled {
-   opacity: 0.5;
-   cursor: not-allowed;
+   &--disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+   }
 }
 
 .ListItem-checkEmpty {

@@ -93,32 +93,32 @@ async function onDonateClick() {
    transition:
       color 0.2s,
       text-shadow 0.3s;
-}
 
-.FooterMenu-btn:hover {
-   color: var(--color-text);
-}
-
-.FooterMenu-btn--active {
-   color: var(--color-accent);
-
-   :deep(svg) {
-      filter: drop-shadow(0 0 6px var(--color-accent-glow));
+   &:hover {
+      color: var(--color-text);
    }
-}
 
-.FooterMenu-btn--active span {
-   text-shadow: 0 0 8px var(--color-accent-glow);
-}
+   &--active {
+      color: var(--color-accent);
 
-.FooterMenu-btn span {
-   font-size: 0.75rem;
-   font-weight: 500;
-   width: 100%;
-   min-width: 0;
-   overflow: hidden;
-   text-overflow: ellipsis;
-   white-space: nowrap;
-   text-align: center;
+      :deep(svg) {
+         filter: drop-shadow(0 0 6px var(--color-accent-glow));
+      }
+
+      span {
+         text-shadow: 0 0 8px var(--color-accent-glow);
+      }
+   }
+
+   span {
+      font-size: 0.75rem;
+      font-weight: 500;
+      width: 100%;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: center;
+   }
 }
 </style>

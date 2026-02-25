@@ -94,16 +94,16 @@ const emit = defineEmits<{
       background 0.2s ease,
       box-shadow 0.3s ease,
       transform 0.2s ease;
-}
 
-.ScanSplashScreen-scanBtn:hover {
-   background: var(--color-accent-hover);
-   box-shadow: var(--glow-lg);
-   transform: translateY(-1px);
-}
+   &:hover {
+      background: var(--color-accent-hover);
+      box-shadow: var(--glow-lg);
+      transform: translateY(-1px);
+   }
 
-.ScanSplashScreen-scanBtn:active {
-   box-shadow: var(--glow-sm);
-   transform: translateY(0);
+   &:active {
+      box-shadow: var(--glow-sm);
+      transform: translateY(0);
+   }
 }
 </style>

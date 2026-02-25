@@ -21,20 +21,14 @@ import ScanResults from './ScanResults.vue'
 
 import { ref } from 'vue'
 
-import type { FolderInfo } from '@/types/structures'
+import type { FolderInfo, ScanProgress } from '@/types/structures'
 
 const selectedSize = ref(0)
 
 const props = defineProps<{
    folders: FolderInfo[]
    loading: boolean
-   progress: {
-      current: number
-      total: number
-      folder: string
-      size: number
-      scanning?: string
-   }
+   progress: ScanProgress
 }>()
 
 defineEmits<{

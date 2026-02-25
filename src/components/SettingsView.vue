@@ -189,10 +189,10 @@ function toggleAnimations() {
 .SettingsView-selectWrap {
    position: relative;
    display: inline-block;
-}
 
-.SettingsView-selectWrap .SettingsSelect {
-   background-image: none;
+   .SettingsSelect {
+      background-image: none;
+   }
 }
 
 .SettingsView-selectChevron {
