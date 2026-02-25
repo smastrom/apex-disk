@@ -6,6 +6,8 @@ import { DiskUsageProgress } from './DiskUsageProgress'
 import { ScanSplashScreen } from './ScanSplashScreen'
 import { ScanLoadingView } from './ScanLoadingView'
 import { ScanResults } from './ScanResults'
+import { ScanResultsDelete } from './ScanResultsDelete'
+import { ScanResultsDeleteComplete } from './ScanResultsDeleteComplete'
 import { SettingsView } from './SettingsView'
 import { FooterMenu } from './FooterMenu'
 
@@ -20,6 +22,8 @@ export const translations = {
    ScanSplashScreen,
    ScanLoadingView,
    ScanResults,
+   ScanResultsDelete,
+   ScanResultsDeleteComplete,
    SettingsView,
    FooterMenu,
 } as const

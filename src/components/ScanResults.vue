@@ -12,10 +12,11 @@ Example:
 <script setup lang="ts">
 import ListItem from './ListItem.vue'
 import ScanLoadingView from './ScanLoadingView.vue'
+import ScanResultsNav from './ScanResultsNav.vue'
 import ScanSplashScreen from './ScanSplashScreen.vue'
 
 import { ref, reactive, watch, computed, inject, type Ref } from 'vue'
-import { PhCaretLeft, PhCaretRight, PhFolder, PhTrash } from '@phosphor-icons/vue'
+import { PhTrash } from '@phosphor-icons/vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 
 import { useTranslations } from '@/lib/useTranslations'
@@ -24,7 +25,7 @@ import { formatBytes } from '@/lib/format'
 import { SETTINGS_KEY } from '@/stores/settings'
 
 import type { SettingsStore } from '@/stores/settings'
-import type { FolderInfo, ScanProgress } from '@/types/structures'
+import type { DeleteListItem, FolderInfo, ScanProgress } from '@/types/structures'
 
 const { t } = useTranslations()
 const { withTransition } = useViewTransition()
@@ -42,9 +43,8 @@ const emit = defineEmits<{
    (e: 'start-scan'): void
    (e: 'abort'): void
    (e: 'update:selectedSize', value: number): void
+   (e: 'review', items: DeleteListItem[]): void
 }>()
-
-const showDeleteResults = ref(false)
 
 interface NavEntry {
    items: FolderInfo[]
@@ -141,6 +141,26 @@ function hasSelectedAncestor(path: string): boolean {
    }
 }
 
+/** Build flat list of selected items (no ancestor selected) for delete review, sorted by size descending. */
+function buildSelectedItemsForDelete(): DeleteListItem[] {
+   const out: DeleteListItem[] = []
+   function visit(items: FolderInfo[]) {
+      for (const item of items) {
+         if (selectedMap.get(item.path) && !hasSelectedAncestor(item.path)) {
+            out.push({
+               path: item.path,
+               name: item.name,
+               size: item.size,
+               is_file: item.is_file,
+            })
+         }
+         if (!item.is_file) visit(item.children)
+      }
+   }
+   visit(props.folders)
+   return out.sort((a, b) => b.size - a.size)
+}
+
 /** True if item should appear selected: explicitly in map or inside a selected folder. */
 function isSelectedForUI(path: string): boolean {
    return !!selectedMap.get(path) || hasSelectedAncestor(path)
@@ -191,8 +211,8 @@ function goForward() {
    })
 }
 
-function onDeleteClick() {
-   showDeleteResults.value = true
+function onReviewClick() {
+   emit('review', buildSelectedItemsForDelete())
 }
 
 function onAbort() {
@@ -205,45 +225,19 @@ function onAbort() {
       <ScanLoadingView v-if="loading" :progress="progress" @abort="onAbort" />
       <ScanSplashScreen v-else-if="folders.length === 0" @start-scan="emit('start-scan')" />
       <div v-else class="ScanResults-content">
-         <nav class="ScanResults-nav">
-            <div class="ScanResults-navControls">
-               <button
-                  type="button"
-                  class="ScanResults-navBtn"
-                  :disabled="backStack.length === 0"
-                  aria-label="Back"
-                  @click="goBack"
-               >
-                  <PhCaretLeft :size="18" weight="regular" />
-               </button>
-               <button
-                  type="button"
-                  class="ScanResults-navBtn"
-                  :disabled="forwardStack.length === 0"
-                  aria-label="Forward"
-                  @click="goForward"
-               >
-                  <PhCaretRight :size="18" weight="regular" />
-               </button>
-            </div>
-            <div class="ScanResults-navPath" :title="current.path">
-               <PhFolder :size="16" weight="regular" class="ScanResults-navPathIcon" />
-               <span class="ScanResults-navPathText">{{ displayPath }}</span>
-            </div>
-            <div class="ScanResults-navActions">
-               <button
-                  type="button"
-                  class="ScanResults-resetBtn"
-                  :disabled="selectedMap.size === 0"
-                  @click="selectedMap.clear()"
-               >
-                  {{ t('ScanResults', 'resetSelection') }}
-               </button>
-               <button type="button" class="ScanResults-abortBtn" @click="onAbort">
-                  {{ t('ScanResults', 'abort') }}
-               </button>
-            </div>
-         </nav>
+         <ScanResultsNav
+            :showForward="true"
+            :backDisabled="backStack.length === 0"
+            :forwardDisabled="forwardStack.length === 0"
+            :pathLabel="displayPath"
+            :pathTitle="current.path"
+            :showActions="true"
+            :resetDisabled="selectedMap.size === 0"
+            @back="goBack"
+            @forward="goForward"
+            @reset="selectedMap.clear()"
+            @abort="onAbort"
+         />
          <div class="ScanResults-listWrap" :style="{ '--nav-direction': navDirection }">
             <div ref="parentRef" class="ScanResults-list ScanResults-listScroll">
                <div
@@ -275,12 +269,12 @@ function onAbort() {
             </div>
          </div>
       </div>
-      <div v-if="!loading && folders.length > 0 && !showDeleteResults" class="ScanResults-footer">
+      <div v-if="!loading && folders.length > 0" class="ScanResults-footer">
          <button
             type="button"
             class="ScanResults-deleteBtn"
             :disabled="selectedMap.size === 0"
-            @click="onDeleteClick"
+            @click="onReviewClick"
          >
             <PhTrash :size="18" weight="bold" />
             <span>{{ t('ScanResults', 'reviewSize', { size: formatBytes(selectedSize) }) }}</span>
@@ -310,111 +304,6 @@ function onAbort() {
    padding: 0;
    overflow: hidden;
    padding-bottom: var(--delete-footer-height);
-}
-
-.ScanResults-nav {
-   flex-shrink: 0;
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-   gap: var(--spacing-md);
-   padding: var(--spacing-md);
-   border-bottom: 1px solid var(--color-bg);
-}
-
-.ScanResults-navControls {
-   display: flex;
-   align-items: center;
-   gap: var(--spacing-sm);
-}
-
-.ScanResults-navActions {
-   display: flex;
-   align-items: center;
-   gap: var(--spacing-md);
-}
-
-.ScanResults-navBtn {
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   width: 32px;
-   height: 28px;
-   color: var(--color-text);
-   background: var(--color-surface);
-   border: none;
-   border-radius: 6px;
-   cursor: pointer;
-   transition:
-      background 0.2s,
-      box-shadow 0.25s;
-
-   &:hover:not(:disabled) {
-      background: var(--color-surface-hover);
-      box-shadow: var(--glow-sm);
-   }
-
-   &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-   }
-}
-
-.ScanResults-navPath {
-   flex: 1;
-   min-width: 0;
-   display: flex;
-   align-items: center;
-   gap: var(--spacing-xs);
-   padding: var(--spacing-xs) 0;
-   font-size: 0.8125rem;
-   color: var(--color-text-muted);
-   text-align: left;
-}
-
-.ScanResults-navPathIcon {
-   flex-shrink: 0;
-   color: var(--color-accent);
-}
-
-.ScanResults-navPathText {
-   overflow: hidden;
-   text-overflow: ellipsis;
-   white-space: nowrap;
-}
-
-.ScanResults-resetBtn {
-   padding: 0;
-   font-size: 0.875rem;
-   font-weight: 500;
-   color: var(--color-text-muted);
-   background: none;
-   border: none;
-   cursor: pointer;
-
-   &:hover:not(:disabled) {
-      color: var(--color-text);
-      opacity: 0.85;
-   }
-
-   &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-   }
-}
-
-.ScanResults-abortBtn {
-   padding: 0;
-   font-size: 0.875rem;
-   font-weight: 500;
-   color: #ff3b30;
-   background: none;
-   border: none;
-   cursor: pointer;
-
-   &:hover {
-      opacity: 0.75;
-   }
 }
 
 .ScanResults-listWrap {

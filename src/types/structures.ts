@@ -9,6 +9,14 @@ export interface FolderInfo {
    is_protected: boolean
 }
 
+/** Single item in the delete review list (flattened from selection). */
+export interface DeleteListItem {
+   path: string
+   name: string
+   size: number
+   is_file: boolean
+}
+
 /** Scan progress event payload from Tauri. */
 export interface ScanProgress {
    current: number
