@@ -86,9 +86,11 @@ const emit = defineEmits<{
    align-items: center;
    gap: var(--spacing-sm);
    padding: var(--spacing-sm);
-   min-height: 56px;
-   margin: 4px var(--spacing-sm);
+   height: 64px;
+   min-height: 64px;
+   margin: calc(var(--spacing-sm) / 2) var(--spacing-sm);
    border-radius: 8px;
+   box-sizing: border-box;
    /* border: 1px solid transparent; */
    transition: background 0.2s; /* ,
       border-color 0.2s; */
@@ -156,7 +158,7 @@ const emit = defineEmits<{
    min-width: 0;
    display: flex;
    flex-direction: column;
-   gap: 4px;
+   gap: var(--spacing-xs);
 }
 
 .ListItem-name {
