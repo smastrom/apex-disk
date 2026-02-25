@@ -1,6 +1,15 @@
 /** Donate / support link. Opens in default browser when user taps Donate. */
 export const DONATE_URL = 'https://buymeacoffee.com/smastrom'
 
+/** Seconds to show countdown on the Delete button before it becomes clickable. */
+export const DELETE_COUNTDOWN_SECONDS = 1
+
+/** Ms to wait after delete_paths completes before emitting complete and clearing spinner. */
+export const DELETE_POST_DELETE_SLEEP_MS = 2000
+
+/** Ms to simulate delete in dev when MOCK_DELETE is true. */
+export const MOCK_DELETE_DURATION_MS = 1500
+
 /**
  * Protected system folder names (relative to home). Must match Rust PROTECTED_RELATIVE_PATHS.
  * These cannot be selected or deleted. Add/remove here and in src-tauri/src/safe_folders.rs.

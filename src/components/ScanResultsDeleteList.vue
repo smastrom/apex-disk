@@ -1,34 +1,37 @@
 <!--
-ScanResultsDelete
+ScanResultsDeleteList
 
-Purpose: Fullscreen list of items scheduled for delete. Checkboxes (default on) update progress and button size. Red Delete button with 3s countdown then spinner when processing.
+Purpose: Fullscreen list of items scheduled for delete. Checkboxes (default on) update progress and button size. Red Delete button with countdown then spinner when processing.
 
 Props: items (DeleteListItem[]), active (boolean?) — when true, countdown starts
 
 Example:
- <ScanResultsDelete :items="deleteItems" :active="isDeleteView" @update:selectedSize="onSize" @complete="onComplete" />
+ <ScanResultsDeleteList :items="deleteItems" :active="isDeleteView" @update:selectedSize="onSize" @complete="onComplete" />
 -->
 
 <script setup lang="ts">
 import ScanResultsDeleteListItem from './ScanResultsDeleteListItem.vue'
 import ScanResultsNav from './ScanResultsNav.vue'
+import Spinner from './Spinner.vue'
 
 import { ref, shallowRef, watch, computed, onUnmounted } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { PhTrash } from '@phosphor-icons/vue'
 
-import { useTranslations } from '@/lib/useTranslations'
 import { formatBytes } from '@/lib/format'
+import { useTranslations } from '@/lib/useTranslations'
 
-import Spinner from './Spinner.vue'
+import {
+   DELETE_COUNTDOWN_SECONDS,
+   DELETE_POST_DELETE_SLEEP_MS,
+   MOCK_DELETE_DURATION_MS,
+} from '@/lib/constants'
 
 import type { DeleteListItem } from '@/types/structures'
 
 const MOCK_DELETE = false // import.meta.env.DEV
 
 const { t } = useTranslations()
-
-const COUNTDOWN_SECONDS = 1
 
 const props = defineProps<{
    items: DeleteListItem[]
@@ -46,7 +49,7 @@ watch(
          countdownInterval = null
       }
       if (active) {
-         countdownRemaining.value = COUNTDOWN_SECONDS
+         countdownRemaining.value = DELETE_COUNTDOWN_SECONDS
          countdownInterval = setInterval(() => {
             countdownRemaining.value -= 1
             if (countdownRemaining.value <= 0 && countdownInterval) {
@@ -120,7 +123,7 @@ async function onDeleteClick() {
    const toDelete = props.items.filter((item) => checkedMapRef.value.get(item.path))
 
    if (MOCK_DELETE) {
-      await new Promise((r) => setTimeout(r, 1500))
+      await new Promise((r) => setTimeout(r, MOCK_DELETE_DURATION_MS))
    } else {
       const items = toDelete.map((item) => ({
          path: item.path,
@@ -129,6 +132,7 @@ async function onDeleteClick() {
       await invoke('delete_paths', { items }).catch(() => {})
    }
 
+   await new Promise((r) => setTimeout(r, DELETE_POST_DELETE_SLEEP_MS))
    emit('complete', toDelete)
    deleting.value = false
 }
