@@ -15,7 +15,7 @@ import ScanResultsLoadingView from './ScanResultsLoadingView.vue'
 import ScanResultsNav from './ScanResultsNav.vue'
 import ScanViewInitial from './ScanViewInitial.vue'
 
-import { ref, reactive, watch, computed, inject, type Ref } from 'vue'
+import { ref, reactive, watch, watchEffect, shallowRef, computed, inject, type Ref } from 'vue'
 import { PhTrash } from '@phosphor-icons/vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 
@@ -166,6 +166,28 @@ function isSelectedForUI(path: string): boolean {
    return !!selectedMap.get(path) || hasSelectedAncestor(path)
 }
 
+
+// Set of folder paths that have at least one selected descendant but are not
+// themselves selected. Updated once per selectedMap mutation — O(entries × depth).
+// Template does a simple O(1) Set.has() lookup instead of per-row tree traversal.
+const someSelectedPaths = shallowRef(new Set<string>())
+
+watchEffect(() => {
+   const set = new Set<string>()
+   for (const [path] of selectedMap) {
+      let dir = path
+      for (;;) {
+         const slash = dir.lastIndexOf('/')
+         if (slash <= 0) break
+         dir = dir.slice(0, slash)
+         if (selectedMap.has(dir)) break // ancestor already covers everything below
+         set.add(dir)
+      }
+   }
+   someSelectedPaths.value = set
+})
+
+
 const selectedSize = computed(() => {
    let total = 0
    for (const [path] of selectedMap) {
@@ -259,6 +281,7 @@ function onAbort() {
                      <ScanResultsListItem
                         :item="displayedItems[virtualRow.index]"
                         :selected="isSelectedForUI(displayedItems[virtualRow.index].path)"
+                        :someSelected="someSelectedPaths.has(displayedItems[virtualRow.index].path)"
                         :selectable="!displayedItems[virtualRow.index].is_protected"
                         :formatBytes="formatBytes"
                         @select="() => toggleSelect(displayedItems[virtualRow.index])"

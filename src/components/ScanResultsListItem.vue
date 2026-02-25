@@ -17,7 +17,7 @@ Example:
 -->
 
 <script setup lang="ts">
-import { PhFolder, PhFile, PhCaretRight, PhCircle, PhCheckCircle } from '@phosphor-icons/vue'
+import { PhFolder, PhFile, PhCaretRight, PhCircle, PhCheckCircle, PhMinusCircle } from '@phosphor-icons/vue'
 
 import { useTranslations } from '@/lib/useTranslations'
 
@@ -28,6 +28,7 @@ const { t } = useTranslations()
 defineProps<{
    item: FolderInfo
    selected: boolean
+   someSelected?: boolean
    selectable?: boolean
    formatBytes: (bytes: number) => string
 }>()
@@ -52,18 +53,25 @@ const emit = defineEmits<{
          class="ScanResultsListItem-check"
          :class="{
             'ScanResultsListItem-check--selected': selected,
+            'ScanResultsListItem-check--some-selected': !selected && someSelected,
             'ScanResultsListItem-check--disabled': selectable === false,
          }"
-         :aria-pressed="selected"
+         :aria-pressed="selected || someSelected"
          :disabled="selectable === false"
          :aria-disabled="selectable === false"
          @click.stop="selectable !== false && emit('select')"
       >
          <PhCircle
-            v-if="!selected"
+            v-if="!selected && !someSelected"
             :size="22"
             weight="regular"
             class="ScanResultsListItem-checkEmpty"
+         />
+         <PhMinusCircle
+            v-else-if="someSelected"
+            :size="22"
+            weight="fill"
+            class="ScanResultsListItem-checkPartial"
          />
          <PhCheckCircle v-else :size="22" weight="fill" class="ScanResultsListItem-checkFilled" />
       </button>
@@ -134,6 +142,10 @@ const emit = defineEmits<{
 .ScanResultsListItem-check--selected .ScanResultsListItem-checkFilled {
    color: var(--color-accent);
    filter: drop-shadow(0 0 4px var(--color-accent-glow));
+}
+
+.ScanResultsListItem-check--some-selected .ScanResultsListItem-checkPartial {
+   color: var(--color-accent);
 }
 
 .ScanResultsListItem-check--disabled {
