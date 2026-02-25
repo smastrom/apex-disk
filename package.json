@@ -10,7 +10,8 @@
     "fmt": "oxfmt --write",
     "fmt:check": "oxfmt --check",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "tauri:build": "tauri build --target universal-apple-darwin"
   },
   "dependencies": {
     "@phosphor-icons/vue": "^2.2.1",
