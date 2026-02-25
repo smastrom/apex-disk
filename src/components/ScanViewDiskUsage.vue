@@ -1,12 +1,12 @@
 <!--
 ScanViewDiskUsage
 
-Purpose: Progress bar showing current disk usage (home volume). Shows "new free" in accent when items are selected for delete.
+Purpose: Progress bar showing current disk usage (home volume). Shows "new free" in accent when items are selected for delete. Exposes refresh() to re-fetch after delete.
 
 Props: selectedSize (number?)
 
 Example:
- <ScanViewDiskUsage :selectedSize="selectedSize" />
+ <ScanViewDiskUsage ref="diskUsageRef" :selectedSize="selectedSize" />
 -->
 
 <script setup lang="ts">
@@ -25,13 +25,17 @@ const { t } = useTranslations()
 
 const usage = ref<DiskUsage | null>(null)
 
-onMounted(async () => {
+async function fetchUsage() {
    try {
       usage.value = await getDiskUsage()
    } catch (err) {
       console.error('Failed to get disk usage:', err)
    }
-})
+}
+
+onMounted(fetchUsage)
+
+defineExpose({ refresh: fetchUsage })
 
 const props = defineProps<{
    selectedSize?: number

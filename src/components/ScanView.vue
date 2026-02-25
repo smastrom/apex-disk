@@ -29,6 +29,7 @@ const selectedSize = ref(0)
 const viewState = ref<'results' | 'delete' | 'deleteComplete'>('results')
 const deleteItems = ref<DeleteListItem[]>([])
 const deletedSummary = ref<{ count: number; size: number } | null>(null)
+const diskUsageRef = ref<InstanceType<typeof ScanViewDiskUsage> | null>(null)
 
 const props = defineProps<{
    folders: FolderInfo[]
@@ -55,6 +56,8 @@ function onDeleteComplete(items: DeleteListItem[]) {
       count: items.length,
       size: items.reduce((sum, i) => sum + i.size, 0),
    }
+   selectedSize.value = 0
+   diskUsageRef.value?.refresh()
    viewState.value = 'deleteComplete'
 }
 
@@ -66,7 +69,7 @@ function onScanAgain() {
 
 <template>
    <main class="ScanView-root">
-      <ScanViewDiskUsage :selectedSize="selectedSize" />
+      <ScanViewDiskUsage ref="diskUsageRef" :selectedSize="selectedSize" />
       <ScanResultsList
          v-show="viewState === 'results'"
          class="ScanView-body"

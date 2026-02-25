@@ -45,7 +45,12 @@ const emit = defineEmits<{
             weight="regular"
             class="ScanResultsDeleteListItem-checkEmpty"
          />
-         <PhCheckCircle v-else :size="16" weight="fill" class="ScanResultsDeleteListItem-checkFilled" />
+         <PhCheckCircle
+            v-else
+            :size="16"
+            weight="fill"
+            class="ScanResultsDeleteListItem-checkFilled"
+         />
       </button>
       <div class="ScanResultsDeleteListItem-icon">
          <PhFolder v-if="!item.is_file" :size="18" weight="regular" />
@@ -63,7 +68,6 @@ const emit = defineEmits<{
    gap: var(--spacing-xs);
    padding: var(--spacing-xs) var(--spacing-sm);
    min-height: 40px;
-   border-radius: 6px;
    cursor: pointer;
    transition: background 0.2s;
 

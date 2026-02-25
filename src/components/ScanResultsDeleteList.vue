@@ -14,6 +14,7 @@ import ScanResultsDeleteListItem from './ScanResultsDeleteListItem.vue'
 import ScanResultsNav from './ScanResultsNav.vue'
 
 import { ref, shallowRef, watch, computed, onUnmounted } from 'vue'
+import { invoke } from '@tauri-apps/api/core'
 import { PhTrash } from '@phosphor-icons/vue'
 
 import { useTranslations } from '@/lib/useTranslations'
@@ -22,6 +23,8 @@ import { formatBytes } from '@/lib/format'
 import Spinner from './Spinner.vue'
 
 import type { DeleteListItem } from '@/types/structures'
+
+const MOCK_DELETE = false // import.meta.env.DEV
 
 const { t } = useTranslations()
 
@@ -111,13 +114,23 @@ function toggle(path: string) {
 
 const deleteReady = computed(() => countdownRemaining.value <= 0)
 
-function onDeleteClick() {
+async function onDeleteClick() {
    if (!deleteReady.value || deleting.value || checkedCount.value === 0) return
    deleting.value = true
    const toDelete = props.items.filter((item) => checkedMapRef.value.get(item.path))
-   setTimeout(() => {
-      emit('complete', toDelete)
-   }, 1500)
+
+   if (MOCK_DELETE) {
+      await new Promise((r) => setTimeout(r, 1500))
+   } else {
+      const items = toDelete.map((item) => ({
+         path: item.path,
+         is_file: item.is_file,
+      }))
+      await invoke('delete_paths', { items }).catch(() => {})
+   }
+
+   emit('complete', toDelete)
+   deleting.value = false
 }
 </script>
 
