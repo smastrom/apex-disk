@@ -125,6 +125,11 @@ function hasSelectedAncestor(path: string): boolean {
    }
 }
 
+/** True if item should appear selected: explicitly in map or inside a selected folder. */
+function isSelectedForUI(path: string): boolean {
+   return !!selectedMap.get(path) || hasSelectedAncestor(path)
+}
+
 const selectedSize = computed(() => {
    let total = 0
    for (const [path] of selectedMap) {
@@ -239,7 +244,7 @@ function onAbort() {
                   >
                      <ListItem
                         :item="displayedItems[virtualRow.index]"
-                        :selected="!!selectedMap.get(displayedItems[virtualRow.index].path)"
+                        :selected="isSelectedForUI(displayedItems[virtualRow.index].path)"
                         :selectable="!displayedItems[virtualRow.index].is_protected"
                         :formatBytes="formatBytes"
                         @select="() => toggleSelect(displayedItems[virtualRow.index])"

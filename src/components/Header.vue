@@ -40,5 +40,6 @@ const { t } = useTranslations()
    color: var(--color-text);
    margin: 0;
    text-shadow: var(--glow-text);
+   pointer-events: none;
 }
 </style>
