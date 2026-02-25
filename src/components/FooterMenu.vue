@@ -61,10 +61,7 @@ async function onDonateClick() {
          <PhInfo :size="24" weight="regular" />
          <span>{{ t('FooterMenu', 'informations') }}</span>
       </button>
-      <button
-         class="FooterMenu-btn"
-         @click="onDonateClick"
-      >
+      <button class="FooterMenu-btn" @click="onDonateClick">
          <PhHeart :size="24" weight="regular" />
          <span>{{ t('FooterMenu', 'donate') }}</span>
       </button>
@@ -76,8 +73,7 @@ async function onDonateClick() {
    height: var(--footer-height);
    display: flex;
    align-items: center;
-   justify-content: space-around;
-   padding: 0 var(--spacing-md);
+   padding: 0;
    background: var(--color-bg-elevated);
    flex-shrink: 0;
    border-top: 1px solid var(--color-bg);
@@ -85,14 +81,18 @@ async function onDonateClick() {
 }
 
 .FooterMenu-btn {
+   flex: 1;
+   min-width: 0;
    display: flex;
    flex-direction: column;
    align-items: center;
    gap: var(--spacing-xs);
-   padding: var(--spacing-sm) var(--spacing-md);
+   padding: var(--spacing-sm);
    color: var(--color-text-muted);
    border-radius: 8px;
-   transition: color 0.2s, text-shadow 0.3s;
+   transition:
+      color 0.2s,
+      text-shadow 0.3s;
 }
 
 .FooterMenu-btn:hover {
@@ -114,5 +114,11 @@ async function onDonateClick() {
 .FooterMenu-btn span {
    font-size: 0.75rem;
    font-weight: 500;
+   width: 100%;
+   min-width: 0;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+   text-align: center;
 }
 </style>
