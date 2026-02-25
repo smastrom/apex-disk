@@ -8,6 +8,7 @@ export const ScanResults = {
       deleteSize: 'Delete ({{size}})',
       resetSelection: 'Reset',
       abort: 'Abort',
+      openInFinder: 'Open folder in Finder',
    },
    it: {
       scanning: 'Scansione… {{current}} di {{total}}',
@@ -18,5 +19,6 @@ export const ScanResults = {
       deleteSize: 'Elimina ({{size}})',
       resetSelection: 'Resetta',
       abort: 'Annulla',
+      openInFinder: 'Apri cartella nel Finder',
    },
 } as const

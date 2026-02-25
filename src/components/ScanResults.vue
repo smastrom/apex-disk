@@ -15,7 +15,8 @@ import ScanLoadingView from './ScanLoadingView.vue'
 import ScanSplashScreen from './ScanSplashScreen.vue'
 
 import { ref, reactive, watch, computed, inject, type Ref } from 'vue'
-import { PhCaretLeft, PhCaretRight } from '@phosphor-icons/vue'
+import { PhCaretLeft, PhCaretRight, PhFolder, PhTrash } from '@phosphor-icons/vue'
+import { openPath } from '@tauri-apps/plugin-opener'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 
 import { useTranslations } from '@/lib/useTranslations'
@@ -50,14 +51,18 @@ const emit = defineEmits<{
    (e: 'update:selectedSize', value: number): void
 }>()
 
+const showDeleteResults = ref(false)
+
 interface NavEntry {
    items: FolderInfo[]
    label: string
+   path: string
 }
 
 const backStack = ref<NavEntry[]>([])
 const forwardStack = ref<NavEntry[]>([])
-const current = ref<NavEntry>({ items: [], label: '' })
+const current = ref<NavEntry>({ items: [], label: '', path: '' })
+const homePath = ref('')
 
 // Map instead of Set: Map.get(key) tracks per-key, not ITERATE_KEY.
 // This means only the toggled ListItem re-renders, not the entire list.
@@ -73,6 +78,11 @@ function buildSizeIndex(items: FolderInfo[]) {
    }
 }
 
+function parentDir(path: string): string {
+   const i = path.lastIndexOf('/')
+   return i <= 0 ? '' : path.slice(0, i)
+}
+
 watch(
    () => props.folders,
    (folders) => {
@@ -81,12 +91,15 @@ watch(
          buildSizeIndex(folders)
          backStack.value = []
          forwardStack.value = []
-         current.value = { items: folders, label: '' }
+         const rootPath = parentDir(folders[0].path)
+         homePath.value = rootPath
+         current.value = { items: folders, label: '', path: rootPath }
       } else {
          sizeIndex.clear()
          backStack.value = []
          forwardStack.value = []
-         current.value = { items: [], label: '' }
+         current.value = { items: [], label: '', path: '' }
+         homePath.value = ''
          selectedMap.clear()
       }
    },
@@ -96,6 +109,16 @@ watch(
 const showZeroByteFolders = computed(
    () => storeRef?.value?.settings?.value?.showZeroByteFolders ?? false
 )
+
+/** Path for display: home directory shown as ~. */
+const displayPath = computed(() => {
+   const path = current.value.path
+   const home = homePath.value
+   if (!path) return '/'
+   if (path === home) return '~'
+   if (home && path.startsWith(home + '/')) return '~' + path.slice(home.length)
+   return path
+})
 
 const displayedItems = computed(() => {
    const items = current.value.items
@@ -108,7 +131,7 @@ const rowVirtualizer = useVirtualizer(
    computed(() => ({
       count: displayedItems.value.length,
       getScrollElement: () => parentRef.value,
-      estimateSize: () => 64,
+      estimateSize: () => 72,
       overscan: 10,
       getItemKey: (index: number) => displayedItems.value[index]?.path ?? index,
    }))
@@ -153,7 +176,7 @@ function goInto(item: FolderInfo) {
    withTransition(async () => {
       backStack.value = [...backStack.value, { ...current.value }]
       forwardStack.value = []
-      current.value = { items: item.children, label: item.name }
+      current.value = { items: item.children, label: item.name, path: item.path }
    })
 }
 
@@ -175,8 +198,18 @@ function goForward() {
    })
 }
 
+async function openCurrentInFinder() {
+   const path = current.value.path
+   if (!path) return
+   try {
+      await openPath(path)
+   } catch (err) {
+      console.error('Failed to open folder in Finder:', err)
+   }
+}
+
 function onDeleteClick() {
-   // Logic to be implemented later
+   showDeleteResults.value = true
 }
 
 function onAbort() {
@@ -210,6 +243,17 @@ function onAbort() {
                   <PhCaretRight :size="18" weight="regular" />
                </button>
             </div>
+            <button
+               type="button"
+               class="ScanResults-navPath"
+               :title="current.path"
+               :aria-label="t('ScanResults', 'openInFinder')"
+               :disabled="!current.path"
+               @click.stop="openCurrentInFinder"
+            >
+               <PhFolder :size="16" weight="regular" class="ScanResults-navPathIcon" />
+               <span class="ScanResults-navPathText">{{ displayPath }}</span>
+            </button>
             <div class="ScanResults-navActions">
                <button
                   type="button"
@@ -255,13 +299,14 @@ function onAbort() {
             </div>
          </div>
       </div>
-      <div v-if="!loading && folders.length > 0" class="ScanResults-footer">
+      <div v-if="!loading && folders.length > 0 && !showDeleteResults" class="ScanResults-footer">
          <button
             type="button"
             class="ScanResults-deleteBtn"
             :disabled="selectedMap.size === 0"
             @click="onDeleteClick"
          >
+            <PhTrash :size="18" weight="bold" />
             {{
                selectedMap.size === 0
                   ? t('ScanResults', 'delete')
@@ -290,11 +335,7 @@ function onAbort() {
    max-width: var(--content-max-width);
    margin: 0 auto;
    width: 100%;
-}
-
-.ScanResults-content {
    padding: 0;
-   min-height: 0;
    overflow: hidden;
    padding-bottom: var(--delete-footer-height);
 }
@@ -304,6 +345,7 @@ function onAbort() {
    display: flex;
    align-items: center;
    justify-content: space-between;
+   gap: var(--spacing-md);
    padding: var(--spacing-md);
    border-bottom: 1px solid var(--color-bg);
 }
@@ -344,6 +386,59 @@ function onAbort() {
 .ScanResults-navBtn:disabled {
    opacity: 0.5;
    cursor: not-allowed;
+}
+
+.ScanResults-navPath {
+   flex: 1;
+   min-width: 0;
+   display: flex;
+   align-items: center;
+   gap: var(--spacing-xs);
+   padding: var(--spacing-xs) 0;
+   font-size: 0.8125rem;
+   color: var(--color-text-muted);
+   background: none;
+   border: none;
+   border-radius: 0;
+   cursor: pointer;
+   text-align: left;
+   position: relative;
+}
+
+.ScanResults-navPath::after {
+   content: '';
+   position: absolute;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   height: 1px;
+   background: var(--color-accent);
+   transform: scaleX(0);
+   transition: transform 0.2s ease;
+   pointer-events: none;
+}
+
+.ScanResults-navPath:hover {
+   color: var(--color-text);
+}
+
+.ScanResults-navPath:hover:not(:disabled)::after {
+   transform: scaleX(1);
+}
+
+.ScanResults-navPath:disabled {
+   cursor: default;
+}
+
+.ScanResults-navPathIcon {
+   flex-shrink: 0;
+   color: var(--color-accent);
+}
+
+.ScanResults-navPathText {
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
 }
 
 .ScanResults-resetBtn {

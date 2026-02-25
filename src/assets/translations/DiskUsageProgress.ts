@@ -2,11 +2,11 @@ export const DiskUsageProgress = {
    en: {
       total: 'Total',
       free: 'Free',
-      newFree: 'New free',
+      newFree: 'New',
    },
    it: {
       total: 'Totale',
       free: 'Libero',
-      newFree: 'Nuovo libero',
+      newFree: 'Nuovo',
    },
 } as const
