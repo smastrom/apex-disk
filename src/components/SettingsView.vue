@@ -10,6 +10,8 @@ Example:
 -->
 
 <script setup lang="ts">
+import { PhCaretDown } from '@phosphor-icons/vue'
+
 import { inject, computed, type Ref } from 'vue'
 
 import { useTranslations } from '@/lib/useTranslations'
@@ -76,27 +78,33 @@ function toggleAnimations() {
          <section class="SettingsGroup">
             <div class="SettingsGroup-row">
                <span class="SettingsGroup-label">{{ t('SettingsView', 'language') }}</span>
-               <select
-                  class="SettingsSelect"
-                  :value="settings.language"
-                  @change="store?.setLanguage(($event.target as HTMLSelectElement).value as Language)"
-               >
-                  <option v-for="opt in languageOptions" :key="opt.value" :value="opt.value">
-                     {{ opt.label }}
-                  </option>
-               </select>
+               <div class="SettingsView-selectWrap">
+                  <select
+                     class="SettingsSelect"
+                     :value="settings.language"
+                     @change="store?.setLanguage(($event.target as HTMLSelectElement).value as Language)"
+                  >
+                     <option v-for="opt in languageOptions" :key="opt.value" :value="opt.value">
+                        {{ opt.label }}
+                     </option>
+                  </select>
+                  <PhCaretDown :size="14" weight="regular" class="SettingsView-selectChevron" />
+               </div>
             </div>
             <div class="SettingsGroup-row">
                <span class="SettingsGroup-label">{{ t('SettingsView', 'themeColor') }}</span>
-               <select
-                  class="SettingsSelect"
-                  :value="settings.themeColor"
-                  @change="store?.setThemeColor(($event.target as HTMLSelectElement).value as ThemeColor)"
-               >
-                  <option v-for="opt in themeOptions" :key="opt.value" :value="opt.value">
-                     {{ opt.label }}
-                  </option>
-               </select>
+               <div class="SettingsView-selectWrap">
+                  <select
+                     class="SettingsSelect"
+                     :value="settings.themeColor"
+                     @change="store?.setThemeColor(($event.target as HTMLSelectElement).value as ThemeColor)"
+                  >
+                     <option v-for="opt in themeOptions" :key="opt.value" :value="opt.value">
+                        {{ opt.label }}
+                     </option>
+                  </select>
+                  <PhCaretDown :size="14" weight="regular" class="SettingsView-selectChevron" />
+               </div>
             </div>
          </section>
 
@@ -176,5 +184,23 @@ function toggleAnimations() {
 .SettingsView-content {
    max-width: var(--content-max-width);
    margin: 0 auto;
+}
+
+.SettingsView-selectWrap {
+   position: relative;
+   display: inline-block;
+}
+
+.SettingsView-selectWrap .SettingsSelect {
+   background-image: none;
+}
+
+.SettingsView-selectChevron {
+   position: absolute;
+   right: 10px;
+   top: 50%;
+   transform: translateY(-50%);
+   pointer-events: none;
+   color: var(--color-text-muted);
 }
 </style>
