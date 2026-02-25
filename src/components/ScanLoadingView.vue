@@ -261,6 +261,7 @@ onUnmounted(() => {
    background: none;
    border: none;
    cursor: pointer;
+   margin-top: var(--spacing-md);
 }
 
 .ScanLoadingView-abortBtn:hover {
