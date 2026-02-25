@@ -14,9 +14,9 @@
       {
         "title": "Mac User Lens",
         "hiddenTitle": true,
-        "width": 415,
+        "width": 425,
         "height": 725,
-        "resizable": true,
+        "resizable": false,
         "fullscreen": false,
         "titleBarStyle": "Overlay",
         "center": true

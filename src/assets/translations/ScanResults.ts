@@ -5,6 +5,7 @@ export const ScanResults = {
       startScan: 'Start Scan',
       foldersLoaded: '{{count}} folders loaded',
       deleteSize: 'Delete ({{size}})',
+      resetSelection: 'Reset',
       abort: 'Abort',
    },
    it: {
@@ -13,6 +14,7 @@ export const ScanResults = {
       startScan: 'Avvia scansione',
       foldersLoaded: '{{count}} cartelle caricate',
       deleteSize: 'Elimina ({{size}})',
+      resetSelection: 'Resetta',
       abort: 'Annulla',
    },
 } as const

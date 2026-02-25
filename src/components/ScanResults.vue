@@ -190,9 +190,19 @@ function onAbort() {
                   <PhCaretRight :size="18" weight="regular" />
                </button>
             </div>
-            <button type="button" class="ScanResults-abortBtn" @click="onAbort">
-               {{ t('ScanResults', 'abort') }}
-            </button>
+            <div class="ScanResults-navActions">
+               <button
+                  type="button"
+                  class="ScanResults-resetBtn"
+                  :disabled="selectedMap.size === 0"
+                  @click="selectedMap.clear()"
+               >
+                  {{ t('ScanResults', 'resetSelection') }}
+               </button>
+               <button type="button" class="ScanResults-abortBtn" @click="onAbort">
+                  {{ t('ScanResults', 'abort') }}
+               </button>
+            </div>
          </nav>
          <div
             class="ScanResults-listWrap"
@@ -320,6 +330,12 @@ function onAbort() {
    gap: var(--spacing-sm);
 }
 
+.ScanResults-navActions {
+   display: flex;
+   align-items: center;
+   gap: var(--spacing-md);
+}
+
 .ScanResults-navBtn {
    display: flex;
    align-items: center;
@@ -340,6 +356,26 @@ function onAbort() {
 }
 
 .ScanResults-navBtn:disabled {
+   opacity: 0.5;
+   cursor: not-allowed;
+}
+
+.ScanResults-resetBtn {
+   padding: 0;
+   font-size: 0.875rem;
+   font-weight: 500;
+   color: var(--color-text-muted);
+   background: none;
+   border: none;
+   cursor: pointer;
+}
+
+.ScanResults-resetBtn:hover:not(:disabled) {
+   color: var(--color-text);
+   opacity: 0.85;
+}
+
+.ScanResults-resetBtn:disabled {
    opacity: 0.5;
    cursor: not-allowed;
 }
