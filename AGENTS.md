@@ -4,13 +4,13 @@ This document defines code style and conventions. **Always follow these rules** 
 
 ---
 
-## 1. Project guidelines
-
 ### For AI agents
 
 - **Read the relevant section** before making edits (e.g. Vue rules when editing `.vue` files).
 - **"Do not"** = never do this. **"Avoid"** = prefer not to, but allowed in edge cases.
 - **When in doubt**, prefer the simpler option (no extra files, no extra imports, no extra reactivity).
+
+## 1. Project guidelines
 
 ### File organization
 
@@ -39,12 +39,14 @@ This document defines code style and conventions. **Always follow these rules** 
 
 #### CSS files
 
+
 | File                         | Purpose                                              |
 | ---------------------------- | ---------------------------------------------------- |
 | `src/assets/css/theme.css`   | Variables (colors, spacing, etc.) and fonts          |
 | `src/assets/css/global.css`  | Styles for `html`, `body`, and other global elements |
 | `src/assets/css/reset.css`   | Style normalization                                  |
 | `src/assets/css/classes.css` | Reusable utility classes used across the project     |
+
 
 **These rules are mandatory.** Do not mix concerns between files.
 
@@ -493,3 +495,4 @@ use rayon::prelude::*;
 
 use crate::FolderInfo;
 ```
+
