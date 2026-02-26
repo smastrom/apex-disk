@@ -10,6 +10,7 @@ Example:
 -->
 
 <script setup lang="ts">
+import AppLoadingScreen from '@/components/AppLoadingScreen.vue'
 import Layout from '@/components/Layout.vue'
 
 import { ref, shallowRef, provide, onMounted, onUnmounted, watch } from 'vue'
@@ -27,6 +28,8 @@ import '@/assets/css/reset.css'
 import '@/assets/css/classes.css'
 
 const settingsStore = shallowRef<SettingsStore | null>(null)
+const appReady = ref(false)
+
 provide(SETTINGS_KEY, settingsStore)
 
 function applyTheme(theme: string) {
@@ -43,6 +46,8 @@ onMounted(async () => {
       applyTheme(settingsStore.value!.getThemeColor())
    } catch (err) {
       console.error('Failed to load settings:', err)
+   } finally {
+      appReady.value = true
    }
 })
 
@@ -105,13 +110,36 @@ onUnmounted(() => {
 </script>
 
 <template>
-   <Layout
-      :folders="folders"
-      :loading="loading"
-      :progress="progress"
-      :activeView="activeView"
-      @select-view="onSelectView"
-      @start-scan="loadFolders"
-      @abort="onAbort"
-   />
+   <Transition name="App-ready" mode="out-in">
+      <AppLoadingScreen v-if="!appReady" key="loading" />
+      <Layout
+         v-else
+         key="app"
+         :folders="folders"
+         :loading="loading"
+         :progress="progress"
+         :activeView="activeView"
+         @select-view="onSelectView"
+         @start-scan="loadFolders"
+         @abort="onAbort"
+      />
+   </Transition>
 </template>
+
+<style scoped>
+.App-ready-leave-active {
+   transition: opacity 0.2s ease-out;
+}
+
+.App-ready-leave-to {
+   opacity: 0;
+}
+
+.App-ready-enter-active {
+   transition: opacity 0.15s ease-out;
+}
+
+.App-ready-enter-from {
+   opacity: 0;
+}
+</style>
