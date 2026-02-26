@@ -23,8 +23,8 @@ This document defines code style and conventions. **Always follow these rules** 
 
 - Before adding a function, **check `src/lib/`** — it may already exist (e.g. `formatBytes` in `format.ts`)
 - If the function **might be used outside** the current file, define it in `src/lib/`:
-  - **Generic utilities** → `src/lib/utils.ts` (e.g. `isClient`, `noop`)
-  - **Domain-specific** → new file (e.g. `src/lib/format.ts` for `formatBytes`, `formatDuration`)
+   - **Generic utilities** → `src/lib/utils.ts` (e.g. `isClient`, `noop`)
+   - **Domain-specific** → new file (e.g. `src/lib/format.ts` for `formatBytes`, `formatDuration`)
 - **Do not hesitate to create new files** in `src/lib/` when a function is reusable but not generic enough for `utils.ts`
 
 #### Constants
@@ -39,14 +39,12 @@ This document defines code style and conventions. **Always follow these rules** 
 
 #### CSS files
 
-
 | File                         | Purpose                                              |
 | ---------------------------- | ---------------------------------------------------- |
 | `src/assets/css/theme.css`   | Variables (colors, spacing, etc.) and fonts          |
 | `src/assets/css/global.css`  | Styles for `html`, `body`, and other global elements |
 | `src/assets/css/reset.css`   | Style normalization                                  |
 | `src/assets/css/classes.css` | Reusable utility classes used across the project     |
-
 
 **These rules are mandatory.** Do not mix concerns between files.
 
@@ -58,9 +56,9 @@ Translations are stored in `src/assets/translations/`. The active language comes
 
 ##### File structure
 
-- `**global.ts`** — Strings shared across multiple components (e.g. `appName`, `scan`, `settings`, `donate`)
+- `**global.ts`\*\* — Strings shared across multiple components (e.g. `appName`, `scan`, `settings`, `donate`)
 - **Component-named files** — One file per component: `Header.ts`, `MainView.ts`, `SettingsView.ts`, `FooterNav.ts`, `Layout.ts`
-- `**index.ts`** — Exports `translations` and `createT(lang)`
+- `**index.ts`\*\* — Exports `translations` and `createT(lang)`
 
 ##### Translation file format
 
@@ -147,8 +145,8 @@ To add or remove protected folders: edit both files. Only the exact folders in t
 #### Commits
 
 - **Do not use Conventional Commits** — no prefixes like `feat:`, `fix:`, `refactor:`, `docs:`, etc.
-- Use the project's existing nomenclature: **imperative verb + short description** (e.g. *Add protected system folders*, *Fix window drag region*, *Improve default settings*, *Move animations to their own settings group*).
-- Keep the first line concise; add a body or scope after a colon when useful (e.g. *Fix abort, view switch lag, layout jumps, and startup crash*).
+- Use the project's existing nomenclature: **imperative verb + short description** (e.g. _Add protected system folders_, _Fix window drag region_, _Improve default settings_, _Move animations to their own settings group_).
+- Keep the first line concise; add a body or scope after a colon when useful (e.g. _Fix abort, view switch lag, layout jumps, and startup crash_).
 
 ---
 
@@ -406,7 +404,7 @@ Media queries must be **nested inside the selector**, not at the root level. Nev
 
 - Variable names: **kebab-case** (e.g. `--primary-color`, `--spacing-md`)
 - If the same value appears **more than 2 times** in a component, move it to `theme.css`:
-  - e.g. `12px` used for indentation in 3 places → `--tree-indent: 12px` in `theme.css`
+   - e.g. `12px` used for indentation in 3 places → `--tree-indent: 12px` in `theme.css`
 
 ### TypeScript / JavaScript
 
@@ -415,6 +413,29 @@ Media queries must be **nested inside the selector**, not at the root level. Nev
 - Add comments **only when necessary**
 - Prefer **function declarations** over `const fn = () => {}`
 - **Prefer `interface`** over `type` when possible (see File organization for placement rules)
+
+#### If statements
+
+`if` (and `else`, `else if`) bodies must use curly brackets. The only exception is when the condition and the single statement fit on **one line**.
+
+```ts
+// ✅ GOOD — single line, no braces needed
+if (bytes === 0) return '0 B'
+
+// ✅ GOOD — multiple statements or multi-line: use braces
+if (theme === ROOT_THEME) {
+   document.documentElement.removeAttribute('data-theme')
+} else {
+   document.documentElement.setAttribute('data-theme', theme)
+}
+
+// ❌ BAD — body on next line without braces
+if (theme === ROOT_THEME) document.documentElement.removeAttribute('data-theme')
+
+// ❌ BAD — else without braces
+if (x) doSomething()
+else doOther()
+```
 
 #### Return types
 
@@ -495,4 +516,3 @@ use rayon::prelude::*;
 
 use crate::FolderInfo;
 ```
-
