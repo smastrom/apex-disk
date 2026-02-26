@@ -2,22 +2,24 @@
 
 This document defines code style and conventions. **Always follow these rules** when editing this codebase.
 
-## For AI agents
+---
+
+## 1. Project guidelines
+
+### For AI agents
 
 - **Read the relevant section** before making edits (e.g. Vue rules when editing `.vue` files).
 - **"Do not"** = never do this. **"Avoid"** = prefer not to, but allowed in edge cases.
 - **When in doubt**, prefer the simpler option (no extra files, no extra imports, no extra reactivity).
 
----
+### File organization
 
-## File organization
-
-### New files
+#### New files
 
 - **Do not create tests** unless explicitly requested
 - **Do not create documentation** unless explicitly requested
 
-### Functions
+#### Functions
 
 - Before adding a function, **check `src/lib/`** — it may already exist (e.g. `formatBytes` in `format.ts`)
 - If the function **might be used outside** the current file, define it in `src/lib/`:
@@ -25,18 +27,17 @@ This document defines code style and conventions. **Always follow these rules** 
   - **Domain-specific** → new file (e.g. `src/lib/format.ts` for `formatBytes`, `formatDuration`)
 - **Do not hesitate to create new files** in `src/lib/` when a function is reusable but not generic enough for `utils.ts`
 
-### Constants
+#### Constants
 
 - **Module-local constants**: Define in the same file when used only within that module
 - **Shared constants**: If the scope extends beyond the module where they are declared, define them in `src/lib/constants.ts`
 
-### Types
+#### Types
 
 - **Single-file types**: Define in the same file (e.g. `ScanProgress` only used in `App.vue`)
 - **Shared types**: Define in `src/types/` — e.g. `FolderInfo` used by `App.vue`, `FolderNode.vue`, and Rust → `src/types/structures.ts`
 
-### CSS files
-
+#### CSS files
 
 | File                         | Purpose                                              |
 | ---------------------------- | ---------------------------------------------------- |
@@ -45,20 +46,121 @@ This document defines code style and conventions. **Always follow these rules** 
 | `src/assets/css/reset.css`   | Style normalization                                  |
 | `src/assets/css/classes.css` | Reusable utility classes used across the project     |
 
-
 **These rules are mandatory.** Do not mix concerns between files.
+
+### Project-specific implementation
+
+#### Translations
+
+Translations are stored in `src/assets/translations/`. The active language comes from the settings store (`settings.language`).
+
+##### File structure
+
+- `**global.ts`** — Strings shared across multiple components (e.g. `appName`, `scan`, `settings`, `donate`)
+- **Component-named files** — One file per component: `Header.ts`, `MainView.ts`, `SettingsView.ts`, `FooterNav.ts`, `Layout.ts`
+- `**index.ts`** — Exports `translations` and `createT(lang)`
+
+##### Translation file format
+
+Each file exports an object with `en` and `it` keys (matching `Language` in `src/types/settings.ts`):
+
+```ts
+// SettingsView.ts
+export const SettingsView = {
+   en: { loadingSettings: 'Loading settings…', language: 'Language', ... },
+   it: { loadingSettings: 'Caricamento impostazioni…', language: 'Lingua', ... },
+} as const
+```
+
+##### Usage in components
+
+1. Import `useTranslations` from `@/lib/useTranslations`
+2. Call `const { t } = useTranslations()`
+3. Use `t(module, key)` or `t(module, key, vars)` for interpolation
+
+```vue
+<script setup lang="ts">
+import { useTranslations } from '@/lib/useTranslations'
+
+const { t } = useTranslations()
+</script>
+
+<template>
+   <p>
+      {{
+         t('MainView', 'scanning', {
+            current: progress.current,
+            total: progress.total,
+         })
+      }}
+   </p>
+</template>
+```
+
+##### Interpolation
+
+Use `{{varName}}` in translation strings. Pass variables as the third argument:
+
+```ts
+// MainView.ts: scanning: 'Scanning… {{current}} of {{total}}'
+t('MainView', 'scanning', { current: 1, total: 10 }) // → "Scanning… 1 of 10"
+```
+
+##### Adding a new language
+
+1. Add the language to `Language` in `src/types/settings.ts`
+2. Add the locale key to every translation file (e.g. `de: { ... }`)
+3. Update `createT` in `index.ts` if the type needs to change
+
+##### Adding translations for a new component
+
+1. Create `src/assets/translations/ComponentName.ts` with `en` and `it` keys
+2. Import and add it to `translations` in `index.ts`
+3. Use `t('ComponentName', 'key')` in the component
+
+#### Safe / protected folders
+
+Standard macOS home directory folders (Applications, Desktop, Documents, Downloads, Library, Movies, Music, Pictures, Public) cannot be selected or deleted. Their contents (e.g. Library/Application Support, files in Desktop) remain selectable.
+
+##### Constants
+
+- **Rust**: `src-tauri/src/safe_folders.rs` — `PROTECTED_RELATIVE_PATHS` (paths relative to home)
+- **Frontend**: `src/lib/constants.ts` — `PROTECTED_FOLDER_NAMES` (must match Rust for reference)
+
+To add or remove protected folders: edit both files. Only the exact folders in the list are protected, not their descendants.
+
+##### Implementation
+
+- **Rust**: `FolderInfo.is_protected` is set when building the tree; `safe_folders::is_path_protected()` checks exact path match. Future delete command must reject protected paths.
+- **Frontend**: `ListItem` receives `selectable={!item.is_protected}`; `toggleSelect` ignores protected items.
+
+### Workflow
+
+#### Package manager
+
+- **Use pnpm** as package manager.
+- **Do not install any npm package** unless explicitly asked.
+- **Do not propose to launch dev servers** when testing implementations. The dev server is always running when the agent is working for the human.
+
+#### Commits
+
+- **Do not use Conventional Commits** — no prefixes like `feat:`, `fix:`, `refactor:`, `docs:`, etc.
+- Use the project's existing nomenclature: **imperative verb + short description** (e.g. *Add protected system folders*, *Fix window drag region*, *Improve default settings*, *Move animations to their own settings group*).
+- Keep the first line concise; add a body or scope after a colon when useful (e.g. *Fix abort, view switch lag, layout jumps, and startup crash*).
 
 ---
 
-## Vue
+## 2. Code rules
 
-### Component structure
+### Vue
+
+#### Component structure
 
 - **Always use `<script setup lang="ts">`** — no Options API, no plain `<script>`.
 - **Prefer splitting big components** into smaller ones using a "blocks" logic: each sub-component handles a distinct UI block
 - Example: instead of one `ScanView.vue` with 200+ lines, split into `ScanViewHeader.vue`, `ScanViewProgress.vue`, `ScanViewTree.vue` — each with a single responsibility
 
-### Component documentation
+#### Component documentation
 
 Above each component, add a comment block with:
 
@@ -95,12 +197,12 @@ Example:
 </template>
 ```
 
-### Class naming
+#### Class naming
 
 - Format: `ComponentName-nestedElement`
 - `ComponentName` must equal the **filename** (e.g. `FolderNode.vue` → `FolderNode-item`, `FolderNode-row`)
 
-### Props and component usage
+#### Props and component usage
 
 - **Prop definitions**: Always camelCase (e.g. `expandedPaths`, `formatBytes`)
 - **Prop bindings in templates**: Use camelCase (e.g. `:expandedPaths`, `:formatBytes`) — JSX-like convention
@@ -108,18 +210,18 @@ Example:
 - **Emits**: Use kebab-case (e.g. `emit('select-item')`, not `emit('selectItem')`)
 - **Never use snake_case** for props or component names (e.g. `expanded_paths` is wrong)
 
-### Reactivity
+#### Reactivity
 
 - Use `ref`, `computed`, `reactive`, etc. **only when strictly necessary**
 - **Avoid `computed`** when the value is not meant to be reactive
 - Prefer plain variables when reactivity is not needed
 
-### Lifecycle
+#### Lifecycle
 
 - Use `onMounted` **only when strictly required**
 - Avoid it when the same can be achieved without lifecycle hooks
 
-### Imports
+#### Imports
 
 Sort imports in this order, with a **blank line between each group**:
 
@@ -147,7 +249,7 @@ import Package from 'package.json'
 import '@/assets/css/reset.css'
 ```
 
-### Renaming components
+#### Renaming components
 
 When renaming a Vue component:
 
@@ -155,24 +257,26 @@ When renaming a Vue component:
 2. **Rename CSS classes** that start with the component (file) name so they still match the new filename (e.g. `FooterMenu-root` → `FooterNav-root`, `FooterMenu-btn` → `FooterNav-btn`). Use the same convention: `ComponentName-nestedElement`.
 3. **Rename translations** in `src/assets/translations/` if the component has a dedicated translation file: rename the file (e.g. `FooterMenu.ts` → `FooterNav.ts`), the exported object name, and add the new module to `index.ts` (and remove the old one). Update all `t('OldName', 'key')` calls in the component to use the new module name.
 
----
+### CSS
 
-## CSS
-
-### Class naming
+#### Class naming
 
 - Format: `ComponentName-nestedElement`
 - `ComponentName` must match the **filename** (e.g. `FolderNode.vue` → `FolderNode-item`, `FolderNode-row`, `FolderNode-children`)
 
 ```css
 /* FolderNode.vue */
-.FolderNode-item { }
-.FolderNode-row { }
-.FolderNode-arrow { }
-.FolderNode-children { }
+.FolderNode-item {
+}
+.FolderNode-row {
+}
+.FolderNode-arrow {
+}
+.FolderNode-children {
+}
 ```
 
-### Nesting
+#### Nesting
 
 Use **CSS nesting** — always. Add a **blank line** between selector declarations.
 
@@ -270,7 +374,7 @@ Use **CSS nesting** — always. Add a **blank line** between selector declaratio
 }
 ```
 
-### Media queries
+#### Media queries
 
 Media queries must be **nested inside the selector**, not at the root level. Never group multiple selectors under the same root-level media query:
 
@@ -296,28 +400,26 @@ Media queries must be **nested inside the selector**, not at the root level. Nev
 }
 ```
 
-### Variables
+#### Variables
 
 - Variable names: **kebab-case** (e.g. `--primary-color`, `--spacing-md`)
 - If the same value appears **more than 2 times** in a component, move it to `theme.css`:
   - e.g. `12px` used for indentation in 3 places → `--tree-indent: 12px` in `theme.css`
 
----
+### TypeScript / JavaScript
 
-## TypeScript / JavaScript
-
-### General
+#### General
 
 - Add comments **only when necessary**
 - Prefer **function declarations** over `const fn = () => {}`
 - **Prefer `interface`** over `type` when possible (see File organization for placement rules)
 
-### Return types
+#### Return types
 
 - **Avoid** typing the return type after `()`; prefer casting the return value with `as` when declaring it
 - If the return type is obvious and the same as the sole parameter (e.g. `(x: string): string`), omit the return type
 
-### Variables
+#### Variables
 
 **Avoid declaring many variables just to shorten names** — prefer using the expression directly. Do not introduce `const s = x`, `const curr = y` etc. only to save a few characters.
 
@@ -331,7 +433,7 @@ if (s && curr) s.setShowHiddenFiles(!curr.showHiddenFiles)
 if (store.value && settings.value) store.value.setShowHiddenFiles(!settings.value.showHiddenFiles)
 ```
 
-### JSDoc
+#### JSDoc
 
 Add JSDoc to all functions **except** those that are: (a) defined and used only in the same file, and (b) less than 4 lines.
 
@@ -352,7 +454,7 @@ function clamp(n: number) {
 }
 ```
 
-### Object keys (Tauri / Rust boundary)
+#### Object keys (Tauri / Rust boundary)
 
 - **snake_case**: Objects crossing boundaries — Tauri commands, Rust structs, API payloads, `invoke()` responses
 - **camelCase**: Objects used only in Vue/JS (component state, local variables, computed values)
@@ -370,11 +472,9 @@ const localState = { expandedPaths: new Set(), currentFolder: '' }
 const progress = { current: 0, total: 1, folder: '' }
 ```
 
----
+### Rust
 
-## Rust
-
-### Imports
+#### Imports
 
 Sort imports in this order, with a **blank line between each group**:
 
@@ -393,110 +493,3 @@ use rayon::prelude::*;
 
 use crate::FolderInfo;
 ```
-
----
-
-## Workflow
-
-### Package manager
-
-- **Use pnpm** as package manager.
-- **Do not install any npm package** unless explicitly asked.
-- **Do not propose to launch dev servers** when testing implementations. The dev server is always running when the agent is working for the human.
-
-### Commits
-
-- **Do not use Conventional Commits** — no prefixes like `feat:`, `fix:`, `refactor:`, `docs:`, etc.
-- Use the project's existing nomenclature: **imperative verb + short description** (e.g. *Add protected system folders*, *Fix window drag region*, *Improve default settings*, *Move animations to their own settings group*).
-- Keep the first line concise; add a body or scope after a colon when useful (e.g. *Fix abort, view switch lag, layout jumps, and startup crash*).
-
----
-
-## Project-specific implementation
-
-### Translations
-
-Translations are stored in `src/assets/translations/`. The active language comes from the settings store (`settings.language`).
-
-#### File structure
-
-- `**global.ts`** — Strings shared across multiple components (e.g. `appName`, `scan`, `settings`, `donate`)
-- **Component-named files** — One file per component: `Header.ts`, `MainView.ts`, `SettingsView.ts`, `FooterNav.ts`, `Layout.ts`
-- `**index.ts`** — Exports `translations` and `createT(lang)`
-
-#### Translation file format
-
-Each file exports an object with `en` and `it` keys (matching `Language` in `src/types/settings.ts`):
-
-```ts
-// SettingsView.ts
-export const SettingsView = {
-   en: { loadingSettings: 'Loading settings…', language: 'Language', ... },
-   it: { loadingSettings: 'Caricamento impostazioni…', language: 'Lingua', ... },
-} as const
-```
-
-#### Usage in components
-
-1. Import `useTranslations` from `@/lib/useTranslations`
-2. Call `const { t } = useTranslations()`
-3. Use `t(module, key)` or `t(module, key, vars)` for interpolation
-
-```vue
-<script setup lang="ts">
-import { useTranslations } from '@/lib/useTranslations'
-
-const { t } = useTranslations()
-</script>
-
-<template>
-   <p>
-      {{
-         t('MainView', 'scanning', {
-            current: progress.current,
-            total: progress.total,
-         })
-      }}
-   </p>
-</template>
-```
-
-#### Interpolation
-
-Use `{{varName}}` in translation strings. Pass variables as the third argument:
-
-```ts
-// MainView.ts: scanning: 'Scanning… {{current}} of {{total}}'
-t('MainView', 'scanning', { current: 1, total: 10 }) // → "Scanning… 1 of 10"
-```
-
-#### Adding a new language
-
-1. Add the language to `Language` in `src/types/settings.ts`
-2. Add the locale key to every translation file (e.g. `de: { ... }`)
-3. Update `createT` in `index.ts` if the type needs to change
-
-#### Adding translations for a new component
-
-1. Create `src/assets/translations/ComponentName.ts` with `en` and `it` keys
-2. Import and add it to `translations` in `index.ts`
-3. Use `t('ComponentName', 'key')` in the component
-
----
-
-### Safe / protected folders
-
-Standard macOS home directory folders (Applications, Desktop, Documents, Downloads, Library, Movies, Music, Pictures, Public) cannot be selected or deleted. Their contents (e.g. Library/Application Support, files in Desktop) remain selectable.
-
-#### Constants
-
-- **Rust**: `src-tauri/src/safe_folders.rs` — `PROTECTED_RELATIVE_PATHS` (paths relative to home)
-- **Frontend**: `src/lib/constants.ts` — `PROTECTED_FOLDER_NAMES` (must match Rust for reference)
-
-To add or remove protected folders: edit both files. Only the exact folders in the list are protected, not their descendants.
-
-#### Implementation
-
-- **Rust**: `FolderInfo.is_protected` is set when building the tree; `safe_folders::is_path_protected()` checks exact path match. Future delete command must reject protected paths.
-- **Frontend**: `ListItem` receives `selectable={!item.is_protected}`; `toggleSelect` ignores protected items.
-
