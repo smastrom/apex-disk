@@ -10,17 +10,12 @@ This document defines code style and conventions. **Always follow these rules** 
 
 ---
 
-## File creation
+## File organization
 
-### Do not create
+### New files
 
 - **Do not create tests** unless explicitly requested
 - **Do not create documentation** unless explicitly requested
-
-### Types
-
-- **Single-file types**: Define in the same file (e.g. `ScanProgress` only used in `App.vue`)
-- **Shared types**: Define in `src/types/` — e.g. `FolderInfo` used by `App.vue`, `FolderNode.vue`, and Rust → `src/types/structures.ts`
 
 ### Functions
 
@@ -35,12 +30,13 @@ This document defines code style and conventions. **Always follow these rules** 
 - **Module-local constants**: Define in the same file when used only within that module
 - **Shared constants**: If the scope extends beyond the module where they are declared, define them in `src/lib/constants.ts`
 
-### Vue components
+### Types
 
-- **Prefer splitting big components** into smaller ones using a "blocks" logic: each sub-component handles a distinct UI block
-- Example: instead of one `ScanView.vue` with 200+ lines, split into `ScanViewHeader.vue`, `ScanViewProgress.vue`, `ScanViewTree.vue`—each with a single responsibility
+- **Single-file types**: Define in the same file (e.g. `ScanProgress` only used in `App.vue`)
+- **Shared types**: Define in `src/types/` — e.g. `FolderInfo` used by `App.vue`, `FolderNode.vue`, and Rust → `src/types/structures.ts`
 
 ### CSS files
+
 
 | File                         | Purpose                                              |
 | ---------------------------- | ---------------------------------------------------- |
@@ -49,31 +45,20 @@ This document defines code style and conventions. **Always follow these rules** 
 | `src/assets/css/reset.css`   | Style normalization                                  |
 | `src/assets/css/classes.css` | Reusable utility classes used across the project     |
 
+
 **These rules are mandatory.** Do not mix concerns between files.
 
 ---
 
-## Code style
+## Vue
 
-### Package / development
-
-- **Use pnpm** as package manager.
-- **Do not propose to launch dev servers** when testing implementations. The dev server is always running when the agent is working for the human.
-- **Do not install any npm package** unless explicitly asked.
-
-### Commits
-
-- **Do not use Conventional Commits** — no prefixes like `feat:`, `fix:`, `refactor:`, `docs:`, etc.
-- Use the project’s existing nomenclature: **imperative verb + short description** (e.g. _Add protected system folders_, _Fix window drag region_, _Improve default settings_, _Move animations to their own settings group_).
-- Keep the first line concise; add a body or scope after a colon when useful (e.g. _Fix abort, view switch lag, layout jumps, and startup crash_).
-
----
-
-### Vue
+### Component structure
 
 - **Always use `<script setup lang="ts">`** — no Options API, no plain `<script>`.
+- **Prefer splitting big components** into smaller ones using a "blocks" logic: each sub-component handles a distinct UI block
+- Example: instead of one `ScanView.vue` with 200+ lines, split into `ScanViewHeader.vue`, `ScanViewProgress.vue`, `ScanViewTree.vue` — each with a single responsibility
 
-#### Component documentation
+### Component documentation
 
 Above each component, add a comment block with:
 
@@ -106,27 +91,16 @@ Example:
 </script>
 
 <template>
-  <!-- ... -->
+   <!-- ... -->
 </template>
 ```
 
-#### Reactivity
-
-- Use `ref`, `computed`, `reactive`, etc. **only when strictly necessary**
-- **Avoid `computed`** when the value is not meant to be reactive
-- Prefer plain variables when reactivity is not needed
-
-#### Lifecycle
-
-- Use `onMounted` **only when strictly required**
-- Avoid it when the same can be achieved without lifecycle hooks
-
-#### Class naming
+### Class naming
 
 - Format: `ComponentName-nestedElement`
 - `ComponentName` must equal the **filename** (e.g. `FolderNode.vue` → `FolderNode-item`, `FolderNode-row`)
 
-#### Props and component usage
+### Props and component usage
 
 - **Prop definitions**: Always camelCase (e.g. `expandedPaths`, `formatBytes`)
 - **Prop bindings in templates**: Use camelCase (e.g. `:expandedPaths`, `:formatBytes`) — JSX-like convention
@@ -134,9 +108,18 @@ Example:
 - **Emits**: Use kebab-case (e.g. `emit('select-item')`, not `emit('selectItem')`)
 - **Never use snake_case** for props or component names (e.g. `expanded_paths` is wrong)
 
----
+### Reactivity
 
-### Imports (Vue & JS/TS)
+- Use `ref`, `computed`, `reactive`, etc. **only when strictly necessary**
+- **Avoid `computed`** when the value is not meant to be reactive
+- Prefer plain variables when reactivity is not needed
+
+### Lifecycle
+
+- Use `onMounted` **only when strictly required**
+- Avoid it when the same can be achieved without lifecycle hooks
+
+### Imports
 
 Sort imports in this order, with a **blank line between each group**:
 
@@ -145,101 +128,131 @@ Sort imports in this order, with a **blank line between each group**:
 3. **Internal modules** (`@/` paths or relative `./utils/...`)
 4. **Constants** (`import { SETTINGS_KEY } from "@/stores/settings";`, `import { DEFAULT_SETTINGS } from "@/types/settings";`)
 5. **Types** (`import type { SettingsStore } from "@/stores/settings";`, `import type { FolderInfo } from "@/types/structures";`)
-6. **Other** (JSON, assets, CSS)
+6. **JSON** (`import Package from 'package.json'`)
+7. **CSS** (`import '@/assets/css/reset.css'`)
+8. **Other** (assets, etc.)
 
 ```ts
-import FolderNode from "@/components/FolderNode.vue";
+import FolderNode from '@/components/FolderNode.vue'
 
-import { ref, onUnmounted } from "vue";
-import { invoke } from "@tauri-apps/api/core";
+import { ref, onUnmounted } from 'vue'
+import { invoke } from '@tauri-apps/api/core'
 
-import { formatBytes } from "@/lib/format";
-import type { FolderInfo } from "@/types/structures";
+import { formatBytes } from '@/lib/format'
 
-import "@/assets/css/reset.css";
+import type { FolderInfo } from '@/types/structures'
+
+import Package from 'package.json'
+
+import '@/assets/css/reset.css'
 ```
+
+### Renaming components
+
+When renaming a Vue component:
+
+1. **Rename the file** (e.g. `FooterMenu.vue` → `FooterNav.vue`).
+2. **Rename CSS classes** that start with the component (file) name so they still match the new filename (e.g. `FooterMenu-root` → `FooterNav-root`, `FooterMenu-btn` → `FooterNav-btn`). Use the same convention: `ComponentName-nestedElement`.
+3. **Rename translations** in `src/assets/translations/` if the component has a dedicated translation file: rename the file (e.g. `FooterMenu.ts` → `FooterNav.ts`), the exported object name, and add the new module to `index.ts` (and remove the old one). Update all `t('OldName', 'key')` calls in the component to use the new module name.
 
 ---
 
-### JavaScript / TypeScript
+## CSS
 
-- Add comments **only when necessary**
-- Prefer **function declarations** over `const fn = () => {}`
-- **Prefer `interface`** over `type` when possible (see File creation for placement rules)
+### Class naming
 
-#### Function return types
-
-- **Avoid** typing the return type after `()`; prefer casting the return value with `as` when declaring it
-- If the return type is obvious and the same as the sole parameter (e.g. `(x: string): string`), omit the return type
-
-#### Variables
-
-- **Avoid declaring many variables just to shorten names** — prefer using the expression directly. Do not introduce `const s = x`, `const curr = y` etc. only to save a few characters.
-
-```ts
-// ❌ BAD — extra variables for shortening
-const s = store.value;
-const curr = settings.value ?? s?.settings.value;
-if (s && curr) s.setShowHiddenFiles(!curr.showHiddenFiles);
-
-// ✅ GOOD — use the expression directly
-if (store.value && settings.value)
-  store.value.setShowHiddenFiles(!settings.value.showHiddenFiles);
-```
-
-#### JSDoc
-
-Add JSDoc to all functions **except** those that are: (a) defined and used only in the same file, and (b) less than 4 lines.
-
-```ts
-// ✅ JSDoc required — exported or 4+ lines
-/** Formats bytes into human-readable string (e.g. "1.2 GB"). */
-export function formatBytes(bytes: number): string {
-  if (bytes === 0) return "0 B";
-  const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
-}
-
-// ✅ No JSDoc — same file only, < 4 lines
-function clamp(n: number) {
-  return Math.max(0, Math.min(1, n));
-}
-```
-
----
-
-### Object keys (Vue & JS/TS)
-
-- **snake_case**: Objects crossing boundaries — Tauri commands, Rust structs, API payloads, `invoke()` responses
-- **camelCase**: Objects used only in Vue/JS (component state, local variables, computed values)
-
-```ts
-// Tauri/Rust — must match Rust struct field names
-interface FolderInfo {
-  is_file: boolean;
-  children: FolderInfo[];
-}
-const data = await invoke<FolderInfo[]>("get_user_folders");
-
-// Component-internal only
-const localState = { expandedPaths: new Set(), currentFolder: "" };
-const progress = { current: 0, total: 1, folder: "" };
-```
-
----
-
-### CSS
-
-#### General rules
-
-- Add a **blank line** between any selector declaration
-- Use **CSS nesting**
-- **Always use nesting** for pseudo selectors and any other child selector; use **`&`** for pseudo and state-modifier selectors (e.g. `:disabled`, `:hover`, `:focus`)
-- **Never use `&--modifier` to construct BEM modifier class names** — this is SASS-style and does not belong in native CSS. Always write BEM modifier selectors as explicit, full class names at the top level.
+- Format: `ComponentName-nestedElement`
+- `ComponentName` must match the **filename** (e.g. `FolderNode.vue` → `FolderNode-item`, `FolderNode-row`, `FolderNode-children`)
 
 ```css
+/* FolderNode.vue */
+.FolderNode-item { }
+.FolderNode-row { }
+.FolderNode-arrow { }
+.FolderNode-children { }
+```
+
+### Nesting
+
+Use **CSS nesting** — always. Add a **blank line** between selector declarations.
+
+**Pseudo-selectors and state modifiers** (`:hover`, `:disabled`, `:focus`, etc.) must always be nested under the parent using `&`:
+
+```css
+/* ✅ GOOD */
+.DeleteResults-cancelBtn {
+   flex: 1;
+
+   &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+   }
+}
+
+/* ❌ BAD — flat pseudo-selectors */
+.DeleteResults-cancelBtn {
+   flex: 1;
+}
+
+.DeleteResults-cancelBtn:disabled {
+   opacity: 0.5;
+   cursor: not-allowed;
+}
+```
+
+**Element tags** (e.g. `p`, `span`, `strong`) when styling children must be nested under the parent selector, not declared at root level:
+
+```css
+/* ✅ GOOD */
+.ScanResults-stats {
+   display: flex;
+   flex-direction: column;
+
+   p {
+      display: flex;
+   }
+
+   span {
+      color: var(--color-text-muted);
+   }
+
+   strong {
+      max-width: 65%;
+   }
+}
+
+/* ❌ BAD — element selectors at root */
+.ScanResults-stats {
+   display: flex;
+   padding: var(--spacing-md);
+}
+
+.ScanResults-stats p {
+   margin: 0;
+}
+
+.ScanResults-stats span {
+   color: var(--color-text-muted);
+}
+```
+
+**Never use `&--modifier`** to construct BEM modifier class names — this is SASS-style and does not belong in native CSS. Always write BEM modifier selectors as explicit, full class names at the top level:
+
+```css
+/* ✅ GOOD — explicit full class names */
+.ListItem-check {
+   cursor: pointer;
+}
+
+.ListItem-check--selected .ListItem-checkFilled {
+   color: var(--color-accent);
+}
+
+.ListItem-check--disabled {
+   opacity: 0.5;
+   cursor: not-allowed;
+}
+
 /* ❌ BAD — SASS-style modifier nesting */
 .ListItem-check {
    cursor: pointer;
@@ -255,90 +268,35 @@ const progress = { current: 0, total: 1, folder: "" };
       cursor: not-allowed;
    }
 }
-
-/* ✅ GOOD — explicit full class names */
-.ListItem-check {
-   cursor: pointer;
-}
-
-.ListItem-check--selected .ListItem-checkFilled {
-   color: var(--color-accent);
-}
-
-.ListItem-check--disabled {
-   opacity: 0.5;
-   cursor: not-allowed;
-}
 ```
 
-- **Never** nest different selectors under the same root-level media query
-- Media queries must be **nested under the selector**, not at the root
+### Media queries
 
-```css
-/* ❌ BAD */
-.DeleteResults-cancelBtn {
-  flex: 1;
-}
-
-.DeleteResults-cancelBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ✅ GOOD */
-.DeleteResults-cancelBtn {
-  flex: 1;
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-```
+Media queries must be **nested inside the selector**, not at the root level. Never group multiple selectors under the same root-level media query:
 
 ```css
 /* ✅ GOOD */
 .card {
-  padding: 1rem;
+   padding: 1rem;
 
-  @media (min-width: 768px) {
-    padding: 1.5rem;
-  }
+   @media (min-width: 768px) {
+      padding: 1.5rem;
+   }
 }
 
 /* ❌ BAD */
 @media (min-width: 768px) {
-  .card {
-    padding: 1.5rem;
-  }
+   .card {
+      padding: 1.5rem;
+   }
 
-  .sidebar {
-    width: 200px;
-  }
+   .sidebar {
+      width: 200px;
+   }
 }
 ```
 
-#### Class naming
-
-- Format: `ComponentName-nestedElement`
-- `ComponentName` must match the **filename** (e.g. `FolderNode.vue` → `FolderNode-item`, `FolderNode-row`, `FolderNode-children`)
-
-```css
-/* FolderNode.vue */
-.FolderNode-item {
-}
-
-.FolderNode-row {
-}
-
-.FolderNode-arrow {
-}
-
-.FolderNode-children {
-}
-```
-
-#### Variables
+### Variables
 
 - Variable names: **kebab-case** (e.g. `--primary-color`, `--spacing-md`)
 - If the same value appears **more than 2 times** in a component, move it to `theme.css`:
@@ -346,9 +304,77 @@ const progress = { current: 0, total: 1, folder: "" };
 
 ---
 
-### Rust
+## TypeScript / JavaScript
 
-#### Imports
+### General
+
+- Add comments **only when necessary**
+- Prefer **function declarations** over `const fn = () => {}`
+- **Prefer `interface`** over `type` when possible (see File organization for placement rules)
+
+### Return types
+
+- **Avoid** typing the return type after `()`; prefer casting the return value with `as` when declaring it
+- If the return type is obvious and the same as the sole parameter (e.g. `(x: string): string`), omit the return type
+
+### Variables
+
+**Avoid declaring many variables just to shorten names** — prefer using the expression directly. Do not introduce `const s = x`, `const curr = y` etc. only to save a few characters.
+
+```ts
+// ❌ BAD — extra variables for shortening
+const s = store.value
+const curr = settings.value ?? s?.settings.value
+if (s && curr) s.setShowHiddenFiles(!curr.showHiddenFiles)
+
+// ✅ GOOD — use the expression directly
+if (store.value && settings.value) store.value.setShowHiddenFiles(!settings.value.showHiddenFiles)
+```
+
+### JSDoc
+
+Add JSDoc to all functions **except** those that are: (a) defined and used only in the same file, and (b) less than 4 lines.
+
+```ts
+// ✅ JSDoc required — exported or 4+ lines
+/** Formats bytes into human-readable string (e.g. "1.2 GB"). */
+export function formatBytes(bytes: number): string {
+   if (bytes === 0) return '0 B'
+   const k = 1024
+   const sizes = ['B', 'KB', 'MB', 'GB']
+   const i = Math.floor(Math.log(bytes) / Math.log(k))
+   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`
+}
+
+// ✅ No JSDoc — same file only, < 4 lines
+function clamp(n: number) {
+   return Math.max(0, Math.min(1, n))
+}
+```
+
+### Object keys (Tauri / Rust boundary)
+
+- **snake_case**: Objects crossing boundaries — Tauri commands, Rust structs, API payloads, `invoke()` responses
+- **camelCase**: Objects used only in Vue/JS (component state, local variables, computed values)
+
+```ts
+// Tauri/Rust — must match Rust struct field names
+interface FolderInfo {
+   is_file: boolean
+   children: FolderInfo[]
+}
+const data = await invoke<FolderInfo[]>('get_user_folders')
+
+// Component-internal only
+const localState = { expandedPaths: new Set(), currentFolder: '' }
+const progress = { current: 0, total: 1, folder: '' }
+```
+
+---
+
+## Rust
+
+### Imports
 
 Sort imports in this order, with a **blank line between each group**:
 
@@ -370,17 +396,23 @@ use crate::FolderInfo;
 
 ---
 
-### Rename refactoring
+## Workflow
 
-When renaming a Vue component:
+### Package manager
 
-1. **Rename the file** (e.g. `FooterMenu.vue` → `FooterNav.vue`).
-2. **Rename CSS classes** that start with the component (file) name so they still match the new filename (e.g. `FooterMenu-root` → `FooterNav-root`, `FooterMenu-btn` → `FooterNav-btn`). Use the same convention: `ComponentName-nestedElement`.
-3. **Rename translations** in `src/assets/translations/` if the component has a dedicated translation file: rename the file (e.g. `FooterMenu.ts` → `FooterNav.ts`), the exported object name, and add the new module to `index.ts` (and remove the old one). Update all `t('OldName', 'key')` calls in the component to use the new module name.
+- **Use pnpm** as package manager.
+- **Do not install any npm package** unless explicitly asked.
+- **Do not propose to launch dev servers** when testing implementations. The dev server is always running when the agent is working for the human.
+
+### Commits
+
+- **Do not use Conventional Commits** — no prefixes like `feat:`, `fix:`, `refactor:`, `docs:`, etc.
+- Use the project's existing nomenclature: **imperative verb + short description** (e.g. *Add protected system folders*, *Fix window drag region*, *Improve default settings*, *Move animations to their own settings group*).
+- Keep the first line concise; add a body or scope after a colon when useful (e.g. *Fix abort, view switch lag, layout jumps, and startup crash*).
 
 ---
 
-## Project details
+## Project-specific implementation
 
 ### Translations
 
@@ -388,9 +420,9 @@ Translations are stored in `src/assets/translations/`. The active language comes
 
 #### File structure
 
-- **`global.ts`** — Strings shared across multiple components (e.g. `appName`, `scan`, `settings`, `donate`)
+- `**global.ts`** — Strings shared across multiple components (e.g. `appName`, `scan`, `settings`, `donate`)
 - **Component-named files** — One file per component: `Header.ts`, `MainView.ts`, `SettingsView.ts`, `FooterNav.ts`, `Layout.ts`
-- **`index.ts`** — Exports `translations` and `createT(lang)`
+- `**index.ts`** — Exports `translations` and `createT(lang)`
 
 #### Translation file format
 
@@ -412,20 +444,20 @@ export const SettingsView = {
 
 ```vue
 <script setup lang="ts">
-import { useTranslations } from "@/lib/useTranslations";
+import { useTranslations } from '@/lib/useTranslations'
 
-const { t } = useTranslations();
+const { t } = useTranslations()
 </script>
 
 <template>
-  <p>
-    {{
-      t("MainView", "scanning", {
-        current: progress.current,
-        total: progress.total,
-      })
-    }}
-  </p>
+   <p>
+      {{
+         t('MainView', 'scanning', {
+            current: progress.current,
+            total: progress.total,
+         })
+      }}
+   </p>
 </template>
 ```
 
@@ -435,7 +467,7 @@ Use `{{varName}}` in translation strings. Pass variables as the third argument:
 
 ```ts
 // MainView.ts: scanning: 'Scanning… {{current}} of {{total}}'
-t("MainView", "scanning", { current: 1, total: 10 }); // → "Scanning… 1 of 10"
+t('MainView', 'scanning', { current: 1, total: 10 }) // → "Scanning… 1 of 10"
 ```
 
 #### Adding a new language
@@ -468,4 +500,3 @@ To add or remove protected folders: edit both files. Only the exact folders in t
 - **Rust**: `FolderInfo.is_protected` is set when building the tree; `safe_folders::is_path_protected()` checks exact path match. Future delete command must reject protected paths.
 - **Frontend**: `ListItem` receives `selectable={!item.is_protected}`; `toggleSelect` ignores protected items.
 
----
