@@ -34,8 +34,8 @@ const languageOptions = computed(() => [
 
 const themeOptions = computed(() => [
    { value: 'oceanic' as ThemeColor, label: t('SettingsView', 'themeOceanic') },
-   { value: 'light' as ThemeColor, label: t('SettingsView', 'themeLight') },
-   { value: 'dark' as ThemeColor, label: t('SettingsView', 'themeDark') },
+   { value: 'macos-light' as ThemeColor, label: t('SettingsView', 'themeLight') },
+   { value: 'macos-dark' as ThemeColor, label: t('SettingsView', 'themeDark') },
    { value: 'tokyo-night' as ThemeColor, label: t('SettingsView', 'themeTokyoNight') },
    { value: 'ayu-dark' as ThemeColor, label: t('SettingsView', 'themeAyuDark') },
    { value: 'ayu-mirage' as ThemeColor, label: t('SettingsView', 'themeAyuMirage') },
@@ -45,7 +45,6 @@ const themeOptions = computed(() => [
    { value: 'nord' as ThemeColor, label: t('SettingsView', 'themeNord') },
    { value: 'solarized' as ThemeColor, label: t('SettingsView', 'themeSolarized') },
    { value: 'one-dark' as ThemeColor, label: t('SettingsView', 'themeOneDark') },
-   { value: 'deep-purple' as ThemeColor, label: t('SettingsView', 'themeDeepPurple') },
    { value: 'kanagawa' as ThemeColor, label: t('SettingsView', 'themeKanagawa') },
 ])
 
@@ -83,7 +82,9 @@ function toggleAnimations() {
                   <select
                      class="SettingsSelect"
                      :value="settings.language"
-                     @change="store?.setLanguage(($event.target as HTMLSelectElement).value as Language)"
+                     @change="
+                        store?.setLanguage(($event.target as HTMLSelectElement).value as Language)
+                     "
                   >
                      <option v-for="opt in languageOptions" :key="opt.value" :value="opt.value">
                         {{ opt.label }}
@@ -98,7 +99,11 @@ function toggleAnimations() {
                   <select
                      class="SettingsSelect"
                      :value="settings.themeColor"
-                     @change="store?.setThemeColor(($event.target as HTMLSelectElement).value as ThemeColor)"
+                     @change="
+                        store?.setThemeColor(
+                           ($event.target as HTMLSelectElement).value as ThemeColor
+                        )
+                     "
                   >
                      <option v-for="opt in themeOptions" :key="opt.value" :value="opt.value">
                         {{ opt.label }}
@@ -135,7 +140,9 @@ function toggleAnimations() {
                </button>
             </div>
             <div class="SettingsGroup-row">
-               <span class="SettingsGroup-label">{{ t('SettingsView', 'showZeroByteFolders') }}</span>
+               <span class="SettingsGroup-label">{{
+                  t('SettingsView', 'showZeroByteFolders')
+               }}</span>
                <button
                   type="button"
                   class="SettingsToggle"

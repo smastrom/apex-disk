@@ -4,8 +4,8 @@ export type Language = 'en' | 'it'
 /** Supported theme color presets. */
 export type ThemeColor =
    | 'oceanic'
-   | 'light'
-   | 'dark'
+   | 'macos-light'
+   | 'macos-dark'
    | 'tokyo-night'
    | 'ayu-dark'
    | 'ayu-mirage'
@@ -15,7 +15,6 @@ export type ThemeColor =
    | 'nord'
    | 'solarized'
    | 'one-dark'
-   | 'deep-purple'
    | 'kanagawa'
 
 /** App settings persisted to disk. */
@@ -30,7 +29,7 @@ export interface AppSettings {
 
 export const DEFAULT_SETTINGS: AppSettings = {
    language: 'en',
-   themeColor: 'dark',
+   themeColor: 'catppuccin',
    showHiddenFiles: false,
    showZeroByteFiles: false,
    showZeroByteFolders: false,

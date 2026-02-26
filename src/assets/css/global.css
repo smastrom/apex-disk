@@ -5,6 +5,7 @@ html {
       -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif;
    font-size: 16px;
    line-height: 1.5;
+   font-weight: 500;
    color: var(--color-text);
    background: var(--color-bg);
    -webkit-font-smoothing: antialiased;
