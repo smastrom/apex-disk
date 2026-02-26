@@ -1,21 +1,26 @@
 /** Supported app languages. */
 export type Language = 'en' | 'it'
 
-/** Supported theme color presets. */
-export type ThemeColor =
-   | 'oceanic'
-   | 'macos-light'
-   | 'macos-dark'
-   | 'tokyo-night'
-   | 'ayu-dark'
-   | 'ayu-mirage'
-   | 'dracula'
-   | 'catppuccin'
-   | 'gruvbox'
-   | 'nord'
-   | 'solarized'
-   | 'one-dark'
-   | 'kanagawa'
+/** Supported theme color presets. Single source of truth for theme IDs. */
+export const THEME_COLORS = [
+   'mac-user-lens',
+   'macos-light',
+   'macos-dark',
+   'tokyo-night',
+   'ayu-dark',
+   'ayu-mirage',
+   'dracula',
+   'gruvbox',
+   'nord',
+   'solarized',
+   'one-dark',
+   'kanagawa',
+] as const
+
+export type ThemeColor = (typeof THEME_COLORS)[number]
+
+/** Theme that uses :root palette (no data-theme attribute). */
+export const ROOT_THEME: ThemeColor = 'mac-user-lens'
 
 /** App settings persisted to disk. */
 export interface AppSettings {
@@ -29,7 +34,7 @@ export interface AppSettings {
 
 export const DEFAULT_SETTINGS: AppSettings = {
    language: 'en',
-   themeColor: 'catppuccin',
+   themeColor: 'mac-user-lens',
    showHiddenFiles: false,
    showZeroByteFiles: false,
    showZeroByteFolders: false,

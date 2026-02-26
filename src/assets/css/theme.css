@@ -1,33 +1,24 @@
-/* Mac User Lens — Theme variables (oceanic blue palette) */
+/* Mac User Lens — Theme variables */
 
+/* Default theme: Mac User Lens (Catppuccin Mocha–inspired) */
 :root {
-   /* Primary oceanic palette */
-   --ocean-deep: #060f1e;
-   --ocean-dark: #081929;
-   --ocean-mid: #132d42;
-   --ocean-teal: #234d61;
-   --ocean-light: #326a83;
-   --ocean-surface: #5ba3b8;
-   --ocean-foam: #7ec8d4;
-   --ocean-mist: #a8dce8;
-
    /* Semantic colors */
    --color-on-accent: #fff;
-   --color-bg: var(--ocean-deep);
-   --color-bg-elevated: var(--ocean-dark);
-   --color-surface: var(--ocean-mid);
-   --color-surface-hover: var(--ocean-teal);
-   --color-accent: var(--ocean-surface);
-   --color-accent-hover: var(--ocean-foam);
-   --color-text: #e8f4f8;
-   --color-text-muted: #8fb4c4;
-   --color-text-dim: #5a8a9e;
+   --color-bg: #131320;
+   --color-bg-elevated: #181b2c;
+   --color-surface: #232436;
+   --color-surface-hover: #33354a;
+   --color-accent: #cba6f7;
+   --color-accent-hover: #d3b4ff;
+   --color-text: #cdd6f4;
+   --color-text-muted: #6c7086;
+   --color-text-dim: #585b70;
 
    /* Glow system */
-   --color-accent-glow: rgba(91, 163, 184, 0.45);
-   --color-accent-bg: rgba(91, 163, 184, 0.12);
-   --color-accent-bg-hover: rgba(91, 163, 184, 0.06);
-   --color-border: #0e2135;
+   --color-accent-glow: rgba(203, 166, 247, 0.4);
+   --color-accent-bg: rgba(203, 166, 247, 0.12);
+   --color-accent-bg-hover: rgba(203, 166, 247, 0.06);
+   --color-border: #1e213a;
    --glow-sm: 0 0 8px var(--color-accent-glow);
    --glow-md: 0 0 14px var(--color-accent-glow);
    --glow-lg: 0 0 24px var(--color-accent-glow);
@@ -149,23 +140,6 @@
    --color-accent-bg: rgba(189, 147, 249, 0.12);
    --color-accent-bg-hover: rgba(189, 147, 249, 0.06);
    --color-border: #29293e;
-}
-
-/* Theme: Catppuccin Mocha */
-[data-theme='catppuccin'] {
-   --color-bg: #131320;
-   --color-bg-elevated: #181b2c;
-   --color-surface: #232436;
-   --color-surface-hover: #33354a;
-   --color-accent: #cba6f7;
-   --color-accent-hover: #d3b4ff;
-   --color-text: #cdd6f4;
-   --color-text-muted: #6c7086;
-   --color-text-dim: #585b70;
-   --color-accent-glow: rgba(203, 166, 247, 0.4);
-   --color-accent-bg: rgba(203, 166, 247, 0.12);
-   --color-accent-bg-hover: rgba(203, 166, 247, 0.06);
-   --color-border: #1e213a;
 }
 
 /* Theme: Gruvbox */

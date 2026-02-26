@@ -17,6 +17,7 @@ import { ref, shallowRef, provide, onMounted, onUnmounted, watch } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 
+import { applyTheme } from '@/lib/theme'
 import { createSettingsStore, SETTINGS_KEY } from '@/stores/settings'
 
 import type { SettingsStore } from '@/stores/settings'
@@ -31,14 +32,6 @@ const settingsStore = shallowRef<SettingsStore | null>(null)
 const appReady = ref(false)
 
 provide(SETTINGS_KEY, settingsStore)
-
-function applyTheme(theme: string) {
-   if (theme === 'oceanic') {
-      document.documentElement.removeAttribute('data-theme')
-   } else {
-      document.documentElement.setAttribute('data-theme', theme)
-   }
-}
 
 onMounted(async () => {
    try {

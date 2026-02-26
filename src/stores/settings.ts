@@ -3,9 +3,20 @@ import { ref, type Ref } from 'vue'
 
 import { getSystemLanguage } from '@/lib/systemDefaults'
 
-import { DEFAULT_SETTINGS } from '@/types/settings'
+import { DEFAULT_SETTINGS, THEME_COLORS } from '@/types/settings'
 
 import type { AppSettings, ThemeColor, Language } from '@/types/settings'
+
+/** Normalizes stored theme value: valid theme, legacy (oceanic/catppuccin) → mac-user-lens, or default. */
+function normalizeThemeColor(value: unknown): ThemeColor {
+   if (value === 'oceanic' || value === 'catppuccin') {
+      return 'mac-user-lens'
+   }
+   if (typeof value === 'string' && (THEME_COLORS as readonly string[]).includes(value)) {
+      return value as ThemeColor
+   }
+   return DEFAULT_SETTINGS.themeColor
+}
 
 const STORE_PATH = 'settings.json'
 
@@ -76,6 +87,10 @@ export async function createSettingsStore(): Promise<SettingsStore> {
          ...DEFAULT_SETTINGS,
          language: raw?.language ?? systemLanguage,
          ...(raw && typeof raw === 'object' ? raw : {}),
+         themeColor:
+            raw?.themeColor != null
+               ? normalizeThemeColor(raw.themeColor)
+               : DEFAULT_SETTINGS.themeColor,
       })
 
       async function persist() {
@@ -93,6 +108,10 @@ export async function createSettingsStore(): Promise<SettingsStore> {
                ...DEFAULT_SETTINGS,
                language: raw.language ?? systemLanguage,
                ...raw,
+               themeColor:
+                  raw.themeColor != null
+                     ? normalizeThemeColor(raw.themeColor)
+                     : DEFAULT_SETTINGS.themeColor,
             }
          }
       }
