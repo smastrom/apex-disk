@@ -1,6 +1,6 @@
 import { global } from './global'
 import { AppHeader } from './AppHeader'
-import { AppLayout } from './AppLayout'
+import { App } from './App'
 import { ScanViewDiskUsage } from './ScanViewDiskUsage'
 import { ScanLaunch } from './ScanLaunch'
 import { ScanScanningResults } from './ScanScanningResults'
@@ -16,7 +16,7 @@ import type { Language } from '@/types/settings'
 export const translations = {
    global,
    AppHeader,
-   AppLayout,
+   App,
    ScanViewDiskUsage,
    ScanLaunch,
    ScanScanningResults,

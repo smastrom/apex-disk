@@ -1,7 +1,7 @@
 <!--
 App
 
-Purpose: Root application component. Bootstraps the settings store, manages scan state, and renders the app shell.
+Purpose: Root application component. Bootstraps the settings store, manages scan state, and renders the app shell with header, main content, and footer menu.
 
 Props: none
 
@@ -11,13 +11,17 @@ Example:
 
 <script setup lang="ts">
 import AppLoadingScreen from '@/components/AppLoadingScreen.vue'
-import AppLayout from '@/components/AppLayout.vue'
+import AppHeader from './AppHeader.vue'
+import ScanView from './ScanView.vue'
+import SettingsView from './SettingsView.vue'
+import AppFooter from './AppFooter.vue'
 
 import { ref, shallowRef, provide, onMounted, onUnmounted, watch } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 
 import { applyTheme } from '@/lib/theme'
+import { useTranslations } from '@/lib/useTranslations'
 import { createSettingsStore, SETTINGS_KEY } from '@/stores/settings'
 
 import type { SettingsStore } from '@/stores/settings'
@@ -27,6 +31,8 @@ import '@/assets/css/theme.css'
 import '@/assets/css/global.css'
 import '@/assets/css/reset.css'
 import '@/assets/css/classes.css'
+
+const { t } = useTranslations()
 
 const settingsStore = shallowRef<SettingsStore | null>(null)
 const appReady = ref(false)
@@ -112,10 +118,6 @@ function onCancel() {
    folders.value = []
 }
 
-function onSelectView(view: string) {
-   activeView.value = view
-}
-
 onUnmounted(() => {
    unlistenProgress?.()
 })
@@ -124,18 +126,48 @@ onUnmounted(() => {
 <template>
    <Transition name="App-ready" mode="out-in">
       <AppLoadingScreen v-if="!appReady" key="loading" />
-      <AppLayout
-         v-else
-         :folders="folders"
-         :loading="loading"
-         :progress="progress"
-         :activeView="activeView"
-         :fdaGranted="fdaGranted"
-         @select-view="onSelectView"
-         @start-scan="loadFolders"
-         @abort="onAbort"
-         @cancel="onCancel"
-      />
+
+      <div v-else key="layout" class="App-root">
+         <AppHeader />
+
+         <div class="App-main">
+            <Transition name="App-fade">
+               <KeepAlive>
+                  <ScanView
+                     v-if="activeView === 'scan'"
+                     :folders="folders"
+                     :loading="loading"
+                     :progress="progress"
+                     @start-scan="loadFolders"
+                     @abort="onAbort"
+                     @cancel="onCancel"
+                  />
+
+                  <div v-else-if="activeView === 'settings'" key="settings" class="App-overlay">
+                     <SettingsView :fdaGranted="fdaGranted" />
+                  </div>
+
+                  <div v-else-if="activeView === 'information'" key="other" class="App-overlay">
+                     <main class="App-placeholder">
+                        <p>{{ t('App', 'informationComingSoon') }}</p>
+                     </main>
+                  </div>
+
+                  <div v-else-if="activeView === 'donate'" class="App-overlay">
+                     <main class="App-placeholder">
+                        <p>{{ t('App', 'donateComingSoon') }}</p>
+                     </main>
+                  </div>
+               </KeepAlive>
+            </Transition>
+         </div>
+
+         <AppFooter
+            :activeView="activeView"
+            :hasPermissionIssue="fdaGranted === false"
+            @select-view="activeView = $event"
+         />
+      </div>
    </Transition>
 </template>
 
@@ -153,6 +185,54 @@ onUnmounted(() => {
 }
 
 .App-ready-enter-from {
+   opacity: 0;
+}
+
+.App-root {
+   display: flex;
+   flex-direction: column;
+   height: 100vh;
+   overflow: hidden;
+   background: var(--color-bg);
+}
+
+.App-main {
+   position: relative;
+   flex: 1;
+   display: flex;
+   flex-direction: column;
+   min-height: 0;
+}
+
+.App-overlay {
+   position: absolute;
+   inset: 0;
+   display: flex;
+   flex-direction: column;
+   background: var(--color-bg);
+   z-index: 1;
+}
+
+.App-placeholder {
+   flex: 1;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding: var(--spacing-md);
+
+   p {
+      color: var(--color-text-muted);
+      margin: 0;
+   }
+}
+
+.App-fade-enter-active,
+.App-fade-leave-active {
+   transition: opacity 0.18s ease-out;
+}
+
+.App-fade-enter-from,
+.App-fade-leave-to {
    opacity: 0;
 }
 </style>
