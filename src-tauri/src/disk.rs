@@ -1,15 +1,11 @@
 //! Disk usage and volume name for the home directory.
 //!
-//! Uses statvfs on Unix; volume name on macOS comes from diskutil.
+//! Uses statvfs for usage stats; volume name from diskutil.
 
-use std::path::Path;
-#[cfg(unix)]
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
-#[cfg(unix)]
 use nix::sys::statvfs;
 
-#[cfg(target_os = "macos")]
 fn get_volume_name(path: &Path) -> String {
     use std::process::Command;
 
@@ -48,11 +44,6 @@ fn get_volume_name(path: &Path) -> String {
     "Startup Disk".to_string()
 }
 
-#[cfg(not(target_os = "macos"))]
-fn get_volume_name(_path: &Path) -> String {
-    "Disk".to_string()
-}
-
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct DiskUsage {
     pub total: u64,
@@ -64,33 +55,25 @@ pub struct DiskUsage {
 
 #[tauri::command]
 pub fn get_disk_usage() -> Result<DiskUsage, String> {
-    #[cfg(unix)]
-    {
-        let home: PathBuf = dirs::home_dir().ok_or("Unable to determine home directory")?;
-        let vfs = statvfs::statvfs(&home).map_err(|e| format!("Failed to get disk stats: {}", e))?;
-        let block_size = vfs.fragment_size() as u64;
-        let total = vfs.blocks() as u64 * block_size;
-        let free = vfs.blocks_available() as u64 * block_size;
+    let home: PathBuf = dirs::home_dir().ok_or("Unable to determine home directory")?;
+    let vfs = statvfs::statvfs(&home).map_err(|e| format!("Failed to get disk stats: {}", e))?;
+    let block_size = vfs.fragment_size() as u64;
+    let total = vfs.blocks() as u64 * block_size;
+    let free = vfs.blocks_available() as u64 * block_size;
 
-        let user_name = home
-            .file_name()
-            .map(|s| s.to_string_lossy().into_owned())
-            .unwrap_or_else(|| std::env::var("USER").unwrap_or_else(|_| "User".to_string()));
+    let user_name = home
+        .file_name()
+        .map(|s| s.to_string_lossy().into_owned())
+        .unwrap_or_else(|| std::env::var("USER").unwrap_or_else(|_| "User".to_string()));
 
-        let volume_name = get_volume_name(&home);
-        let home_path = home.to_string_lossy().into_owned();
+    let volume_name = get_volume_name(&home);
+    let home_path = home.to_string_lossy().into_owned();
 
-        Ok(DiskUsage {
-            total,
-            free,
-            volume_name,
-            user_name,
-            home_path,
-        })
-    }
-
-    #[cfg(not(unix))]
-    {
-        Err("Disk usage is only supported on Unix".to_string())
-    }
+    Ok(DiskUsage {
+        total,
+        free,
+        volume_name,
+        user_name,
+        home_path,
+    })
 }

@@ -12,6 +12,10 @@ This document defines code style and conventions. **Always follow these rules** 
 
 ## 1. Project guidelines
 
+### Target platform
+
+The app targets **macOS only**. Do not add or retain platform-specific code or conditionals for Windows or Linux.
+
 ### File organization
 
 #### New files
@@ -297,6 +301,38 @@ Example:
 
 <template>
    <!-- ... -->
+</template>
+```
+
+#### Template block comments
+
+When the template contains **similar or repeated blocks** of elements (e.g. multiple `<section>`, groups of rows, repeated list items), add a short **HTML comment** above each block describing what that block represents. Use one line, concise wording (e.g. "Section name" or "List of X, Y, Z").
+
+Example (from `SettingsView.vue`):
+
+```vue
+<template>
+   <main class="SettingsView-root">
+      <div v-else class="SettingsView-content">
+         <!-- FDA -->
+
+         <section class="SettingsGroup">
+            <!-- ... FDA row, description, buttons ... -->
+         </section>
+
+         <!-- App Settings -->
+
+         <section class="SettingsGroup">
+            <!-- ... language select, theme select ... -->
+         </section>
+
+         <!-- Results -->
+
+         <section class="SettingsGroup">
+            <!-- ... toggles ... -->
+         </section>
+      </div>
+   </main>
 </template>
 ```
 
