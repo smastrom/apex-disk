@@ -2,16 +2,18 @@
 //!
 //! These are the standard macOS home directory folders managed by the OS.
 //! Deleting them would break Finder, iCloud, system services, or app configs.
-//! Their contents remain selectable — only the parent folders are protected.
+//! Their contents remain selectable — only the exact paths listed are protected.
 //! To add/remove: edit PROTECTED_RELATIVE_PATHS.
 
 use std::path::Path;
 
-/// Paths relative to home that are protected. Only these exact folders are protected,
-/// not their descendants. To add/remove: edit this list.
+/// Paths relative to home that are protected. Only these exact paths are protected —
+/// not their descendants. Both top-level names ("Library") and nested paths
+/// ("Library/Application Support") are supported. To add/remove: edit this list.
 ///
 /// - Desktop, Documents, Downloads: Finder sidebar + iCloud sync
 /// - Library: app preferences, caches, keychains, LaunchAgents
+/// - Library/Application Support: shared app data managed by macOS
 /// - Movies, Music, Pictures: media apps (TV, Music, Photos) store data here
 /// - Public: macOS file-sharing drop box
 /// - Applications: user-installed apps
@@ -21,15 +23,15 @@ pub const PROTECTED_RELATIVE_PATHS: &[&str] = &[
     "Documents",
     "Downloads",
     "Library",
+    "Library/Application Support",
     "Movies",
     "Music",
     "Pictures",
     "Public",
-    "Application Support",
-]; // TODO: Add support for e.g. Library/Application Support and other nested protected folders
+];
 
-/// Returns true if the given path is exactly one of the protected parent folders.
-/// Descendants (e.g. Library/Application Support) are NOT protected.
+/// Returns true if the given path exactly matches one of the protected paths.
+/// Descendants of protected paths are NOT protected.
 pub fn is_path_protected(path: &Path, home: &Path) -> bool {
     let home_str = home.to_string_lossy();
     let path_str = path.to_string_lossy();

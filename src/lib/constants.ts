@@ -11,7 +11,8 @@ export const DELETE_POST_DELETE_SLEEP_MS = 2000
 export const MOCK_DELETE_DURATION_MS = 1500
 
 /**
- * Protected system folder names (relative to home). Must match Rust PROTECTED_RELATIVE_PATHS.
+ * Protected paths relative to home. Must match Rust PROTECTED_RELATIVE_PATHS.
+ * Both top-level names ("Library") and nested paths ("Library/Application Support") are supported.
  * These cannot be selected or deleted. Add/remove here and in src-tauri/src/safe_folders.rs.
  */
 export const PROTECTED_FOLDER_NAMES = [
@@ -20,9 +21,9 @@ export const PROTECTED_FOLDER_NAMES = [
    'Documents',
    'Downloads',
    'Library',
+   'Library/Application Support',
    'Movies',
    'Music',
    'Pictures',
    'Public',
-   'Application Support', // TODO: Add support for e.g. Library/Application Support and other nested protected folders
 ] as const

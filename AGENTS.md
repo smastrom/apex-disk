@@ -227,18 +227,18 @@ async function onThemeChange(theme: ThemeColor) {
 
 #### Safe / protected folders
 
-Standard macOS home directory folders (Applications, Desktop, Documents, Downloads, Library, Movies, Music, Pictures, Public) cannot be selected or deleted. Their contents (e.g. Library/Application Support, files in Desktop) remain selectable.
+Specific macOS home directory paths cannot be selected or deleted. Both top-level folders (e.g. `Library`) and nested paths (e.g. `Library/Application Support`) are supported. Only the exact paths listed are protected — their descendants remain selectable.
 
 ##### Constants
 
 - **Rust**: `src-tauri/src/safe_folders.rs` — `PROTECTED_RELATIVE_PATHS` (paths relative to home)
 - **Frontend**: `src/lib/constants.ts` — `PROTECTED_FOLDER_NAMES` (must match Rust for reference)
 
-To add or remove protected folders: edit both files. Only the exact folders in the list are protected, not their descendants.
+To add or remove protected paths: edit both files. Both simple folder names (`"Library"`) and nested paths (`"Library/Application Support"`) are valid entries — protection is exact-match only, descendants are not affected.
 
 ##### Implementation
 
-- **Rust**: `FolderInfo.is_protected` is set when building the tree; `safe_folders::is_path_protected()` checks exact path match. Future delete command must reject protected paths.
+- **Rust**: `FolderInfo.is_protected` is set when building the tree; `safe_folders::is_path_protected()` strips the home prefix and checks the relative path against the list. Future delete command must reject protected paths.
 - **Frontend**: `ListItem` receives `selectable={!item.is_protected}`; `toggleSelect` ignores protected items.
 
 ### Workflow
