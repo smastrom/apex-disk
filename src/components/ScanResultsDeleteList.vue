@@ -15,6 +15,7 @@ import ScanResultsNav from './ScanResultsNav.vue'
 import Spinner from './Spinner.vue'
 
 import { ref, shallowRef, watch, computed, onUnmounted } from 'vue'
+import { useVirtualizer } from '@tanstack/vue-virtual'
 import { invoke } from '@tauri-apps/api/core'
 import { PhTrash } from '@phosphor-icons/vue'
 
@@ -77,6 +78,18 @@ const emit = defineEmits<{
 /** ShallowRef so we replace the whole Map on load (one reactive write) instead of N .set() calls. */
 const checkedMapRef = shallowRef(new Map<string, boolean>())
 const deleting = ref(false)
+
+const parentRef = ref<HTMLElement | null>(null)
+
+const rowVirtualizer = useVirtualizer(
+   computed(() => ({
+      count: props.items.length,
+      getScrollElement: () => parentRef.value,
+      estimateSize: () => 40,
+      overscan: 5,
+      getItemKey: (index: number) => props.items[index]?.path ?? index,
+   }))
+)
 
 watch(
    () => props.items,
@@ -156,15 +169,31 @@ async function onDeleteClick() {
          class="ScanResultsDeleteList-listWrap"
          :class="{ 'ScanResultsDeleteList-listWrap--deleting': deleting }"
       >
-         <div class="ScanResultsDeleteList-list ScanResultsDeleteList-listScroll">
-            <ScanResultsDeleteListItem
-               v-for="item in items"
-               :key="item.path"
-               :item="item"
-               :selected="!!checkedMapRef.get(item.path)"
-               :formatBytes="formatBytes"
-               @toggle="toggle(item.path)"
-            />
+         <div ref="parentRef" class="ScanResultsDeleteList-list ScanResultsDeleteList-listScroll">
+            <div
+               class="ScanResultsDeleteList-listInner"
+               :style="{ height: rowVirtualizer.getTotalSize() + 'px' }"
+            >
+               <div
+                  v-for="virtualRow in rowVirtualizer.getVirtualItems()"
+                  :key="String(virtualRow.key)"
+                  class="ScanResultsDeleteList-listItem"
+                  :style="{
+                     position: 'absolute',
+                     top: 0,
+                     left: 0,
+                     width: '100%',
+                     transform: `translateY(${virtualRow.start}px)`,
+                  }"
+               >
+                  <ScanResultsDeleteListItem
+                     :item="items[virtualRow.index]"
+                     :selected="!!checkedMapRef.get(items[virtualRow.index].path)"
+                     :formatBytes="formatBytes"
+                     @toggle="toggle(items[virtualRow.index].path)"
+                  />
+               </div>
+            </div>
          </div>
       </div>
       <div class="ScanResultsDeleteList-footer">
@@ -220,6 +249,15 @@ async function onDeleteClick() {
 
 .ScanResultsDeleteList-listScroll {
    overflow: auto;
+}
+
+.ScanResultsDeleteList-listInner {
+   position: relative;
+   width: 100%;
+}
+
+.ScanResultsDeleteList-listItem {
+   will-change: transform;
 }
 
 .ScanResultsDeleteList-footer {

@@ -72,13 +72,15 @@ const homePath = ref('')
 // This means only the toggled ListItem re-renders, not the entire list.
 const selectedMap = reactive(new Map<string, boolean>())
 
-// Flat path→size index built once on scan, gives O(1) size lookup
+// Flat indexes built once on scan, give O(1) lookup
 const sizeIndex = new Map<string, number>()
+const itemIndex = new Map<string, FolderInfo>()
 
-function buildSizeIndex(items: FolderInfo[]) {
+function buildIndexes(items: FolderInfo[]) {
    for (const item of items) {
       sizeIndex.set(item.path, item.size)
-      if (!item.is_file) buildSizeIndex(item.children)
+      itemIndex.set(item.path, item)
+      if (!item.is_file) buildIndexes(item.children)
    }
 }
 
@@ -92,7 +94,8 @@ watch(
    (folders) => {
       if (folders.length > 0) {
          sizeIndex.clear()
-         buildSizeIndex(folders)
+         itemIndex.clear()
+         buildIndexes(folders)
          backStack.value = []
          forwardStack.value = []
          const rootPath = parentDir(folders[0].path)
@@ -100,6 +103,7 @@ watch(
          current.value = { items: folders, label: '', path: rootPath }
       } else {
          sizeIndex.clear()
+         itemIndex.clear()
          backStack.value = []
          forwardStack.value = []
          current.value = { items: [], label: '', path: '' }
@@ -163,20 +167,12 @@ function hasSelectedAncestor(path: string): boolean {
 /** Build flat list of selected items (no ancestor selected) for delete review, sorted by size descending. */
 function buildSelectedItemsForDelete(): DeleteListItem[] {
    const out: DeleteListItem[] = []
-   function visit(items: FolderInfo[]) {
-      for (const item of items) {
-         if (selectedMap.get(item.path) && !hasSelectedAncestor(item.path)) {
-            out.push({
-               path: item.path,
-               name: item.name,
-               size: item.size,
-               is_file: item.is_file,
-            })
-         }
-         if (!item.is_file) visit(item.children)
+   for (const [path] of selectedMap) {
+      if (!hasSelectedAncestor(path)) {
+         const item = itemIndex.get(path)
+         if (item) out.push({ path, name: item.name, size: item.size, is_file: item.is_file })
       }
    }
-   visit(props.folders)
    return out.sort((a, b) => b.size - a.size)
 }
 

@@ -89,10 +89,10 @@ function onScanAgain() {
          @review="onReview"
       />
       <ScanResultsDeleteList
-         v-if="viewState === 'delete'"
+         v-show="viewState === 'delete'"
          class="ScanView-body"
          :items="deleteItems"
-         :active="true"
+         :active="viewState === 'delete'"
          @back="onBackFromDelete"
          @update:selectedSize="onSelectedSizeUpdate"
          @complete="onDeleteComplete"

@@ -43,7 +43,7 @@ defineEmits<{
          </p>
          <button
             type="button"
-            class="ScanResultsDeleteConfirmation-scanBtn"
+            class="ScanResultsDeleteConfirmation-scanBtn GradientButton"
             @click="$emit('scan-again')"
          >
             <PhMagnifyingGlass :size="18" weight="regular" />
@@ -102,20 +102,5 @@ defineEmits<{
    margin-top: var(--spacing-sm);
    padding: var(--spacing-md) var(--spacing-lg);
    font-size: 0.9375rem;
-   font-weight: 600;
-   color: var(--color-on-accent);
-   background: var(--color-accent);
-   border: none;
-   border-radius: 8px;
-   cursor: pointer;
-   box-shadow: var(--glow-md);
-   transition:
-      background 0.2s,
-      box-shadow 0.3s;
-
-   &:hover {
-      background: var(--color-accent-hover);
-      box-shadow: var(--glow-lg);
-   }
 }
 </style>
