@@ -29,7 +29,13 @@ fn delete_paths_sync(items: Vec<DeletePathItem>) {
         .into_iter()
         .filter(|i| {
             let p = Path::new(&i.path);
-            !safe_folders::is_path_protected(p, &home)
+            // Canonicalize first so ../../ sequences can't bypass is_path_protected.
+            // If the path doesn't exist or can't be resolved, skip it.
+            let canonical = match p.canonicalize() {
+                Ok(c) => c,
+                Err(_) => return false,
+            };
+            !safe_folders::is_path_protected(&canonical, &home)
         })
         .partition(|i| i.is_file);
 

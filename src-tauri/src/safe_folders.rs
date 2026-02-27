@@ -38,7 +38,7 @@ pub fn is_path_protected(path: &Path, home: &Path) -> bool {
         None => return false,
     };
     if rel.is_empty() {
-        return false;
+        return true; // The home directory itself is protected.
     }
     for protected in PROTECTED_RELATIVE_PATHS {
         if rel == *protected {

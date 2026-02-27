@@ -24,5 +24,5 @@ export const PROTECTED_FOLDER_NAMES = [
    'Music',
    'Pictures',
    'Public',
-   'Application Support',
+   'Application Support', // TODO: Add support for e.g. Library/Application Support and other nested protected folders
 ] as const
