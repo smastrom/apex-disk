@@ -9,9 +9,6 @@ import type { AppSettings, ThemeColor, Language } from '@/types/settings'
 
 /** Normalizes stored theme value: valid theme, legacy (oceanic/catppuccin) → mac-user-lens, or default. */
 function normalizeThemeColor(value: unknown): ThemeColor {
-   if (value === 'oceanic' || value === 'catppuccin') {
-      return 'mac-user-lens'
-   }
    if (typeof value === 'string' && (THEME_COLORS as readonly string[]).includes(value)) {
       return value as ThemeColor
    }
@@ -99,6 +96,7 @@ export async function createSettingsStore(): Promise<SettingsStore> {
       }
 
       const result = createStoreFromSettings(settings, persist)
+
       result.load = async () => {
          await store.reload()
          const raw = (await store.get('app')) as Partial<AppSettings> | null

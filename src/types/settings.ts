@@ -2,20 +2,7 @@
 export type Language = 'en' | 'it'
 
 /** Supported theme color presets. Single source of truth for theme IDs. */
-export const THEME_COLORS = [
-   'mac-user-lens',
-   'macos-light',
-   'macos-dark',
-   'tokyo-night',
-   'ayu-dark',
-   'ayu-mirage',
-   'dracula',
-   'gruvbox',
-   'nord',
-   'solarized',
-   'one-dark',
-   'kanagawa',
-] as const
+export const THEME_COLORS = ['mac-user-lens', 'ayu'] as const
 
 export type ThemeColor = (typeof THEME_COLORS)[number]
 
