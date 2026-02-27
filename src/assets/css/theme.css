@@ -27,6 +27,7 @@
    --glow-text: 0 0 12px var(--color-accent-glow);
 
    /* Spacing */
+   --spacing-xxs: 2px;
    --spacing-xs: 4px;
    --spacing-sm: 8px;
    --spacing-md: 16px;

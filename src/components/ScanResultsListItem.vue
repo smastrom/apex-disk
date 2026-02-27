@@ -18,7 +18,14 @@ Example:
 -->
 
 <script setup lang="ts">
-import { PhFolder, PhFile, PhCaretRight, PhCircle, PhCheckCircle, PhMinusCircle } from '@phosphor-icons/vue'
+import {
+   PhFolder,
+   PhFile,
+   PhCaretRight,
+   PhCircle,
+   PhCheckCircle,
+   PhMinusCircle,
+} from '@phosphor-icons/vue'
 
 import { useTranslations } from '@/lib/useTranslations'
 
@@ -92,7 +99,12 @@ const emit = defineEmits<{
       </div>
       <div class="ScanResultsListItem-meta">
          <span class="ScanResultsListItem-size">{{ formatBytes(item.size) }}</span>
-         <PhCaretRight v-if="!item.is_file" :size="18" weight="regular" class="ScanResultsListItem-chevron" />
+         <PhCaretRight
+            v-if="!item.is_file"
+            :size="18"
+            weight="regular"
+            class="ScanResultsListItem-chevron"
+         />
       </div>
    </div>
 </template>
@@ -163,10 +175,8 @@ const emit = defineEmits<{
    display: flex;
    align-items: center;
    justify-content: center;
-   width: 36px;
-   height: 36px;
-   border-radius: 8px;
-   background: var(--color-surface);
+   width: 24px;
+   height: 24px;
    color: var(--color-accent);
 }
 
@@ -175,7 +185,7 @@ const emit = defineEmits<{
    min-width: 0;
    display: flex;
    flex-direction: column;
-   gap: var(--spacing-xs);
+   gap: var(--spacing-xxs);
 }
 
 .ScanResultsListItem-name {
