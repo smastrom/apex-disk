@@ -1,18 +1,21 @@
 <!--
 SettingsView
 
-Purpose: Settings screen with Language, Theme, Show hidden files, Show 0B files. macOS-style grouped list.
+Purpose: Settings screen with Language, Theme, Show hidden files, Show 0B files, and Permissions. macOS-style grouped list.
 
-Props: none (uses inject for settings store)
+Props: fdaGranted (boolean)
+
+Events: fda-updated (boolean)
 
 Example:
- <SettingsView />
+ <SettingsView :fdaGranted="fdaGranted" @fda-updated="fdaGranted = $event" />
 -->
 
 <script setup lang="ts">
-import { PhCaretDown } from '@phosphor-icons/vue'
+import { PhCaretDown, PhCheckCircle, PhXCircle } from '@phosphor-icons/vue'
 
-import { inject, computed, type Ref } from 'vue'
+import { ref, inject, computed, type Ref } from 'vue'
+import { openUrl } from '@tauri-apps/plugin-opener'
 
 import { useTranslations } from '@/lib/useTranslations'
 
@@ -21,11 +24,17 @@ import { SETTINGS_KEY } from '@/stores/settings'
 import type { SettingsStore } from '@/stores/settings'
 import type { AppSettings, Language, ThemeColor } from '@/types/settings'
 
+const props = defineProps<{
+   fdaGranted: boolean
+}>()
+
 const { t } = useTranslations()
 
 const storeRef = inject<Ref<SettingsStore | null>>(SETTINGS_KEY)
 const store = computed(() => storeRef?.value ?? null)
 const settings = computed((): AppSettings | null => store.value?.settings.value ?? null)
+
+const hasFda = ref(props.fdaGranted)
 
 const languageOptions = computed(() => [
    { value: 'en' as Language, label: t('SettingsView', 'languageEn') },
@@ -56,6 +65,10 @@ function toggleAnimations() {
    if (store.value && settings.value)
       store.value.setEnableAnimations(!settings.value.enableAnimations)
 }
+
+async function openSystemSettings() {
+   await openUrl('x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles')
+}
 </script>
 
 <template>
@@ -64,6 +77,32 @@ function toggleAnimations() {
          {{ t('SettingsView', 'loadingSettings') }}
       </div>
       <div v-else class="SettingsView-content">
+         <!-- FDA -->
+
+         <section class="SettingsGroup">
+            <div class="SettingsGroup-row">
+               <span class="SettingsGroup-label">{{ t('SettingsView', 'fdaLabel') }}</span>
+               <span class="SettingsView-fdaStatus" :class="hasFda ? 'is-ok' : 'is-denied'">
+                  <PhCheckCircle v-if="hasFda" :size="13" weight="fill" />
+                  <PhXCircle v-else :size="13" weight="fill" />
+                  {{ hasFda ? t('SettingsView', 'fdaGranted') : t('SettingsView', 'fdaMissing') }}
+               </span>
+            </div>
+            <template v-if="!hasFda">
+               <p class="SettingsView-fdaDesc">
+                  {{ t('SettingsView', 'fdaDesc') }}
+               </p>
+
+               <div class="SettingsView-fdaControls">
+                  <button type="button" class="SettingsView-fdaBtn" @click="openSystemSettings">
+                     {{ t('SettingsView', 'fdaOpenSettings') }}
+                  </button>
+               </div>
+            </template>
+         </section>
+
+         <!-- App Settings -->
+
          <section class="SettingsGroup">
             <div class="SettingsGroup-row">
                <span class="SettingsGroup-label">{{ t('SettingsView', 'language') }}</span>
@@ -102,6 +141,8 @@ function toggleAnimations() {
                </div>
             </div>
          </section>
+
+         <!-- Results -->
 
          <section class="SettingsGroup">
             <div class="SettingsGroup-row">
@@ -143,6 +184,8 @@ function toggleAnimations() {
                </button>
             </div>
          </section>
+
+         <!-- Animations -->
 
          <section class="SettingsGroup">
             <div class="SettingsGroup-row">
@@ -199,5 +242,72 @@ function toggleAnimations() {
    transform: translateY(-50%);
    pointer-events: none;
    color: var(--color-text-muted);
+}
+
+/* FDA row */
+.SettingsView-fdaStatus {
+   display: flex;
+   align-items: center;
+   gap: 5px;
+   font-size: 0.8125rem;
+   font-weight: 500;
+}
+
+.SettingsView-fdaStatus.is-ok {
+   color: var(--color-success, #22c55e);
+}
+
+.SettingsView-fdaStatus.is-denied {
+   color: var(--color-danger, #ef4444);
+}
+
+.SettingsView-fdaControls {
+   display: flex;
+   justify-content: space-between;
+   gap: 6px;
+   padding: 0 var(--spacing-lg);
+   margin-bottom: var(--spacing-md);
+}
+
+.SettingsView-fdaBtn {
+   display: inline-flex;
+   align-items: center;
+   gap: 4px;
+   padding: 4px 10px;
+   border: 1px solid var(--color-border);
+   border-radius: 5px;
+   background: var(--color-bg);
+   color: var(--color-text);
+   font-size: 0.75rem;
+   font-weight: 500;
+   cursor: pointer;
+   transition: opacity 0.15s ease;
+}
+
+.SettingsView-fdaBtn:hover:not(:disabled) {
+   opacity: 0.75;
+}
+
+.SettingsView-fdaBtn:disabled {
+   opacity: 0.45;
+   cursor: default;
+}
+
+.SettingsView-fdaDesc {
+   margin: 0;
+   padding: var(--spacing-md) var(--spacing-lg);
+   font-size: 0.75rem;
+   line-height: 1.5;
+   color: var(--color-text-muted);
+}
+
+@keyframes spin {
+   to {
+      transform: rotate(360deg);
+   }
+}
+
+.SettingsView-spinning {
+   animation: spin 0.7s linear infinite;
 }
 </style>

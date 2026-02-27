@@ -26,7 +26,7 @@ pub const PROTECTED_RELATIVE_PATHS: &[&str] = &[
     "Pictures",
     "Public",
     "Application Support",
-];
+]; // TODO: Add support for e.g. Library/Application Support and other nested protected folders
 
 /// Returns true if the given path is exactly one of the protected parent folders.
 /// Descendants (e.g. Library/Application Support) are NOT protected.

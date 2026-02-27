@@ -11,6 +11,10 @@
       "identifier": "opener:allow-open-path",
       "allow": [{ "path": "/Users/*" }]
     },
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [{ "url": "x-apple.systempreferences:*" }]
+    },
     "os:default",
     "store:default"
   ]

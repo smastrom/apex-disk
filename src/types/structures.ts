@@ -17,6 +17,12 @@ export interface DeleteListItem {
    is_file: boolean
 }
 
+/** Permission status for a single TCC-protected user folder. */
+export interface FolderPermissionStatus {
+   folder: string
+   accessible: boolean
+}
+
 /** Scan progress event payload from Tauri. */
 export interface ScanProgress {
    current: number

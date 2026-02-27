@@ -1,12 +1,8 @@
 mod delete;
 mod disk;
+mod permissions;
 mod safe_folders;
 mod scan;
-
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
 
 #[derive(serde::Serialize, serde::Deserialize, Clone)]
 pub struct FolderInfo {
@@ -26,6 +22,13 @@ async fn get_user_folders(app: tauri::AppHandle) -> Result<Vec<FolderInfo>, Stri
         .map_err(|e| format!("Task join error: {}", e))?
 }
 
+#[tauri::command]
+async fn check_full_disk_access() -> bool {
+    tauri::async_runtime::spawn_blocking(permissions::check_full_disk_access_sync)
+        .await
+        .unwrap_or(false)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -33,10 +36,10 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::default().build())
         .invoke_handler(tauri::generate_handler![
-            greet,
             disk::get_disk_usage,
             get_user_folders,
             delete::delete_paths,
+            check_full_disk_access,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

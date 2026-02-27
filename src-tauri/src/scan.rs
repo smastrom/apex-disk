@@ -2,6 +2,11 @@
 //!
 //! Builds a FolderInfo tree for the user's home top-level directories,
 //! limiting retained file entries per directory to keep memory and IPC bounded.
+//!
+//! On macOS, when the app has Full Disk Access (FDA), all `read_dir` / file
+//! access here succeed for Desktop, Documents, Music, Library, etc. without
+//! any per-folder permission prompts. No special code path is needed — the
+//! same I/O is used; the OS grants access process-wide when FDA is granted.
 
 use std::path::Path;
 use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};

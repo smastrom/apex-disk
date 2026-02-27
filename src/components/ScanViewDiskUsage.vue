@@ -76,13 +76,14 @@ async function openHomeInFinder() {
 <template>
    <div v-if="usage" class="ScanViewDiskUsage-root">
       <div class="ScanViewDiskUsage-header">
+         <button type="button" class="ScanViewDiskUsage-userBadge" @click="openHomeInFinder">
+            /{{ usage.user_name }}
+         </button>
+
          <span class="ScanViewDiskUsage-volume">
             <PhHardDrive :size="14" weight="regular" class="ScanViewDiskUsage-volumeIcon" />
             {{ usage.volume_name }}
          </span>
-         <button type="button" class="ScanViewDiskUsage-userBadge" @click="openHomeInFinder">
-            /{{ usage.user_name }}
-         </button>
       </div>
       <div class="ScanViewDiskUsage-infoRow">
          <span class="ScanViewDiskUsage-info">

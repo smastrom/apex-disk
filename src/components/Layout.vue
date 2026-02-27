@@ -32,6 +32,7 @@ defineProps<{
    loading: boolean
    progress: ScanProgress
    activeView?: string
+   fdaGranted?: boolean
 }>()
 
 defineEmits<{
@@ -56,7 +57,7 @@ defineEmits<{
          />
          <Transition name="Layout-fade">
             <div v-if="activeView === 'settings'" key="settings" class="Layout-overlay">
-               <SettingsView />
+               <SettingsView :fdaGranted="fdaGranted ?? true" />
             </div>
             <div v-else-if="activeView !== 'scan'" key="other" class="Layout-overlay">
                <main class="Layout-placeholder">
@@ -73,7 +74,11 @@ defineEmits<{
             </div>
          </Transition>
       </div>
-      <FooterNav :activeView="activeView" @select-view="$emit('select-view', $event)" />
+      <FooterNav
+         :activeView="activeView"
+         :hasPermissionIssue="fdaGranted === false"
+         @select-view="$emit('select-view', $event)"
+      />
    </div>
 </template>
 

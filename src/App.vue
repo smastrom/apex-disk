@@ -31,12 +31,17 @@ import '@/assets/css/classes.css'
 const settingsStore = shallowRef<SettingsStore | null>(null)
 const appReady = ref(false)
 
+// We cannot detect FDA without probing a protected path (which would ask for that path, not FDA).
+// Show instructions and open on settings so the user grants FDA and relaunches.
+const fdaGranted = ref(false)
+
 provide(SETTINGS_KEY, settingsStore)
 
 onMounted(async () => {
    try {
       settingsStore.value = await createSettingsStore()
       applyTheme(settingsStore.value!.getThemeColor())
+      activeView.value = 'settings'
    } catch (err) {
       console.error('Failed to load settings:', err)
    } finally {
@@ -112,6 +117,7 @@ onUnmounted(() => {
          :loading="loading"
          :progress="progress"
          :activeView="activeView"
+         :fdaGranted="fdaGranted"
          @select-view="onSelectView"
          @start-scan="loadFolders"
          @abort="onAbort"

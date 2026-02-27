@@ -38,7 +38,8 @@
       "longDescription": "Identify and remove large, unused files and folders on your Mac.",
       "macOS": {
          "minimumSystemVersion": "10.15",
-         "hardenedRuntime": true
+         "hardenedRuntime": true,
+         "entitlements": "Entitlements.plist"
       }
    }
 }

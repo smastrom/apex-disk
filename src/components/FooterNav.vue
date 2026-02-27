@@ -3,10 +3,10 @@ FooterNav
 
 Purpose: Bottom navigation bar with Scan, Settings, Information, Donate buttons. Mobile-app style footer.
 
-Props: activeView (string?), emit: select-view
+Props: activeView (string?), hasPermissionIssue (boolean?), emit: select-view
 
 Example:
- <FooterNav :activeView="activeView" @select-view="onSelect" />
+ <FooterNav :activeView="activeView" :hasPermissionIssue="!fdaGranted" @select-view="onSelect" />
 -->
 
 <script setup lang="ts">
@@ -21,6 +21,7 @@ const { t } = useTranslations()
 
 defineProps<{
    activeView?: string
+   hasPermissionIssue?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -51,7 +52,10 @@ async function onDonateClick() {
          :class="{ 'FooterNav-btn--active': activeView === 'settings' }"
          @click="emit('select-view', 'settings')"
       >
-         <PhGear :size="24" weight="regular" />
+         <span class="FooterNav-iconWrap">
+            <PhGear :size="24" weight="regular" />
+            <span v-if="hasPermissionIssue" class="FooterNav-badge" aria-hidden="true" />
+         </span>
          <span>{{ t('FooterNav', 'settings') }}</span>
       </button>
       <button
@@ -99,7 +103,7 @@ async function onDonateClick() {
       color: var(--color-text);
    }
 
-   span {
+   > span:not(.FooterNav-iconWrap) {
       font-size: 0.75rem;
       font-weight: 500;
       width: 100%;
@@ -121,5 +125,30 @@ async function onDonateClick() {
    span {
       text-shadow: 0 0 8px var(--color-accent-glow);
    }
+}
+
+/* Icon wrapper to position the badge relative to the icon only */
+.FooterNav-iconWrap {
+   position: relative;
+   display: inline-flex;
+   /* Override the inherited span styles that stretch to full button width */
+   width: auto;
+   overflow: visible;
+   text-overflow: unset;
+   white-space: unset;
+   text-shadow: none;
+}
+
+.FooterNav-badge {
+   position: absolute;
+   top: -2px;
+   right: -4px;
+   width: 7px;
+   height: 7px;
+   border-radius: 50%;
+   background: #ef4444;
+   border: 1.5px solid var(--color-bg-elevated);
+   font-size: 0;
+   overflow: visible;
 }
 </style>
