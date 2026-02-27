@@ -254,6 +254,7 @@ To add or remove protected folders: edit both files. Only the exact folders in t
 - **Do not use Conventional Commits** — no prefixes like `feat:`, `fix:`, `refactor:`, `docs:`, etc.
 - Use the project's existing nomenclature: **imperative verb + short description** (e.g. _Add protected system folders_, _Fix window drag region_, _Improve default settings_, _Move animations to their own settings group_).
 - Keep the first line concise; add a body or scope after a colon when useful (e.g. _Fix abort, view switch lag, layout jumps, and startup crash_).
+- **When the commit is made by the agent**, add a `Co-authored-by` trailer (e.g. `Co-authored-by: Cursor <cursoragent@cursor.com>`).
 
 ---
 
@@ -575,11 +576,6 @@ if (theme === ROOT_THEME) document.documentElement.removeAttribute('data-theme')
 if (x) doSomething()
 else doOther()
 ```
-
-#### Return types
-
-- **Avoid** typing the return type after `()`; prefer casting the return value with `as` when declaring it
-- If the return type is obvious and the same as the sole parameter (e.g. `(x: string): string`), omit the return type
 
 #### Variables
 
