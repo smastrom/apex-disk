@@ -20,6 +20,8 @@ import ScanViewDiskUsage from './ScanViewDiskUsage.vue'
 import ScanResultsDeleteList from './ScanResultsDeleteList.vue'
 import ScanResultsDeleteConfirmation from './ScanResultsDeleteConfirmation.vue'
 import ScanResultsList from './ScanResultsList.vue'
+import ScanScanningResults from './ScanScanningResults.vue'
+import ScanLaunch from './ScanLaunch.vue'
 
 import { ref } from 'vue'
 
@@ -41,6 +43,7 @@ defineProps<{
 const emit = defineEmits<{
    (e: 'start-scan'): void
    (e: 'abort'): void
+   (e: 'cancel'): void
 }>()
 
 function onSelectedSizeUpdate(value: number) {
@@ -76,33 +79,50 @@ function onScanAgain() {
 <template>
    <main class="ScanView-root">
       <ScanViewDiskUsage ref="diskUsageRef" :selectedSize="selectedSize" />
-      <ScanResultsList
-         ref="resultsListRef"
-         v-show="viewState === 'results'"
-         class="ScanView-body"
-         :folders="folders"
-         :loading="loading"
-         :progress="progress"
-         @start-scan="$emit('start-scan')"
-         @abort="$emit('abort')"
-         @update:selectedSize="onSelectedSizeUpdate"
-         @review="onReview"
-      />
-      <ScanResultsDeleteList
-         v-show="viewState === 'delete'"
-         class="ScanView-body"
-         :items="deleteItems"
-         :active="viewState === 'delete'"
-         @back="onBackFromDelete"
-         @update:selectedSize="onSelectedSizeUpdate"
-         @complete="onDeleteComplete"
-      />
-      <ScanResultsDeleteConfirmation
-         v-if="viewState === 'deleteComplete'"
-         class="ScanView-body"
-         :deletedSummary="deletedSummary"
-         @scan-again="onScanAgain"
-      />
+
+      <Transition name="ScanView-fade" mode="out-in">
+         <KeepAlive>
+            <ScanScanningResults
+               v-if="loading"
+               class="ScanView-body"
+               :progress="progress"
+               @abort="$emit('abort')"
+            />
+
+            <ScanLaunch
+               v-else-if="viewState === 'results' && folders.length === 0"
+               class="ScanView-body"
+               @start-scan="$emit('start-scan')"
+            />
+
+            <ScanResultsList
+               ref="resultsListRef"
+               v-else-if="viewState === 'results'"
+               class="ScanView-body"
+               :folders="folders"
+               @update:selectedSize="onSelectedSizeUpdate"
+               @review="onReview"
+               @cancel="$emit('cancel')"
+            />
+
+            <ScanResultsDeleteList
+               v-else-if="viewState === 'delete'"
+               class="ScanView-body"
+               :items="deleteItems"
+               :active="viewState === 'delete'"
+               @back="onBackFromDelete"
+               @update:selectedSize="onSelectedSizeUpdate"
+               @complete="onDeleteComplete"
+            />
+
+            <ScanResultsDeleteConfirmation
+               v-else-if="viewState === 'deleteComplete'"
+               class="ScanView-body"
+               :deletedSummary="deletedSummary"
+               @scan-again="onScanAgain"
+            />
+         </KeepAlive>
+      </Transition>
    </main>
 </template>
 
@@ -122,5 +142,15 @@ function onScanAgain() {
    display: flex;
    flex-direction: column;
    overflow: hidden;
+}
+
+.ScanView-fade-enter-active,
+.ScanView-fade-leave-active {
+   transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ScanView-fade-enter-from,
+.ScanView-fade-leave-to {
+   opacity: 0;
 }
 </style>

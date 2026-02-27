@@ -1,31 +1,31 @@
 import { global } from './global'
-import { Header } from './Header'
-import { Layout } from './Layout'
+import { AppHeader } from './AppHeader'
+import { AppLayout } from './AppLayout'
 import { ScanViewDiskUsage } from './ScanViewDiskUsage'
-import { ScanViewInitial } from './ScanViewInitial'
-import { ScanResultsLoadingView } from './ScanResultsLoadingView'
+import { ScanLaunch } from './ScanLaunch'
+import { ScanScanningResults } from './ScanScanningResults'
 import { ScanResultsList } from './ScanResultsList'
 import { ScanResultsListItem } from './ScanResultsListItem'
 import { ScanResultsDeleteList } from './ScanResultsDeleteList'
 import { ScanResultsDeleteConfirmation } from './ScanResultsDeleteConfirmation'
 import { SettingsView } from './SettingsView'
-import { FooterNav } from './FooterNav'
+import { AppFooter } from './AppFooter'
 
 import type { Language } from '@/types/settings'
 
 export const translations = {
    global,
-   Header,
-   Layout,
+   AppHeader,
+   AppLayout,
    ScanViewDiskUsage,
-   ScanViewInitial,
-   ScanResultsLoadingView,
+   ScanLaunch,
+   ScanScanningResults,
    ScanResultsList,
    ScanResultsListItem,
    ScanResultsDeleteList,
    ScanResultsDeleteConfirmation,
    SettingsView,
-   FooterNav,
+   AppFooter,
 } as const
 
 export type TranslationModule = keyof typeof translations

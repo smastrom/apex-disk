@@ -1,12 +1,12 @@
 <!--
-Layout
+AppLayout
 
 Purpose: App shell with header, main content, and footer menu. Mobile-app style layout.
 
 Props: folders (FolderInfo[]), loading (boolean), progress (ScanProgress), activeView (string?)
 
 Example:
- <Layout
+ <AppLayout
    :folders="folders"
    :loading="loading"
    :progress="progress"
@@ -16,10 +16,10 @@ Example:
 -->
 
 <script setup lang="ts">
-import Header from './Header.vue'
+import AppHeader from './AppHeader.vue'
 import ScanView from './ScanView.vue'
 import SettingsView from './SettingsView.vue'
-import FooterNav from './FooterNav.vue'
+import AppFooter from './AppFooter.vue'
 
 import { useTranslations } from '@/lib/useTranslations'
 
@@ -39,42 +39,47 @@ defineEmits<{
    (e: 'select-view', view: string): void
    (e: 'start-scan'): void
    (e: 'abort'): void
+   (e: 'cancel'): void
 }>()
 </script>
 
 <template>
-   <div class="Layout-root">
-      <Header />
+   <div class="AppLayout-root">
+      <AppHeader />
 
-      <div class="Layout-main">
-         <ScanView
-            v-show="activeView === 'scan'"
-            :folders="folders"
-            :loading="loading"
-            :progress="progress"
-            @start-scan="$emit('start-scan')"
-            @abort="$emit('abort')"
-         />
-         <Transition name="Layout-fade">
-            <div v-if="activeView === 'settings'" key="settings" class="Layout-overlay">
-               <SettingsView :fdaGranted="fdaGranted ?? true" />
-            </div>
-            <div v-else-if="activeView !== 'scan'" key="other" class="Layout-overlay">
-               <main class="Layout-placeholder">
-                  <p>
-                     {{
-                        activeView === 'information'
-                           ? t('Layout', 'informationComingSoon')
-                           : activeView === 'donate'
-                             ? t('Layout', 'donateComingSoon')
-                             : ''
-                     }}
-                  </p>
-               </main>
-            </div>
+      <div class="AppLayout-main">
+         <Transition name="AppLayout-fade">
+            <KeepAlive>
+               <ScanView
+                  v-if="activeView === 'scan'"
+                  :folders="folders"
+                  :loading="loading"
+                  :progress="progress"
+                  @start-scan="$emit('start-scan')"
+                  @abort="$emit('abort')"
+                  @cancel="$emit('cancel')"
+               />
+
+               <div v-else-if="activeView === 'settings'" key="settings" class="AppLayout-overlay">
+                  <SettingsView :fdaGranted="fdaGranted ?? true" />
+               </div>
+
+               <div v-else-if="activeView === 'information'" key="other" class="AppLayout-overlay">
+                  <main class="AppLayout-placeholder">
+                     <p>{{ t('AppLayout', 'informationComingSoon') }}</p>
+                  </main>
+               </div>
+
+               <div v-else-if="activeView === 'donate'" class="AppLayout-overlay">
+                  <main class="AppLayout-placeholder">
+                     <p>{{ t('AppLayout', 'donateComingSoon') }}</p>
+                  </main>
+               </div>
+            </KeepAlive>
          </Transition>
       </div>
-      <FooterNav
+
+      <AppFooter
          :activeView="activeView"
          :hasPermissionIssue="fdaGranted === false"
          @select-view="$emit('select-view', $event)"
@@ -83,7 +88,7 @@ defineEmits<{
 </template>
 
 <style scoped>
-.Layout-root {
+.AppLayout-root {
    display: flex;
    flex-direction: column;
    height: 100vh;
@@ -91,7 +96,7 @@ defineEmits<{
    background: var(--color-bg);
 }
 
-.Layout-main {
+.AppLayout-main {
    position: relative;
    flex: 1;
    display: flex;
@@ -99,7 +104,7 @@ defineEmits<{
    min-height: 0;
 }
 
-.Layout-overlay {
+.AppLayout-overlay {
    position: absolute;
    inset: 0;
    display: flex;
@@ -108,7 +113,7 @@ defineEmits<{
    z-index: 1;
 }
 
-.Layout-placeholder {
+.AppLayout-placeholder {
    flex: 1;
    display: flex;
    align-items: center;
@@ -121,13 +126,13 @@ defineEmits<{
    }
 }
 
-.Layout-fade-enter-active,
-.Layout-fade-leave-active {
-   transition: opacity 0.18s ease;
+.AppLayout-fade-enter-active,
+.AppLayout-fade-leave-active {
+   transition: opacity 0.18s ease-out;
 }
 
-.Layout-fade-enter-from,
-.Layout-fade-leave-to {
+.AppLayout-fade-enter-from,
+.AppLayout-fade-leave-to {
    opacity: 0;
 }
 </style>

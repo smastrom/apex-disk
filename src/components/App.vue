@@ -11,7 +11,7 @@ Example:
 
 <script setup lang="ts">
 import AppLoadingScreen from '@/components/AppLoadingScreen.vue'
-import Layout from '@/components/Layout.vue'
+import AppLayout from '@/components/AppLayout.vue'
 
 import { ref, shallowRef, provide, onMounted, onUnmounted, watch } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
@@ -59,7 +59,7 @@ watch(
 const folders = ref<FolderInfo[]>([])
 const loading = ref(false)
 const activeView = ref('scan')
-const aborted = ref(false)
+const scanGeneration = ref(0)
 const progress = ref<ScanProgress>({
    current: 0,
    total: 1,
@@ -71,31 +71,45 @@ const progress = ref<ScanProgress>({
 let unlistenProgress: (() => void) | null = null
 
 async function loadFolders() {
-   aborted.value = false
+   // Clean up any previous scan's listener before starting a new one
+   unlistenProgress?.()
+   unlistenProgress = null
+
+   scanGeneration.value += 1
+   const gen = scanGeneration.value
+
    loading.value = true
    progress.value = { current: 0, total: 1, folder: '', size: 0, scanned_size_total: 0 }
 
    unlistenProgress = await listen<ScanProgress>('folder-scan-progress', (event) => {
-      progress.value = event.payload
+      if (gen === scanGeneration.value) progress.value = event.payload
    })
 
    try {
       const result = await invoke<FolderInfo[]>('get_user_folders')
-      if (!aborted.value) folders.value = result
+      if (gen === scanGeneration.value) folders.value = result
    } catch (error) {
-      if (!aborted.value) console.error('Error loading folders:', error)
+      if (gen === scanGeneration.value) console.error('Error loading folders:', error)
    } finally {
-      unlistenProgress?.()
-      unlistenProgress = null
-      loading.value = false
+      if (gen === scanGeneration.value) {
+         unlistenProgress?.()
+         unlistenProgress = null
+         loading.value = false
+      }
    }
 }
 
 function onAbort() {
-   aborted.value = true
+   scanGeneration.value += 1
+   unlistenProgress?.()
+   unlistenProgress = null
    folders.value = []
    loading.value = false
    progress.value = { current: 0, total: 1, folder: '', size: 0, scanned_size_total: 0 }
+}
+
+function onCancel() {
+   folders.value = []
 }
 
 function onSelectView(view: string) {
@@ -110,9 +124,8 @@ onUnmounted(() => {
 <template>
    <Transition name="App-ready" mode="out-in">
       <AppLoadingScreen v-if="!appReady" key="loading" />
-      <Layout
+      <AppLayout
          v-else
-         key="app"
          :folders="folders"
          :loading="loading"
          :progress="progress"
@@ -121,6 +134,7 @@ onUnmounted(() => {
          @select-view="onSelectView"
          @start-scan="loadFolders"
          @abort="onAbort"
+         @cancel="onCancel"
       />
    </Transition>
 </template>

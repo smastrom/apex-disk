@@ -1,12 +1,12 @@
 <!--
-Header
+AppHeader
 
 Purpose: Top bar of the app layout. Placeholder for future navigation/actions.
 
 Props: none
 
 Example:
- <Header />
+ <AppHeader />
 -->
 
 <script setup lang="ts">
@@ -16,13 +16,13 @@ const { t } = useTranslations()
 </script>
 
 <template>
-   <header class="Header-root" data-tauri-drag-region>
-      <h1 class="Header-title">{{ t('Header', 'title') }}</h1>
+   <header class="AppHeader-root" data-tauri-drag-region>
+      <h1 class="AppHeader-title">{{ t('AppHeader', 'title') }}</h1>
    </header>
 </template>
 
 <style scoped>
-.Header-root {
+.AppHeader-root {
    height: var(--header-height);
    display: flex;
    align-items: center;
@@ -34,7 +34,7 @@ const { t } = useTranslations()
    box-shadow: 0 1px 12px var(--color-bg);
 }
 
-.Header-title {
+.AppHeader-title {
    font-size: 1.125rem;
    font-weight: 600;
    color: var(--color-text);

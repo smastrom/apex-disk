@@ -1,4 +1,4 @@
-export const Layout = {
+export const AppLayout = {
    en: {
       informationComingSoon: 'Information view coming soon.',
       donateComingSoon: 'Donate view coming soon.',

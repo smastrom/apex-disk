@@ -1,4 +1,4 @@
-export const FooterNav = {
+export const AppFooter = {
    en: {
       scan: 'Scan',
       settings: 'Settings',

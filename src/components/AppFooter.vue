@@ -1,12 +1,12 @@
 <!--
-FooterNav
+AppFooter
 
 Purpose: Bottom navigation bar with Scan, Settings, Information, Donate buttons. Mobile-app style footer.
 
 Props: activeView (string?), hasPermissionIssue (boolean?), emit: select-view
 
 Example:
- <FooterNav :activeView="activeView" :hasPermissionIssue="!fdaGranted" @select-view="onSelect" />
+ <AppFooter :activeView="activeView" :hasPermissionIssue="!fdaGranted" @select-view="onSelect" />
 -->
 
 <script setup lang="ts">
@@ -38,43 +38,43 @@ async function onDonateClick() {
 </script>
 
 <template>
-   <footer class="FooterNav-root">
+   <footer class="AppFooter-root">
       <button
-         class="FooterNav-btn"
-         :class="{ 'FooterNav-btn--active': activeView === 'scan' }"
+         class="AppFooter-btn"
+         :class="{ 'AppFooter-btn--active': activeView === 'scan' }"
          @click="emit('select-view', 'scan')"
       >
          <PhMagnifyingGlass :size="24" weight="regular" />
-         <span>{{ t('FooterNav', 'scan') }}</span>
+         <span>{{ t('AppFooter', 'scan') }}</span>
       </button>
       <button
-         class="FooterNav-btn"
-         :class="{ 'FooterNav-btn--active': activeView === 'settings' }"
+         class="AppFooter-btn"
+         :class="{ 'AppFooter-btn--active': activeView === 'settings' }"
          @click="emit('select-view', 'settings')"
       >
-         <span class="FooterNav-iconWrap">
+         <span class="AppFooter-iconWrap">
             <PhGear :size="24" weight="regular" />
-            <span v-if="hasPermissionIssue" class="FooterNav-badge" aria-hidden="true" />
+            <span v-if="hasPermissionIssue" class="AppFooter-badge" aria-hidden="true" />
          </span>
-         <span>{{ t('FooterNav', 'settings') }}</span>
+         <span>{{ t('AppFooter', 'settings') }}</span>
       </button>
       <button
-         class="FooterNav-btn"
-         :class="{ 'FooterNav-btn--active': activeView === 'information' }"
+         class="AppFooter-btn"
+         :class="{ 'AppFooter-btn--active': activeView === 'information' }"
          @click="emit('select-view', 'information')"
       >
          <PhInfo :size="24" weight="regular" />
-         <span>{{ t('FooterNav', 'information') }}</span>
+         <span>{{ t('AppFooter', 'information') }}</span>
       </button>
-      <button class="FooterNav-btn" @click="onDonateClick">
+      <button class="AppFooter-btn" @click="onDonateClick">
          <PhHeart :size="24" weight="regular" />
-         <span>{{ t('FooterNav', 'donate') }}</span>
+         <span>{{ t('AppFooter', 'donate') }}</span>
       </button>
    </footer>
 </template>
 
 <style scoped>
-.FooterNav-root {
+.AppFooter-root {
    height: var(--footer-height);
    display: flex;
    align-items: center;
@@ -85,7 +85,7 @@ async function onDonateClick() {
    box-shadow: 0 -1px 12px var(--color-bg);
 }
 
-.FooterNav-btn {
+.AppFooter-btn {
    flex: 1;
    min-width: 0;
    display: flex;
@@ -103,7 +103,7 @@ async function onDonateClick() {
       color: var(--color-text);
    }
 
-   > span:not(.FooterNav-iconWrap) {
+   > span:not(.AppFooter-iconWrap) {
       font-size: 0.75rem;
       font-weight: 500;
       width: 100%;
@@ -115,7 +115,7 @@ async function onDonateClick() {
    }
 }
 
-.FooterNav-btn--active {
+.AppFooter-btn--active {
    color: var(--color-accent);
 
    :deep(svg) {
@@ -128,7 +128,7 @@ async function onDonateClick() {
 }
 
 /* Icon wrapper to position the badge relative to the icon only */
-.FooterNav-iconWrap {
+.AppFooter-iconWrap {
    position: relative;
    display: inline-flex;
    /* Override the inherited span styles that stretch to full button width */
@@ -139,7 +139,7 @@ async function onDonateClick() {
    text-shadow: none;
 }
 
-.FooterNav-badge {
+.AppFooter-badge {
    position: absolute;
    top: -2px;
    right: -4px;
