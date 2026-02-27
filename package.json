@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "vue-tsc --noEmit && vite build",
-    "clean": "rm -rf dist && rm -rf target && cargo clean --manifest-path src-tauri/Cargo.toml",
+    "clean": "rm -rf dist",
+    "clean:all": "rm -rf dist && pnpm tauri:clean",
     "dev": "vite",
     "fmt": "oxfmt --write",
     "fmt:check": "oxfmt --check",
@@ -13,6 +14,7 @@
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build --target universal-apple-darwin",
     "tauri:icons": "tauri icon ./src-tauri/icons/app-icon.png && cd ./src-tauri/icons && rm -rf android && rm -rf ios",
+    "tauri:clean": "cargo clean --manifest-path src-tauri/Cargo.toml",
     "test": "node tests/index.js"
   },
   "dependencies": {
