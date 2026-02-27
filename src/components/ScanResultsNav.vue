@@ -42,7 +42,7 @@ const emit = defineEmits<{
    (e: 'back'): void
    (e: 'forward'): void
    (e: 'reset'): void
-   (e: 'abort'): void
+   (e: 'cancel'): void
 }>()
 </script>
 
@@ -82,8 +82,8 @@ const emit = defineEmits<{
          >
             {{ t('ScanResultsList', 'resetSelection') }}
          </button>
-         <button type="button" class="ScanResultsNav-abortBtn" @click="emit('abort')">
-            {{ t('ScanResultsList', 'abort') }}
+         <button type="button" class="ScanResultsNav-cancelBtn" @click="emit('cancel')">
+            {{ t('ScanResultsList', 'cancel') }}
          </button>
       </div>
    </nav>
@@ -182,7 +182,7 @@ const emit = defineEmits<{
    }
 }
 
-.ScanResultsNav-abortBtn {
+.ScanResultsNav-cancelBtn {
    padding: 0;
    font-size: 0.875rem;
    font-weight: 500;

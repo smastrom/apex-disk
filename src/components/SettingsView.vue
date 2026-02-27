@@ -12,7 +12,7 @@ Example:
 -->
 
 <script setup lang="ts">
-import { PhCaretDown, PhCheckCircle, PhXCircle } from '@phosphor-icons/vue'
+import { PhCaretDown, PhCheckCircle, PhXCircle, PhWrench as PhGearSix } from '@phosphor-icons/vue'
 
 import { ref, inject, computed, type Ref } from 'vue'
 import { openUrl } from '@tauri-apps/plugin-opener'
@@ -95,6 +95,7 @@ async function openSystemSettings() {
 
                <div class="SettingsView-fdaControls">
                   <button type="button" class="SettingsView-fdaBtn" @click="openSystemSettings">
+                     <PhGearSix :size="13" weight="fill" />
                      {{ t('SettingsView', 'fdaOpenSettings') }}
                   </button>
                </div>

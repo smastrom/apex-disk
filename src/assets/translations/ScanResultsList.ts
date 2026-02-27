@@ -8,7 +8,7 @@ export const ScanResultsList = {
       deleteSize: 'Delete ({{size}})',
       reviewSize: 'Review ({{size}})',
       resetSelection: 'Reset',
-      abort: 'Abort',
+      cancel: 'Cancel',
    },
    it: {
       scanning: 'Scansione… {{current}} di {{total}}',
@@ -19,6 +19,6 @@ export const ScanResultsList = {
       deleteSize: 'Elimina ({{size}})',
       reviewSize: 'Rivedi ({{size}})',
       resetSelection: 'Resetta',
-      abort: 'Annulla',
+      cancel: 'Annulla',
    },
 } as const

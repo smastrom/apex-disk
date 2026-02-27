@@ -10,7 +10,10 @@ Example:
 -->
 
 <script setup lang="ts">
-import { PhCheckCircle, PhMagnifyingGlass } from '@phosphor-icons/vue'
+import AnimatedCheckCircle from './AnimatedCheckCircle.vue'
+
+import { PhMagnifyingGlass, PhX } from '@phosphor-icons/vue'
+import { getCurrentWindow } from '@tauri-apps/api/window'
 
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/useTranslations'
@@ -24,12 +27,16 @@ defineProps<{
 defineEmits<{
    (e: 'scan-again'): void
 }>()
+
+function closeApp() {
+   getCurrentWindow().close()
+}
 </script>
 
 <template>
    <div class="ScanResultsDeleteConfirmation-root">
       <div class="ScanResultsDeleteConfirmation-content">
-         <PhCheckCircle :size="48" weight="fill" class="ScanResultsDeleteConfirmation-icon" />
+         <AnimatedCheckCircle :size="48" class="ScanResultsDeleteConfirmation-icon" />
          <h2 class="ScanResultsDeleteConfirmation-title">
             {{ t('ScanResultsDeleteConfirmation', 'title') }}
          </h2>
@@ -48,6 +55,14 @@ defineEmits<{
          >
             <PhMagnifyingGlass :size="18" weight="regular" />
             {{ t('ScanResultsDeleteConfirmation', 'scanAgain') }}
+         </button>
+         <button
+            type="button"
+            class="ScanResultsDeleteConfirmation-closeBtn"
+            @click="closeApp"
+         >
+            <PhX :size="16" weight="bold" />
+            {{ t('ScanResultsDeleteConfirmation', 'closeApp') }}
          </button>
       </div>
    </div>
@@ -102,5 +117,25 @@ defineEmits<{
    margin-top: var(--spacing-sm);
    padding: var(--spacing-md) var(--spacing-lg);
    font-size: 0.9375rem;
+}
+
+.ScanResultsDeleteConfirmation-closeBtn {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 0.375rem;
+   padding: var(--spacing-sm) var(--spacing-md);
+   font-size: 0.8125rem;
+   font-weight: 500;
+   color: var(--color-text-muted);
+   background: none;
+   border: none;
+   border-radius: 6px;
+   cursor: pointer;
+   transition: color 0.2s;
+
+   &:hover {
+      color: var(--color-text);
+   }
 }
 </style>

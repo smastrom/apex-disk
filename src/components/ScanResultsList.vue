@@ -11,9 +11,7 @@ Example:
 
 <script setup lang="ts">
 import ScanResultsListItem from './ScanResultsListItem.vue'
-import ScanResultsLoadingView from './ScanResultsLoadingView.vue'
 import ScanResultsNav from './ScanResultsNav.vue'
-import ScanViewInitial from './ScanViewInitial.vue'
 
 import {
    ref,
@@ -36,7 +34,7 @@ import { useViewTransition } from '@/lib/useViewTransition'
 import { SETTINGS_KEY } from '@/stores/settings'
 
 import type { SettingsStore } from '@/stores/settings'
-import type { DeleteListItem, FolderInfo, ScanProgress } from '@/types/structures'
+import type { DeleteListItem, FolderInfo } from '@/types/structures'
 
 const { t } = useTranslations()
 const { withTransition } = useViewTransition()
@@ -46,15 +44,12 @@ const navDirection = ref<1 | -1>(1)
 
 const props = defineProps<{
    folders: FolderInfo[]
-   loading: boolean
-   progress: ScanProgress
 }>()
 
 const emit = defineEmits<{
-   (e: 'start-scan'): void
-   (e: 'abort'): void
    (e: 'update:selectedSize', value: number): void
    (e: 'review', items: DeleteListItem[]): void
+   (e: 'cancel'): void
 }>()
 
 interface NavEntry {
@@ -258,62 +253,59 @@ function onReviewClick() {
    emit('review', buildSelectedItemsForDelete())
 }
 
-function onAbort() {
-   emit('abort')
+function onCancel() {
+   emit('cancel')
 }
 </script>
 
 <template>
    <div class="ScanResultsList-root">
-      <ScanResultsLoadingView v-if="loading" :progress="progress" @abort="onAbort" />
-      <ScanViewInitial v-else-if="folders.length === 0" @start-scan="emit('start-scan')" />
-      <div v-else class="ScanResultsList-content">
-         <ScanResultsNav
-            :showForward="true"
-            :backDisabled="backStack.length === 0"
-            :forwardDisabled="forwardStack.length === 0"
-            :pathLabel="displayPath"
-            :pathTitle="current.path"
-            :showActions="true"
-            :resetDisabled="selectedMap.size === 0"
-            @back="goBack"
-            @forward="goForward"
-            @reset="selectedMap.clear()"
-            @abort="onAbort"
-         />
-         <div class="ScanResultsList-listWrap" :style="{ '--nav-direction': navDirection }">
-            <div ref="parentRef" class="ScanResultsList-list ScanResultsList-listScroll">
+      <ScanResultsNav
+         :showForward="true"
+         :backDisabled="backStack.length === 0"
+         :forwardDisabled="forwardStack.length === 0"
+         :pathLabel="displayPath"
+         :pathTitle="current.path"
+         :showActions="true"
+         :resetDisabled="selectedMap.size === 0"
+         @back="goBack"
+         @forward="goForward"
+         @reset="selectedMap.clear()"
+         @cancel="onCancel"
+      />
+      <div class="ScanResultsList-listWrap" :style="{ '--nav-direction': navDirection }">
+         <div ref="parentRef" class="ScanResultsList-list ScanResultsList-listScroll">
+            <div
+               class="ScanResultsList-listInner"
+               :style="{ height: rowVirtualizer.getTotalSize() + 'px' }"
+            >
                <div
-                  class="ScanResultsList-listInner"
-                  :style="{ height: rowVirtualizer.getTotalSize() + 'px' }"
+                  v-for="virtualRow in rowVirtualizer.getVirtualItems()"
+                  :key="String(virtualRow.key)"
+                  class="ScanResultsList-listItem"
+                  :style="{
+                     position: 'absolute',
+                     top: 0,
+                     left: 0,
+                     width: '100%',
+                     transform: `translateY(${virtualRow.start}px)`,
+                  }"
                >
-                  <div
-                     v-for="virtualRow in rowVirtualizer.getVirtualItems()"
-                     :key="String(virtualRow.key)"
-                     class="ScanResultsList-listItem"
-                     :style="{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        transform: `translateY(${virtualRow.start}px)`,
-                     }"
-                  >
-                     <ScanResultsListItem
-                        :item="displayedItems[virtualRow.index]"
-                        :selected="isSelectedForUI(displayedItems[virtualRow.index].path)"
-                        :someSelected="someSelectedPaths.has(displayedItems[virtualRow.index].path)"
-                        :selectable="!displayedItems[virtualRow.index].is_protected"
-                        :formatBytes="formatBytes"
-                        @select="() => toggleSelect(displayedItems[virtualRow.index])"
-                        @navigate="() => goInto(displayedItems[virtualRow.index])"
-                     />
-                  </div>
+                  <ScanResultsListItem
+                     :item="displayedItems[virtualRow.index]"
+                     :selected="isSelectedForUI(displayedItems[virtualRow.index].path)"
+                     :someSelected="someSelectedPaths.has(displayedItems[virtualRow.index].path)"
+                     :selectable="!displayedItems[virtualRow.index].is_protected"
+                     :formatBytes="formatBytes"
+                     @select="() => toggleSelect(displayedItems[virtualRow.index])"
+                     @navigate="() => goInto(displayedItems[virtualRow.index])"
+                  />
                </div>
             </div>
          </div>
       </div>
-      <div v-if="!loading && folders.length > 0" class="ScanResultsList-footer">
+
+      <div class="ScanResultsList-footer">
          <button
             type="button"
             class="ScanResultsList-deleteBtn GradientButton"
@@ -337,6 +329,16 @@ function onAbort() {
    flex-direction: column;
    overflow: hidden;
    background: var(--color-bg);
+}
+
+.ScanResultsList-fade-enter-active,
+.ScanResultsList-fade-leave-active {
+   transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ScanResultsList-fade-enter-from,
+.ScanResultsList-fade-leave-to {
+   opacity: 0;
 }
 
 .ScanResultsList-content {
