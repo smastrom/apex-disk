@@ -26,7 +26,7 @@ export const SettingsView = {
       showHiddenFiles: 'Mostra file nascosti',
       showZeroByteFiles: 'Mostra file da 0 B',
       showZeroByteFolders: 'Mostra cartelle da 0 B',
-      enableAnimations: 'Abilita animazioni',
+      enableAnimations: 'Mostra animazioni',
       permissionsGroup: 'Permessi',
       fdaLabel: 'Accesso completo al disco',
       fdaGranted: 'Concesso',
