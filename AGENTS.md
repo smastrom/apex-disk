@@ -61,7 +61,7 @@ Translations are stored in `src/assets/translations/`. The active language comes
 ##### File structure
 
 - `**global.ts`\*\* — Strings shared across multiple components (e.g. `appName`, `scan`, `settings`, `donate`)
-- **Component-named files** — One file per component: `Header.ts`, `MainView.ts`, `SettingsView.ts`, `FooterNav.ts`, `Layout.ts`
+- **Component-named files** — One file per component: `AppHeader.ts`, `MainView.ts`, `SettingsView.ts`, `AppFooter.ts`, `AppLayout.ts`
 - `**index.ts`\*\* — Exports `translations` and `createT(lang)`
 
 ##### Translation file format
@@ -393,9 +393,9 @@ import '@/assets/css/reset.css'
 
 When renaming a Vue component:
 
-1. **Rename the file** (e.g. `FooterMenu.vue` → `FooterNav.vue`).
-2. **Rename CSS classes** that start with the component (file) name so they still match the new filename (e.g. `FooterMenu-root` → `FooterNav-root`, `FooterMenu-btn` → `FooterNav-btn`). Use the same convention: `ComponentName-nestedElement`.
-3. **Rename translations** in `src/assets/translations/` if the component has a dedicated translation file: rename the file (e.g. `FooterMenu.ts` → `FooterNav.ts`), the exported object name, and add the new module to `index.ts` (and remove the old one). Update all `t('OldName', 'key')` calls in the component to use the new module name.
+1. **Rename the file** (e.g. `FooterMenu.vue` → `AppFooter.vue`).
+2. **Rename CSS classes** that start with the component (file) name so they still match the new filename (e.g. `FooterMenu-root` → `AppFooter-root`, `FooterMenu-btn` → `AppFooter-btn`). Use the same convention: `ComponentName-nestedElement`.
+3. **Rename translations** in `src/assets/translations/` if the component has a dedicated translation file: rename the file (e.g. `FooterMenu.ts` → `AppFooter.ts`), the exported object name, and add the new module to `index.ts` (and remove the old one). Update all `t('OldName', 'key')` calls in the component to use the new module name.
 
 ### CSS
 

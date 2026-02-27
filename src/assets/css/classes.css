@@ -69,21 +69,19 @@
    font-size: 0.9375rem;
    color: var(--color-text);
    background: var(--color-surface);
-   border: 1px solid transparent;
    border-radius: 6px;
    cursor: pointer;
    appearance: none;
    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2386868b' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
    background-repeat: no-repeat;
    background-position: right 10px center;
-   transition:
-      border-color 0.25s,
-      box-shadow 0.25s;
+   transition: background 0.25s;
+   outline: none;
+   border: none;
 }
 
-.SettingsSelect:focus {
-   outline: none;
-   border-color: var(--color-border);
+.SettingsSelect:hover {
+   background: var(--color-surface-hover);
 }
 
 .GradientButton {
