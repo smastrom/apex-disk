@@ -31,7 +31,11 @@ const emit = defineEmits<{
          <p class="ScanViewInitial-noticeBody">{{ t('ScanViewInitial', 'warningBody') }}</p>
       </div>
 
-      <button type="button" class="ScanViewInitial-scanBtn" @click="emit('start-scan')">
+      <button
+         type="button"
+         class="ScanViewInitial-scanBtn GradientButton"
+         @click="emit('start-scan')"
+      >
          <PhMagnifyingGlass :size="18" weight="regular" />
          {{ t('ScanViewInitial', 'startScan') }}
       </button>
@@ -82,28 +86,6 @@ const emit = defineEmits<{
    gap: 10px;
    width: 100%;
    padding: var(--spacing-md) var(--spacing-lg);
-   font-size: 0.9375rem;
-   font-weight: 600;
-   color: var(--color-on-accent);
-   background: var(--color-accent);
-   border: none;
-   border-radius: 8px;
-   cursor: pointer;
-   box-shadow: var(--glow-md);
-   transition:
-      background 0.2s ease,
-      box-shadow 0.3s ease,
-      transform 0.2s ease;
-
-   &:hover {
-      background: var(--color-accent-hover);
-      box-shadow: var(--glow-lg);
-      transform: translateY(-1px);
-   }
-
-   &:active {
-      box-shadow: var(--glow-sm);
-      transform: translateY(0);
-   }
+   font-size: var(--btn-font-size);
 }
 </style>

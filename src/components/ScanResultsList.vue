@@ -15,7 +15,17 @@ import ScanResultsLoadingView from './ScanResultsLoadingView.vue'
 import ScanResultsNav from './ScanResultsNav.vue'
 import ScanViewInitial from './ScanViewInitial.vue'
 
-import { ref, reactive, watch, watchEffect, shallowRef, computed, inject, nextTick, type Ref } from 'vue'
+import {
+   ref,
+   reactive,
+   watch,
+   watchEffect,
+   shallowRef,
+   computed,
+   inject,
+   nextTick,
+   type Ref,
+} from 'vue'
 import { PhTrash } from '@phosphor-icons/vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 
@@ -175,7 +185,6 @@ function isSelectedForUI(path: string): boolean {
    return !!selectedMap.get(path) || hasSelectedAncestor(path)
 }
 
-
 // Set of folder paths that have at least one selected descendant but are not
 // themselves selected. Updated once per selectedMap mutation — O(entries × depth).
 // Template does a simple O(1) Set.has() lookup instead of per-row tree traversal.
@@ -195,7 +204,6 @@ watchEffect(() => {
    }
    someSelectedPaths.value = set
 })
-
 
 const selectedSize = computed(() => {
    let total = 0
@@ -312,12 +320,14 @@ function onAbort() {
       <div v-if="!loading && folders.length > 0" class="ScanResultsList-footer">
          <button
             type="button"
-            class="ScanResultsList-deleteBtn"
+            class="ScanResultsList-deleteBtn GradientButton"
             :disabled="selectedMap.size === 0"
             @click="onReviewClick"
          >
             <PhTrash :size="18" weight="bold" />
-            <span>{{ t('ScanResultsList', 'reviewSize', { size: formatBytes(selectedSize) }) }}</span>
+            <span>{{
+               t('ScanResultsList', 'reviewSize', { size: formatBytes(selectedSize) })
+            }}</span>
          </button>
       </div>
    </div>
@@ -392,27 +402,6 @@ function onAbort() {
    padding: var(--spacing-md) var(--spacing-lg);
    font-size: 0.9375rem;
    font-weight: 600;
-   color: var(--color-on-accent);
-   background: var(--color-accent);
-   border: none;
-   border-radius: 8px;
-   cursor: pointer;
-   box-shadow: var(--glow-md);
-   transition:
-      background 0.2s,
-      box-shadow 0.3s,
-      transform 0.15s;
-
-   &:hover:not(:disabled) {
-      background: var(--color-accent-hover);
-      box-shadow: var(--glow-lg);
-      transform: translateY(-1px);
-   }
-
-   &:active:not(:disabled) {
-      transform: translateY(0);
-      box-shadow: var(--glow-sm);
-   }
 
    &:disabled {
       opacity: 0.5;

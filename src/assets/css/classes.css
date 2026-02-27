@@ -34,7 +34,9 @@
    background: var(--color-surface);
    border-radius: 16px;
    cursor: pointer;
-   transition: background 0.25s, box-shadow 0.3s;
+   transition:
+      background 0.25s,
+      box-shadow 0.3s;
 }
 
 .SettingsToggle--on {
@@ -56,7 +58,9 @@
 
 .SettingsToggle--on .SettingsToggle-knob {
    transform: translateX(20px);
-   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), var(--glow-sm);
+   box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.2),
+      var(--glow-sm);
 }
 
 /* macOS-style select/picker */
@@ -72,10 +76,53 @@
    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2386868b' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
    background-repeat: no-repeat;
    background-position: right 10px center;
-   transition: border-color 0.25s, box-shadow 0.25s;
+   transition:
+      border-color 0.25s,
+      box-shadow 0.25s;
 }
 
 .SettingsSelect:focus {
    outline: none;
    border-color: var(--color-border);
+}
+
+.GradientButton {
+   --font-size: 18px;
+   --font-weight: 600;
+   --line-height: 21px;
+   --radius: 6px;
+   --shine-top-width: 96px;
+   --shine-top-height: 6px;
+   --shine-top-blur: 6px;
+   --text-shadow: 0 0px 3px rgba(0, 0, 0, 0.2);
+
+   appearance: none;
+   border: none;
+   outline: none;
+   overflow: hidden;
+   position: relative;
+   cursor: pointer;
+
+   font-weight: var(--font-weight);
+   font-size: var(--font-size);
+   line-height: var(--line-height);
+   text-shadow: var(--text-shadow);
+   border-radius: var(--radius);
+   color: var(--color-on-accent);
+   background: linear-gradient(
+      90deg,
+      var(--btn-gradient-0) 0%,
+      var(--btn-gradient-50) 50%,
+      var(--btn-gradient-100) 100%
+   );
+   border: 1px solid rgba(255, 255, 255, 0.25);
+   transition: box-shadow 0.2s;
+
+   &:hover {
+      box-shadow: var(--glow-md);
+   }
+
+   & svg {
+      filter: drop-shadow(var(--text-shadow));
+   }
 }
