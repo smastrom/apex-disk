@@ -15,41 +15,41 @@ importers:
         specifier: ^3.13.19
         version: 3.13.19(vue@3.5.29(typescript@5.6.3))
       '@tauri-apps/api':
-        specifier: ^2
+        specifier: ^2.10.1
         version: 2.10.1
       '@tauri-apps/plugin-opener':
-        specifier: ^2
+        specifier: ^2.5.3
         version: 2.5.3
       '@tauri-apps/plugin-os':
         specifier: ~2.3.2
         version: 2.3.2
       '@tauri-apps/plugin-store':
-        specifier: ^2
+        specifier: ^2.4.2
         version: 2.4.2
       vue:
-        specifier: ^3.5.13
+        specifier: ^3.5.29
         version: 3.5.29(typescript@5.6.3)
     devDependencies:
       '@tauri-apps/cli':
-        specifier: ^2
+        specifier: ^2.10.0
         version: 2.10.0
       '@types/node':
-        specifier: ^25.3.0
-        version: 25.3.0
+        specifier: ^25.3.2
+        version: 25.3.2
       '@vitejs/plugin-vue':
-        specifier: ^5.2.1
-        version: 5.2.4(vite@6.4.1(@types/node@25.3.0))(vue@3.5.29(typescript@5.6.3))
+        specifier: ^5.2.4
+        version: 5.2.4(vite@6.4.1(@types/node@25.3.2))(vue@3.5.29(typescript@5.6.3))
       oxfmt:
-        specifier: ^0.35
+        specifier: ^0.35.0
         version: 0.35.0
       typescript:
-        specifier: ~5.6.2
+        specifier: ~5.6.3
         version: 5.6.3
       vite:
-        specifier: ^6.0.3
-        version: 6.4.1(@types/node@25.3.0)
+        specifier: ^6.4.1
+        version: 6.4.1(@types/node@25.3.2)
       vue-tsc:
-        specifier: ^2.1.10
+        specifier: ^2.2.12
         version: 2.2.12(typescript@5.6.3)
 
 packages:
@@ -569,8 +569,8 @@ packages:
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
-  '@types/node@25.3.0':
-    resolution: {integrity: sha512-4K3bqJpXpqfg2XKGK9bpDTc6xO/xoUP/RBWS7AtRMug6zZFaRekiLzjVtAoZMquxoAbzBvy5nxQ7veS5eYzf8A==}
+  '@types/node@25.3.2':
+    resolution: {integrity: sha512-RpV6r/ij22zRRdyBPcxDeKAzH43phWVKEjL2iksqo1Vz3CuBUrgmPpPhALKiRfU7OMCmeeO9vECBMsV0hMTG8Q==}
 
   '@vitejs/plugin-vue@5.2.4':
     resolution: {integrity: sha512-7Yx/SXSOcQq5HiiV3orevHUFn+pmMB4cgbEkDYgnkUWb0WfeQ/wa2yFv6D5ICiCQOVpjA7vYDXrC7AGO8yjDHA==}
@@ -631,13 +631,11 @@ packages:
   alien-signals@1.0.13:
     resolution: {integrity: sha512-OGj9yyTnJEttvzhTUWuscOvtqxq5vrhF7vL9oS0xJ2mK0ItPYP1/y+vCFebfxoEyAz0++1AIwJ5CMr+Fk3nDmg==}
 
-  balanced-match@4.0.4:
-    resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
-    engines: {node: 18 || 20 || >=22}
+  balanced-match@1.0.2:
+    resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
-  brace-expansion@5.0.3:
-    resolution: {integrity: sha512-fy6KJm2RawA5RcHkLa1z/ScpBeA762UF9KmZQxwIbDtRJrgLzM10depAiEQ+CXYcoiqW1/m96OAAoke2nE9EeA==}
-    engines: {node: 18 || 20 || >=22}
+  brace-expansion@2.0.2:
+    resolution: {integrity: sha512-Jt0vHyM+jmUBqojB7E1NIYadt0vI0Qxjxd2TErW94wDz+E2LAm5vKMXXwg6ZZBTHPuUlDgQHKXvjGBdfcF1ZDQ==}
 
   csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
@@ -678,8 +676,8 @@ packages:
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
-  minimatch@9.0.6:
-    resolution: {integrity: sha512-kQAVowdR33euIqeA0+VZTDqU+qo1IeVY+hrKYtZMio3Pg0P0vuh/kwRylLUddJhB6pf3q/botcOvRtx4IN1wqQ==}
+  minimatch@9.0.9:
+    resolution: {integrity: sha512-OBwBN9AL4dqmETlpS2zasx+vTeWclWzkblfZk7KTA5j3jeOONz/tRCnZomUyvNg83wL5Zv9Ss6HMJXAgL8R2Yg==}
     engines: {node: '>=16 || 14 >=14.17'}
 
   muggle-string@0.4.1:
@@ -1092,13 +1090,13 @@ snapshots:
 
   '@types/estree@1.0.8': {}
 
-  '@types/node@25.3.0':
+  '@types/node@25.3.2':
     dependencies:
       undici-types: 7.18.2
 
-  '@vitejs/plugin-vue@5.2.4(vite@6.4.1(@types/node@25.3.0))(vue@3.5.29(typescript@5.6.3))':
+  '@vitejs/plugin-vue@5.2.4(vite@6.4.1(@types/node@25.3.2))(vue@3.5.29(typescript@5.6.3))':
     dependencies:
-      vite: 6.4.1(@types/node@25.3.0)
+      vite: 6.4.1(@types/node@25.3.2)
       vue: 3.5.29(typescript@5.6.3)
 
   '@volar/language-core@2.4.15':
@@ -1155,7 +1153,7 @@ snapshots:
       '@vue/compiler-vue2': 2.7.16
       '@vue/shared': 3.5.29
       alien-signals: 1.0.13
-      minimatch: 9.0.6
+      minimatch: 9.0.9
       muggle-string: 0.4.1
       path-browserify: 1.0.1
     optionalDependencies:
@@ -1187,11 +1185,11 @@ snapshots:
 
   alien-signals@1.0.13: {}
 
-  balanced-match@4.0.4: {}
+  balanced-match@1.0.2: {}
 
-  brace-expansion@5.0.3:
+  brace-expansion@2.0.2:
     dependencies:
-      balanced-match: 4.0.4
+      balanced-match: 1.0.2
 
   csstype@3.2.3: {}
 
@@ -1243,9 +1241,9 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  minimatch@9.0.6:
+  minimatch@9.0.9:
     dependencies:
-      brace-expansion: 5.0.3
+      brace-expansion: 2.0.2
 
   muggle-string@0.4.1: {}
 
@@ -1331,7 +1329,7 @@ snapshots:
 
   undici-types@7.18.2: {}
 
-  vite@6.4.1(@types/node@25.3.0):
+  vite@6.4.1(@types/node@25.3.2):
     dependencies:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.3)
@@ -1340,7 +1338,7 @@ snapshots:
       rollup: 4.59.0
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 25.3.0
+      '@types/node': 25.3.2
       fsevents: 2.3.3
 
   vscode-uri@3.1.0: {}
