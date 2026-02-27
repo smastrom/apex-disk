@@ -2,13 +2,13 @@ export const FooterNav = {
    en: {
       scan: 'Scan',
       settings: 'Settings',
-      informations: 'Informations',
+      information: 'Information',
       donate: 'Donate',
    },
    it: {
       scan: 'Scansiona',
       settings: 'Impostazioni',
-      informations: 'Informazioni',
+      information: 'Informazioni',
       donate: 'Dona',
    },
 } as const
