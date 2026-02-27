@@ -118,6 +118,109 @@ t('MainView', 'scanning', { current: 1, total: 10 }) // → "Scanning… 1 of 10
 2. Import and add it to `translations` in `index.ts`
 3. Use `t('ComponentName', 'key')` in the component
 
+#### Theme
+
+The app theme is controlled by CSS variables in `src/assets/css/theme.css` and persisted in the settings store via `themeColor` in `src/types/settings.ts`.
+
+##### CSS variables
+
+- The **default palette** lives under `:root` in `theme.css` and is used when the theme is `ROOT_THEME` (`'mac-user-lens'`).
+- **Additional themes** use a `data-theme` attribute on `html` and override only the variables they need:
+
+```css
+:root {
+   --color-bg: #050508;
+   --color-text: #f8fafc;
+   /* ... */
+}
+
+html[data-theme='ayu'] {
+   --color-bg: #0b0e14;
+   --color-text: #e6edf7;
+   /* override only what changes for this theme */
+}
+```
+
+The helper `applyTheme(theme)` in `src/lib/theme.ts` is responsible for toggling the `data-theme` attribute:
+
+```ts
+// src/lib/theme.ts
+export function applyTheme(theme: string): void {
+   if (theme === ROOT_THEME) {
+      document.documentElement.removeAttribute('data-theme')
+   } else {
+      document.documentElement.setAttribute('data-theme', theme)
+   }
+}
+```
+
+##### Settings and types
+
+Theme options are defined in `src/types/settings.ts` and consumed by the settings store in `src/stores/settings.ts`:
+
+```ts
+// src/types/settings.ts
+export const THEME_COLORS = ['mac-user-lens', 'ayu'] as const
+export type ThemeColor = (typeof THEME_COLORS)[number]
+export const ROOT_THEME: ThemeColor = 'mac-user-lens'
+
+export interface AppSettings {
+   language: Language
+   themeColor: ThemeColor
+   /* ... */
+}
+
+export const DEFAULT_SETTINGS: AppSettings = {
+   language: 'en',
+   themeColor: 'mac-user-lens',
+   /* ... */
+}
+```
+
+```ts
+// src/stores/settings.ts
+export interface SettingsStore {
+   settings: Ref<AppSettings>
+   getThemeColor: () => string
+   setThemeColor: (theme: ThemeColor) => Promise<void>
+   /* ... */
+}
+```
+
+`themeColor` is loaded from disk, validated against `THEME_COLORS`, and then used by the UI to render the theme picker and call `setThemeColor`.
+
+##### Usage and examples
+
+- **Applying the theme on startup** (e.g. in `App.vue` or `main.ts`):
+
+```ts
+const store = await createSettingsStore()
+const currentTheme = store.getThemeColor()
+applyTheme(currentTheme)
+```
+
+- **Reacting to user selection in a settings view**:
+
+```ts
+const settingsStore = inject(SETTINGS_KEY)!
+
+async function onThemeChange(theme: ThemeColor) {
+   await settingsStore.setThemeColor(theme)
+   applyTheme(theme)
+}
+```
+
+##### Adding a new theme
+
+1. **Define the theme ID** in `src/types/settings.ts`:
+   - Add it to `THEME_COLORS` (e.g. `'dracula'`) and update any unions if needed.
+   - Optionally set it as the default by changing `DEFAULT_SETTINGS.themeColor`.
+2. **Add CSS overrides** in `src/assets/css/theme.css`:
+   - Create a new block `html[data-theme='dracula'] { ... }` and override only the variables that differ from `:root`.
+3. **Expose in the UI**:
+   - Use `THEME_COLORS` (or a local list) to render theme options in `SettingsView.vue`.
+   - When the user selects a theme, call `setThemeColor(newTheme)` and then `applyTheme(newTheme)`.
+
 #### Safe / protected folders
 
 Standard macOS home directory folders (Applications, Desktop, Documents, Downloads, Library, Movies, Music, Pictures, Public) cannot be selected or deleted. Their contents (e.g. Library/Application Support, files in Desktop) remain selectable.
