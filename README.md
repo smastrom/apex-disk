@@ -1,22 +1,22 @@
+![Mac User Lens](./src-tauri/icons/128x128.png)
+
 # Mac User Lens
 
-Mac User Lens is a tool that helps you easily identify and get rid of big, unused files and folders in seconds.
+Tool for macOS to easily identify and get rid of big, unused files and folders in seconds.
 
-## Getting started
+<!-- ![Mac User Lens](./public/screenshot-2.png) -->
 
-### Dependencies
+<br />
 
+## Development
+
+### 1. Dependencies
+
+- **macOS** (the app targets macOS only)
 - **Node.js** and **pnpm** (>= 10)
 - **Rust** (stable toolchain)
-- **macOS** (the app targets macOS only)
 
-For a universal build (Intel + Apple Silicon), install both macOS targets:
-
-```bash
-rustup target add aarch64-apple-darwin x86_64-apple-darwin
-```
-
-### Development
+### 2. Dev server
 
 Install dependencies and start the dev server (opens the Tauri app with hot-reload):
 
@@ -25,7 +25,13 @@ pnpm install
 pnpm tauri dev
 ```
 
-### Build
+### 3. Release build
+
+For a universal build (Intel + Apple Silicon), install both macOS targets:
+
+```bash
+rustup target add aarch64-apple-darwin x86_64-apple-darwin
+```
 
 Build the app for release (universal macOS binary + DMG):
 
