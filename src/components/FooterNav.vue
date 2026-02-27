@@ -1,7 +1,7 @@
 <!--
 FooterNav
 
-Purpose: Bottom navigation bar with Scan, Settings, Informations, Donate buttons. Mobile-app style footer.
+Purpose: Bottom navigation bar with Scan, Settings, Information, Donate buttons. Mobile-app style footer.
 
 Props: activeView (string?), emit: select-view
 
@@ -56,11 +56,11 @@ async function onDonateClick() {
       </button>
       <button
          class="FooterNav-btn"
-         :class="{ 'FooterNav-btn--active': activeView === 'informations' }"
-         @click="emit('select-view', 'informations')"
+         :class="{ 'FooterNav-btn--active': activeView === 'information' }"
+         @click="emit('select-view', 'information')"
       >
          <PhInfo :size="24" weight="regular" />
-         <span>{{ t('FooterNav', 'informations') }}</span>
+         <span>{{ t('FooterNav', 'information') }}</span>
       </button>
       <button class="FooterNav-btn" @click="onDonateClick">
          <PhHeart :size="24" weight="regular" />

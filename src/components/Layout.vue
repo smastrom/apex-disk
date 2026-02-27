@@ -62,8 +62,8 @@ defineEmits<{
                <main class="Layout-placeholder">
                   <p>
                      {{
-                        activeView === 'informations'
-                           ? t('Layout', 'informationsComingSoon')
+                        activeView === 'information'
+                           ? t('Layout', 'informationComingSoon')
                            : activeView === 'donate'
                              ? t('Layout', 'donateComingSoon')
                              : ''

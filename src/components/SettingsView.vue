@@ -34,17 +34,7 @@ const languageOptions = computed(() => [
 
 const themeOptions = computed(() => [
    { value: 'mac-user-lens' as ThemeColor, label: t('SettingsView', 'themeMacUserLens') },
-   { value: 'macos-light' as ThemeColor, label: t('SettingsView', 'themeLight') },
-   { value: 'macos-dark' as ThemeColor, label: t('SettingsView', 'themeDark') },
-   { value: 'tokyo-night' as ThemeColor, label: t('SettingsView', 'themeTokyoNight') },
-   { value: 'ayu-dark' as ThemeColor, label: t('SettingsView', 'themeAyuDark') },
-   { value: 'ayu-mirage' as ThemeColor, label: t('SettingsView', 'themeAyuMirage') },
-   { value: 'dracula' as ThemeColor, label: t('SettingsView', 'themeDracula') },
-   { value: 'gruvbox' as ThemeColor, label: t('SettingsView', 'themeGruvbox') },
-   { value: 'nord' as ThemeColor, label: t('SettingsView', 'themeNord') },
-   { value: 'solarized' as ThemeColor, label: t('SettingsView', 'themeSolarized') },
-   { value: 'one-dark' as ThemeColor, label: t('SettingsView', 'themeOneDark') },
-   { value: 'kanagawa' as ThemeColor, label: t('SettingsView', 'themeKanagawa') },
+   { value: 'ayu' as ThemeColor, label: t('SettingsView', 'themeAyu') },
 ])
 
 function toggleHiddenFiles() {

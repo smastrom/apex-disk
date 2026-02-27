@@ -6,7 +6,8 @@ import { SETTINGS_KEY } from '@/stores/settings'
 
 import type { SettingsStore } from '@/stores/settings'
 
-const VIEW_TRANSITION_SUPPORTED = typeof document !== 'undefined' && 'startViewTransition' in document
+const VIEW_TRANSITION_SUPPORTED =
+   typeof document !== 'undefined' && 'startViewTransition' in document
 
 function prefersReducedMotion(): boolean {
    if (typeof window === 'undefined' || !window.matchMedia) return false
@@ -21,10 +22,8 @@ export function useViewTransition() {
    const storeRef = inject<Ref<SettingsStore | null>>(SETTINGS_KEY)
 
    async function withTransition(update: () => void | Promise<void>) {
-      const enabled =
-         storeRef?.value?.settings?.value?.enableAnimations ?? true
-      const useNative =
-         VIEW_TRANSITION_SUPPORTED && enabled && !prefersReducedMotion()
+      const enabled = storeRef?.value?.settings?.value?.enableAnimations ?? true
+      const useNative = VIEW_TRANSITION_SUPPORTED && enabled && !prefersReducedMotion()
 
       if (useNative) {
          document.startViewTransition(async () => {
