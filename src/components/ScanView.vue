@@ -23,17 +23,9 @@ import ScanResultsList from './ScanResultsList.vue'
 import ScanScanningResults from './ScanScanningResults.vue'
 import ScanLaunch from './ScanLaunch.vue'
 
-import { ref, computed, watch, onDeactivated } from 'vue'
+import { ref, watch, onDeactivated, useTemplateRef } from 'vue'
 
 import type { DeleteListItem, FolderInfo, ScanProgress } from '@/types/structures'
-
-const selectedSize = ref(0)
-const viewState = ref<'results' | 'delete' | 'deleteComplete'>('results')
-const deleteItems = ref<DeleteListItem[]>([])
-const deletedSummary = ref<{ count: number; size: number } | null>(null)
-const diskUsageRef = ref<InstanceType<typeof ScanViewDiskUsage> | null>(null)
-const resultsListRef = ref<InstanceType<typeof ScanResultsList> | null>(null)
-const pendingSelection = ref<Set<string> | null>(null)
 
 defineProps<{
    folders: FolderInfo[]
@@ -47,6 +39,14 @@ const emit = defineEmits<{
    (e: 'cancel'): void
 }>()
 
+const selectedSize = ref(0)
+const viewState = ref<'results' | 'delete' | 'deleteComplete'>('results')
+const deleteItems = ref<DeleteListItem[]>([])
+const deletedSummary = ref<{ count: number; size: number } | null>(null)
+const diskUsageRef = useTemplateRef<InstanceType<typeof ScanViewDiskUsage>>('diskUsageRef')
+const resultsListRef = useTemplateRef<InstanceType<typeof ScanResultsList>>('resultsListRef')
+const pendingSelection = ref<DeleteListItem[] | null>(null)
+
 function onSelectedSizeUpdate(value: number) {
    selectedSize.value = value
 }
@@ -56,14 +56,14 @@ function onReview(items: DeleteListItem[]) {
    viewState.value = 'delete'
 }
 
-function onBackFromDelete(checkedPaths: string[]) {
-   pendingSelection.value = new Set(checkedPaths)
+function onBackFromDelete(checkedItems: DeleteListItem[]) {
+   pendingSelection.value = checkedItems
    viewState.value = 'results'
 }
 
 watch(resultsListRef, (ref) => {
    if (ref && pendingSelection.value) {
-      ref.setSelectedPaths(pendingSelection.value)
+      ref.setSelectedItems(pendingSelection.value)
       pendingSelection.value = null
    }
 })
@@ -95,7 +95,7 @@ onDeactivated(() => {
    <main class="ScanView-root">
       <ScanViewDiskUsage ref="diskUsageRef" :selectedSize="selectedSize" />
 
-      <Transition name="ScanView-fade" mode="out-in">
+      <Transition name="fade" mode="out-in">
          <KeepAlive>
             <ScanScanningResults
                v-if="loading"
@@ -105,14 +105,16 @@ onDeactivated(() => {
             />
 
             <ScanLaunch
-               v-else-if="viewState === 'results' && folders.length === 0"
+               v-else-if="
+                  viewState === 'results' && folders.length === 0 /* TODO: Add its own viewState */
+               "
                class="ScanView-body"
                @start-scan="$emit('start-scan')"
             />
 
             <ScanResultsList
                ref="resultsListRef"
-               v-else-if="viewState === 'results'"
+               v-else-if="viewState === 'results' && folders.length > 0"
                class="ScanView-body"
                :folders="folders"
                @update:selectedSize="onSelectedSizeUpdate"
@@ -159,13 +161,4 @@ onDeactivated(() => {
    overflow: hidden;
 }
 
-.ScanView-fade-enter-active,
-.ScanView-fade-leave-active {
-   transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.ScanView-fade-enter-from,
-.ScanView-fade-leave-to {
-   opacity: 0;
-}
 </style>

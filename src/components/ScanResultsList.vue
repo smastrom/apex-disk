@@ -22,6 +22,7 @@ import {
    computed,
    inject,
    nextTick,
+   useTemplateRef,
    type Ref,
 } from 'vue'
 import { PhTrash } from '@phosphor-icons/vue'
@@ -36,10 +37,6 @@ import { SETTINGS_KEY } from '@/stores/settings'
 import type { SettingsStore } from '@/stores/settings'
 import type { DeleteListItem, FolderInfo } from '@/types/structures'
 
-const { t } = useTranslations()
-const { withTransition } = useViewTransition()
-const storeRef = inject<Ref<SettingsStore | null>>(SETTINGS_KEY)
-
 const props = defineProps<{
    folders: FolderInfo[]
 }>()
@@ -50,53 +47,60 @@ const emit = defineEmits<{
    (e: 'cancel'): void
 }>()
 
+const storeRef = inject<Ref<SettingsStore | null>>(SETTINGS_KEY)
+
+const { t } = useTranslations()
+const { withTransition } = useViewTransition()
+
 interface NavEntry {
    items: FolderInfo[]
    label: string
    path: string
 }
 
-const backStack = ref<NavEntry[]>([])
-const forwardStack = ref<NavEntry[]>([])
-const current = ref<NavEntry>({ items: [], label: '', path: '' })
+/**
+ * Browser-style navigation stacks. shallowRef avoids deep reactivity on the
+ * NavEntry arrays — we only ever replace the whole array, never mutate in place.
+ */
+const backStack = shallowRef<NavEntry[]>([])
+const forwardStack = shallowRef<NavEntry[]>([])
+const current = shallowRef<NavEntry>({ items: [], label: '', path: '' })
 const homePath = ref('')
 
-// Map instead of Set: Map.get(key) tracks per-key, not ITERATE_KEY.
-// This means only the toggled ListItem re-renders, not the entire list.
-const selectedMap = reactive(new Map<string, boolean>())
+/**
+ * Selection state: Map<path, FolderInfo>.
+ *
+ * Performance design choices:
+ * - reactive(Map) instead of reactive(Set): Vue tracks Map.get(key) per-key
+ *   (not ITERATE_KEY), so toggling one item only re-renders that row, not the
+ *   entire list.
+ * - Stores FolderInfo references directly: gives O(1) access to item size/name
+ *   without needing a separate lookup index. Items are captured at toggle time,
+ *   avoiding any upfront tree walk (the folder tree can have 1.5M+ nodes).
+ */
+const selectedMap = reactive(new Map<string, FolderInfo>())
 
-// Flat indexes built once on scan, give O(1) lookup
-const sizeIndex = new Map<string, number>()
-const itemIndex = new Map<string, FolderInfo>()
-
-function buildIndexes(items: FolderInfo[]) {
-   for (const item of items) {
-      sizeIndex.set(item.path, item.size)
-      itemIndex.set(item.path, item)
-      if (!item.is_file) buildIndexes(item.children)
-   }
-}
-
+/** Extracts the parent directory from a path string. */
 function parentDir(path: string): string {
    const i = path.lastIndexOf('/')
    return i <= 0 ? '' : path.slice(0, i)
 }
 
+/**
+ * Resets navigation and sets the root view when scan results arrive.
+ * `{ immediate: true }` so the initial prop value is handled synchronously
+ * during setup — no extra render cycle needed.
+ */
 watch(
    () => props.folders,
    (folders) => {
       if (folders.length > 0) {
-         sizeIndex.clear()
-         itemIndex.clear()
-         buildIndexes(folders)
          backStack.value = []
          forwardStack.value = []
          const rootPath = parentDir(folders[0].path)
          homePath.value = rootPath
          current.value = { items: folders, label: '', path: rootPath }
       } else {
-         sizeIndex.clear()
-         itemIndex.clear()
          backStack.value = []
          forwardStack.value = []
          current.value = { items: [], label: '', path: '' }
@@ -106,12 +110,11 @@ watch(
    },
    { immediate: true }
 )
-
 const showZeroByteFolders = computed(
    () => storeRef?.value?.settings?.value?.showZeroByteFolders ?? false
 )
 
-/** Path for display: home directory shown as ~. */
+/** Path for display: replaces the home directory prefix with ~ for brevity. */
 const displayPath = computed(() => {
    const path = current.value.path
    const home = homePath.value
@@ -121,14 +124,16 @@ const displayPath = computed(() => {
    return path
 })
 
+/** Visible items for the current directory, optionally hiding 0-byte folders. */
 const displayedItems = computed(() => {
    const items = current.value.items
    if (showZeroByteFolders.value) return items
    return items.filter((item) => item.is_file || item.size > 0)
 })
 
-const parentRef = ref<HTMLElement | null>(null)
+const parentRef = useTemplateRef<HTMLElement>('parentRef')
 
+/** Resets scroll position to top when navigating into a different directory. */
 watch(
    () => current.value.path,
    () => {
@@ -136,6 +141,10 @@ watch(
    }
 )
 
+/**
+ * Virtual scroller: only renders rows visible in the viewport + overscan buffer.
+ * Wrapped in a computed so the virtualizer reactively tracks count/key changes.
+ */
 const rowVirtualizer = useVirtualizer(
    computed(() => ({
       count: displayedItems.value.length,
@@ -145,25 +154,31 @@ const rowVirtualizer = useVirtualizer(
       getItemKey: (index: number) => displayedItems.value[index]?.path ?? index,
    }))
 )
-
-/** True if any key in selectedMap is a strict ancestor of path (path is inside that folder). */
+/**
+ * Walks up the directory hierarchy via string slicing to check if any
+ * ancestor of `path` is already selected. O(depth) — typically 3-6 levels.
+ * Used to avoid double-counting nested selections in size totals and delete lists.
+ */
 function hasSelectedAncestor(path: string): boolean {
    let dir = path
    for (;;) {
       const slash = dir.lastIndexOf('/')
       if (slash <= 0) return false
       dir = dir.slice(0, slash)
-      if (selectedMap.get(dir)) return true
+      if (selectedMap.has(dir)) return true
    }
 }
 
-/** Build flat list of selected items (no ancestor selected) for delete review, sorted by size descending. */
+/**
+ * Builds a flat list of selected items for the delete review screen.
+ * Filters out items whose ancestor folder is already selected (to avoid
+ * double-counting), then sorts largest first for user visibility.
+ */
 function buildSelectedItemsForDelete(): DeleteListItem[] {
    const out: DeleteListItem[] = []
-   for (const [path] of selectedMap) {
+   for (const [path, item] of selectedMap) {
       if (!hasSelectedAncestor(path)) {
-         const item = itemIndex.get(path)
-         if (item) out.push({ path, name: item.name, size: item.size, is_file: item.is_file })
+         out.push({ path, name: item.name, size: item.size, is_file: item.is_file })
       }
    }
    return out.sort((a, b) => b.size - a.size)
@@ -171,12 +186,17 @@ function buildSelectedItemsForDelete(): DeleteListItem[] {
 
 /** True if item should appear selected: explicitly in map or inside a selected folder. */
 function isSelectedForUI(path: string): boolean {
-   return !!selectedMap.get(path) || hasSelectedAncestor(path)
+   return selectedMap.has(path) || hasSelectedAncestor(path)
 }
 
-// Set of folder paths that have at least one selected descendant but are not
-// themselves selected. Updated once per selectedMap mutation — O(entries × depth).
-// Template does a simple O(1) Set.has() lookup instead of per-row tree traversal.
+/**
+ * Pre-computed set of folder paths that have at least one selected descendant
+ * but are not themselves selected — i.e. folders in "indeterminate" state.
+ *
+ * Rebuilt automatically on every selectedMap mutation via watchEffect.
+ * Cost: O(entries × depth) per mutation. The template then does O(1) Set.has()
+ * per row instead of a per-row tree traversal.
+ */
 const someSelectedPaths = shallowRef(new Set<string>())
 
 watchEffect(() => {
@@ -187,24 +207,30 @@ watchEffect(() => {
          const slash = dir.lastIndexOf('/')
          if (slash <= 0) break
          dir = dir.slice(0, slash)
-         if (selectedMap.has(dir)) break // ancestor already covers everything below
+         if (selectedMap.has(dir)) break
          set.add(dir)
       }
    }
    someSelectedPaths.value = set
 })
 
+/**
+ * Total size of selected items, excluding items already covered by a selected
+ * ancestor. Reads item.size directly from the stored FolderInfo — O(entries × depth).
+ */
 const selectedSize = computed(() => {
    let total = 0
-   for (const [path] of selectedMap) {
+   for (const [path, item] of selectedMap) {
       if (hasSelectedAncestor(path)) continue
-      total += sizeIndex.get(path) ?? 0
+      total += item.size
    }
    return total
 })
 
+/** Emits size changes to parent so the disk usage bar stays in sync. */
 watch(selectedSize, (size) => emit('update:selectedSize', size), { immediate: true })
 
+/** Removes all selectedMap entries whose path is inside `folderPath`. */
 function deselectDescendants(folderPath: string) {
    const prefix = folderPath + '/'
    for (const [path] of selectedMap) {
@@ -212,29 +238,51 @@ function deselectDescendants(folderPath: string) {
    }
 }
 
+/**
+ * Three-state toggle for item selection:
+ * 1. Selected → deselect (remove from map).
+ * 2. Indeterminate (has selected descendants) → deselect all descendants.
+ * 3. Unselected → select (store FolderInfo reference in map).
+ */
 function toggleSelect(item: FolderInfo) {
    if (item.is_protected) return
-   if (selectedMap.get(item.path)) {
+   if (selectedMap.has(item.path)) {
       selectedMap.delete(item.path)
    } else if (someSelectedPaths.value.has(item.path)) {
-      // Indeterminate state: deselect all descendants
       deselectDescendants(item.path)
    } else {
-      selectedMap.set(item.path, true)
+      selectedMap.set(item.path, item)
    }
 }
 
-/** Replaces selection with the given paths (e.g. after returning from DeleteList). */
-function setSelectedPaths(paths: Set<string>) {
+/**
+ * Restores selection from DeleteListItem[] (e.g. after returning from the delete
+ * review screen). Converts each item to a FolderInfo stub so selectedMap stays
+ * consistent. O(items) — no tree walk needed.
+ */
+function setSelectedItems(items: DeleteListItem[]) {
    selectedMap.clear()
-   for (const path of paths) selectedMap.set(path, true)
+   for (const item of items) {
+      selectedMap.set(item.path, {
+         name: item.name,
+         path: item.path,
+         size: item.size,
+         is_file: item.is_file,
+         is_protected: false,
+         children: [],
+      })
+   }
 }
 
-defineExpose({ setSelectedPaths })
+defineExpose({ setSelectedItems })
 
-const listWrapRef = ref<HTMLElement | null>(null)
-const footerRef = ref<HTMLElement | null>(null)
+const listWrapRef = useTemplateRef<HTMLElement>('listWrapRef')
+const footerRef = useTemplateRef<HTMLElement>('footerRef')
 
+/**
+ * View transition name helpers. Names are applied just before a transition
+ * and removed after, so they don't interfere with other transitions on the page.
+ */
 function enableListTransitionNames() {
    listWrapRef.value?.style.setProperty('view-transition-name', 'list-view')
    footerRef.value?.style.setProperty('view-transition-name', 'list-footer')
@@ -245,6 +293,7 @@ function clearListTransitionNames() {
    footerRef.value?.style.removeProperty('view-transition-name')
 }
 
+/** Navigates into a folder's children with a forward view transition. */
 async function goInto(item: FolderInfo) {
    if (item.is_file) return
    document.documentElement.style.setProperty('--nav-direction', '1')
@@ -257,6 +306,7 @@ async function goInto(item: FolderInfo) {
    clearListTransitionNames()
 }
 
+/** Navigates to the previous directory with a backward view transition. */
 async function goBack() {
    if (backStack.value.length === 0) return
    document.documentElement.style.setProperty('--nav-direction', '-1')
@@ -268,6 +318,7 @@ async function goBack() {
    clearListTransitionNames()
 }
 
+/** Re-enters a previously visited directory with a forward view transition. */
 async function goForward() {
    if (forwardStack.value.length === 0) return
    document.documentElement.style.setProperty('--nav-direction', '1')
@@ -291,12 +342,12 @@ function onCancel() {
 <template>
    <div class="ScanResultsList-root">
       <ScanResultsNav
-         :showForward="true"
+         showForward
          :backDisabled="backStack.length === 0"
          :forwardDisabled="forwardStack.length === 0"
          :pathLabel="displayPath"
          :pathTitle="current.path"
-         :showActions="true"
+         showActions
          :resetDisabled="selectedMap.size === 0"
          @back="goBack"
          @forward="goForward"
@@ -361,34 +412,12 @@ function onCancel() {
    background: var(--color-bg);
 }
 
-.ScanResultsList-fade-enter-active,
-.ScanResultsList-fade-leave-active {
-   transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.ScanResultsList-fade-enter-from,
-.ScanResultsList-fade-leave-to {
-   opacity: 0;
-}
-
-.ScanResultsList-content {
-   flex: 1;
-   display: flex;
-   flex-direction: column;
-   min-height: 0;
-   max-width: var(--content-max-width);
-   margin: 0 auto;
-   width: 100%;
-   padding: 0;
-   overflow: hidden;
-   padding-bottom: var(--delete-footer-height);
-}
-
 .ScanResultsList-listWrap {
    flex: 1;
    min-height: 0;
    display: flex;
    flex-direction: column;
+   padding-bottom: var(--delete-footer-height);
 }
 
 .ScanResultsList-list {
