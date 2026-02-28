@@ -200,12 +200,13 @@ async function onDeleteClick() {
          <button
             type="button"
             class="ScanResultsDeleteList-deleteBtn"
+            :class="{ 'ScanResultsDeleteList-deleteBtn--deleting': deleting }"
             :disabled="countdownRemaining > 0 || checkedCount === 0 || deleting"
             @click="onDeleteClick"
          >
             <Spinner v-if="deleting" :size="18" class="ScanResultsDeleteList-spinner" />
             <PhTrash v-else :size="18" weight="bold" aria-hidden="true" />
-            <span v-if="!deleting">{{
+            <span>{{
                selectedSize > 0
                   ? t('ScanResultsDeleteList', 'deleteSize', { size: formatBytes(selectedSize) })
                   : t('ScanResultsDeleteList', 'delete')
@@ -288,7 +289,7 @@ async function onDeleteClick() {
       opacity: 0.9;
    }
 
-   &:disabled {
+   &:disabled:not(.ScanResultsDeleteList-deleteBtn--deleting) {
       opacity: 0.5;
       cursor: not-allowed;
    }
