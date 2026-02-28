@@ -17,12 +17,13 @@ function prefersReducedMotion(): boolean {
 /**
  * Wraps a DOM update in the View Transitions API when animations are enabled.
  * Falls back to immediate update when disabled or unsupported.
+ * @param storeRef - Optional ref to the settings store; when provided (e.g. by the providing component), inject is skipped.
  */
-export function useViewTransition() {
-   const storeRef = inject<Ref<SettingsStore | null>>(SETTINGS_KEY)
+export function useViewTransition(storeRef?: Ref<SettingsStore | null>) {
+   const resolved = storeRef ?? inject<Ref<SettingsStore | null>>(SETTINGS_KEY)
 
    async function withTransition(update: () => void | Promise<void>): Promise<void> {
-      const enabled = storeRef?.value?.settings?.value?.enableAnimations ?? true
+      const enabled = resolved?.value?.settings?.value?.enableAnimations ?? true
       const useNative = VIEW_TRANSITION_SUPPORTED && enabled && !prefersReducedMotion()
 
       if (useNative) {
