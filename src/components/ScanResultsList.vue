@@ -40,8 +40,6 @@ const { t } = useTranslations()
 const { withTransition } = useViewTransition()
 const storeRef = inject<Ref<SettingsStore | null>>(SETTINGS_KEY)
 
-const navDirection = ref<1 | -1>(1)
-
 const props = defineProps<{
    folders: FolderInfo[]
 }>()
@@ -207,10 +205,23 @@ const selectedSize = computed(() => {
 
 watch(selectedSize, (size) => emit('update:selectedSize', size), { immediate: true })
 
+function deselectDescendants(folderPath: string) {
+   const prefix = folderPath + '/'
+   for (const [path] of selectedMap) {
+      if (path.startsWith(prefix)) selectedMap.delete(path)
+   }
+}
+
 function toggleSelect(item: FolderInfo) {
    if (item.is_protected) return
-   if (selectedMap.get(item.path)) selectedMap.delete(item.path)
-   else selectedMap.set(item.path, true)
+   if (selectedMap.get(item.path)) {
+      selectedMap.delete(item.path)
+   } else if (someSelectedPaths.value.has(item.path)) {
+      // Indeterminate state: deselect all descendants
+      deselectDescendants(item.path)
+   } else {
+      selectedMap.set(item.path, true)
+   }
 }
 
 /** Replaces selection with the given paths (e.g. after returning from DeleteList). */
@@ -221,32 +232,51 @@ function setSelectedPaths(paths: Set<string>) {
 
 defineExpose({ setSelectedPaths })
 
-function goInto(item: FolderInfo) {
+const listWrapRef = ref<HTMLElement | null>(null)
+const footerRef = ref<HTMLElement | null>(null)
+
+function enableListTransitionNames() {
+   listWrapRef.value?.style.setProperty('view-transition-name', 'list-view')
+   footerRef.value?.style.setProperty('view-transition-name', 'list-footer')
+}
+
+function clearListTransitionNames() {
+   listWrapRef.value?.style.removeProperty('view-transition-name')
+   footerRef.value?.style.removeProperty('view-transition-name')
+}
+
+async function goInto(item: FolderInfo) {
    if (item.is_file) return
-   navDirection.value = 1
-   withTransition(async () => {
+   document.documentElement.style.setProperty('--nav-direction', '1')
+   enableListTransitionNames()
+   await withTransition(async () => {
       backStack.value = [...backStack.value, { ...current.value }]
       forwardStack.value = []
       current.value = { items: item.children, label: item.name, path: item.path }
    })
+   clearListTransitionNames()
 }
 
-function goBack() {
+async function goBack() {
    if (backStack.value.length === 0) return
-   navDirection.value = -1
-   withTransition(async () => {
+   document.documentElement.style.setProperty('--nav-direction', '-1')
+   enableListTransitionNames()
+   await withTransition(async () => {
       forwardStack.value = [...forwardStack.value, { ...current.value }]
       current.value = backStack.value.pop()!
    })
+   clearListTransitionNames()
 }
 
-function goForward() {
+async function goForward() {
    if (forwardStack.value.length === 0) return
-   navDirection.value = 1
-   withTransition(async () => {
+   document.documentElement.style.setProperty('--nav-direction', '1')
+   enableListTransitionNames()
+   await withTransition(async () => {
       backStack.value = [...backStack.value, { ...current.value }]
       current.value = forwardStack.value.pop()!
    })
+   clearListTransitionNames()
 }
 
 function onReviewClick() {
@@ -273,7 +303,7 @@ function onCancel() {
          @reset="selectedMap.clear()"
          @cancel="onCancel"
       />
-      <div class="ScanResultsList-listWrap" :style="{ '--nav-direction': navDirection }">
+      <div ref="listWrapRef" class="ScanResultsList-listWrap">
          <div ref="parentRef" class="ScanResultsList-list ScanResultsList-listScroll">
             <div
                class="ScanResultsList-listInner"
@@ -305,7 +335,7 @@ function onCancel() {
          </div>
       </div>
 
-      <div class="ScanResultsList-footer">
+      <div ref="footerRef" class="ScanResultsList-footer">
          <button
             type="button"
             class="ScanResultsList-deleteBtn GradientButton"
@@ -359,7 +389,6 @@ function onCancel() {
    min-height: 0;
    display: flex;
    flex-direction: column;
-   view-transition-name: list-view;
 }
 
 .ScanResultsList-list {
