@@ -337,6 +337,29 @@ Example (from `SettingsView.vue`):
 </template>
 ```
 
+#### SVG icons
+
+**Always add `aria-hidden="true"` to SVG elements used as icons.** This applies to:
+
+- **Internal SVGs** — inline `<svg>` in templates or components
+- **External icon packages** — e.g. Phosphor icons; ensure the rendered `<svg>` has `aria-hidden="true"` (via wrapper, component props, or package configuration)
+
+Decorative icons should be hidden from assistive technologies so that screen readers don’t announce them; use visible text or `aria-label` on the parent control (e.g. button) when the icon alone isn’t sufficient.
+
+```vue
+<!-- ✅ GOOD -->
+<button type="button" aria-label="Close">
+   <svg aria-hidden="true" ...>...</svg>
+   <PhX size="16" weight="bold" aria-hidden="true"/>
+</button>
+
+<!-- ❌ BAD — SVG exposed to assistive tech as redundant/confusing -->
+<button type="button" aria-label="Close">
+   <svg ...>...</svg>
+   <PhX size="16" weight="bold"/>
+</button>
+```
+
 #### Class naming
 
 - Format: `ComponentName-nestedElement`
@@ -576,6 +599,22 @@ if (theme === ROOT_THEME) document.documentElement.removeAttribute('data-theme')
 if (x) doSomething()
 else doOther()
 ```
+
+#### Boolean expressions
+
+**Avoid direct comparison with `false`** where the same intent can be expressed with `!`. Prefer `!value` over `value === false` (and likewise `value` over `value === true` when you only need truthiness).
+
+```ts
+// ✅ GOOD
+:disabled="!selectable"
+:aria-disabled="!selectable"
+
+// ❌ BAD — unnecessary comparison with false
+:disabled="selectable === false"
+:aria-disabled="selectable === false"
+```
+
+Use `=== false` or `=== true` only when you must distinguish from other falsy/truthy values (e.g. `undefined`, `null`).
 
 #### Variables
 
