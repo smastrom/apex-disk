@@ -22,6 +22,7 @@ import { listen } from '@tauri-apps/api/event'
 
 import { applyTheme } from '@/lib/theme'
 import { useTranslations } from '@/lib/useTranslations'
+import { useViewTransition } from '@/lib/useViewTransition'
 import { createSettingsStore, SETTINGS_KEY } from '@/stores/settings'
 
 import type { SettingsStore } from '@/stores/settings'
@@ -31,8 +32,10 @@ import '@/assets/css/theme.css'
 import '@/assets/css/global.css'
 import '@/assets/css/reset.css'
 import '@/assets/css/classes.css'
+import '@/assets/css/animations.css'
 
 const { t } = useTranslations()
+const { withTransition } = useViewTransition()
 
 const settingsStore = shallowRef<SettingsStore | null>(null)
 const appReady = ref(false)
@@ -65,6 +68,13 @@ watch(
 const folders = ref<FolderInfo[]>([])
 const loading = ref(false)
 const activeView = ref('scan')
+const mainContentRef = ref<HTMLElement | null>(null)
+
+const VIEW_ORDER = ['scan', 'settings', 'information', 'donate'] as const
+function viewIndex(view: string): number {
+   const i = VIEW_ORDER.indexOf(view as (typeof VIEW_ORDER)[number])
+   return i >= 0 ? i : 0
+}
 const scanGeneration = ref(0)
 const progress = ref<ScanProgress>({
    current: 0,
@@ -118,6 +128,19 @@ function onCancel() {
    folders.value = []
 }
 
+async function setActiveView(view: string) {
+   if (view === activeView.value) return
+
+   const el = mainContentRef.value
+   const dir = viewIndex(view) > viewIndex(activeView.value) ? 1 : -1
+   document.documentElement.style.setProperty('--nav-direction', String(dir))
+   el?.style.setProperty('view-transition-name', 'app-view')
+   await withTransition(async () => {
+      activeView.value = view
+   })
+   el?.style.removeProperty('view-transition-name')
+}
+
 onUnmounted(() => {
    unlistenProgress?.()
 })
@@ -127,11 +150,11 @@ onUnmounted(() => {
    <Transition name="App-ready" mode="out-in">
       <AppLoadingScreen v-if="!appReady" key="loading" />
 
-      <div v-else key="layout" class="App-root">
+      <div v-else class="App-root">
          <AppHeader />
 
          <div class="App-main">
-            <Transition name="App-fade">
+            <div ref="mainContentRef" class="App-mainContent">
                <KeepAlive>
                   <ScanView
                      v-if="activeView === 'scan'"
@@ -159,13 +182,13 @@ onUnmounted(() => {
                      </main>
                   </div>
                </KeepAlive>
-            </Transition>
+            </div>
          </div>
 
          <AppFooter
             :activeView="activeView"
             :hasPermissionIssue="!fdaGranted"
-            @select-view="activeView = $event"
+            @select-view="setActiveView"
          />
       </div>
    </Transition>
@@ -204,6 +227,13 @@ onUnmounted(() => {
    min-height: 0;
 }
 
+.App-mainContent {
+   flex: 1;
+   min-height: 0;
+   display: flex;
+   flex-direction: column;
+}
+
 .App-overlay {
    position: absolute;
    inset: 0;
@@ -224,15 +254,5 @@ onUnmounted(() => {
       color: var(--color-text-muted);
       margin: 0;
    }
-}
-
-.App-fade-enter-active,
-.App-fade-leave-active {
-   transition: opacity 0.18s ease-out;
-}
-
-.App-fade-enter-from,
-.App-fade-leave-to {
-   opacity: 0;
 }
 </style>
