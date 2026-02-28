@@ -26,6 +26,9 @@
    --glow-inset: inset 0 1px 8px var(--color-accent-glow);
    --glow-text: 0 0 12px var(--color-accent-glow);
 
+   /* Easing */
+   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
    /* Spacing */
    --spacing-xxs: 2px;
    --spacing-xs: 4px;
