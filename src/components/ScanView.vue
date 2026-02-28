@@ -23,7 +23,7 @@ import ScanResultsList from './ScanResultsList.vue'
 import ScanScanningResults from './ScanScanningResults.vue'
 import ScanLaunch from './ScanLaunch.vue'
 
-import { ref } from 'vue'
+import { ref, computed, watch, onDeactivated } from 'vue'
 
 import type { DeleteListItem, FolderInfo, ScanProgress } from '@/types/structures'
 
@@ -33,6 +33,7 @@ const deleteItems = ref<DeleteListItem[]>([])
 const deletedSummary = ref<{ count: number; size: number } | null>(null)
 const diskUsageRef = ref<InstanceType<typeof ScanViewDiskUsage> | null>(null)
 const resultsListRef = ref<InstanceType<typeof ScanResultsList> | null>(null)
+const pendingSelection = ref<Set<string> | null>(null)
 
 defineProps<{
    folders: FolderInfo[]
@@ -56,9 +57,16 @@ function onReview(items: DeleteListItem[]) {
 }
 
 function onBackFromDelete(checkedPaths: string[]) {
-   resultsListRef.value?.setSelectedPaths(new Set(checkedPaths))
+   pendingSelection.value = new Set(checkedPaths)
    viewState.value = 'results'
 }
+
+watch(resultsListRef, (ref) => {
+   if (ref && pendingSelection.value) {
+      ref.setSelectedPaths(pendingSelection.value)
+      pendingSelection.value = null
+   }
+})
 
 function onDeleteComplete(items: DeleteListItem[]) {
    deletedSummary.value = {
@@ -72,8 +80,15 @@ function onDeleteComplete(items: DeleteListItem[]) {
 
 function onScanAgain() {
    viewState.value = 'results'
-   emit('start-scan')
+   emit('cancel')
 }
+
+onDeactivated(() => {
+   if (viewState.value === 'deleteComplete') {
+      viewState.value = 'results'
+      emit('cancel')
+   }
+})
 </script>
 
 <template>
