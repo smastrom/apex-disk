@@ -1,0 +1,34 @@
+import { ref, useTemplateRef, type Ref } from 'vue'
+
+import { useViewTransition } from '@/lib/useViewTransition'
+
+import type { SettingsStore } from '@/stores/settings'
+
+const VIEW_ORDER = ['scan', 'settings', 'information', 'donate'] as const
+
+function viewIndex(view: string): number {
+   const i = VIEW_ORDER.indexOf(view as (typeof VIEW_ORDER)[number])
+   return i >= 0 ? i : 0
+}
+
+export function useViews(storeRef?: Ref<SettingsStore | null>) {
+   const { withTransition } = useViewTransition(storeRef)
+
+   const activeView = ref('settings')
+   const mainContentRef = useTemplateRef<HTMLElement>('mainContentRef')
+
+   async function setActiveView(view: string) {
+      if (view === activeView.value) return
+
+      const el = mainContentRef.value
+      const dir = viewIndex(view) > viewIndex(activeView.value) ? 1 : -1
+      document.documentElement.style.setProperty('--nav-direction', String(dir))
+      el?.style.setProperty('view-transition-name', 'app-view')
+      await withTransition(async () => {
+         activeView.value = view
+      })
+      el?.style.removeProperty('view-transition-name')
+   }
+
+   return { activeView, mainContentRef, setActiveView }
+}
