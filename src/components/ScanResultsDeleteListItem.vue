@@ -44,17 +44,19 @@ const emit = defineEmits<{
             :size="16"
             weight="regular"
             class="ScanResultsDeleteListItem-checkEmpty"
+            aria-hidden="true"
          />
          <PhCheckCircle
             v-else
             :size="16"
             weight="fill"
             class="ScanResultsDeleteListItem-checkFilled"
+            aria-hidden="true"
          />
       </button>
       <div class="ScanResultsDeleteListItem-icon">
-         <PhFolder v-if="!item.is_file" :size="18" weight="regular" />
-         <PhFile v-else :size="18" weight="regular" />
+         <PhFolder v-if="!item.is_file" :size="18" weight="regular" aria-hidden="true" />
+         <PhFile v-else :size="18" weight="regular" aria-hidden="true" />
       </div>
       <span class="ScanResultsDeleteListItem-name">{{ item.name }}</span>
       <span class="ScanResultsDeleteListItem-size">{{ formatBytes(item.size) }}</span>

@@ -204,7 +204,7 @@ async function onDeleteClick() {
             @click="onDeleteClick"
          >
             <Spinner v-if="deleting" :size="18" class="ScanResultsDeleteList-spinner" />
-            <PhTrash v-else :size="18" weight="bold" />
+            <PhTrash v-else :size="18" weight="bold" aria-hidden="true" />
             <span v-if="!deleting">{{
                selectedSize > 0
                   ? t('ScanResultsDeleteList', 'deleteSize', { size: formatBytes(selectedSize) })

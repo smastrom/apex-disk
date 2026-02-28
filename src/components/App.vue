@@ -164,7 +164,7 @@ onUnmounted(() => {
 
          <AppFooter
             :activeView="activeView"
-            :hasPermissionIssue="fdaGranted === false"
+            :hasPermissionIssue="!fdaGranted"
             @select-view="activeView = $event"
          />
       </div>

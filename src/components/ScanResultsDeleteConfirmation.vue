@@ -53,15 +53,11 @@ function closeApp() {
             class="ScanResultsDeleteConfirmation-scanBtn GradientButton"
             @click="$emit('scan-again')"
          >
-            <PhMagnifyingGlass :size="18" weight="regular" />
+            <PhMagnifyingGlass :size="18" weight="regular" aria-hidden="true" />
             {{ t('ScanResultsDeleteConfirmation', 'scanAgain') }}
          </button>
-         <button
-            type="button"
-            class="ScanResultsDeleteConfirmation-closeBtn"
-            @click="closeApp"
-         >
-            <PhX :size="16" weight="bold" />
+         <button type="button" class="ScanResultsDeleteConfirmation-closeBtn" @click="closeApp">
+            <PhX :size="16" weight="bold" aria-hidden="true" />
             {{ t('ScanResultsDeleteConfirmation', 'closeApp') }}
          </button>
       </div>

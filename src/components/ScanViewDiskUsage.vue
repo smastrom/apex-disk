@@ -81,7 +81,12 @@ async function openHomeInFinder() {
          </button>
 
          <span class="ScanViewDiskUsage-volume">
-            <PhHardDrive :size="14" weight="regular" class="ScanViewDiskUsage-volumeIcon" />
+            <PhHardDrive
+               :size="14"
+               weight="regular"
+               class="ScanViewDiskUsage-volumeIcon"
+               aria-hidden="true"
+            />
             {{ usage.volume_name }}
          </span>
       </div>

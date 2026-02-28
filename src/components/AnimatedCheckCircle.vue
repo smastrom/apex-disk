@@ -21,14 +21,9 @@ withDefaults(defineProps<{ size?: number }>(), { size: 48 })
       viewBox="0 0 256 256"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
    >
-      <circle
-         class="AnimatedCheckCircle-circle"
-         cx="128"
-         cy="128"
-         r="120"
-         fill="currentColor"
-      />
+      <circle class="AnimatedCheckCircle-circle" cx="128" cy="128" r="120" fill="currentColor" />
       <path
          class="AnimatedCheckCircle-check"
          d="M85 130 L115 160 L175 100"

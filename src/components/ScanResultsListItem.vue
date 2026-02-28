@@ -62,30 +62,38 @@ const emit = defineEmits<{
          :class="{
             'ScanResultsListItem-check--selected': selected,
             'ScanResultsListItem-check--some-selected': !selected && someSelected,
-            'ScanResultsListItem-check--disabled': selectable === false,
+            'ScanResultsListItem-check--disabled': !selectable,
          }"
          :aria-pressed="selected || someSelected"
-         :disabled="selectable === false"
-         :aria-disabled="selectable === false"
-         @click.stop="selectable !== false && emit('select')"
+         :disabled="!selectable"
+         :aria-disabled="!selectable"
+         @click.stop="selectable && emit('select')"
       >
          <PhCircle
             v-if="!selected && !someSelected"
             :size="22"
             weight="regular"
             class="ScanResultsListItem-checkEmpty"
+            aria-hidden="true"
          />
          <PhMinusCircle
             v-else-if="someSelected"
             :size="22"
             weight="fill"
             class="ScanResultsListItem-checkPartial"
+            aria-hidden="true"
          />
-         <PhCheckCircle v-else :size="22" weight="fill" class="ScanResultsListItem-checkFilled" />
+         <PhCheckCircle
+            v-else
+            :size="22"
+            weight="fill"
+            class="ScanResultsListItem-checkFilled"
+            aria-hidden="true"
+         />
       </button>
       <div class="ScanResultsListItem-icon">
-         <PhFolder v-if="!item.is_file" :size="28" weight="regular" />
-         <PhFile v-else :size="28" weight="regular" />
+         <PhFolder v-if="!item.is_file" :size="28" weight="regular" aria-hidden="true" />
+         <PhFile v-else :size="28" weight="regular" aria-hidden="true" />
       </div>
       <div class="ScanResultsListItem-info">
          <span class="ScanResultsListItem-name">{{ item.name }}</span>
@@ -104,6 +112,7 @@ const emit = defineEmits<{
             :size="18"
             weight="regular"
             class="ScanResultsListItem-chevron"
+            aria-hidden="true"
          />
       </div>
    </div>

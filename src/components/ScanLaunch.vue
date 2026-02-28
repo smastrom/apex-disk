@@ -25,7 +25,7 @@ const emit = defineEmits<{
    <section class="ScanLaunch-root">
       <div class="ScanLaunch-notice">
          <p class="ScanLaunch-noticeTitle">
-            <PhShieldWarning :size="16" weight="regular" />
+            <PhShieldWarning :size="16" weight="regular" aria-hidden="true" />
             {{ t('ScanLaunch', 'warningTitle') }}
          </p>
          <p class="ScanLaunch-noticeBody">
@@ -34,7 +34,7 @@ const emit = defineEmits<{
       </div>
 
       <button type="button" class="ScanLaunch-scanBtn GradientButton" @click="emit('start-scan')">
-         <PhMagnifyingGlass :size="18" weight="regular" />
+         <PhMagnifyingGlass :size="18" weight="regular" aria-hidden="true" />
          {{ t('ScanLaunch', 'startScan') }}
       </button>
    </section>

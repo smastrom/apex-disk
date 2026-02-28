@@ -44,7 +44,7 @@ async function onDonateClick() {
          :class="{ 'AppFooter-btn--active': activeView === 'scan' }"
          @click="emit('select-view', 'scan')"
       >
-         <PhMagnifyingGlass :size="24" weight="regular" />
+         <PhMagnifyingGlass :size="24" weight="regular" aria-hidden="true" />
          <span>{{ t('AppFooter', 'scan') }}</span>
       </button>
       <button
@@ -53,7 +53,7 @@ async function onDonateClick() {
          @click="emit('select-view', 'settings')"
       >
          <span class="AppFooter-iconWrap">
-            <PhGear :size="24" weight="regular" />
+            <PhGear :size="24" weight="regular" aria-hidden="true" />
             <span v-if="hasPermissionIssue" class="AppFooter-badge" aria-hidden="true" />
          </span>
          <span>{{ t('AppFooter', 'settings') }}</span>
@@ -63,11 +63,11 @@ async function onDonateClick() {
          :class="{ 'AppFooter-btn--active': activeView === 'information' }"
          @click="emit('select-view', 'information')"
       >
-         <PhInfo :size="24" weight="regular" />
+         <PhInfo :size="24" weight="regular" aria-hidden="true" />
          <span>{{ t('AppFooter', 'information') }}</span>
       </button>
       <button class="AppFooter-btn" @click="onDonateClick">
-         <PhHeart :size="24" weight="regular" />
+         <PhHeart :size="24" weight="regular" aria-hidden="true" />
          <span>{{ t('AppFooter', 'donate') }}</span>
       </button>
    </footer>

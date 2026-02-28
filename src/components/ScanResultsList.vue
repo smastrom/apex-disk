@@ -312,7 +312,7 @@ function onCancel() {
             :disabled="selectedMap.size === 0"
             @click="onReviewClick"
          >
-            <PhTrash :size="18" weight="bold" />
+            <PhTrash :size="18" weight="bold" aria-hidden="true" />
             <span>{{
                t('ScanResultsList', 'reviewSize', { size: formatBytes(selectedSize) })
             }}</span>

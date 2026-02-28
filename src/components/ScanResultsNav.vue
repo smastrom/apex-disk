@@ -56,7 +56,7 @@ const emit = defineEmits<{
             aria-label="Back"
             @click="emit('back')"
          >
-            <PhCaretLeft :size="18" weight="regular" />
+            <PhCaretLeft :size="18" weight="regular" aria-hidden="true" />
          </button>
          <button
             v-if="showForward"
@@ -66,11 +66,11 @@ const emit = defineEmits<{
             aria-label="Forward"
             @click="emit('forward')"
          >
-            <PhCaretRight :size="18" weight="regular" />
+            <PhCaretRight :size="18" weight="regular" aria-hidden="true" />
          </button>
       </div>
       <div class="ScanResultsNav-path" :title="pathTitle">
-         <PhFolder :size="16" weight="regular" class="ScanResultsNav-pathIcon" />
+         <PhFolder :size="16" weight="regular" class="ScanResultsNav-pathIcon" aria-hidden="true" />
          <span class="ScanResultsNav-pathText">{{ pathLabel }}</span>
       </div>
       <div v-if="showActions" class="ScanResultsNav-actions">

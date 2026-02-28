@@ -83,8 +83,8 @@ async function openSystemSettings() {
             <div class="SettingsGroup-row">
                <span class="SettingsGroup-label">{{ t('SettingsView', 'fdaLabel') }}</span>
                <span class="SettingsView-fdaStatus" :class="hasFda ? 'is-ok' : 'is-denied'">
-                  <PhCheckCircle v-if="hasFda" :size="13" weight="fill" />
-                  <PhXCircle v-else :size="13" weight="fill" />
+                  <PhCheckCircle v-if="hasFda" :size="13" weight="fill" aria-hidden="true" />
+                  <PhXCircle v-else :size="13" weight="fill" aria-hidden="true" />
                   {{ hasFda ? t('SettingsView', 'fdaGranted') : t('SettingsView', 'fdaMissing') }}
                </span>
             </div>
@@ -95,7 +95,7 @@ async function openSystemSettings() {
 
                <div class="SettingsView-fdaControls">
                   <button type="button" class="SettingsView-fdaBtn" @click="openSystemSettings">
-                     <PhGearSix :size="13" weight="fill" />
+                     <PhGearSix :size="13" weight="fill" aria-hidden="true" />
                      {{ t('SettingsView', 'fdaOpenSettings') }}
                   </button>
                </div>
@@ -119,7 +119,12 @@ async function openSystemSettings() {
                         {{ opt.label }}
                      </option>
                   </select>
-                  <PhCaretDown :size="14" weight="regular" class="SettingsView-selectChevron" />
+                  <PhCaretDown
+                     :size="14"
+                     weight="regular"
+                     class="SettingsView-selectChevron"
+                     aria-hidden="true"
+                  />
                </div>
             </div>
             <div class="SettingsGroup-row">
@@ -138,7 +143,12 @@ async function openSystemSettings() {
                         {{ opt.label }}
                      </option>
                   </select>
-                  <PhCaretDown :size="14" weight="regular" class="SettingsView-selectChevron" />
+                  <PhCaretDown
+                     :size="14"
+                     weight="regular"
+                     class="SettingsView-selectChevron"
+                     aria-hidden="true"
+                  />
                </div>
             </div>
          </section>
