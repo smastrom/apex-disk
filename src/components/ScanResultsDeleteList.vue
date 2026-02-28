@@ -14,7 +14,7 @@ import ScanResultsDeleteListItem from './ScanResultsDeleteListItem.vue'
 import ScanResultsNav from './ScanResultsNav.vue'
 import Spinner from './Spinner.vue'
 
-import { ref, shallowRef, watch, computed, onUnmounted } from 'vue'
+import { ref, shallowRef, watch, computed, onUnmounted, useTemplateRef } from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import { invoke } from '@tauri-apps/api/core'
 import { PhTrash } from '@phosphor-icons/vue'
@@ -22,22 +22,22 @@ import { PhTrash } from '@phosphor-icons/vue'
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/useTranslations'
 
-import {
-   DELETE_COUNTDOWN_SECONDS,
-   DELETE_POST_DELETE_SLEEP_MS,
-   MOCK_DELETE_DURATION_MS,
-} from '@/lib/constants'
+import { DELETE_COUNTDOWN_SECONDS, DELETE_POST_DELETE_SLEEP_MS } from '@/lib/constants'
 
 import type { DeleteListItem } from '@/types/structures'
-
-const MOCK_DELETE = false // import.meta.env.DEV
-
-const { t } = useTranslations()
 
 const props = defineProps<{
    items: DeleteListItem[]
    active?: boolean
 }>()
+
+const emit = defineEmits<{
+   (e: 'back', checkedItems: DeleteListItem[]): void
+   (e: 'update:selectedSize', value: number): void
+   (e: 'complete', items: DeleteListItem[]): void
+}>()
+
+const { t } = useTranslations()
 
 const countdownRemaining = ref(0)
 let countdownInterval: ReturnType<typeof setInterval> | null = null
@@ -69,17 +69,11 @@ onUnmounted(() => {
    if (countdownInterval) clearInterval(countdownInterval)
 })
 
-const emit = defineEmits<{
-   (e: 'back', checkedPaths: string[]): void
-   (e: 'update:selectedSize', value: number): void
-   (e: 'complete', items: DeleteListItem[]): void
-}>()
-
 /** ShallowRef so we replace the whole Map on load (one reactive write) instead of N .set() calls. */
 const checkedMapRef = shallowRef(new Map<string, boolean>())
 const deleting = ref(false)
 
-const parentRef = ref<HTMLElement | null>(null)
+const parentRef = useTemplateRef<HTMLElement>('parentRef')
 
 const rowVirtualizer = useVirtualizer(
    computed(() => ({
@@ -128,9 +122,9 @@ function toggle(path: string) {
    checkedMapRef.value = next
 }
 
-function getCheckedPaths(): string[] {
+function getCheckedItems(): DeleteListItem[] {
    const map = checkedMapRef.value
-   return props.items.filter((item) => map.get(item.path)).map((item) => item.path)
+   return props.items.filter((item) => map.get(item.path))
 }
 
 const deleteReady = computed(() => countdownRemaining.value <= 0)
@@ -140,15 +134,11 @@ async function onDeleteClick() {
    deleting.value = true
    const toDelete = props.items.filter((item) => checkedMapRef.value.get(item.path))
 
-   if (MOCK_DELETE) {
-      await new Promise((r) => setTimeout(r, MOCK_DELETE_DURATION_MS))
-   } else {
-      const items = toDelete.map((item) => ({
-         path: item.path,
-         is_file: item.is_file,
-      }))
-      await invoke('delete_paths', { items }).catch(() => {})
-   }
+   const items = toDelete.map((item) => ({
+      path: item.path,
+      is_file: item.is_file,
+   }))
+   await invoke('delete_paths', { items }).catch(() => {})
 
    await new Promise((r) => setTimeout(r, DELETE_POST_DELETE_SLEEP_MS))
    emit('complete', toDelete)
@@ -163,7 +153,7 @@ async function onDeleteClick() {
          :backDisabled="false"
          :pathLabel="t('ScanResultsDeleteList', 'navTitle')"
          :showActions="false"
-         @back="emit('back', getCheckedPaths())"
+         @back="emit('back', getCheckedItems())"
       />
       <div
          class="ScanResultsDeleteList-listWrap"

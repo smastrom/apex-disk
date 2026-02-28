@@ -7,9 +7,6 @@ export const DELETE_COUNTDOWN_SECONDS = 1
 /** Ms to wait after delete_paths completes before emitting complete and clearing spinner. */
 export const DELETE_POST_DELETE_SLEEP_MS = 2000
 
-/** Ms to simulate delete in dev when MOCK_DELETE is true. */
-export const MOCK_DELETE_DURATION_MS = 1500
-
 /**
  * Protected paths relative to home. Must match Rust PROTECTED_RELATIVE_PATHS.
  * Both top-level names ("Library") and nested paths ("Library/Application Support") are supported.
