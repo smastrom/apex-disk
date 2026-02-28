@@ -5,16 +5,14 @@ Purpose: Settings screen with Language, Theme, Show hidden files, Show 0B files,
 
 Props: fdaGranted (boolean)
 
-Events: fda-updated (boolean)
-
 Example:
- <SettingsView :fdaGranted="fdaGranted" @fda-updated="fdaGranted = $event" />
+ <SettingsView :fdaGranted="fdaGranted" />
 -->
 
 <script setup lang="ts">
 import { PhCaretDown, PhCheckCircle, PhXCircle, PhWrench as PhGearSix } from '@phosphor-icons/vue'
 
-import { ref, inject, computed, type Ref } from 'vue'
+import { inject, computed, type Ref } from 'vue'
 import { openUrl } from '@tauri-apps/plugin-opener'
 
 import { useTranslations } from '@/lib/useTranslations'
@@ -24,7 +22,7 @@ import { SETTINGS_KEY } from '@/stores/settings'
 import type { SettingsStore } from '@/stores/settings'
 import type { AppSettings, Language, ThemeColor } from '@/types/settings'
 
-const props = defineProps<{
+defineProps<{
    fdaGranted: boolean
 }>()
 
@@ -33,8 +31,6 @@ const { t } = useTranslations()
 const storeRef = inject<Ref<SettingsStore | null>>(SETTINGS_KEY)
 const store = computed(() => storeRef?.value ?? null)
 const settings = computed((): AppSettings | null => store.value?.settings.value ?? null)
-
-const hasFda = ref(props.fdaGranted)
 
 const languageOptions = computed(() => [
    { value: 'en' as Language, label: t('SettingsView', 'languageEn') },
@@ -82,13 +78,15 @@ async function openSystemSettings() {
          <section class="SettingsGroup">
             <div class="SettingsGroup-row">
                <span class="SettingsGroup-label">{{ t('SettingsView', 'fdaLabel') }}</span>
-               <span class="SettingsView-fdaStatus" :class="hasFda ? 'is-ok' : 'is-denied'">
-                  <PhCheckCircle v-if="hasFda" :size="13" weight="fill" aria-hidden="true" />
+               <span class="SettingsView-fdaStatus" :class="fdaGranted ? 'is-ok' : 'is-denied'">
+                  <PhCheckCircle v-if="fdaGranted" :size="13" weight="fill" aria-hidden="true" />
                   <PhXCircle v-else :size="13" weight="fill" aria-hidden="true" />
-                  {{ hasFda ? t('SettingsView', 'fdaGranted') : t('SettingsView', 'fdaMissing') }}
+                  {{
+                     fdaGranted ? t('SettingsView', 'fdaGranted') : t('SettingsView', 'fdaMissing')
+                  }}
                </span>
             </div>
-            <template v-if="!hasFda">
+            <template v-if="!fdaGranted">
                <p class="SettingsView-fdaDesc">
                   {{ t('SettingsView', 'fdaDesc') }}
                </p>
@@ -310,15 +308,5 @@ async function openSystemSettings() {
    font-size: 0.75rem;
    line-height: 1.5;
    color: var(--color-text-muted);
-}
-
-@keyframes spin {
-   to {
-      transform: rotate(360deg);
-   }
-}
-
-.SettingsView-spinning {
-   animation: spin 0.7s linear infinite;
 }
 </style>

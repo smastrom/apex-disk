@@ -7,12 +7,12 @@ Props: showForward (boolean), backDisabled (boolean), forwardDisabled (boolean?)
 
 Example:
  <ScanResultsNav
-   :showForward="true"
+   showForward
    :backDisabled="backStack.length === 0"
    :forwardDisabled="forwardStack.length === 0"
    :pathLabel="displayPath"
    :pathTitle="current.path"
-   :showActions="true"
+   showActions
    :resetDisabled="selectedMap.size === 0"
    @back="goBack"
    @forward="goForward"
@@ -25,8 +25,6 @@ Example:
 import { PhCaretLeft, PhCaretRight, PhFolder } from '@phosphor-icons/vue'
 
 import { useTranslations } from '@/lib/useTranslations'
-
-const { t } = useTranslations()
 
 defineProps<{
    showForward?: boolean
@@ -44,6 +42,8 @@ const emit = defineEmits<{
    (e: 'reset'): void
    (e: 'cancel'): void
 }>()
+
+const { t } = useTranslations()
 </script>
 
 <template>

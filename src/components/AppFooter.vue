@@ -17,8 +17,6 @@ import { useTranslations } from '@/lib/useTranslations'
 
 import { DONATE_URL } from '@/lib/constants'
 
-const { t } = useTranslations()
-
 defineProps<{
    activeView?: string
    hasPermissionIssue?: boolean
@@ -27,6 +25,8 @@ defineProps<{
 const emit = defineEmits<{
    (e: 'select-view', view: string): void
 }>()
+
+const { t } = useTranslations()
 
 async function onDonateClick() {
    try {

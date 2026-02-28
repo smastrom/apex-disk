@@ -14,11 +14,11 @@ import { PhMagnifyingGlass, PhShieldWarning } from '@phosphor-icons/vue'
 
 import { useTranslations } from '@/lib/useTranslations'
 
-const { t } = useTranslations()
-
 const emit = defineEmits<{
    (e: 'start-scan'): void
 }>()
+
+const { t } = useTranslations()
 </script>
 
 <template>

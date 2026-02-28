@@ -20,6 +20,10 @@ import { useTranslations } from '@/lib/useTranslations'
 
 import type { DiskUsage } from '@/lib/disk'
 
+const props = defineProps<{
+   selectedSize?: number
+}>()
+
 const { t } = useTranslations()
 
 const usage = ref<DiskUsage | null>(null)
@@ -35,10 +39,6 @@ async function fetchUsage() {
 onMounted(fetchUsage)
 
 defineExpose({ refresh: fetchUsage })
-
-const props = defineProps<{
-   selectedSize?: number
-}>()
 
 /** Main bar: shrinks when selecting to show remaining used after delete. */
 const mainBarPercent = computed(() => {

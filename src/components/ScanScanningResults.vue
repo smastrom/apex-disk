@@ -19,8 +19,6 @@ import { useTranslations } from '@/lib/useTranslations'
 
 import type { ScanProgress } from '@/types/structures'
 
-const { t } = useTranslations()
-
 const props = defineProps<{
    progress: ScanProgress
 }>()
@@ -28,6 +26,8 @@ const props = defineProps<{
 const emit = defineEmits<{
    (e: 'abort'): void
 }>()
+
+const { t } = useTranslations()
 
 const elapsedSeconds = ref(0)
 let elapsedInterval: ReturnType<typeof setInterval> | null = null

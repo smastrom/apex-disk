@@ -31,8 +31,6 @@ import { useTranslations } from '@/lib/useTranslations'
 
 import type { FolderInfo } from '@/types/structures'
 
-const { t } = useTranslations()
-
 defineProps<{
    item: FolderInfo
    selected: boolean
@@ -45,6 +43,8 @@ const emit = defineEmits<{
    (e: 'select'): void
    (e: 'navigate'): void
 }>()
+
+const { t } = useTranslations()
 </script>
 
 <template>

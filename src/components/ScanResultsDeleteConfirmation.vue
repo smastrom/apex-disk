@@ -18,8 +18,6 @@ import { getCurrentWindow } from '@tauri-apps/api/window'
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/useTranslations'
 
-const { t } = useTranslations()
-
 defineProps<{
    deletedSummary: { count: number; size: number } | null
 }>()
@@ -27,6 +25,8 @@ defineProps<{
 defineEmits<{
    (e: 'scan-again'): void
 }>()
+
+const { t } = useTranslations()
 
 function closeApp() {
    getCurrentWindow().close()
