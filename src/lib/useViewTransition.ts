@@ -21,15 +21,16 @@ function prefersReducedMotion(): boolean {
 export function useViewTransition() {
    const storeRef = inject<Ref<SettingsStore | null>>(SETTINGS_KEY)
 
-   async function withTransition(update: () => void | Promise<void>) {
+   async function withTransition(update: () => void | Promise<void>): Promise<void> {
       const enabled = storeRef?.value?.settings?.value?.enableAnimations ?? true
       const useNative = VIEW_TRANSITION_SUPPORTED && enabled && !prefersReducedMotion()
 
       if (useNative) {
-         document.startViewTransition(async () => {
+         const transition = document.startViewTransition(async () => {
             await update()
             await nextTick()
          })
+         await transition.finished
       } else {
          await update()
       }

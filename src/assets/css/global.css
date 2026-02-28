@@ -27,35 +27,3 @@ body {
    height: 100vh;
    overflow: hidden;
 }
-
-/* View Transitions API — folder list navigation only */
-@supports (view-transition-name: none) {
-   ::view-transition-old(list-view) {
-      animation: 220ms cubic-bezier(0.4, 0, 0.2, 1) both vt-slide-out;
-   }
-
-   ::view-transition-new(list-view) {
-      animation: 220ms cubic-bezier(0.4, 0, 0.2, 1) both vt-slide-in;
-   }
-
-   @keyframes vt-slide-out {
-      to {
-         opacity: 0;
-         transform: translateX(calc(-24px * var(--nav-direction, 1)));
-      }
-   }
-
-   @keyframes vt-slide-in {
-      from {
-         opacity: 0;
-         transform: translateX(calc(24px * var(--nav-direction, 1)));
-      }
-   }
-
-   @media (prefers-reduced-motion: reduce) {
-      ::view-transition-old(list-view),
-      ::view-transition-new(list-view) {
-         animation-duration: 0.01ms;
-      }
-   }
-}
