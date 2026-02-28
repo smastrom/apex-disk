@@ -268,6 +268,37 @@ To add or remove protected paths: edit both files. Both simple folder names (`"L
 - **Prefer splitting big components** into smaller ones using a "blocks" logic: each sub-component handles a distinct UI block
 - Example: instead of one `ScanView.vue` with 200+ lines, split into `ScanViewHeader.vue`, `ScanViewProgress.vue`, `ScanViewTree.vue` — each with a single responsibility
 
+#### Script setup order
+
+After imports, declare **Vue-specific API only** in this order; then put all other logic below.
+
+1. **defineProps** (if the component has props)
+2. **defineEmits** (if the component emits)
+3. **Other Vue-specific declarations** (e.g. `inject`, `defineExpose`) when needed
+4. **Blank line**
+5. **All other logic**: composables (`useTranslations()`, etc.), `ref`, `computed`, `watch`, lifecycle hooks, functions
+
+Do not call composables, create refs, or run logic before `defineProps` / `defineEmits`.
+
+```ts
+// ✅ GOOD — props and emits first, then logic
+const props = defineProps<{ items: Item[] }>()
+const emit = defineEmits<{ (e: 'complete', items: Item[]): void }>()
+
+const { t } = useTranslations()
+const list = ref<Item[]>([])
+watch(/* ... */)
+```
+
+```ts
+// ❌ BAD — composable and logic before emits
+const { t } = useTranslations()
+const props = defineProps<{ items: Item[] }>()
+const count = ref(0)
+watch(/* ... */)
+const emit = defineEmits<{ (e: 'complete'): void }>()
+```
+
 #### Component documentation
 
 Above each component, add a comment block with:
@@ -348,16 +379,12 @@ Decorative icons should be hidden from assistive technologies so that screen rea
 
 ```vue
 <!-- ✅ GOOD -->
-<button type="button" aria-label="Close">
-   <svg aria-hidden="true" ...>...</svg>
-   <PhX size="16" weight="bold" aria-hidden="true"/>
-</button>
+<svg aria-hidden="true" ...>...</svg>
+<PhX size="16" weight="bold" aria-hidden="true" />
 
 <!-- ❌ BAD — SVG exposed to assistive tech as redundant/confusing -->
-<button type="button" aria-label="Close">
-   <svg ...>...</svg>
-   <PhX size="16" weight="bold"/>
-</button>
+<svg ...>...</svg>
+<PhX size="16" weight="bold" />
 ```
 
 #### Class naming
@@ -369,9 +396,19 @@ Decorative icons should be hidden from assistive technologies so that screen rea
 
 - **Prop definitions**: Always camelCase (e.g. `expandedPaths`, `formatBytes`)
 - **Prop bindings in templates**: Use camelCase (e.g. `:expandedPaths`, `:formatBytes`) — JSX-like convention
+- **Boolean props that are `true`**: Omit the value and pass the prop name only (JSX-like shorthand). Use `:prop="false"` when the value is `false`.
 - **Component tags**: Use PascalCase (e.g. `<FolderNode />`, not `<folder-node />`)
 - **Emits**: Use kebab-case (e.g. `emit('select-item')`, not `emit('selectItem')`)
 - **Never use snake_case** for props or component names (e.g. `expanded_paths` is wrong)
+
+```vue
+<!-- ✅ GOOD -->
+<ScanResultsNav showForward showActions :backDisabled="backStack.length === 0" />
+<SomeForm :submitDisabled="false" />
+
+<!-- ❌ BAD — redundant :prop="true" -->
+<ScanResultsNav :showForward="true" :showActions="true" :backDisabled="backStack.length === 0" />
+```
 
 #### Reactivity
 
@@ -383,6 +420,25 @@ Decorative icons should be hidden from assistive technologies so that screen rea
 
 - Use `onMounted` **only when strictly required**
 - Avoid it when the same can be achieved without lifecycle hooks
+
+#### Template refs
+
+- **Use `useTemplateRef(name)`** for refs that are bound in the template via `ref="name"` (DOM elements or component instances).
+- Do not use `ref<HTMLElement | null>(null)` (or similar) for template refs — the string-based `useTemplateRef` aligns with Vue’s template ref resolution and avoids manual binding.
+
+```vue
+<script setup lang="ts">
+import { useTemplateRef } from 'vue'
+
+const mainContentRef = useTemplateRef<HTMLElement>('mainContentRef')
+const resultsListRef = useTemplateRef<InstanceType<typeof ScanResultsList>>('resultsListRef')
+</script>
+
+<template>
+  <div ref="mainContentRef">...</div>
+  <ScanResultsList ref="resultsListRef" />
+</template>
+```
 
 #### Imports
 
