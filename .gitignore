@@ -29,4 +29,8 @@ lerna-debug.log*
 *.sln
 *.sw?
 
+# Lock files
+pnpm-lock.yaml
+
+# AI agents
 .claude/
