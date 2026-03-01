@@ -336,6 +336,50 @@ Example:
 </template>
 ```
 
+#### Script logic documentation
+
+When the `<script setup>` block contains **more than 2 declarations** (functions, watchers, computed properties, watchEffects, or any other logic blocks), each declaration must have a **JSDoc comment** explaining its purpose, design choices, or performance rationale.
+
+This applies to all declarations in the script tag — not just exported functions. The goal is to make complex components self-documenting, especially when they contain performance-specific patterns (e.g. `shallowRef` vs `reactive`, `Map` clone-and-replace, virtual scrolling, `onActivated` workarounds for `KeepAlive`).
+
+```vue
+<script setup lang="ts">
+// ✅ GOOD — each declaration is documented
+
+/**
+ * Checked-state map: Map<path, boolean>.
+ *
+ * Performance design choices:
+ * - shallowRef(Map) instead of reactive(Map): every toggle replaces the whole
+ *   Map reference, which triggers a single reactive notification.
+ */
+const checkedMapRef = shallowRef(new Map<string, boolean>())
+
+/** Total size of currently checked items. Drives the button label and parent disk-usage bar. */
+const selectedSize = computed(() => { /* ... */ })
+
+/** Emits size changes to parent so the disk usage bar stays in sync. */
+watch(selectedSize, (size) => emit('update:selectedSize', size), { immediate: true })
+
+/**
+ * Toggles a single item's checked state by cloning the Map and replacing the ref.
+ * Clone-and-replace ensures Vue sees a new reference and triggers dependents.
+ */
+function toggle(path: string) { /* ... */ }
+</script>
+```
+
+```vue
+<script setup lang="ts">
+// ❌ BAD — complex logic with no documentation
+
+const checkedMapRef = shallowRef(new Map<string, boolean>())
+const selectedSize = computed(() => { /* ... */ })
+watch(selectedSize, (size) => emit('update:selectedSize', size), { immediate: true })
+function toggle(path: string) { /* ... */ }
+</script>
+```
+
 #### Template block comments
 
 When the template contains **similar or repeated blocks** of elements (e.g. multiple `<section>`, groups of rows, repeated list items), add a short **HTML comment** above each block describing what that block represents. Use one line, concise wording (e.g. "Section name" or "List of X, Y, Z").
