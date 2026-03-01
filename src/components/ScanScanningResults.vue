@@ -14,7 +14,7 @@ import Spinner from './Spinner.vue'
 
 import { computed, onActivated, onDeactivated, onUnmounted, ref } from 'vue'
 
-import { formatBytes } from '@/lib/format'
+import { formatBytes, formatProgressNumber } from '@/lib/format'
 import { useTranslations } from '@/lib/useTranslations'
 
 import type { ScanProgress } from '@/types/structs'
@@ -67,8 +67,8 @@ onUnmounted(stopTimer)
             <p class="ScanScanningResults-progressTitle">
                {{
                   t('ScanScanningResults', 'scanning', {
-                     current: progress.current,
-                     total: progress.total,
+                     current: formatProgressNumber(progress.current),
+                     total: formatProgressNumber(progress.total),
                   })
                }}
             </p>
@@ -84,17 +84,17 @@ onUnmounted(stopTimer)
       <div class="ScanScanningResults-stats">
          <p>
             <span>{{ t('ScanScanningResults', 'stage') }}</span>
-            <strong>{{ percent.toFixed(1) }}%</strong>
-         </p>
-         <p>
-            <span>{{ t('ScanScanningResults', 'scannedSize') }}</span>
-            <strong>{{ formatBytes(progress.scanned_size_total) }}</strong>
+            <strong>{{ formatProgressNumber(percent) }}%</strong>
          </p>
          <p>
             <span>{{ t('ScanScanningResults', 'currentPath') }}</span>
             <strong class="ScanScanningResults-currentPath" :title="progress.folder || ''">
                {{ progress.folder || t('ScanScanningResults', 'preparing') }}
             </strong>
+         </p>
+         <p>
+            <span>{{ t('ScanScanningResults', 'scannedSize') }}</span>
+            <strong>{{ formatBytes(progress.scanned_size_total) }}</strong>
          </p>
       </div>
 

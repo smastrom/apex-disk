@@ -12,7 +12,7 @@ export const ScanScanningResults = {
    it: {
       scanning: 'Scansione… {{current}} di {{total}}',
       elapsed: '{{seconds}}s trascorsi',
-      scannedSize: 'Dimensione analizzata',
+      scannedSize: 'Totale analizzato',
       currentPath: 'Cartella corrente',
       stage: 'Avanzamento',
       estimate: 'I dischi molto grandi possono richiedere diversi minuti.',
