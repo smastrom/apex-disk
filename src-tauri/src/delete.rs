@@ -54,6 +54,7 @@ fn delete_paths_sync(items: Vec<DeletePathItem>) {
 /// Tauri command: runs deletion on a blocking task so the UI stays responsive.
 #[tauri::command]
 pub async fn delete_paths(items: Vec<DeletePathItem>) {
-    tauri::async_runtime::spawn_blocking(move || delete_paths_sync(items)).await
+    tauri::async_runtime::spawn_blocking(move || delete_paths_sync(items))
+        .await
         .ok();
 }

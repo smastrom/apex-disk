@@ -32,7 +32,10 @@ fn get_volume_name(path: &Path) -> String {
         .collect();
 
     for p in paths {
-        if let Ok(o) = Command::new("/usr/sbin/diskutil").args(["info", p]).output() {
+        if let Ok(o) = Command::new("/usr/sbin/diskutil")
+            .args(["info", p])
+            .output()
+        {
             if o.status.success() {
                 let stdout = String::from_utf8_lossy(&o.stdout);
                 if let Some(name) = parse_volume_name(&stdout) {

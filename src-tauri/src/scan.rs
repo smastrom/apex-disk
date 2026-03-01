@@ -128,8 +128,7 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions) -> FolderI
     let dir_children: Vec<FolderInfo> = dir_children
         .into_iter()
         .filter(|c| {
-            (options.show_zero_byte || c.size > 0)
-                && (options.show_under_1kb || c.size >= 1024)
+            (options.show_zero_byte || c.size > 0) && (options.show_under_1kb || c.size >= 1024)
         })
         .collect();
 
@@ -169,10 +168,7 @@ pub fn get_user_folders_sync_with_progress(
         if !is_dir_not_symlink {
             continue;
         }
-        let name = entry
-            .file_name()
-            .to_string_lossy()
-            .into_owned();
+        let name = entry.file_name().to_string_lossy().into_owned();
         if !options.show_hidden_files && name.starts_with('.') {
             continue;
         }
