@@ -14,7 +14,7 @@ import ScanResultsDeleteListItem from './ScanResultsDeleteListItem.vue'
 import ScanResultsNav from './ScanResultsNav.vue'
 import Spinner from './Spinner.vue'
 
-import { ref, shallowRef, watch, computed, onUnmounted, useTemplateRef } from 'vue'
+import { ref, shallowRef, watch, computed, onActivated, onUnmounted, useTemplateRef } from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import { invoke } from '@tauri-apps/api/core'
 import { PhTrash } from '@phosphor-icons/vue'
@@ -39,42 +39,77 @@ const emit = defineEmits<{
 
 const { t } = useTranslations()
 
+/**
+ * Safety countdown: the delete button stays disabled for DELETE_COUNTDOWN_SECONDS
+ * after the view becomes active. Prevents accidental taps when the user just
+ * navigated in. A plain `let` timer ID is fine — it's never read reactively.
+ */
 const countdownRemaining = ref(0)
 let countdownInterval: ReturnType<typeof setInterval> | null = null
+
+/** Resets and starts a fresh countdown. Safe to call multiple times. */
+function startCountdown() {
+   if (countdownInterval) {
+      clearInterval(countdownInterval)
+      countdownInterval = null
+   }
+   countdownRemaining.value = DELETE_COUNTDOWN_SECONDS
+   countdownInterval = setInterval(() => {
+      countdownRemaining.value -= 1
+      if (countdownRemaining.value <= 0 && countdownInterval) {
+         clearInterval(countdownInterval)
+         countdownInterval = null
+      }
+   }, 1000)
+}
+
+function stopCountdown() {
+   if (countdownInterval) {
+      clearInterval(countdownInterval)
+      countdownInterval = null
+   }
+   countdownRemaining.value = 0
+}
 
 watch(
    () => props.active,
    (active) => {
-      if (countdownInterval) {
-         clearInterval(countdownInterval)
-         countdownInterval = null
-      }
-      if (active) {
-         countdownRemaining.value = DELETE_COUNTDOWN_SECONDS
-         countdownInterval = setInterval(() => {
-            countdownRemaining.value -= 1
-            if (countdownRemaining.value <= 0 && countdownInterval) {
-               clearInterval(countdownInterval)
-               countdownInterval = null
-            }
-         }, 1000)
-      } else {
-         countdownRemaining.value = 0
-      }
+      if (active) startCountdown()
+      else stopCountdown()
    },
    { immediate: true }
 )
 
-onUnmounted(() => {
-   if (countdownInterval) clearInterval(countdownInterval)
+/**
+ * KeepAlive re-activation: the watcher above won't fire when the component is
+ * restored from cache because `props.active` stays `true` → `true` (no change).
+ * Restart the countdown explicitly on re-activation.
+ */
+onActivated(() => {
+   if (props.active) startCountdown()
 })
 
-/** ShallowRef so we replace the whole Map on load (one reactive write) instead of N .set() calls. */
+onUnmounted(stopCountdown)
+
+/**
+ * Checked-state map: Map<path, boolean>.
+ *
+ * Performance design choices:
+ * - shallowRef(Map) instead of reactive(Map): every toggle replaces the whole
+ *   Map reference, which triggers a single reactive notification. This keeps
+ *   the update path predictable and avoids Vue tracking every individual key.
+ * - Map<string, boolean> keyed by path: O(1) per-item lookup in the template
+ *   and in size/count computeds without needing a secondary index.
+ */
 const checkedMapRef = shallowRef(new Map<string, boolean>())
 const deleting = ref(false)
 
 const parentRef = useTemplateRef<HTMLElement>('parentRef')
 
+/**
+ * Virtual scroller: only renders rows visible in the viewport + overscan buffer.
+ * Wrapped in a computed so the virtualizer reactively tracks count/key changes.
+ */
 const rowVirtualizer = useVirtualizer(
    computed(() => ({
       count: props.items.length,
@@ -85,6 +120,10 @@ const rowVirtualizer = useVirtualizer(
    }))
 )
 
+/**
+ * Initialises all items as checked when a new set of items arrives.
+ * Builds the Map in one shot and assigns it atomically (single reactive write).
+ */
 watch(
    () => props.items,
    (items) => {
@@ -95,6 +134,7 @@ watch(
    { immediate: true }
 )
 
+/** Total size of currently checked items. Drives the button label and parent disk-usage bar. */
 const selectedSize = computed(() => {
    const map = checkedMapRef.value
    let total = 0
@@ -104,8 +144,10 @@ const selectedSize = computed(() => {
    return total
 })
 
+/** Emits size changes to parent so the disk usage bar stays in sync. */
 watch(selectedSize, (size) => emit('update:selectedSize', size), { immediate: true })
 
+/** Number of checked items. Used to disable the delete button when nothing is checked. */
 const checkedCount = computed(() => {
    const map = checkedMapRef.value
    let n = 0
@@ -115,6 +157,10 @@ const checkedCount = computed(() => {
    return n
 })
 
+/**
+ * Toggles a single item's checked state by cloning the Map and replacing the ref.
+ * Clone-and-replace ensures Vue sees a new reference and triggers dependents.
+ */
 function toggle(path: string) {
    const prev = checkedMapRef.value
    const next = new Map(prev)
@@ -122,6 +168,7 @@ function toggle(path: string) {
    checkedMapRef.value = next
 }
 
+/** Returns checked items for the back-navigation emit (restores selection in ScanResultsList). */
 function getCheckedItems(): DeleteListItem[] {
    const map = checkedMapRef.value
    return props.items.filter((item) => map.get(item.path))
@@ -129,6 +176,11 @@ function getCheckedItems(): DeleteListItem[] {
 
 const deleteReady = computed(() => countdownRemaining.value <= 0)
 
+/**
+ * Delete handler. Guards against double-clicks and empty selections.
+ * Calls the Tauri `delete_paths` command, waits a short delay (so the user
+ * sees the spinner), then emits `complete` with the deleted items.
+ */
 async function onDeleteClick() {
    if (!deleteReady.value || deleting.value || checkedCount.value === 0) return
    deleting.value = true
