@@ -1,4 +1,4 @@
-import { ref, useTemplateRef, type Ref } from 'vue'
+import { ref, type Ref, type ShallowRef } from 'vue'
 
 import { useViewTransition } from '@/lib/useViewTransition'
 
@@ -11,11 +11,13 @@ function viewIndex(view: string): number {
    return i >= 0 ? i : 0
 }
 
-export function useViews(storeRef?: Ref<SettingsStore | null>) {
+export function useViews(
+   mainContentRef: Readonly<ShallowRef<HTMLElement | null>>,
+   storeRef?: Ref<SettingsStore | null>
+) {
    const { withTransition } = useViewTransition(storeRef)
 
    const activeView = ref('settings')
-   const mainContentRef = useTemplateRef<HTMLElement>('mainContentRef')
 
    async function setActiveView(view: string) {
       if (view === activeView.value) return
@@ -30,5 +32,5 @@ export function useViews(storeRef?: Ref<SettingsStore | null>) {
       el?.style.removeProperty('view-transition-name')
    }
 
-   return { activeView, mainContentRef, setActiveView }
+   return { activeView, setActiveView }
 }

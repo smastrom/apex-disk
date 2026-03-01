@@ -16,7 +16,7 @@ import ScanView from './ScanView.vue'
 import SettingsView from './SettingsView.vue'
 import AppFooter from './AppFooter.vue'
 
-import { ref, shallowRef, provide, onMounted, watch } from 'vue'
+import { ref, shallowRef, provide, onMounted, watch, useTemplateRef } from 'vue'
 
 import { applyTheme } from '@/lib/theme'
 import { useTranslations } from '@/lib/useTranslations'
@@ -62,8 +62,8 @@ watch(
 )
 
 const { folders, loading, progress, loadFolders, onAbort, onCancel } = useScan()
-// mainContentRef is bound in template (ref="mainContentRef") for useViews view transitions
-const { activeView, mainContentRef, setActiveView } = useViews(settingsStore)
+const mainContentRef = useTemplateRef<HTMLElement>('mainContentRef')
+const { activeView, setActiveView } = useViews(mainContentRef, settingsStore)
 </script>
 
 <template>
@@ -85,19 +85,15 @@ const { activeView, mainContentRef, setActiveView } = useViews(settingsStore)
                   @cancel="onCancel"
                />
 
-               <Transition name="fade" mode="out-in">
-                  <KeepAlive>
-                     <div v-if="activeView === 'settings'" key="settings" class="App-overlay">
-                        <SettingsView :fdaGranted="fdaGranted" />
-                     </div>
+               <div v-if="activeView === 'settings'" class="App-overlay">
+                  <SettingsView :fdaGranted="fdaGranted" />
+               </div>
 
-                     <div v-else-if="activeView === 'information'" key="other" class="App-overlay">
-                        <main class="App-placeholder">
-                           <p>{{ t('App', 'informationComingSoon') }}</p>
-                        </main>
-                     </div>
-                  </KeepAlive>
-               </Transition>
+               <div v-else-if="activeView === 'information'" class="App-overlay">
+                  <main class="App-placeholder">
+                     <p>{{ t('App', 'informationComingSoon') }}</p>
+                  </main>
+               </div>
             </div>
          </div>
 
