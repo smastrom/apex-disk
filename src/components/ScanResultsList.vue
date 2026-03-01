@@ -382,7 +382,9 @@ function onCancel() {
          >
             <PhTrashSimple :size="18" weight="bold" aria-hidden="true" />
             <span>{{
-               t('ScanResultsList', 'reviewSize', { size: formatBytes(selectedSize) })
+               selectedSize > 0
+                  ? t('ScanResultsList', 'reviewSize', { size: formatBytes(selectedSize) })
+                  : t('ScanResultsList', 'review')
             }}</span>
          </button>
       </div>
