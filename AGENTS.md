@@ -35,6 +35,7 @@ The app targets **macOS only**. Do not add or retain platform-specific code or c
 
 - **Module-local constants**: Define in the same file when used only within that module
 - **Shared constants**: If the scope extends beyond the module where they are declared, define them in `src/lib/constants.ts`
+- **App constants shared with Rust** (app name, author/credits, release notes URL, license URL): Define in `src/lib/constants.ts` (frontend) and in `src-tauri/src/constants.rs` (Rust). Keep both files in sync when changing these values.
 
 #### Types
 
@@ -60,13 +61,13 @@ Translations are stored in `src/assets/translations/`. The active language comes
 
 ##### File structure
 
-- `**global.ts`\*\* — Strings shared across multiple components (e.g. `appName`, `scan`, `settings`, `donate`)
+- **`global.ts`** — Strings shared across multiple components (e.g. `appName`, `scan`, `settings`, `donate`)
 - **Component-named files** — One file per component: `AppHeader.ts`, `MainView.ts`, `SettingsView.ts`, `AppFooter.ts`, `AppLayout.ts`
-- `**index.ts`\*\* — Exports `translations` and `createT(lang)`
+- **`index.ts`** — Exports `translations` and `createT(lang)`
 
 ##### Translation file format
 
-Each file exports an object with `en` and `it` keys (matching `Language` in `src/types/settings.ts`):
+Each file exports an object keyed by language code (matching `Language` in `src/types/settings.ts`):
 
 ```ts
 // SettingsView.ts
@@ -114,11 +115,12 @@ t('MainView', 'scanning', { current: 1, total: 10 }) // → "Scanning… 1 of 10
 
 1. Add the language to `Language` in `src/types/settings.ts`
 2. Add the locale key to every translation file (e.g. `de: { ... }`)
-3. Update `createT` in `index.ts` if the type needs to change
+3. Add a new match arm in `src-tauri/src/menu_translations.rs` → `labels_for()` for the native menu bar
+4. Update `createT` in `index.ts` if the type needs to change
 
 ##### Adding translations for a new component
 
-1. Create `src/assets/translations/ComponentName.ts` with `en` and `it` keys
+1. Create `src/assets/translations/ComponentName.ts` with a key per supported language
 2. Import and add it to `translations` in `index.ts`
 3. Use `t('ComponentName', 'key')` in the component
 
@@ -240,6 +242,25 @@ To add or remove protected paths: edit both files. Both simple folder names (`"L
 
 - **Rust**: `FolderInfo.is_protected` is set when building the tree; `safe_folders::is_path_protected()` strips the home prefix and checks the relative path against the list. Future delete command must reject protected paths.
 - **Frontend**: `ListItem` receives `selectable={!item.is_protected}`; `toggleSelect` ignores protected items.
+
+#### Native menu bar
+
+The macOS menu bar is built in Rust (`src-tauri/src/menu.rs`) and localized via `src-tauri/src/menu_translations.rs`. It is rebuilt dynamically when the user changes language in settings.
+
+##### Structure
+
+Menu bar order: **App** (`Mac User Lens`) → **Window** → **Help**.
+
+- **App submenu**: About, separator, Services, separator, Hide / Hide Others / Show All, separator, Quit
+- **Window submenu**: Minimize, Close Window (uses `WINDOW_SUBMENU_ID` for macOS system integration)
+- **Help submenu**: Release Notes, License (uses `HELP_SUBMENU_ID` for macOS system integration)
+
+##### Language sync
+
+- On startup, the frontend calls `invoke('set_menu_language', { lang })` after loading persisted settings (`src/stores/settings.ts`)
+- On language change, `setLanguage()` calls the same command after persisting
+- The Tauri command `set_menu_language` (in `menu.rs`) rebuilds and replaces the entire menu via `app.set_menu()`
+- The initial menu is built with English (`"en"`) as a safe default before the frontend is ready
 
 ### Workflow
 
@@ -431,11 +452,6 @@ Decorative icons should be hidden from assistive technologies so that screen rea
 <PhX size="16" weight="bold" />
 ```
 
-#### Class naming
-
-- Format: `ComponentName-nestedElement`
-- `ComponentName` must equal the **filename** (e.g. `FolderNode.vue` → `FolderNode-item`, `FolderNode-row`)
-
 #### Props and component usage
 
 - **Prop definitions**: Always camelCase (e.g. `expandedPaths`, `formatBytes`)
@@ -454,16 +470,11 @@ Decorative icons should be hidden from assistive technologies so that screen rea
 <ScanResultsNav :showForward="true" :showActions="true" :backDisabled="backStack.length === 0" />
 ```
 
-#### Reactivity
+#### Reactivity and lifecycle
 
-- Use `ref`, `computed`, `reactive`, etc. **only when strictly necessary**
+- Use `ref`, `computed`, `reactive`, etc. **only when strictly necessary** — prefer plain variables when reactivity is not needed
 - **Avoid `computed`** when the value is not meant to be reactive
-- Prefer plain variables when reactivity is not needed
-
-#### Lifecycle
-
-- Use `onMounted` **only when strictly required**
-- Avoid it when the same can be achieved without lifecycle hooks
+- Use `onMounted` **only when strictly required** — avoid it when the same can be achieved without lifecycle hooks
 
 #### Template refs
 

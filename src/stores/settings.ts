@@ -1,4 +1,5 @@
 import { load } from '@tauri-apps/plugin-store'
+import { invoke } from '@tauri-apps/api/core'
 import { ref, type Ref } from 'vue'
 
 import { getSystemLanguage } from '@/lib/settings'
@@ -66,6 +67,7 @@ function createStoreFromSettings(
       setLanguage: async (lang) => {
          settings.value = { ...settings.value, language: lang }
          await persist()
+         invoke('set_menu_language', { lang }).catch(() => {})
       },
       setThemeColor: async (theme) => {
          settings.value = { ...settings.value, themeColor: theme }
@@ -113,6 +115,8 @@ export async function createSettingsStore(): Promise<SettingsStore> {
       }
 
       const result = createStoreFromSettings(settings, persist)
+
+      invoke('set_menu_language', { lang: settings.value.language }).catch(() => {})
 
       result.load = async () => {
          await store.reload()

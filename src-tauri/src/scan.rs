@@ -216,3 +216,15 @@ pub fn get_user_folders_sync_with_progress(
     });
     Ok(folders)
 }
+
+/// Tauri command: runs the folder scan on a blocking task and emits progress events.
+#[tauri::command]
+pub async fn get_user_folders(
+    app: tauri::AppHandle,
+    options: Option<crate::ScanOptions>,
+) -> Result<Vec<crate::FolderInfo>, String> {
+    let options = options.unwrap_or_default();
+    tauri::async_runtime::spawn_blocking(move || get_user_folders_sync_with_progress(app, options))
+        .await
+        .map_err(|e| format!("Task join error: {}", e))?
+}

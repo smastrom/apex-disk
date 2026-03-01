@@ -1,5 +1,8 @@
+mod constants;
 mod delete;
 mod disk;
+mod menu;
+mod menu_translations;
 mod permissions;
 mod safe_folders;
 mod scan;
@@ -30,36 +33,30 @@ pub struct FolderInfo {
     pub is_protected: bool,
 }
 
-#[tauri::command]
-async fn get_user_folders(
-    app: tauri::AppHandle,
-    options: Option<ScanOptions>,
-) -> Result<Vec<FolderInfo>, String> {
-    let options = options.unwrap_or_default();
-    tauri::async_runtime::spawn_blocking(move || {
-        scan::get_user_folders_sync_with_progress(app, options)
-    })
-    .await
-    .map_err(|e| format!("Task join error: {}", e))?
-}
-
-#[tauri::command]
-async fn check_full_disk_access() -> bool {
-    tauri::async_runtime::spawn_blocking(permissions::check_full_disk_access_sync)
-        .await
-        .unwrap_or(false)
-}
-
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::default().build())
+        .enable_macos_default_menu(false)
+        .menu(|handle| menu::build_app_menu(handle, "en"))
+        .setup(|app| {
+            app.on_menu_event(|_app, event| {
+                let id = event.id().as_ref();
+                if id == constants::RELEASE_NOTES_MENU_ID {
+                    let _ = open::that(constants::RELEASE_NOTES_URL);
+                } else if id == constants::LICENSE_MENU_ID {
+                    let _ = open::that(constants::LICENSE_URL);
+                }
+            });
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             disk::get_disk_usage,
-            get_user_folders,
+            scan::get_user_folders,
             delete::delete_paths,
-            check_full_disk_access,
+            permissions::check_full_disk_access,
+            menu::set_menu_language,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
