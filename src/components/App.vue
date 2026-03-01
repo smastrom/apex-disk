@@ -98,11 +98,11 @@ const { activeView, setActiveView } = useViews(mainContentRef)
                   <SettingsView :fdaGranted="fdaGranted" />
                </div>
 
-               <div v-else-if="activeView === 'information'" class="App-overlay">
+               <!--                <div v-else-if="activeView === 'information'" class="App-overlay">
                   <main class="App-placeholder">
                      <p>{{ t('App', 'informationComingSoon') }}</p>
                   </main>
-               </div>
+               </div> -->
             </div>
          </div>
 

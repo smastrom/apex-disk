@@ -58,14 +58,14 @@ async function onDonateClick() {
          </span>
          <span>{{ t('AppFooter', 'settings') }}</span>
       </button>
-      <button
+      <!-- <button
          class="AppFooter-btn"
          :class="{ 'AppFooter-btn--active': activeView === 'information' }"
          @click="emit('select-view', 'information')"
       >
          <PhInfo :size="24" weight="regular" aria-hidden="true" />
          <span>{{ t('AppFooter', 'information') }}</span>
-      </button>
+      </button> -->
       <button class="AppFooter-btn" @click="onDonateClick">
          <PhHeart :size="24" weight="regular" aria-hidden="true" />
          <span>{{ t('AppFooter', 'donate') }}</span>
