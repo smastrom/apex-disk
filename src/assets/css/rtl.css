@@ -1,0 +1,68 @@
+/* Mac User Lens — RTL overrides (Arabic and other right-to-left languages) */
+
+/* ── Toggle switch: flip knob to opposite side ─────────────────────── */
+
+[dir='rtl'] .SettingsToggle-knob {
+   left: auto;
+   right: 2px;
+}
+
+[dir='rtl'] .SettingsToggle--on .SettingsToggle-knob {
+   transform: translateX(-20px);
+}
+
+/* ── Select dropdown: mirror padding and caret position ────────────── */
+
+[dir='rtl'] .SettingsSelect {
+   padding: 6px 12px 6px 28px;
+   background-position: left 10px center;
+}
+
+[dir='rtl'] .SettingsView-selectChevron {
+   right: auto;
+   left: 10px;
+}
+
+/* ── Nav path: match text direction ────────────────────────────────── */
+
+[dir='rtl'] .ScanResultsNav-path {
+   text-align: right;
+}
+
+/* ── Chevron on list items: flip for RTL ───────────────────────────── */
+
+[dir='rtl'] .ScanResultsListItem-chevron {
+   transform: scaleX(-1);
+}
+
+/* ── Badge dot on footer: mirror to left side ──────────────────────── */
+
+[dir='rtl'] .AppFooter-badge {
+   right: auto;
+   left: -4px;
+}
+
+/* ── Delete list caption transition: use margin-right instead ──────── */
+
+[dir='rtl'] .ScanResultsDeleteList-caption-enter-active,
+[dir='rtl'] .ScanResultsDeleteList-caption-leave-active {
+   transition:
+      opacity 0.25s var(--ease-standard),
+      max-width 0.3s var(--ease-standard),
+      margin-right 0.3s var(--ease-standard);
+   margin-left: 0;
+}
+
+[dir='rtl'] .ScanResultsDeleteList-caption-enter-from,
+[dir='rtl'] .ScanResultsDeleteList-caption-leave-to {
+   margin-left: 0;
+   margin-right: -0.5rem;
+}
+
+/* ── View Transitions: reverse slide direction for RTL ─────────────── */
+/* --rtl-flip is multiplied into animation keyframes (set in animations.css).
+   LTR = 1 (default), RTL = -1 so slides go the expected physical direction. */
+
+[dir='rtl'] {
+   --rtl-flip: -1;
+}

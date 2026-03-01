@@ -18,7 +18,7 @@ import AppFooter from './AppFooter.vue'
 
 import { ref, shallowRef, provide, onMounted, watch, useTemplateRef } from 'vue'
 
-import { applyTheme } from '@/lib/theme'
+import { applyTheme, applyDirection } from '@/lib/theme'
 import { useTranslations } from '@/lib/useTranslations'
 import { useScan } from '@/lib/useScan'
 import { useViews } from '@/lib/useViews'
@@ -31,6 +31,7 @@ import '@/assets/css/global.css'
 import '@/assets/css/reset.css'
 import '@/assets/css/classes.css'
 import '@/assets/css/animations.css'
+import '@/assets/css/rtl.css'
 
 const settingsStore = shallowRef<SettingsStore | null>(null)
 provide(SETTINGS_KEY, settingsStore)
@@ -47,6 +48,7 @@ onMounted(async () => {
    try {
       settingsStore.value = await createSettingsStore()
       applyTheme(settingsStore.value!.getThemeColor())
+      applyDirection(settingsStore.value!.settings.value.language)
    } catch (err) {
       console.error('Failed to load settings:', err)
    } finally {
@@ -58,6 +60,13 @@ watch(
    () => settingsStore.value?.getThemeColor(),
    (theme) => {
       if (theme) applyTheme(theme)
+   }
+)
+
+watch(
+   () => settingsStore.value?.settings.value.language,
+   (lang) => {
+      if (lang) applyDirection(lang)
    }
 )
 
