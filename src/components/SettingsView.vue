@@ -3,16 +3,22 @@ SettingsView
 
 Purpose: Settings screen with Language, Theme, Scan Settings (hidden files, 0 B, under 1 KB), and Permissions. macOS-style grouped list.
 
-Props: fdaGranted (boolean)
+Props: fdaGranted (boolean), availableUpdate (string | null)
 
 Example:
- <SettingsView :fdaGranted="fdaGranted" />
+ <SettingsView :fdaGranted="fdaGranted" :availableUpdate="null" />
 -->
 
 <script setup lang="ts">
 import SettingsFooter from '@/components/SettingsFooter.vue'
 
-import { PhCaretDown, PhCheckCircle, PhCircle, PhWrench as PhGearSix } from '@phosphor-icons/vue'
+import {
+   PhArrowCircleUp,
+   PhCaretDown,
+   PhCheckCircle,
+   PhCircle,
+   PhWrench as PhGearSix,
+} from '@phosphor-icons/vue'
 
 import { inject, computed, type Ref } from 'vue'
 import { openUrl } from '@tauri-apps/plugin-opener'
@@ -26,6 +32,7 @@ import type { AppSettings, Language, ThemeColor } from '@/types/settings'
 
 defineProps<{
    fdaGranted: boolean
+   availableUpdate: string | null
 }>()
 
 const { t } = useTranslations()
@@ -206,6 +213,34 @@ async function openSystemSettings() {
             </p>
          </section>
 
+         <!-- Software Update -->
+
+         <section class="SettingsGroup">
+            <div class="SettingsGroup-row SettingsGroup-row--canWrap">
+               <span class="SettingsGroup-label">{{ t('SettingsView', 'updateLabel') }}</span>
+               <span
+                  class="SettingsView-updateStatus"
+                  :class="
+                     availableUpdate
+                        ? 'SettingsView-updateStatus--available'
+                        : 'SettingsView-updateStatus--ok'
+                  "
+               >
+                  <PhArrowCircleUp
+                     v-if="availableUpdate"
+                     :size="13"
+                     weight="fill"
+                     aria-hidden="true"
+                  />
+                  <PhCheckCircle v-else :size="13" weight="fill" aria-hidden="true" />
+                  {{ availableUpdate ? availableUpdate : t('SettingsView', 'updateUpToDate') }}
+               </span>
+            </div>
+            <p v-if="availableUpdate" class="SettingsView-updateDesc">
+               {{ t('SettingsView', 'updateAvailableHint', { version: availableUpdate }) }}
+            </p>
+         </section>
+
          <!-- App info (name, version, author, links) -->
          <SettingsFooter />
       </div>
@@ -309,6 +344,31 @@ async function openSystemSettings() {
 }
 
 .SettingsView-resultsNotice {
+   margin: 0;
+   padding: var(--spacing-md) var(--spacing-lg);
+   font-size: 0.75rem;
+   line-height: 1.5;
+   color: var(--color-text-muted);
+}
+
+/* Update row */
+.SettingsView-updateStatus {
+   display: flex;
+   align-items: center;
+   gap: 5px;
+   font-size: 0.8125rem;
+   font-weight: 500;
+}
+
+.SettingsView-updateStatus--ok {
+   color: var(--color-success, #22c55e);
+}
+
+.SettingsView-updateStatus--available {
+   color: var(--color-accent);
+}
+
+.SettingsView-updateDesc {
    margin: 0;
    padding: var(--spacing-md) var(--spacing-lg);
    font-size: 0.75rem;
