@@ -193,8 +193,9 @@ async function onDeleteClick() {
    await invoke('delete_paths', { items }).catch(() => {})
 
    await new Promise((r) => setTimeout(r, DELETE_POST_DELETE_SLEEP_MS))
+   // Keep deleting=true visually — the parent will tear down this component
+   // after handling `complete`. Resetting here would flash the ready state.
    emit('complete', toDelete)
-   deleting.value = false
 }
 </script>
 
@@ -248,11 +249,13 @@ async function onDeleteClick() {
          >
             <Spinner v-if="deleting" :size="18" class="ScanResultsDeleteList-spinner" />
             <PhTrash v-else :size="18" weight="bold" aria-hidden="true" />
-            <span>{{
-               selectedSize > 0
-                  ? t('ScanResultsDeleteList', 'deleteSize', { size: formatBytes(selectedSize) })
-                  : t('ScanResultsDeleteList', 'delete')
-            }}</span>
+            <Transition name="ScanResultsDeleteList-caption">
+               <span v-if="!deleting" class="ScanResultsDeleteList-captionText">{{
+                  selectedSize > 0
+                     ? t('ScanResultsDeleteList', 'deleteSize', { size: formatBytes(selectedSize) })
+                     : t('ScanResultsDeleteList', 'delete')
+               }}</span>
+            </Transition>
          </button>
       </div>
    </div>
@@ -317,7 +320,8 @@ async function onDeleteClick() {
    align-items: center;
    justify-content: center;
    gap: 0.5rem;
-   padding: var(--spacing-md) var(--spacing-lg);
+   height: 50px;
+   padding: 0 var(--spacing-lg);
    font-size: 0.9375rem;
    font-weight: 600;
    color: #fff;
@@ -325,7 +329,10 @@ async function onDeleteClick() {
    border: none;
    border-radius: 8px;
    cursor: pointer;
-   transition: opacity 0.2s;
+   transition:
+      opacity 0.2s,
+      padding 0.3s var(--ease-standard),
+      gap 0.3s var(--ease-standard);
 
    &:hover:not(:disabled) {
       opacity: 0.9;
@@ -337,7 +344,44 @@ async function onDeleteClick() {
    }
 }
 
+.ScanResultsDeleteList-deleteBtn--deleting {
+   gap: 0;
+}
+
+.ScanResultsDeleteList-captionText {
+   display: inline-block;
+   white-space: nowrap;
+}
+
+.ScanResultsDeleteList-caption-enter-active,
+.ScanResultsDeleteList-caption-leave-active {
+   transition:
+      opacity 0.25s var(--ease-standard),
+      max-width 0.3s var(--ease-standard),
+      margin-left 0.3s var(--ease-standard);
+   overflow: hidden;
+   max-width: 20ch;
+}
+
+.ScanResultsDeleteList-caption-enter-from,
+.ScanResultsDeleteList-caption-leave-to {
+   opacity: 0;
+   max-width: 0;
+   margin-left: -0.5rem;
+}
+
 .ScanResultsDeleteList-spinner {
    color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+   .ScanResultsDeleteList-caption-enter-active,
+   .ScanResultsDeleteList-caption-leave-active {
+      transition-duration: 0.01ms;
+   }
+
+   .ScanResultsDeleteList-deleteBtn {
+      transition-duration: 0.01ms;
+   }
 }
 </style>
