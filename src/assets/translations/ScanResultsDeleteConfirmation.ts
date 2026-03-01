@@ -23,4 +23,10 @@ export const ScanResultsDeleteConfirmation = {
       scanAgain: '再次扫描',
       closeApp: '关闭应用',
    },
+   ja: {
+      title: '削除が完了しました',
+      resume: '{{count}} 項目を削除し、{{size}} を解放しました',
+      scanAgain: '再スキャン',
+      closeApp: 'アプリを終了',
+   },
 } as const

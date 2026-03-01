@@ -15,4 +15,8 @@ export const ScanResultsListItem = {
       itemOne: '1 项',
       itemsCount: '{{count}} 项',
    },
+   ja: {
+      itemOne: '1 項目',
+      itemsCount: '{{count}} 項目',
+   },
 } as const

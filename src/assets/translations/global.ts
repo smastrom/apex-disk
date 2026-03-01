@@ -27,4 +27,11 @@ export const global = {
       donate: '捐赠',
       donateComingSoon: '捐赠页面即将推出。',
    },
+   ja: {
+      appName: 'Mac User Lens',
+      scan: 'スキャン',
+      settings: '設定',
+      donate: '寄付',
+      donateComingSoon: '寄付画面は近日公開予定です。',
+   },
 } as const

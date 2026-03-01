@@ -43,4 +43,15 @@ export const ScanResults = {
       resetSelection: '重置',
       abort: '中止',
    },
+   ja: {
+      scanning: 'スキャン中… {{current}} / {{total}}',
+      noDataYet: 'データがありません。スキャンを開始してディスクを確認してください。',
+      startScan: 'スキャン開始',
+      foldersLoaded: '{{count}} フォルダを読み込みました',
+      delete: '削除',
+      deleteSize: '削除 ({{size}})',
+      reviewSize: '確認 ({{size}})',
+      resetSelection: 'リセット',
+      abort: '中止',
+   },
 } as const

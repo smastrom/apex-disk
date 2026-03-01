@@ -19,4 +19,9 @@ export const ScanViewDiskUsage = {
       free: '可用',
       newFree: '新增',
    },
+   ja: {
+      total: '合計',
+      free: '空き',
+      newFree: '新規',
+   },
 } as const

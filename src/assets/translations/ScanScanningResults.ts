@@ -39,4 +39,14 @@ export const ScanScanningResults = {
       preparing: '准备扫描...',
       abort: '中止',
    },
+   ja: {
+      scanning: 'スキャン中… {{current}} / {{total}}',
+      elapsed: '{{seconds}} 秒経過',
+      scannedSize: '解析済みサイズ',
+      currentPath: '現在のフォルダ',
+      stage: '進捗',
+      estimate: '大容量ディスクには数分かかる場合があります。',
+      preparing: 'スキャン準備中...',
+      abort: '中止',
+   },
 } as const

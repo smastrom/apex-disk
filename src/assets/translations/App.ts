@@ -15,4 +15,8 @@ export const App = {
       informationComingSoon: '信息页面即将推出。',
       donateComingSoon: '捐赠页面即将推出。',
    },
+   ja: {
+      informationComingSoon: '情報画面は近日公開予定です。',
+      donateComingSoon: '寄付画面は近日公開予定です。',
+   },
 } as const

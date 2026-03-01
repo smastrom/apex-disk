@@ -1,6 +1,6 @@
 import type { AppSettings } from '@/types/settings'
 
-export const APP_LANGUAGES = ['en', 'it', 'es', 'zh'] as const
+export const APP_LANGUAGES = ['en', 'it', 'es', 'zh', 'ja'] as const
 
 export const DEFAULT_LANGUAGE = 'en' as const
 

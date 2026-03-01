@@ -27,4 +27,11 @@ export const ScanResultsDeleteList = {
       deleting: '删除中…',
       deletingSize: '删除中… ({{size}})',
    },
+   ja: {
+      navTitle: '削除する項目',
+      delete: '削除',
+      deleteSize: '削除 ({{size}})',
+      deleting: '削除中…',
+      deletingSize: '削除中… ({{size}})',
+   },
 } as const

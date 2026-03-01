@@ -23,4 +23,10 @@ export const AppFooter = {
       information: '信息',
       donate: '捐赠',
    },
+   ja: {
+      scan: 'スキャン',
+      settings: '設定',
+      information: '情報',
+      donate: '寄付',
+   },
 } as const
