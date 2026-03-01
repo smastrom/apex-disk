@@ -243,6 +243,10 @@ To add or remove protected paths: edit both files. Both simple folder names (`"L
 - **Rust**: `FolderInfo.is_protected` is set when building the tree; `safe_folders::is_path_protected()` strips the home prefix and checks the relative path against the list. Future delete command must reject protected paths.
 - **Frontend**: `ListItem` receives `selectable={!item.is_protected}`; `toggleSelect` ignores protected items.
 
+#### Tauri bundle targets
+
+The `"app"` target **must** remain in `bundle.targets` alongside `"dmg"` in `tauri.conf.json`. The `"app"` target produces the `.app` bundle, and when `createUpdaterArtifacts` is `true`, Tauri generates the `.app.tar.gz` and `.app.tar.gz.sig` files from it. Without `"app"`, the updater signature is never created and the release workflow fails.
+
 #### Native menu bar
 
 The macOS menu bar is built in Rust (`src-tauri/src/menu.rs`) and localized via `src-tauri/src/menu_translations.rs`. It is rebuilt dynamically when the user changes language in settings.
