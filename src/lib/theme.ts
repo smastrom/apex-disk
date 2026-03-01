@@ -1,4 +1,4 @@
-import { ROOT_THEME } from '@/types/settings'
+import { ROOT_THEME } from '@/lib/constants'
 
 /** Applies theme to document. ROOT_THEME uses :root in CSS; others set data-theme. */
 export function applyTheme(theme: string): void {
