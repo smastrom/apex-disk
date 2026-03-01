@@ -1,0 +1,117 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate versions
+        run: |
+          # Parse latest version from RELEASES.md
+          TAG=$(grep -m 1 '^## v' releases/RELEASES.md | sed 's/^## //')
+          VERSION="${TAG#v}"
+
+          if [ -z "$VERSION" ]; then
+            echo "::error::No version heading found in RELEASES.md. Expected format: ## vX.Y.Z"
+            exit 1
+          fi
+
+          echo "RELEASES.md version: $TAG ($VERSION)"
+
+          # Read versions from source files
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          TAURI_VERSION=$(node -p "require('./src-tauri/tauri.conf.json').version")
+          CARGO_VERSION=$(grep -m 1 '^version' src-tauri/Cargo.toml | sed 's/version = "\(.*\)"/\1/')
+
+          FAILED=0
+
+          if [ "$PKG_VERSION" != "$VERSION" ]; then
+            echo "::error::package.json version ($PKG_VERSION) does not match RELEASES.md ($VERSION)"
+            FAILED=1
+          fi
+
+          if [ "$TAURI_VERSION" != "$VERSION" ]; then
+            echo "::error::tauri.conf.json version ($TAURI_VERSION) does not match RELEASES.md ($VERSION)"
+            FAILED=1
+          fi
+
+          if [ "$CARGO_VERSION" != "$VERSION" ]; then
+            echo "::error::Cargo.toml version ($CARGO_VERSION) does not match RELEASES.md ($VERSION)"
+            FAILED=1
+          fi
+
+          if [ "$FAILED" -eq 1 ]; then
+            exit 1
+          fi
+
+          # Check tag doesn't already exist
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "::error::Tag $TAG already exists"
+            exit 1
+          fi
+
+          echo "All versions match: $VERSION"
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install frontend dependencies
+        run: pnpm install
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Build universal macOS binary
+        run: pnpm tauri:build
+
+      - name: Extract release notes
+        run: |
+          # Extract content between the current version heading and the next version heading (or EOF)
+          awk "
+            /^## ${TAG}\$/ { found=1; next }
+            found && /^## v/ { exit }
+            found { print }
+          " releases/RELEASES.md > release_notes.md
+
+          if [ ! -s release_notes.md ]; then
+            echo "::error::No release notes found for ${TAG}"
+            exit 1
+          fi
+
+      - name: Create tag
+        run: |
+          git tag "$TAG"
+          git push origin "$TAG"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG }}
+          body_path: release_notes.md
+          generate_release_notes: false
+          files: |
+            src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
