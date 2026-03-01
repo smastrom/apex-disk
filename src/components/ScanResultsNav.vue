@@ -26,7 +26,7 @@ import { PhCaretLeft, PhCaretRight, PhFolderSimple, PhTrashSimple } from '@phosp
 
 import { useTranslations } from '@/lib/useTranslations'
 
-const props = withDefaults(
+withDefaults(
    defineProps<{
       showForward?: boolean
       backDisabled?: boolean

@@ -19,7 +19,6 @@ import AppFooter from './AppFooter.vue'
 import { ref, shallowRef, provide, onMounted, watch, useTemplateRef } from 'vue'
 
 import { applyTheme, applyDirection } from '@/lib/theme'
-import { useTranslations } from '@/lib/useTranslations'
 import { useScan } from '@/lib/useScan'
 import { useViews } from '@/lib/useViews'
 import { createSettingsStore, SETTINGS_KEY } from '@/stores/settings'
@@ -35,8 +34,6 @@ import '@/assets/css/rtl.css'
 
 const settingsStore = shallowRef<SettingsStore | null>(null)
 provide(SETTINGS_KEY, settingsStore)
-
-const { t } = useTranslations(settingsStore)
 
 const appReady = ref(false)
 
