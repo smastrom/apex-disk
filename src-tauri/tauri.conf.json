@@ -40,7 +40,7 @@
    },
    "plugins": {
       "updater": {
-         "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEYyRUY0RERBQzc0RjhDQkYKUldTL2pFL0gyazN2OGttZHQvV2piNnBwc0kveDBMb0dNREJDNWl5V0tmZEVYUkdHa3J6cm9wOTcK",
+         "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDUyNzIxOTQ0MkZDM0I5MjYKUldRbXVjTXZSQmx5VXJIcXJrTUljamFPOERVbVpmaWkyRENpMGNPdkZ3M3VYOW8zaHNxTmlEWmsK",
          "endpoints": [
             "https://github.com/smastrom/mac-user-lens/releases/latest/download/latest.json"
          ]
