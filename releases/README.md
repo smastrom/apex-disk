@@ -4,7 +4,21 @@ This folder contains the release infrastructure for Mac User Lens.
 
 ## How It Works
 
-A single GitHub Action (`.github/workflows/release.yml`) handles the entire release process. It is triggered manually from the Actions tab.
+A single GitHub Action (`.github/workflows/release.yml`) handles the entire release process. It is triggered manually from the Actions tab. The workflow builds a signed universal macOS binary, produces updater artifacts (`.app.tar.gz` and `.sig`), generates a `latest.json` for the in-app updater, and publishes everything to a GitHub Release.
+
+## Updater Signing (one-time setup)
+
+The in-app updater requires **signed** artifacts. Do this once before your first updater-enabled release.
+
+1. Generate signing keys:
+
+   ```sh
+   pnpm tauri signer generate -w ~/.tauri/mac-user-lens.key
+   ```
+
+2. Copy the **public key** contents into `src-tauri/tauri.conf.json` → `plugins.updater.pubkey` (single-line, `\n`-escaped). The public key is safe to commit.
+
+3. Add the **private key** as a GitHub repo secret: **Settings → Secrets → Actions** → `TAURI_SIGNING_PRIVATE_KEY`.
 
 ## Creating a Release
 
@@ -60,9 +74,10 @@ The workflow will:
 1. Validate that RELEASES.md, package.json, Cargo.toml, and tauri.conf.json all have the same version
 2. Check that the tag doesn't already exist
 3. Run tests (`pnpm test`)
-4. Build a universal macOS binary (Intel + Apple Silicon)
-5. Create a git tag (e.g., `v0.2.0`)
-6. Create a GitHub Release with the `.dmg` attached and release notes from RELEASES.md
+4. Build a signed universal macOS binary (Intel + Apple Silicon) and updater artifacts (`.app.tar.gz`, `.sig`) using `TAURI_SIGNING_PRIVATE_KEY`
+5. Generate `latest.json` for the in-app updater
+6. Create a git tag (e.g., `v0.2.0`)
+7. Create a GitHub Release with the `.dmg`, `.app.tar.gz`, `.sig`, and `latest.json` attached, and release notes from RELEASES.md
 
 ## Handling Failures
 
@@ -77,6 +92,8 @@ If the workflow fails after the tag was created:
 4. Trigger the workflow again
 
 If it fails before tagging (validation, tests, or build), just fix the issue, push, and re-trigger.
+
+If the build step fails with an error about the updater signature or missing key, ensure the repo secret `TAURI_SIGNING_PRIVATE_KEY` is set (see **Updater Signing** above).
 
 ## Files
 

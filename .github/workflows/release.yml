@@ -86,7 +86,26 @@ jobs:
           workspaces: src-tauri
 
       - name: Build universal macOS binary
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
         run: pnpm tauri:build
+
+      - name: Generate updater latest.json
+        run: |
+          BUNDLE_DIR="src-tauri/target/universal-apple-darwin/release/bundle/macos"
+          SIG_FILE="$BUNDLE_DIR/Mac User Lens.app.tar.gz.sig"
+          if [ ! -f "$SIG_FILE" ]; then
+            echo "::error::Updater signature not found. Ensure TAURI_SIGNING_PRIVATE_KEY is set in repo secrets."
+            exit 1
+          fi
+          SIGNATURE=$(cat "$SIG_FILE")
+          URL="https://github.com/smastrom/mac-user-lens/releases/download/${TAG}/Mac%20User%20Lens.app.tar.gz"
+          jq -n \
+            --arg version "$VERSION" \
+            --arg url "$URL" \
+            --arg signature "$SIGNATURE" \
+            '{version: $version, platforms: {"darwin-aarch64": {url: $url, signature: $signature}, "darwin-x86_64": {url: $url, signature: $signature}}}' \
+            > latest.json
 
       - name: Extract release notes
         run: |
@@ -115,3 +134,6 @@ jobs:
           generate_release_notes: false
           files: |
             src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+            src-tauri/target/universal-apple-darwin/release/bundle/macos/Mac User Lens.app.tar.gz
+            src-tauri/target/universal-apple-darwin/release/bundle/macos/Mac User Lens.app.tar.gz.sig
+            latest.json
