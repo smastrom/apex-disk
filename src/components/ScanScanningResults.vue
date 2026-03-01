@@ -134,6 +134,10 @@ onUnmounted(stopTimer)
 
 .ScanScanningResults-spinnerWrap {
    display: flex;
+
+   @media (prefers-reduced-motion: reduce) {
+      display: none;
+   }
 }
 
 .ScanScanningResults-spinnerWrap :deep(.Spinner-root) {

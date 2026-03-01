@@ -73,6 +73,11 @@ withDefaults(defineProps<{ size?: number }>(), { size: 48 })
    .AnimatedCheckCircle-circle {
       animation-name: AnimatedCheckCircle-fade;
    }
+
+   .AnimatedCheckCircle-check {
+      animation: none;
+      stroke-dashoffset: 0;
+   }
 }
 
 @keyframes AnimatedCheckCircle-fade {
