@@ -40,6 +40,7 @@ const languageOptions = computed(() => [
 const themeOptions = computed(() => [
    { value: 'mac-user-lens' as ThemeColor, label: t('SettingsView', 'themeMacUserLens') },
    { value: 'ayu' as ThemeColor, label: t('SettingsView', 'themeAyu') },
+   { value: 'simone' as ThemeColor, label: t('SettingsView', 'themeSimone') },
 ])
 
 function toggleHiddenFiles() {

@@ -18,6 +18,7 @@ export const SettingsView = {
       languageIt: 'Italiano',
       themeMacUserLens: 'Mac User Lens',
       themeAyu: 'Ayu',
+      themeSimone: 'Simone',
    },
    it: {
       loadingSettings: 'Caricamento impostazioni…',
@@ -38,5 +39,6 @@ export const SettingsView = {
       languageIt: 'Italiano',
       themeMacUserLens: 'Mac User Lens',
       themeAyu: 'Ayu',
+      themeSimone: 'Simone',
    },
 } as const

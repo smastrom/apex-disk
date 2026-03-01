@@ -69,3 +69,24 @@
    --btn-gradient-50: #e8b755;
    --btn-gradient-100: #ffcc66;
 }
+
+/* Theme: Simone (green accent, dark green-tinted base) */
+[data-theme='simone'] {
+   --color-bg: hsl(150, 7.1%, 5.5%);
+   --color-bg-elevated: hsl(150, 9.7%, 12.2%);
+   --color-surface: hsl(150, 9.7%, 16%);
+   --color-surface-hover: hsl(150, 9.7%, 21%);
+   --color-accent: hsl(142, 75%, 53%);
+   --color-accent-hover: hsl(142, 75%, 58%);
+   --color-text: hsl(142, 29.4%, 80%);
+   --color-text-muted: hsl(142, 20%, 60%);
+   --color-text-dim: hsl(142, 15%, 45%);
+   --color-accent-glow: hsla(142, 75%, 53%, 0.4);
+   --color-accent-bg: hsla(142, 75%, 53%, 0.12);
+   --color-accent-bg-hover: hsla(142, 75%, 53%, 0.06);
+   --color-border: hsl(141, 10%, 25%);
+
+   --btn-gradient-0: hsl(142, 75%, 53%);
+   --btn-gradient-50: hsl(142, 75%, 48%);
+   --btn-gradient-100: hsl(142, 75%, 53%);
+}
