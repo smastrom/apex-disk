@@ -79,6 +79,20 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             services: "Servi\u{e7}os",
             quit: "Sair do Mac User Lens",
         },
+        "de" => MenuLabels {
+            help: "Hilfe",
+            window: "Fenster",
+            minimize: "In Dock ablegen",
+            close_window: "Fenster schlie\u{df}en",
+            hide: "Mac User Lens ausblenden",
+            hide_others: "Andere ausblenden",
+            show_all: "Alle einblenden",
+            release_notes: "Versionshinweise",
+            license: "Lizenz",
+            website_label: "Versionshinweise",
+            services: "Dienste",
+            quit: "Mac User Lens beenden",
+        },
         // Помощь, Окно, etc.
         "ru" => MenuLabels {
             help: "\u{41f}\u{43e}\u{43c}\u{43e}\u{449}\u{44c}",

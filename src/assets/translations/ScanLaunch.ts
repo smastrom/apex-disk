@@ -53,4 +53,10 @@ export const ScanLaunch = {
          'A análise de discos muito grandes pode demorar vários minutos. Recomendamos fechar outras aplicações antes de usar esta ferramenta. Ela elimina ficheiros — use com cuidado. O autor não se responsabiliza por ficheiros perdidos.',
       startScan: 'Iniciar análise',
    },
+   de: {
+      warningTitle: 'Wichtiger Hinweis',
+      warningBody:
+         'Scans sehr großer Datenträger können mehrere Minuten dauern. Wir empfehlen, andere Apps zu schließen, bevor Sie dieses Tool verwenden. Es löscht Dateien – verwenden Sie es mit Vorsicht. Der Autor übernimmt keine Haftung für verlorene Dateien.',
+      startScan: 'Scan starten',
+   },
 } as const

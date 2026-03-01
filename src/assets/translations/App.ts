@@ -35,4 +35,8 @@ export const App = {
       informationComingSoon: 'Ecrã de informações em breve.',
       donateComingSoon: 'Ecrã de donativos em breve.',
    },
+   de: {
+      informationComingSoon: 'Informations-Ansicht demnächst.',
+      donateComingSoon: 'Spenden-Ansicht demnächst.',
+   },
 } as const

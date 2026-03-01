@@ -26,4 +26,7 @@ export const AppHeader = {
    pt: {
       title: 'macOS User Lens',
    },
+   de: {
+      title: 'macOS User Lens',
+   },
 } as const

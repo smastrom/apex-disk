@@ -62,4 +62,11 @@ export const ScanResultsDeleteList = {
       deleting: 'A eliminar…',
       deletingSize: 'A eliminar… ({{size}})',
    },
+   de: {
+      navTitle: 'Zu löschende Elemente',
+      delete: 'Löschen',
+      deleteSize: 'Löschen ({{size}})',
+      deleting: 'Wird gelöscht…',
+      deletingSize: 'Wird gelöscht… ({{size}})',
+   },
 } as const

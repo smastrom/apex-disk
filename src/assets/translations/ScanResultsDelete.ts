@@ -44,4 +44,9 @@ export const ScanResultsDelete = {
       delete: 'Eliminar',
       deleteSize: 'Eliminar ({{size}})',
    },
+   de: {
+      navTitle: 'Zu löschende Elemente',
+      delete: 'Löschen',
+      deleteSize: 'Löschen ({{size}})',
+   },
 } as const

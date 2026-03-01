@@ -62,4 +62,11 @@ export const global = {
       donate: 'Doar',
       donateComingSoon: 'Ecrã de donativos em breve.',
    },
+   de: {
+      appName: 'Mac User Lens',
+      scan: 'Scannen',
+      settings: 'Einstellungen',
+      donate: 'Spenden',
+      donateComingSoon: 'Spenden-Ansicht demnächst.',
+   },
 } as const

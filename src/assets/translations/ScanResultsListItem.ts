@@ -35,4 +35,8 @@ export const ScanResultsListItem = {
       itemOne: '1 item',
       itemsCount: '{{count}} itens',
    },
+   de: {
+      itemOne: '1 Element',
+      itemsCount: '{{count}} Elemente',
+   },
 } as const

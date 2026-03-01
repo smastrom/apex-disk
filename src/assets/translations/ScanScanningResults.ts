@@ -89,4 +89,14 @@ export const ScanScanningResults = {
       preparing: 'A preparar análise...',
       abort: 'Cancelar',
    },
+   de: {
+      scanning: 'Scannen… {{current}} von {{total}}',
+      elapsed: '{{seconds}} s vergangen',
+      scannedSize: 'Analysierte Größe',
+      currentPath: 'Aktueller Ordner',
+      stage: 'Fortschritt',
+      estimate: 'Große Datenträger können mehrere Minuten dauern.',
+      preparing: 'Scan wird vorbereitet...',
+      abort: 'Abbrechen',
+   },
 } as const

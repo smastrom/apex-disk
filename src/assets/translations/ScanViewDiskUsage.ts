@@ -44,4 +44,9 @@ export const ScanViewDiskUsage = {
       free: 'Livre',
       newFree: 'Novo',
    },
+   de: {
+      total: 'Gesamt',
+      free: 'Frei',
+      newFree: 'Neu',
+   },
 } as const

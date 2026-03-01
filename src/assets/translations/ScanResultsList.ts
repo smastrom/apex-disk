@@ -98,4 +98,15 @@ export const ScanResultsList = {
       resetSelection: 'Repor',
       cancel: 'Cancelar',
    },
+   de: {
+      scanning: 'Scannen… {{current}} von {{total}}',
+      noDataYet: 'Noch keine Daten. Starten Sie einen Scan, um Ihren Datenträger zu erkunden.',
+      startScan: 'Scan starten',
+      foldersLoaded: '{{count}} Ordner geladen',
+      delete: 'Löschen',
+      deleteSize: 'Löschen ({{size}})',
+      reviewSize: 'Prüfen ({{size}})',
+      resetSelection: 'Zurücksetzen',
+      cancel: 'Abbrechen',
+   },
 } as const
