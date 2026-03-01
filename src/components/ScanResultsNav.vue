@@ -22,7 +22,7 @@ Example:
 -->
 
 <script setup lang="ts">
-import { PhCaretLeft, PhCaretRight, PhFolder } from '@phosphor-icons/vue'
+import { PhCaretLeft, PhCaretRight, PhFolderSimple } from '@phosphor-icons/vue'
 
 import { useTranslations } from '@/lib/useTranslations'
 
@@ -70,7 +70,12 @@ const { t } = useTranslations()
          </button>
       </div>
       <div class="ScanResultsNav-path" :title="pathTitle">
-         <PhFolder :size="16" weight="regular" class="ScanResultsNav-pathIcon" aria-hidden="true" />
+         <PhFolderSimple
+            :size="16"
+            weight="regular"
+            class="ScanResultsNav-pathIcon"
+            aria-hidden="true"
+         />
          <span class="ScanResultsNav-pathText">{{ pathLabel }}</span>
       </div>
       <div v-if="showActions" class="ScanResultsNav-actions">
@@ -140,13 +145,18 @@ const { t } = useTranslations()
    align-items: center;
    gap: var(--spacing-xs);
    padding: var(--spacing-xs) 0;
+   min-height: 24px;
    font-size: 0.8125rem;
    color: var(--color-text-muted);
    text-align: left;
 }
 
+/* Explicit 16×16 and block avoid inline SVG subpixel alignment and blur. */
 .ScanResultsNav-pathIcon {
    flex-shrink: 0;
+   width: 16px;
+   height: 16px;
+   display: block;
    color: var(--color-accent);
 }
 
