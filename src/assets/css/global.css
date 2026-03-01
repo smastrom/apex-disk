@@ -27,3 +27,13 @@ body {
    height: 100vh;
    overflow: hidden;
 }
+
+/* Consistent focus ring for keyboard users (focus-visible only, not mouse click) */
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+input:focus-visible,
+[tabindex='0']:focus-visible {
+   outline: var(--focus-ring-width) solid var(--focus-ring-color);
+   outline-offset: var(--focus-ring-offset);
+}

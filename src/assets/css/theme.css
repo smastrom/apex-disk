@@ -42,6 +42,11 @@
    --btn-gradient-50: #ab6eff;
    --btn-gradient-100: #b185ef;
 
+   /* Focus ring (keyboard focus indicator) */
+   --focus-ring-color: var(--color-accent);
+   --focus-ring-width: 2px;
+   --focus-ring-offset: 2px;
+
    /* AppLayout */
    --header-height: 56px;
    --footer-height: 64px;
