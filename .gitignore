@@ -34,3 +34,4 @@ pnpm-lock.yaml
 
 # AI agents
 .claude/
+.cursor/
