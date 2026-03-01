@@ -20,14 +20,10 @@ Example:
 <script setup lang="ts">
 import ScanResultsListItemIconSwitch from '@/components/ScanResultsListItemIconSwitch.vue'
 
-import {
-   PhCaretRight,
-   PhCircle,
-   PhCheckCircle,
-   PhMinusCircle,
-} from '@phosphor-icons/vue'
+import { PhCaretRight, PhCircle, PhCheckCircle, PhMinusCircle } from '@phosphor-icons/vue'
 
 import { useTranslations } from '@/lib/useTranslations'
+import { useNamePopover } from '@/lib/useNamePopover'
 
 import type { FolderInfo } from '@/types/structs'
 
@@ -45,6 +41,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useTranslations()
+const { popoverRef, triggerRef, onPointerEnter, onPointerLeave } = useNamePopover()
 </script>
 
 <template>
@@ -98,7 +95,13 @@ const { t } = useTranslations()
          <ScanResultsListItemIconSwitch :item="item" :size="28" />
       </div>
       <div class="ScanResultsListItem-info">
-         <span class="ScanResultsListItem-name">{{ item.name }}</span>
+         <span
+            ref="triggerRef"
+            class="ScanResultsListItem-name"
+            @pointerenter="onPointerEnter"
+            @pointerleave="onPointerLeave"
+            >{{ item.name }}</span
+         >
          <span v-if="!item.is_file" class="ScanResultsListItem-count">
             {{
                item.children.length === 1
@@ -116,6 +119,15 @@ const { t } = useTranslations()
             class="ScanResultsListItem-chevron"
             aria-hidden="true"
          />
+      </div>
+      <div
+         ref="popoverRef"
+         popover="manual"
+         class="ScanResultsListItem-popover"
+         @pointerenter="onPointerEnter"
+         @pointerleave="onPointerLeave"
+      >
+         {{ item.name }}
       </div>
    </div>
 </template>
@@ -231,5 +243,53 @@ const { t } = useTranslations()
 
 .ScanResultsListItem-chevron {
    color: var(--color-text-dim);
+}
+
+/* ── Name popover ── */
+
+.ScanResultsListItem-popover {
+   position: fixed;
+   margin: 0;
+   padding: 6px 10px;
+   max-width: 420px;
+   border: 1px solid var(--color-border);
+   border-radius: 6px;
+   background: var(--color-bg-elevated);
+   color: var(--color-text);
+   font-size: 0.8125rem;
+   font-weight: 500;
+   line-height: 1.4;
+   word-break: break-all;
+   box-shadow:
+      0 4px 24px rgba(0, 0, 0, 0.35),
+      0 0 0 0.5px rgba(255, 255, 255, 0.06);
+   transform: translateY(-100%);
+   pointer-events: auto;
+
+   /* Closed state (for the transition) */
+   opacity: 0;
+   filter: blur(4px);
+   transition:
+      opacity 0.2s var(--ease-standard),
+      filter 0.2s var(--ease-standard);
+}
+
+.ScanResultsListItem-popover:popover-open {
+   opacity: 1;
+   filter: blur(0);
+}
+
+@starting-style {
+   .ScanResultsListItem-popover:popover-open {
+      opacity: 0;
+      filter: blur(4px);
+   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+   .ScanResultsListItem-popover {
+      transition: none;
+      filter: none;
+   }
 }
 </style>
