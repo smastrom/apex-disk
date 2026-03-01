@@ -3,7 +3,7 @@ ScanResultsNav
 
 Purpose: Shared nav bar for scan results views. Back (and optional forward), center path/title, optional reset/abort actions.
 
-Props: showForward (boolean), backDisabled (boolean), forwardDisabled (boolean?), pathLabel (string), pathTitle (string?), showActions (boolean), resetDisabled (boolean?)
+Props: showForward (boolean), backDisabled (boolean), forwardDisabled (boolean?), pathLabel (string), pathTitle (string?), pathIcon ('folder' | 'trash'?), showActions (boolean), resetDisabled (boolean?)
 
 Example:
  <ScanResultsNav
@@ -22,19 +22,23 @@ Example:
 -->
 
 <script setup lang="ts">
-import { PhCaretLeft, PhCaretRight, PhFolderSimple } from '@phosphor-icons/vue'
+import { PhCaretLeft, PhCaretRight, PhFolderSimple, PhTrashSimple } from '@phosphor-icons/vue'
 
 import { useTranslations } from '@/lib/useTranslations'
 
-defineProps<{
-   showForward?: boolean
-   backDisabled?: boolean
-   forwardDisabled?: boolean
-   pathLabel: string
-   pathTitle?: string
-   showActions?: boolean
-   resetDisabled?: boolean
-}>()
+const props = withDefaults(
+   defineProps<{
+      showForward?: boolean
+      backDisabled?: boolean
+      forwardDisabled?: boolean
+      pathLabel: string
+      pathTitle?: string
+      pathIcon?: 'folder' | 'trash'
+      showActions?: boolean
+      resetDisabled?: boolean
+   }>(),
+   { pathIcon: 'folder' }
+)
 
 const emit = defineEmits<{
    (e: 'back'): void
@@ -70,7 +74,15 @@ const { t } = useTranslations()
          </button>
       </div>
       <div class="ScanResultsNav-path" :title="pathTitle">
+         <PhTrashSimple
+            v-if="pathIcon === 'trash'"
+            :size="16"
+            weight="regular"
+            class="ScanResultsNav-pathIcon"
+            aria-hidden="true"
+         />
          <PhFolderSimple
+            v-else
             :size="16"
             weight="regular"
             class="ScanResultsNav-pathIcon"

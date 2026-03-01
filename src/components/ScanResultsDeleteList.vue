@@ -207,6 +207,7 @@ async function onDeleteClick() {
       <ScanResultsNav
          :showForward="false"
          :backDisabled="false"
+         pathIcon="trash"
          :pathLabel="t('ScanResultsDeleteList', 'navTitle')"
          :showActions="false"
          @back="emit('back', getCheckedItems())"
