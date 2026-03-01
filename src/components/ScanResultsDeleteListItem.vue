@@ -114,8 +114,6 @@ const emit = defineEmits<{
    justify-content: center;
    width: 24px;
    height: 24px;
-   border-radius: 4px;
-   background: var(--color-surface);
    color: var(--color-accent);
 }
 
