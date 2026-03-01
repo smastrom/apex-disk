@@ -72,7 +72,7 @@ onUnmounted(stopTimer)
                   })
                }}
             </p>
-            <p class="ScanScanningResults-elapsed">
+            <p v-if="elapsedSeconds >= 1" class="ScanScanningResults-elapsed">
                {{ t('ScanScanningResults', 'elapsed', { seconds: elapsedSeconds }) }}
             </p>
          </div>
