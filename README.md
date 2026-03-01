@@ -13,5 +13,3 @@ macOS tool to easily identify and get rid of big, unused files and folders in se
 ```bash
  xattr -cr /Applications/Mac\ User\ Lens.app
 ```
-
-This is required because the app is not yet notarized with Apple (which requires a paid developer account).
