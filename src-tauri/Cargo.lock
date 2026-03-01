@@ -2004,6 +2004,7 @@ name = "mac-user-lens"
 version = "0.0.8"
 dependencies = [
  "dirs 5.0.1",
+ "libc",
  "nix 0.29.0",
  "open",
  "rayon",
