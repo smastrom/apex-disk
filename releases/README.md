@@ -18,7 +18,9 @@ The in-app updater requires **signed** artifacts. Do this once before your first
 
 2. Copy the **public key** contents into `src-tauri/tauri.conf.json` → `plugins.updater.pubkey` (single-line, `\n`-escaped). The public key is safe to commit.
 
-3. Add the **private key** as a GitHub repo secret: **Settings → Secrets → Actions** → `TAURI_SIGNING_PRIVATE_KEY`.
+3. Add the **private key** as a GitHub repo secret: **Settings → Secrets and variables → Actions** → `TAURI_SIGNING_PRIVATE_KEY`.
+
+4. If you set a **password** when generating the key, add a second secret: `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` with that password. CI needs it to decrypt the key.
 
 ## Creating a Release
 
@@ -93,7 +95,7 @@ If the workflow fails after the tag was created:
 
 If it fails before tagging (validation, tests, or build), just fix the issue, push, and re-trigger.
 
-If the build step fails with an error about the updater signature or missing key, ensure the repo secret `TAURI_SIGNING_PRIVATE_KEY` is set (see **Updater Signing** above).
+If the build step fails with an error about the updater signature, missing key, or "Wrong password for that key", ensure the repo secrets `TAURI_SIGNING_PRIVATE_KEY` and (if your key is password-protected) `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` are set (see **Updater Signing** above).
 
 ## Files
 
