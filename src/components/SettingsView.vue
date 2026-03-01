@@ -1,7 +1,7 @@
 <!--
 SettingsView
 
-Purpose: Settings screen with Language, Theme, Show hidden files, Show 0B files, and Permissions. macOS-style grouped list.
+Purpose: Settings screen with Language, Theme, Scan Settings (hidden files, 0 B, under 1 KB), and Permissions. macOS-style grouped list.
 
 Props: fdaGranted (boolean)
 
@@ -47,14 +47,14 @@ function toggleHiddenFiles() {
       store.value.setShowHiddenFiles(!settings.value.showHiddenFiles)
 }
 
-function toggleZeroByteFiles() {
+function toggleUnder1Kb() {
    if (store.value && settings.value)
-      store.value.setShowZeroByteFiles(!settings.value.showZeroByteFiles)
+      store.value.setShowUnder1Kb(!settings.value.showUnder1Kb)
 }
 
-function toggleZeroByteFolders() {
+function toggleZeroByte() {
    if (store.value && settings.value)
-      store.value.setShowZeroByteFolders(!settings.value.showZeroByteFolders)
+      store.value.setShowZeroByte(!settings.value.showZeroByte)
 }
 
 async function openSystemSettings() {
@@ -146,11 +146,11 @@ async function openSystemSettings() {
             </div>
          </section>
 
-         <!-- Results -->
+         <!-- Scan Settings -->
 
          <section class="SettingsGroup">
             <div class="SettingsGroup-row">
-               <span class="SettingsGroup-label">{{ t('SettingsView', 'showHiddenFiles') }}</span>
+               <span class="SettingsGroup-label">{{ t('SettingsView', 'indexHiddenFiles') }}</span>
                <button
                   type="button"
                   class="SettingsToggle"
@@ -162,27 +162,25 @@ async function openSystemSettings() {
                </button>
             </div>
             <div class="SettingsGroup-row">
-               <span class="SettingsGroup-label">{{ t('SettingsView', 'showZeroByteFiles') }}</span>
+               <span class="SettingsGroup-label">{{ t('SettingsView', 'indexUnder1Kb') }}</span>
                <button
                   type="button"
                   class="SettingsToggle"
-                  :class="{ 'SettingsToggle--on': settings.showZeroByteFiles }"
-                  :aria-pressed="settings.showZeroByteFiles"
-                  @click="toggleZeroByteFiles"
+                  :class="{ 'SettingsToggle--on': settings.showUnder1Kb }"
+                  :aria-pressed="settings.showUnder1Kb"
+                  @click="toggleUnder1Kb"
                >
                   <span class="SettingsToggle-knob" aria-hidden="true" />
                </button>
             </div>
             <div class="SettingsGroup-row">
-               <span class="SettingsGroup-label">{{
-                  t('SettingsView', 'showZeroByteFolders')
-               }}</span>
+               <span class="SettingsGroup-label">{{ t('SettingsView', 'indexZeroByte') }}</span>
                <button
                   type="button"
                   class="SettingsToggle"
-                  :class="{ 'SettingsToggle--on': settings.showZeroByteFolders }"
-                  :aria-pressed="settings.showZeroByteFolders"
-                  @click="toggleZeroByteFolders"
+                  :class="{ 'SettingsToggle--on': settings.showZeroByte }"
+                  :aria-pressed="settings.showZeroByte"
+                  @click="toggleZeroByte"
                >
                   <span class="SettingsToggle-knob" aria-hidden="true" />
                </button>

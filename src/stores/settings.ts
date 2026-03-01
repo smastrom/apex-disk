@@ -15,6 +15,31 @@ function normalizeThemeColor(value: unknown): ThemeColor {
    return DEFAULT_SETTINGS.themeColor
 }
 
+/** Legacy keys that may exist in stored settings; merged into showZeroByte when migrating. */
+interface LegacyAppSettings extends Partial<AppSettings> {
+   showZeroByteFiles?: boolean
+   showZeroByteFolders?: boolean
+}
+
+/** Builds AppSettings from stored raw, migrating legacy showZeroByteFiles/showZeroByteFolders into showZeroByte. */
+function normalizeStoredSettings(raw: Partial<LegacyAppSettings> | null): AppSettings {
+   const base = raw && typeof raw === 'object' ? raw : {}
+   const showZeroByte =
+      (base as Partial<AppSettings>).showZeroByte ??
+      (base.showZeroByteFiles || base.showZeroByteFolders) ??
+      DEFAULT_SETTINGS.showZeroByte
+   return {
+      language: base.language ?? DEFAULT_SETTINGS.language,
+      themeColor:
+         base.themeColor != null
+            ? normalizeThemeColor(base.themeColor)
+            : DEFAULT_SETTINGS.themeColor,
+      showHiddenFiles: base.showHiddenFiles ?? DEFAULT_SETTINGS.showHiddenFiles,
+      showUnder1Kb: base.showUnder1Kb ?? DEFAULT_SETTINGS.showUnder1Kb,
+      showZeroByte,
+   }
+}
+
 const STORE_PATH = 'settings.json'
 
 /** Injection key for the settings store. Provided value is Ref<SettingsStore | null>. */
@@ -26,8 +51,8 @@ export interface SettingsStore {
    setLanguage: (lang: Language) => Promise<void>
    setThemeColor: (theme: ThemeColor) => Promise<void>
    setShowHiddenFiles: (value: boolean) => Promise<void>
-   setShowZeroByteFiles: (value: boolean) => Promise<void>
-   setShowZeroByteFolders: (value: boolean) => Promise<void>
+   setShowUnder1Kb: (value: boolean) => Promise<void>
+   setShowZeroByte: (value: boolean) => Promise<void>
    load: () => Promise<void>
 }
 
@@ -50,12 +75,12 @@ function createStoreFromSettings(
          settings.value = { ...settings.value, showHiddenFiles: value }
          await persist()
       },
-      setShowZeroByteFiles: async (value) => {
-         settings.value = { ...settings.value, showZeroByteFiles: value }
+      setShowUnder1Kb: async (value) => {
+         settings.value = { ...settings.value, showUnder1Kb: value }
          await persist()
       },
-      setShowZeroByteFolders: async (value) => {
-         settings.value = { ...settings.value, showZeroByteFolders: value }
+      setShowZeroByte: async (value) => {
+         settings.value = { ...settings.value, showZeroByte: value }
          await persist()
       },
       load: async () => {},
@@ -73,17 +98,14 @@ export async function createSettingsStore(): Promise<SettingsStore> {
             setTimeout(() => reject(new Error('Store load timeout')), LOAD_TIMEOUT_MS)
          ),
       ])
-      const raw = (await store.get('app')) as Partial<AppSettings> | null
+      const raw = (await store.get('app')) as Partial<LegacyAppSettings> | null
       const systemLanguage = await getSystemLanguage()
-      const settings = ref<AppSettings>({
-         ...DEFAULT_SETTINGS,
-         language: raw?.language ?? systemLanguage,
-         ...(raw && typeof raw === 'object' ? raw : {}),
-         themeColor:
-            raw?.themeColor != null
-               ? normalizeThemeColor(raw.themeColor)
-               : DEFAULT_SETTINGS.themeColor,
-      })
+      const settings = ref<AppSettings>(
+         normalizeStoredSettings({
+            ...(raw && typeof raw === 'object' ? raw : {}),
+            language: raw?.language ?? systemLanguage,
+         })
+      )
 
       async function persist() {
          await store.set('app', settings.value)
@@ -94,18 +116,13 @@ export async function createSettingsStore(): Promise<SettingsStore> {
 
       result.load = async () => {
          await store.reload()
-         const raw = (await store.get('app')) as Partial<AppSettings> | null
+         const raw = (await store.get('app')) as Partial<LegacyAppSettings> | null
          if (raw && typeof raw === 'object') {
             const systemLanguage = await getSystemLanguage()
-            settings.value = {
-               ...DEFAULT_SETTINGS,
-               language: raw.language ?? systemLanguage,
+            settings.value = normalizeStoredSettings({
                ...raw,
-               themeColor:
-                  raw.themeColor != null
-                     ? normalizeThemeColor(raw.themeColor)
-                     : DEFAULT_SETTINGS.themeColor,
-            }
+               language: raw.language ?? systemLanguage,
+            })
          }
       }
       return result

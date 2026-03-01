@@ -42,7 +42,7 @@ fn sort_children(children: &mut [FolderInfo]) {
 /// Recursively builds the folder tree with parallelism at every directory level.
 /// Rayon's work-stealing scheduler naturally balances I/O across cores --
 /// threads that finish small directories steal subtasks from large ones like Library.
-/// Respects options: hidden files, 0 B files, 0 B folders are excluded when disabled.
+/// Respects options: hidden files, items under 1 KB, and 0 B files/folders are excluded when disabled.
 fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions) -> FolderInfo {
     let name = root
         .file_name()
@@ -84,7 +84,10 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions) -> FolderI
 
         if ft.is_file() {
             let size = entry.metadata().map(|m| m.len()).unwrap_or(0);
-            if !options.show_zero_byte_files && size == 0 {
+            if !options.show_zero_byte && size == 0 {
+                continue;
+            }
+            if !options.show_under_1kb && size < 1024 {
                 continue;
             }
             file_size += size;
@@ -122,11 +125,13 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions) -> FolderI
         .map(|p| build_folder_tree(p, home, options))
         .collect();
 
-    let dir_children: Vec<FolderInfo> = if options.show_zero_byte_folders {
-        dir_children
-    } else {
-        dir_children.into_iter().filter(|c| c.size > 0).collect()
-    };
+    let dir_children: Vec<FolderInfo> = dir_children
+        .into_iter()
+        .filter(|c| {
+            (options.show_zero_byte || c.size > 0)
+                && (options.show_under_1kb || c.size >= 1024)
+        })
+        .collect();
 
     let dir_size: u64 = dir_children.iter().map(|c| c.size).sum();
 
@@ -206,8 +211,8 @@ pub fn get_user_folders_sync_with_progress(
         .collect();
 
     sort_children(&mut folders);
-    if !options.show_zero_byte_folders {
-        folders.retain(|f| f.size > 0);
-    }
+    folders.retain(|f| {
+        (options.show_zero_byte || f.size > 0) && (options.show_under_1kb || f.size >= 1024)
+    });
     Ok(folders)
 }

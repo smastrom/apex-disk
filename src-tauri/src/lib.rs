@@ -9,10 +9,14 @@ mod scan;
 pub struct ScanOptions {
     #[serde(default)]
     pub show_hidden_files: bool,
+    #[serde(default = "default_show_under_1kb")]
+    pub show_under_1kb: bool,
     #[serde(default)]
-    pub show_zero_byte_files: bool,
-    #[serde(default)]
-    pub show_zero_byte_folders: bool,
+    pub show_zero_byte: bool,
+}
+
+fn default_show_under_1kb() -> bool {
+    true
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Clone)]

@@ -9,6 +9,6 @@ export interface AppSettings {
    language: Language
    themeColor: ThemeColor
    showHiddenFiles: boolean
-   showZeroByteFiles: boolean
-   showZeroByteFolders: boolean
+   showUnder1Kb: boolean
+   showZeroByte: boolean
 }

@@ -51,8 +51,8 @@ export function useScan(storeRef?: Ref<SettingsStore | null>) {
          const options = settings
             ? {
                  show_hidden_files: settings.showHiddenFiles,
-                 show_zero_byte_files: settings.showZeroByteFiles,
-                 show_zero_byte_folders: settings.showZeroByteFolders,
+                 show_under_1kb: settings.showUnder1Kb,
+                 show_zero_byte: settings.showZeroByte,
               }
             : {}
          const result = await invoke<FolderInfo[]>('get_user_folders', { options })
