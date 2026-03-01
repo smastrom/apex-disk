@@ -21,6 +21,7 @@ import { PhTrash } from '@phosphor-icons/vue'
 
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/useTranslations'
+import { useReducedMotion } from '@/lib/useReducedMotion'
 
 import { DELETE_COUNTDOWN_SECONDS, DELETE_POST_DELETE_SLEEP_MS } from '@/lib/constants'
 
@@ -103,6 +104,8 @@ onUnmounted(stopCountdown)
  */
 const checkedMapRef = shallowRef(new Map<string, boolean>())
 const deleting = ref(false)
+
+const prefersReducedMotion = useReducedMotion()
 
 const parentRef = useTemplateRef<HTMLElement>('parentRef')
 
@@ -243,18 +246,40 @@ async function onDeleteClick() {
          <button
             type="button"
             class="ScanResultsDeleteList-deleteBtn"
-            :class="{ 'ScanResultsDeleteList-deleteBtn--deleting': deleting }"
+            :data-deleting="deleting || undefined"
             :disabled="countdownRemaining > 0 || checkedCount === 0 || deleting"
             @click="onDeleteClick"
          >
-            <Spinner v-if="deleting" :size="18" class="ScanResultsDeleteList-spinner" />
-            <PhTrash v-else :size="18" weight="bold" aria-hidden="true" />
-            <Transition name="ScanResultsDeleteList-caption">
-               <span v-if="!deleting" class="ScanResultsDeleteList-captionText">{{
-                  selectedSize > 0
-                     ? t('ScanResultsDeleteList', 'deleteSize', { size: formatBytes(selectedSize) })
-                     : t('ScanResultsDeleteList', 'delete')
-               }}</span>
+            <Transition name="ScanResultsDeleteList-caption" mode="out-in">
+               <span v-if="!deleting" key="ready" class="ScanResultsDeleteList-captionText">
+                  <PhTrash :size="18" weight="bold" aria-hidden="true" />
+                  {{
+                     selectedSize > 0
+                        ? t('ScanResultsDeleteList', 'deleteSize', {
+                             size: formatBytes(selectedSize),
+                          })
+                        : t('ScanResultsDeleteList', 'delete')
+                  }}
+               </span>
+               <span
+                  v-else-if="prefersReducedMotion"
+                  key="deleting-text"
+                  class="ScanResultsDeleteList-captionText"
+               >
+                  {{
+                     selectedSize > 0
+                        ? t('ScanResultsDeleteList', 'deletingSize', {
+                             size: formatBytes(selectedSize),
+                          })
+                        : t('ScanResultsDeleteList', 'deleting')
+                  }}
+               </span>
+               <Spinner
+                  v-else
+                  key="deleting-spinner"
+                  :size="18"
+                  class="ScanResultsDeleteList-spinner"
+               />
             </Transition>
          </button>
       </div>
@@ -319,7 +344,6 @@ async function onDeleteClick() {
    display: flex;
    align-items: center;
    justify-content: center;
-   gap: 0.5rem;
    height: 50px;
    padding: 0 var(--spacing-lg);
    font-size: 0.9375rem;
@@ -331,25 +355,22 @@ async function onDeleteClick() {
    cursor: pointer;
    transition:
       opacity 0.2s,
-      padding 0.3s var(--ease-standard),
-      gap 0.3s var(--ease-standard);
+      padding 0.3s var(--ease-standard);
 
    &:hover:not(:disabled) {
       opacity: 0.9;
    }
 
-   &:disabled:not(.ScanResultsDeleteList-deleteBtn--deleting) {
+   &:disabled:not([data-deleting]) {
       opacity: 0.5;
       cursor: not-allowed;
    }
 }
 
-.ScanResultsDeleteList-deleteBtn--deleting {
-   gap: 0;
-}
-
 .ScanResultsDeleteList-captionText {
-   display: inline-block;
+   display: inline-flex;
+   align-items: center;
+   gap: 0.5rem;
    white-space: nowrap;
 }
 
@@ -374,14 +395,15 @@ async function onDeleteClick() {
    color: #fff;
 }
 
+/* Keep opacity transitions; only remove movement (sliding, gap, padding). */
 @media (prefers-reduced-motion: reduce) {
    .ScanResultsDeleteList-caption-enter-active,
    .ScanResultsDeleteList-caption-leave-active {
-      transition-duration: 0.01ms;
+      transition: opacity 0.25s var(--ease-standard);
    }
 
    .ScanResultsDeleteList-deleteBtn {
-      transition-duration: 0.01ms;
+      transition: opacity 0.2s;
    }
 }
 </style>
