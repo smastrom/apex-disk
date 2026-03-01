@@ -1,4 +1,4 @@
-import { ref, shallowRef, onUnmounted, type Ref } from 'vue'
+import { ref, shallowRef, onUnmounted, type Ref, onDeactivated } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 
@@ -82,6 +82,10 @@ export function useScan(storeRef?: Ref<SettingsStore | null>) {
    }
 
    onUnmounted(() => {
+      unlistenProgress?.()
+   })
+
+   onDeactivated(() => {
       unlistenProgress?.()
    })
 
