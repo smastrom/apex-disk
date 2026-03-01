@@ -14,4 +14,16 @@ export const AppHeader = {
    ja: {
       title: 'macOS User Lens',
    },
+   ar: {
+      title: 'macOS User Lens',
+   },
+   ru: {
+      title: 'macOS User Lens',
+   },
+   fr: {
+      title: 'macOS User Lens',
+   },
+   pt: {
+      title: 'macOS User Lens',
+   },
 } as const

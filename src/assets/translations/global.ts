@@ -34,4 +34,32 @@ export const global = {
       donate: '寄付',
       donateComingSoon: '寄付画面は近日公開予定です。',
    },
+   ar: {
+      appName: 'Mac User Lens',
+      scan: 'مسح',
+      settings: 'الإعدادات',
+      donate: 'تبرّع',
+      donateComingSoon: 'شاشة التبرع قريباً.',
+   },
+   ru: {
+      appName: 'Mac User Lens',
+      scan: 'Сканировать',
+      settings: 'Настройки',
+      donate: 'Поддержать',
+      donateComingSoon: 'Раздел поддержки скоро.',
+   },
+   fr: {
+      appName: 'Mac User Lens',
+      scan: 'Analyser',
+      settings: 'Réglages',
+      donate: 'Faire un don',
+      donateComingSoon: 'Espace dons bientôt disponible.',
+   },
+   pt: {
+      appName: 'Mac User Lens',
+      scan: 'Analisar',
+      settings: 'Definições',
+      donate: 'Doar',
+      donateComingSoon: 'Ecrã de donativos em breve.',
+   },
 } as const

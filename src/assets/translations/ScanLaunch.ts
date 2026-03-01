@@ -29,4 +29,28 @@ export const ScanLaunch = {
          '大容量ディスクのスキャンには数分かかる場合があります。このツールを使用する前に他のアプリを終了することをお勧めします。ファイルを削除するため、慎重にご利用ください。作者は紛失したファイルについて責任を負いません。',
       startScan: 'スキャン開始',
    },
+   ar: {
+      warningTitle: 'إشعار مهم',
+      warningBody:
+         'قد يستغرق مسح الأقراص الكبيرة جداً عدة دقائق. ننصح بإغلاق التطبيقات الأخرى قبل استخدام هذه الأداة. إنها تحذف الملفات، استخدمها بحذر. لا يتحمل المؤلف مسؤولية الملفات المفقودة.',
+      startScan: 'بدء المسح',
+   },
+   ru: {
+      warningTitle: 'Важное уведомление',
+      warningBody:
+         'Сканирование очень больших дисков может занять несколько минут. Рекомендуем закрыть другие приложения перед использованием. Программа удаляет файлы — используйте осторожно. Автор не несёт ответственности за утраченные файлы.',
+      startScan: 'Начать сканирование',
+   },
+   fr: {
+      warningTitle: 'Avis important',
+      warningBody:
+         'L’analyse de disques très volumineux peut prendre plusieurs minutes. Nous recommandons de fermer les autres applications avant d’utiliser cet outil. Il supprime des fichiers — utilisez-le avec précaution. L’auteur n’assume aucune responsabilité pour les fichiers perdus.',
+      startScan: 'Démarrer l’analyse',
+   },
+   pt: {
+      warningTitle: 'Aviso importante',
+      warningBody:
+         'A análise de discos muito grandes pode demorar vários minutos. Recomendamos fechar outras aplicações antes de usar esta ferramenta. Ela elimina ficheiros — use com cuidado. O autor não se responsabiliza por ficheiros perdidos.',
+      startScan: 'Iniciar análise',
+   },
 } as const

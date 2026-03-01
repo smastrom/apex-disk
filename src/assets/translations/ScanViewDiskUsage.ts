@@ -24,4 +24,24 @@ export const ScanViewDiskUsage = {
       free: '空き',
       newFree: '新規',
    },
+   ar: {
+      total: 'المجموع',
+      free: 'متاح',
+      newFree: 'جديد',
+   },
+   ru: {
+      total: 'Всего',
+      free: 'Свободно',
+      newFree: 'Новое',
+   },
+   fr: {
+      total: 'Total',
+      free: 'Disponible',
+      newFree: 'Nouveau',
+   },
+   pt: {
+      total: 'Total',
+      free: 'Livre',
+      newFree: 'Novo',
+   },
 } as const

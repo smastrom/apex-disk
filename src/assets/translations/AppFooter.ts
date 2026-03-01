@@ -29,4 +29,28 @@ export const AppFooter = {
       information: '情報',
       donate: '寄付',
    },
+   ar: {
+      scan: 'مسح',
+      settings: 'الإعدادات',
+      information: 'المعلومات',
+      donate: 'تبرّع',
+   },
+   ru: {
+      scan: 'Сканировать',
+      settings: 'Настройки',
+      information: 'Информация',
+      donate: 'Поддержать',
+   },
+   fr: {
+      scan: 'Analyser',
+      settings: 'Réglages',
+      information: 'Informations',
+      donate: 'Faire un don',
+   },
+   pt: {
+      scan: 'Analisar',
+      settings: 'Definições',
+      information: 'Informações',
+      donate: 'Doar',
+   },
 } as const

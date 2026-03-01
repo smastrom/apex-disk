@@ -29,4 +29,28 @@ export const ScanResultsDeleteConfirmation = {
       scanAgain: '再スキャン',
       closeApp: 'アプリを終了',
    },
+   ar: {
+      title: 'اكتمل الحذف',
+      resume: 'تم حذف {{count}} عنصر، وتحرير {{size}}',
+      scanAgain: 'مسح مرة أخرى',
+      closeApp: 'إغلاق التطبيق',
+   },
+   ru: {
+      title: 'Удаление завершено',
+      resume: 'Удалено элементов: {{count}}, освобождено: {{size}}',
+      scanAgain: 'Сканировать снова',
+      closeApp: 'Закрыть приложение',
+   },
+   fr: {
+      title: 'Suppression terminée',
+      resume: '{{count}} éléments supprimés, {{size}} libérés',
+      scanAgain: 'Analyser à nouveau',
+      closeApp: 'Fermer l’app',
+   },
+   pt: {
+      title: 'Eliminação concluída',
+      resume: '{{count}} itens eliminados, {{size}} libertados',
+      scanAgain: 'Analisar novamente',
+      closeApp: 'Fechar app',
+   },
 } as const

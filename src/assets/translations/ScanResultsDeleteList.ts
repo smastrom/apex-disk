@@ -34,4 +34,32 @@ export const ScanResultsDeleteList = {
       deleting: '削除中…',
       deletingSize: '削除中… ({{size}})',
    },
+   ar: {
+      navTitle: 'العناصر للحذف',
+      delete: 'حذف',
+      deleteSize: 'حذف ({{size}})',
+      deleting: 'جاري الحذف…',
+      deletingSize: 'جاري الحذف… ({{size}})',
+   },
+   ru: {
+      navTitle: 'Элементы для удаления',
+      delete: 'Удалить',
+      deleteSize: 'Удалить ({{size}})',
+      deleting: 'Удаление…',
+      deletingSize: 'Удаление… ({{size}})',
+   },
+   fr: {
+      navTitle: 'Éléments à supprimer',
+      delete: 'Supprimer',
+      deleteSize: 'Supprimer ({{size}})',
+      deleting: 'Suppression…',
+      deletingSize: 'Suppression… ({{size}})',
+   },
+   pt: {
+      navTitle: 'Itens a eliminar',
+      delete: 'Eliminar',
+      deleteSize: 'Eliminar ({{size}})',
+      deleting: 'A eliminar…',
+      deletingSize: 'A eliminar… ({{size}})',
+   },
 } as const

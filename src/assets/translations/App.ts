@@ -19,4 +19,20 @@ export const App = {
       informationComingSoon: '情報画面は近日公開予定です。',
       donateComingSoon: '寄付画面は近日公開予定です。',
    },
+   ar: {
+      informationComingSoon: 'شاشة المعلومات قريباً.',
+      donateComingSoon: 'شاشة التبرع قريباً.',
+   },
+   ru: {
+      informationComingSoon: 'Раздел информации скоро.',
+      donateComingSoon: 'Раздел поддержки скоро.',
+   },
+   fr: {
+      informationComingSoon: 'Espace informations bientôt disponible.',
+      donateComingSoon: 'Espace dons bientôt disponible.',
+   },
+   pt: {
+      informationComingSoon: 'Ecrã de informações em breve.',
+      donateComingSoon: 'Ecrã de donativos em breve.',
+   },
 } as const

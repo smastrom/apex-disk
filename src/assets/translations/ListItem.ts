@@ -19,4 +19,20 @@ export const ListItem = {
       itemOne: '1 項目',
       itemsCount: '{{count}} 項目',
    },
+   ar: {
+      itemOne: 'عنصر واحد',
+      itemsCount: '{{count}} عناصر',
+   },
+   ru: {
+      itemOne: '1 элемент',
+      itemsCount: '{{count}} элементов',
+   },
+   fr: {
+      itemOne: '1 élément',
+      itemsCount: '{{count}} éléments',
+   },
+   pt: {
+      itemOne: '1 item',
+      itemsCount: '{{count}} itens',
+   },
 } as const

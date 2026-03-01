@@ -38,6 +38,10 @@ const languageOptions = computed(() => [
    { value: 'es' as Language, label: t('SettingsView', 'languageEs') },
    { value: 'zh' as Language, label: t('SettingsView', 'languageZh') },
    { value: 'ja' as Language, label: t('SettingsView', 'languageJa') },
+   { value: 'ar' as Language, label: t('SettingsView', 'languageAr') },
+   { value: 'ru' as Language, label: t('SettingsView', 'languageRu') },
+   { value: 'fr' as Language, label: t('SettingsView', 'languageFr') },
+   { value: 'pt' as Language, label: t('SettingsView', 'languagePt') },
 ])
 
 const themeOptions = computed(() => [
