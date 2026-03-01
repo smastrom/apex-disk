@@ -9,6 +9,7 @@ import { ScanResultsListItem } from './ScanResultsListItem'
 import { ScanResultsDeleteList } from './ScanResultsDeleteList'
 import { ScanResultsDeleteConfirmation } from './ScanResultsDeleteConfirmation'
 import { SettingsView } from './SettingsView'
+import { SettingsFooter } from './SettingsFooter'
 import { AppFooter } from './AppFooter'
 
 import type { Language } from '@/types/settings'
@@ -25,6 +26,7 @@ export const translations = {
    ScanResultsDeleteList,
    ScanResultsDeleteConfirmation,
    SettingsView,
+   SettingsFooter,
    AppFooter,
 } as const
 

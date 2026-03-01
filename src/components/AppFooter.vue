@@ -10,7 +10,7 @@ Example:
 -->
 
 <script setup lang="ts">
-import { PhMagnifyingGlass, PhGear, PhInfo, PhHeart } from '@phosphor-icons/vue'
+import { PhMagnifyingGlass, PhGear, PhHeart /* , PhInfo */ } from '@phosphor-icons/vue'
 import { openUrl } from '@tauri-apps/plugin-opener'
 
 import { useTranslations } from '@/lib/useTranslations'

@@ -10,6 +10,8 @@ Example:
 -->
 
 <script setup lang="ts">
+import SettingsFooter from '@/components/SettingsFooter.vue'
+
 import { PhCaretDown, PhCheckCircle, PhXCircle, PhWrench as PhGearSix } from '@phosphor-icons/vue'
 
 import { inject, computed, type Ref } from 'vue'
@@ -198,6 +200,9 @@ async function openSystemSettings() {
                {{ t('SettingsView', 'resultsEffectiveNextScan') }}
             </p>
          </section>
+
+         <!-- App info (name, version, author, links) -->
+         <SettingsFooter />
       </div>
    </main>
 </template>
