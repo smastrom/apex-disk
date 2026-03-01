@@ -118,6 +118,10 @@ async function onDonateClick() {
 .AppFooter-btn--active {
    color: var(--color-accent);
 
+   &:hover {
+      color: var(--color-accent);
+   }
+
    :deep(svg) {
       filter: drop-shadow(0 0 6px var(--color-accent-glow));
    }
