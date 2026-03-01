@@ -18,6 +18,8 @@ export function useNamePopover() {
 
    const ENTER_DELAY = 400
    const LEAVE_DELAY = 200
+   /** Same as row horizontal margin (--spacing-sm) so popover aligns with content. */
+   const EDGE_MARGIN = 8
 
    function isTruncated(): boolean {
       const el = triggerRef.value
@@ -35,6 +37,17 @@ export function useNamePopover() {
       popover.style.top = `${rect.top - 4}px`
    }
 
+   /** Keeps popover within viewport horizontal bounds (same margin as row content). */
+   function clampToViewport() {
+      const popover = popoverRef.value
+      if (!popover) return
+
+      const rect = popover.getBoundingClientRect()
+      const maxLeft = window.innerWidth - EDGE_MARGIN - rect.width
+      const left = Math.max(EDGE_MARGIN, Math.min(rect.left, maxLeft))
+      popover.style.left = `${left}px`
+   }
+
    function show() {
       const popover = popoverRef.value
       if (!popover || isOpen.value) return
@@ -42,6 +55,7 @@ export function useNamePopover() {
       popover.showPopover()
       isOpen.value = true
       addScrollListener()
+      requestAnimationFrame(clampToViewport)
    }
 
    function hide() {

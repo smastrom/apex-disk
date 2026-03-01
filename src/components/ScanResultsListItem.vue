@@ -256,13 +256,11 @@ const { popoverRef, triggerRef, onPointerEnter, onPointerLeave } = useNamePopove
    border-radius: 6px;
    background: var(--color-bg-elevated);
    color: var(--color-text);
-   font-size: 0.8125rem;
+   font-size: 0.75rem;
    font-weight: 500;
    line-height: 1.4;
    word-break: break-all;
-   box-shadow:
-      0 4px 24px rgba(0, 0, 0, 0.35),
-      0 0 0 0.5px rgba(255, 255, 255, 0.06);
+   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
    transform: translateY(-100%);
    pointer-events: auto;
 
