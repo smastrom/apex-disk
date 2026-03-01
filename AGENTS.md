@@ -262,6 +262,10 @@ Menu bar order: **App** (`Mac User Lens`) → **Window** → **Help**.
 - The Tauri command `set_menu_language` (in `menu.rs`) rebuilds and replaces the entire menu via `app.set_menu()`
 - The initial menu is built with English (`"en"`) as a safe default before the frontend is ready
 
+### Releases
+
+For release workflow and instructions, refer to `releases/README.md`.
+
 ### Workflow
 
 #### Package manager
