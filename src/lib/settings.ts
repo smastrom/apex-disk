@@ -1,8 +1,8 @@
 import { locale } from '@tauri-apps/plugin-os'
 
-import type { Language } from '@/types/settings'
+import { APP_LANGUAGES, DEFAULT_LANGUAGE } from '@/lib/constants'
 
-const SUPPORTED_LANGUAGES: Language[] = ['en', 'it']
+import type { Language } from '@/types/settings'
 
 /**
  * Maps system locale (BCP-47) to app language. Falls back to 'en' if unsupported.
@@ -11,10 +11,10 @@ const SUPPORTED_LANGUAGES: Language[] = ['en', 'it']
 export async function getSystemLanguage(): Promise<Language> {
    try {
       const systemLocale = await locale()
-      if (!systemLocale) return 'en'
+      if (!systemLocale) return DEFAULT_LANGUAGE
       const primary = systemLocale.split(/[-_]/)[0]?.toLowerCase()
-      return SUPPORTED_LANGUAGES.includes(primary as Language) ? (primary as Language) : 'en'
+      return APP_LANGUAGES.includes(primary as Language) ? (primary as Language) : DEFAULT_LANGUAGE
    } catch {
-      return 'en'
+      return DEFAULT_LANGUAGE
    }
 }
