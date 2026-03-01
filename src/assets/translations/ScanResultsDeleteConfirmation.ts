@@ -17,4 +17,10 @@ export const ScanResultsDeleteConfirmation = {
       scanAgain: 'Analizar de nuevo',
       closeApp: 'Cerrar app',
    },
+   zh: {
+      title: '删除完成',
+      resume: '已删除 {{count}} 项，已释放 {{size}}',
+      scanAgain: '再次扫描',
+      closeApp: '关闭应用',
+   },
 } as const

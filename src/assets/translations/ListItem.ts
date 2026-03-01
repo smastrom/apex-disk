@@ -11,4 +11,8 @@ export const ListItem = {
       itemOne: '1 elemento',
       itemsCount: '{{count}} elementos',
    },
+   zh: {
+      itemOne: '1 项',
+      itemsCount: '{{count}} 项',
+   },
 } as const

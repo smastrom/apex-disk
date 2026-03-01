@@ -17,4 +17,10 @@ export const ScanLaunch = {
          'El análisis de discos muy grandes puede tardar varios minutos. Recomendamos cerrar otras aplicaciones antes de usar esta herramienta. Elimina archivos, úsala con cuidado. El autor no se hace responsable de archivos perdidos.',
       startScan: 'Iniciar análisis',
    },
+   zh: {
+      warningTitle: '重要提示',
+      warningBody:
+         '扫描大容量磁盘可能需要数分钟。建议使用本工具前关闭其他应用。本工具会删除文件，请谨慎使用。作者不对丢失的文件负责。',
+      startScan: '开始扫描',
+   },
 } as const

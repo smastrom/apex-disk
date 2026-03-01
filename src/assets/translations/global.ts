@@ -20,4 +20,11 @@ export const global = {
       donate: 'Donar',
       donateComingSoon: 'Vista de donaciones próximamente.',
    },
+   zh: {
+      appName: 'Mac User Lens',
+      scan: '扫描',
+      settings: '设置',
+      donate: '捐赠',
+      donateComingSoon: '捐赠页面即将推出。',
+   },
 } as const

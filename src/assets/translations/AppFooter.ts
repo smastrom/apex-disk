@@ -17,4 +17,10 @@ export const AppFooter = {
       information: 'Información',
       donate: 'Donar',
    },
+   zh: {
+      scan: '扫描',
+      settings: '设置',
+      information: '信息',
+      donate: '捐赠',
+   },
 } as const

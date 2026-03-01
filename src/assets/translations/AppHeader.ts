@@ -8,4 +8,7 @@ export const AppHeader = {
    es: {
       title: 'macOS User Lens',
    },
+   zh: {
+      title: 'macOS User Lens',
+   },
 } as const

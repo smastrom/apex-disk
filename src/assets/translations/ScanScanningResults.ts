@@ -29,4 +29,14 @@ export const ScanScanningResults = {
       preparing: 'Preparando análisis...',
       abort: 'Cancelar',
    },
+   zh: {
+      scanning: '扫描中… {{current}} / {{total}}',
+      elapsed: '已用 {{seconds}} 秒',
+      scannedSize: '已分析大小',
+      currentPath: '当前文件夹',
+      stage: '进度',
+      estimate: '大容量磁盘可能需要数分钟。',
+      preparing: '准备扫描...',
+      abort: '中止',
+   },
 } as const

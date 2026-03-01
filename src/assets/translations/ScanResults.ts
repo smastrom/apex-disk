@@ -32,4 +32,15 @@ export const ScanResults = {
       resetSelection: 'Restablecer',
       abort: 'Cancelar',
    },
+   zh: {
+      scanning: '扫描中… {{current}} / {{total}}',
+      noDataYet: '暂无数据。开始扫描以浏览磁盘。',
+      startScan: '开始扫描',
+      foldersLoaded: '已加载 {{count}} 个文件夹',
+      delete: '删除',
+      deleteSize: '删除 ({{size}})',
+      reviewSize: '查看 ({{size}})',
+      resetSelection: '重置',
+      abort: '中止',
+   },
 } as const

@@ -20,4 +20,11 @@ export const ScanResultsDeleteList = {
       deleting: 'Eliminando…',
       deletingSize: 'Eliminando… ({{size}})',
    },
+   zh: {
+      navTitle: '待删除项',
+      delete: '删除',
+      deleteSize: '删除 ({{size}})',
+      deleting: '删除中…',
+      deletingSize: '删除中… ({{size}})',
+   },
 } as const

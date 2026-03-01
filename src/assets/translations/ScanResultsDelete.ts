@@ -14,4 +14,9 @@ export const ScanResultsDelete = {
       delete: 'Eliminar',
       deleteSize: 'Eliminar ({{size}})',
    },
+   zh: {
+      navTitle: '待删除项',
+      delete: '删除',
+      deleteSize: '删除 ({{size}})',
+   },
 } as const

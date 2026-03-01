@@ -14,4 +14,9 @@ export const ScanViewDiskUsage = {
       free: 'Libre',
       newFree: 'Nuevo',
    },
+   zh: {
+      total: '总计',
+      free: '可用',
+      newFree: '新增',
+   },
 } as const

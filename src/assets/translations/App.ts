@@ -11,4 +11,8 @@ export const App = {
       informationComingSoon: 'Vista de información próximamente.',
       donateComingSoon: 'Vista de donaciones próximamente.',
    },
+   zh: {
+      informationComingSoon: '信息页面即将推出。',
+      donateComingSoon: '捐赠页面即将推出。',
+   },
 } as const
