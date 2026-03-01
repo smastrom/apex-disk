@@ -46,6 +46,12 @@ const languageOptions = computed(() => [
 
 const themeOptions = computed(() => [
    { value: 'mac-user-lens' as ThemeColor, label: t('SettingsView', 'themeMacUserLens') },
+   {
+      value: 'mac-user-lens-light' as ThemeColor,
+      label: t('SettingsView', 'themeMacUserLensLight'),
+   },
+   { value: 'macos-dark' as ThemeColor, label: t('SettingsView', 'themeMacosDark') },
+   { value: 'macos-light' as ThemeColor, label: t('SettingsView', 'themeMacosLight') },
    { value: 'ayu' as ThemeColor, label: t('SettingsView', 'themeAyu') },
    { value: 'smastrom' as ThemeColor, label: t('SettingsView', 'themeSmastrom') },
 ])

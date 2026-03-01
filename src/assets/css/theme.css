@@ -49,6 +49,28 @@
    --content-max-width: 600px;
 }
 
+/* Theme: Mac User Lens Light (Catppuccin Latte–inspired) */
+[data-theme='mac-user-lens-light'] {
+   --color-on-accent: #fff;
+   --color-bg: #f8f8fc;
+   --color-bg-elevated: #f0f0f7;
+   --color-surface: #e6e6f0;
+   --color-surface-hover: #dbdbe6;
+   --color-accent: #8839ef;
+   --color-accent-hover: #9c5cf7;
+   --color-text: #4c4f69;
+   --color-text-muted: #8c8fa1;
+   --color-text-dim: #9ca0b0;
+   --color-accent-glow: rgba(136, 57, 239, 0.3);
+   --color-accent-bg: rgba(136, 57, 239, 0.1);
+   --color-accent-bg-hover: rgba(136, 57, 239, 0.05);
+   --color-border: #ccd0da;
+
+   --btn-gradient-0: #8839ef;
+   --btn-gradient-50: #7628d6;
+   --btn-gradient-100: #8839ef;
+}
+
 /* Theme: Ayu */
 [data-theme='ayu'] {
    --color-bg: #141824;
@@ -70,23 +92,67 @@
    --btn-gradient-100: #ffcc66;
 }
 
+/* Theme: macOS Dark — Apple's system dark appearance */
+[data-theme='macos-dark'] {
+   --color-on-accent: #fff;
+   --color-bg: #1e1e1e;
+   --color-bg-elevated: #2a2a2a;
+   --color-surface: #323232;
+   --color-surface-hover: #3a3a3a;
+   --color-accent: #0a84ff;
+   --color-accent-hover: #409cff;
+   --color-text: #f5f5f7;
+   --color-text-muted: #98989d;
+   --color-text-dim: #6e6e73;
+   --color-accent-glow: rgba(10, 132, 255, 0.35);
+   --color-accent-bg: rgba(10, 132, 255, 0.12);
+   --color-accent-bg-hover: rgba(10, 132, 255, 0.06);
+   --color-border: #3d3d3d;
+
+   --btn-gradient-0: #0a84ff;
+   --btn-gradient-50: #0077ed;
+   --btn-gradient-100: #0a84ff;
+}
+
+/* Theme: macOS Light — Apple's system light appearance */
+[data-theme='macos-light'] {
+   --color-on-accent: #fff;
+   --color-bg: #f5f5f7;
+   --color-bg-elevated: #ffffff;
+   --color-surface: #e8e8ed;
+   --color-surface-hover: #d1d1d6;
+   --color-accent: #007aff;
+   --color-accent-hover: #0071e3;
+   --color-text: #1d1d1f;
+   --color-text-muted: #86868b;
+   --color-text-dim: #aeaeb2;
+   --color-accent-glow: rgba(0, 122, 255, 0.25);
+   --color-accent-bg: rgba(0, 122, 255, 0.08);
+   --color-accent-bg-hover: rgba(0, 122, 255, 0.04);
+   --color-border: #d2d2d7;
+
+   --btn-gradient-0: #007aff;
+   --btn-gradient-50: #0071e3;
+   --btn-gradient-100: #007aff;
+}
+
 /* Theme: smastrom (green accent, dark green-tinted base) */
 [data-theme='smastrom'] {
-   --color-bg: hsl(150, 7.1%, 5.5%);
-   --color-bg-elevated: hsl(150, 9.7%, 12.2%);
-   --color-surface: hsl(150, 9.7%, 16%);
-   --color-surface-hover: hsl(150, 9.7%, 21%);
-   --color-accent: hsl(142, 75%, 53%);
-   --color-accent-hover: hsl(142, 75%, 58%);
-   --color-text: hsl(142, 29.4%, 80%);
-   --color-text-muted: hsl(142, 20%, 60%);
-   --color-text-dim: hsl(142, 15%, 45%);
-   --color-accent-glow: hsla(142, 75%, 53%, 0.4);
-   --color-accent-bg: hsla(142, 75%, 53%, 0.12);
-   --color-accent-bg-hover: hsla(142, 75%, 53%, 0.06);
-   --color-border: hsl(141, 10%, 25%);
+   --color-bg: hsl(150, 12%, 7.5%);
+   --color-bg-elevated: hsl(150, 12%, 11%);
+   --color-surface: hsl(150, 10%, 15.5%);
+   --color-surface-hover: hsl(150, 10%, 20.5%);
+   --color-accent: hsl(142, 80%, 50%);
+   --color-accent-hover: hsl(142, 80%, 56%);
+   --color-text: hsl(142, 18%, 82%);
+   --color-text-muted: hsl(142, 14%, 58%);
+   --color-text-dim: hsl(142, 10%, 42%);
+   --color-accent-glow: hsla(142, 80%, 50%, 0.4);
+   --color-accent-bg: hsla(142, 80%, 50%, 0.12);
+   --color-accent-bg-hover: hsla(142, 80%, 50%, 0.06);
+   --color-border: hsl(141, 8%, 22%);
 
-   --btn-gradient-0: hsl(142, 75%, 53%);
-   --btn-gradient-50: hsl(142, 75%, 48%);
-   --btn-gradient-100: hsl(142, 75%, 53%);
+   --btn-gradient-0: hsl(142, 80%, 50%);
+   --btn-gradient-50: hsl(142, 80%, 44%);
+   --btn-gradient-100: hsl(142, 80%, 50%);
 }
