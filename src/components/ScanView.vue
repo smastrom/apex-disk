@@ -27,7 +27,7 @@ import { ref, watch, onDeactivated, useTemplateRef } from 'vue'
 
 import type { DeleteListItem, FolderInfo, ScanProgress } from '@/types/structs'
 
-defineProps<{
+const props = defineProps<{
    folders: FolderInfo[]
    loading: boolean
    progress: ScanProgress
@@ -46,6 +46,21 @@ const deletedSummary = ref<{ count: number; size: number } | null>(null)
 const diskUsageRef = useTemplateRef<InstanceType<typeof ScanViewDiskUsage>>('diskUsageRef')
 const resultsListRef = useTemplateRef<InstanceType<typeof ScanResultsList>>('resultsListRef')
 const pendingSelection = ref<DeleteListItem[] | null>(null)
+
+/** When Abort/cancel clears folders and we return to ScanLaunch, reset all scan state. */
+watch(
+   () => props.folders.length,
+   (len) => {
+      if (len === 0) {
+         selectedSize.value = 0
+         viewState.value = 'results'
+         deleteItems.value = []
+         deletedSummary.value = null
+         pendingSelection.value = null
+      }
+   },
+   { immediate: true }
+)
 
 function onSelectedSizeUpdate(value: number) {
    selectedSize.value = value
