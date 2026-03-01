@@ -48,7 +48,17 @@ pub fn build_app_menu(
         handle,
         constants::APP_NAME,
         true,
-        &[&about, &sep, &services, &sep2, &hide, &hide_others, &show_all, &sep3, &quit],
+        &[
+            &about,
+            &sep,
+            &services,
+            &sep2,
+            &hide,
+            &hide_others,
+            &show_all,
+            &sep3,
+            &quit,
+        ],
     )?;
 
     // ── Window submenu ──
@@ -63,6 +73,13 @@ pub fn build_app_menu(
     )?;
 
     // ── Help submenu ──
+    let check_for_updates = MenuItem::with_id(
+        handle,
+        constants::CHECK_UPDATES_MENU_ID,
+        labels.check_for_updates,
+        true,
+        None::<&str>,
+    )?;
     let release_notes = MenuItem::with_id(
         handle,
         constants::RELEASE_NOTES_MENU_ID,
@@ -82,7 +99,7 @@ pub fn build_app_menu(
         tauri::menu::HELP_SUBMENU_ID,
         labels.help,
         true,
-        &[&release_notes, &read_license],
+        &[&check_for_updates, &release_notes, &read_license],
     )?;
 
     Menu::with_items(handle, &[&app_submenu, &window_submenu, &help_submenu])
