@@ -12,7 +12,7 @@ export const THEME_COLORS = [ROOT_THEME, 'ayu'] as const
 export const DEFAULT_SETTINGS: AppSettings = {
    language: DEFAULT_LANGUAGE,
    themeColor: ROOT_THEME,
-   showHiddenFiles: false,
+   showHiddenFiles: true,
    showZeroByteFiles: false,
    showZeroByteFolders: false,
 }

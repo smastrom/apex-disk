@@ -8,8 +8,8 @@
    --color-bg-elevated: #181b2c;
    --color-surface: #232436;
    --color-surface-hover: #33354a;
-   --color-accent: #cba6f7;
-   --color-accent-hover: #d3b4ff;
+   --color-accent: #b185ef;
+   --color-accent-hover: #c39eff;
    --color-text: #cdd6f4;
    --color-text-muted: #6c7086;
    --color-text-dim: #585b70;
@@ -38,9 +38,9 @@
    --spacing-xl: 32px;
 
    /* Gradient button (accent-based) */
-   --btn-gradient-0: #bd98f1;
-   --btn-gradient-50: #b185ef;
-   --btn-gradient-100: #bd98f1;
+   --btn-gradient-0: #b185ef;
+   --btn-gradient-50: #ab6eff;
+   --btn-gradient-100: #b185ef;
 
    /* AppLayout */
    --header-height: 56px;
