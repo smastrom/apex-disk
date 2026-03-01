@@ -28,12 +28,12 @@ body {
    overflow: hidden;
 }
 
-/* Consistent focus ring for keyboard users (focus-visible only, not mouse click) */
-button:focus-visible,
-a:focus-visible,
-select:focus-visible,
-input:focus-visible,
-[tabindex='0']:focus-visible {
+/* Focus ring only when focus came from keyboard (class toggled in main.ts) */
+html.focus-ring-keyboard button:focus,
+html.focus-ring-keyboard a:focus,
+html.focus-ring-keyboard select:focus,
+html.focus-ring-keyboard input:focus,
+html.focus-ring-keyboard [tabindex='0']:focus {
    outline: var(--focus-ring-width) solid var(--focus-ring-color);
    outline-offset: var(--focus-ring-offset);
 }

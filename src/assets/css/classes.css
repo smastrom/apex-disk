@@ -1,5 +1,5 @@
 /* Mac User Lens — Reusable utility classes */
-/* Focus ring for focusable elements is applied globally in global.css via :focus-visible and theme variables (--focus-ring-*). */
+/* Focus ring for focusable elements is applied globally in global.css when focus came from keyboard (html.focus-ring-keyboard + :focus) and theme variables (--focus-ring-*). */
 
 /* macOS-style grouped list container */
 .SettingsGroup {
