@@ -2,7 +2,7 @@ import { ref, shallowRef, onUnmounted } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 
-import type { FolderInfo, ScanProgress } from '@/types/structures'
+import type { FolderInfo, ScanProgress } from '@/types/structs'
 
 const INITIAL_PROGRESS: ScanProgress = {
    current: 0,

@@ -17,7 +17,7 @@ import { computed, onActivated, onDeactivated, onUnmounted, ref } from 'vue'
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/useTranslations'
 
-import type { ScanProgress } from '@/types/structures'
+import type { ScanProgress } from '@/types/structs'
 
 const props = defineProps<{
    progress: ScanProgress

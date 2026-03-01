@@ -25,7 +25,7 @@ import ScanLaunch from './ScanLaunch.vue'
 
 import { ref, watch, onDeactivated, useTemplateRef } from 'vue'
 
-import type { DeleteListItem, FolderInfo, ScanProgress } from '@/types/structures'
+import type { DeleteListItem, FolderInfo, ScanProgress } from '@/types/structs'
 
 defineProps<{
    folders: FolderInfo[]
@@ -160,5 +160,4 @@ onDeactivated(() => {
    flex-direction: column;
    overflow: hidden;
 }
-
 </style>

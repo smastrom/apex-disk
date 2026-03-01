@@ -35,7 +35,7 @@ import { useViewTransition } from '@/lib/useViewTransition'
 import { SETTINGS_KEY } from '@/stores/settings'
 
 import type { SettingsStore } from '@/stores/settings'
-import type { DeleteListItem, FolderInfo } from '@/types/structures'
+import type { DeleteListItem, FolderInfo } from '@/types/structs'
 
 const props = defineProps<{
    folders: FolderInfo[]

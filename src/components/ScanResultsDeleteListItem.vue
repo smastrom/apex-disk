@@ -17,7 +17,7 @@ Example:
 <script setup lang="ts">
 import { PhFolder, PhFile, PhCircle, PhCheckCircle } from '@phosphor-icons/vue'
 
-import type { DeleteListItem } from '@/types/structures'
+import type { DeleteListItem } from '@/types/structs'
 
 defineProps<{
    item: DeleteListItem

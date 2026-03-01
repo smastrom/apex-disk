@@ -29,7 +29,7 @@ import {
 
 import { useTranslations } from '@/lib/useTranslations'
 
-import type { FolderInfo } from '@/types/structures'
+import type { FolderInfo } from '@/types/structs'
 
 defineProps<{
    item: FolderInfo

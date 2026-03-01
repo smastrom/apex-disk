@@ -24,7 +24,7 @@ import { useTranslations } from '@/lib/useTranslations'
 
 import { DELETE_COUNTDOWN_SECONDS, DELETE_POST_DELETE_SLEEP_MS } from '@/lib/constants'
 
-import type { DeleteListItem } from '@/types/structures'
+import type { DeleteListItem } from '@/types/structs'
 
 const props = defineProps<{
    items: DeleteListItem[]
