@@ -12,7 +12,7 @@ function viewIndex(view: string): number {
 export function useViews(mainContentRef: Readonly<ShallowRef<HTMLElement | null>>) {
    const { withTransition } = useViewTransition()
 
-   const activeView = ref('settings')
+   const activeView = ref('scan')
 
    async function setActiveView(view: string) {
       if (view === activeView.value) return

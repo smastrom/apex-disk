@@ -12,7 +12,7 @@ Example:
 <script setup lang="ts">
 import SettingsFooter from '@/components/SettingsFooter.vue'
 
-import { PhCaretDown, PhCheckCircle, PhXCircle, PhWrench as PhGearSix } from '@phosphor-icons/vue'
+import { PhCaretDown, PhCheckCircle, PhCircle, PhWrench as PhGearSix } from '@phosphor-icons/vue'
 
 import { inject, computed, type Ref } from 'vue'
 import { openUrl } from '@tauri-apps/plugin-opener'
@@ -79,33 +79,6 @@ async function openSystemSettings() {
          {{ t('SettingsView', 'loadingSettings') }}
       </div>
       <div v-else class="SettingsView-content">
-         <!-- FDA -->
-
-         <section class="SettingsGroup">
-            <div class="SettingsGroup-row">
-               <span class="SettingsGroup-label">{{ t('SettingsView', 'fdaLabel') }}</span>
-               <span class="SettingsView-fdaStatus" :class="fdaGranted ? 'is-ok' : 'is-denied'">
-                  <PhCheckCircle v-if="fdaGranted" :size="13" weight="fill" aria-hidden="true" />
-                  <PhXCircle v-else :size="13" weight="fill" aria-hidden="true" />
-                  {{
-                     fdaGranted ? t('SettingsView', 'fdaGranted') : t('SettingsView', 'fdaMissing')
-                  }}
-               </span>
-            </div>
-            <template v-if="!fdaGranted">
-               <p class="SettingsView-fdaDesc">
-                  {{ t('SettingsView', 'fdaDesc') }}
-               </p>
-
-               <div class="SettingsView-fdaControls">
-                  <button type="button" class="SettingsView-fdaBtn" @click="openSystemSettings">
-                     <PhGearSix :size="13" weight="fill" aria-hidden="true" />
-                     {{ t('SettingsView', 'fdaOpenSettings') }}
-                  </button>
-               </div>
-            </template>
-         </section>
-
          <!-- App Settings -->
 
          <section class="SettingsGroup">
@@ -155,6 +128,38 @@ async function openSystemSettings() {
                   />
                </div>
             </div>
+         </section>
+
+         <!-- FDA -->
+
+         <section class="SettingsGroup">
+            <div class="SettingsGroup-row">
+               <span class="SettingsGroup-label">{{ t('SettingsView', 'fdaLabel') }}</span>
+               <span
+                  class="SettingsView-fdaStatus"
+                  :class="
+                     fdaGranted ? 'SettingsView-fdaStatus--ok' : 'SettingsView-fdaStatus--optional'
+                  "
+               >
+                  <PhCheckCircle v-if="fdaGranted" :size="13" weight="fill" aria-hidden="true" />
+                  <PhCircle v-else :size="13" weight="regular" aria-hidden="true" />
+                  {{
+                     fdaGranted ? t('SettingsView', 'fdaGranted') : t('SettingsView', 'fdaMissing')
+                  }}
+               </span>
+            </div>
+            <template v-if="!fdaGranted">
+               <p class="SettingsView-fdaDesc">
+                  {{ t('SettingsView', 'fdaDesc') }}
+               </p>
+
+               <div class="SettingsView-fdaControls">
+                  <button type="button" class="SettingsView-fdaBtn" @click="openSystemSettings">
+                     <PhGearSix :size="13" weight="fill" aria-hidden="true" />
+                     {{ t('SettingsView', 'fdaOpenSettings') }}
+                  </button>
+               </div>
+            </template>
          </section>
 
          <!-- Scan Settings -->
@@ -255,12 +260,12 @@ async function openSystemSettings() {
    font-weight: 500;
 }
 
-.SettingsView-fdaStatus.is-ok {
+.SettingsView-fdaStatus--ok {
    color: var(--color-success, #22c55e);
 }
 
-.SettingsView-fdaStatus.is-denied {
-   color: var(--color-danger, #ef4444);
+.SettingsView-fdaStatus--optional {
+   color: var(--color-text-muted);
 }
 
 .SettingsView-fdaControls {

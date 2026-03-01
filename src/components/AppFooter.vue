@@ -3,10 +3,10 @@ AppFooter
 
 Purpose: Bottom navigation bar with Scan, Settings, Information, Donate buttons. Mobile-app style footer.
 
-Props: activeView (string?), hasPermissionIssue (boolean?), emit: select-view
+Props: activeView (string?), emit: select-view
 
 Example:
- <AppFooter :activeView="activeView" :hasPermissionIssue="!fdaGranted" @select-view="onSelect" />
+ <AppFooter :activeView="activeView" @select-view="onSelect" />
 -->
 
 <script setup lang="ts">
@@ -19,7 +19,6 @@ import { DONATE_URL } from '@/lib/constants'
 
 defineProps<{
    activeView?: string
-   hasPermissionIssue?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -52,10 +51,7 @@ async function onDonateClick() {
          :class="{ 'AppFooter-btn--active': activeView === 'settings' }"
          @click="emit('select-view', 'settings')"
       >
-         <span class="AppFooter-iconWrap">
-            <PhGear :size="24" weight="regular" aria-hidden="true" />
-            <span v-if="hasPermissionIssue" class="AppFooter-badge" aria-hidden="true" />
-         </span>
+         <PhGear :size="24" weight="regular" aria-hidden="true" />
          <span>{{ t('AppFooter', 'settings') }}</span>
       </button>
       <!-- <button
@@ -131,28 +127,4 @@ async function onDonateClick() {
    }
 }
 
-/* Icon wrapper to position the badge relative to the icon only */
-.AppFooter-iconWrap {
-   position: relative;
-   display: inline-flex;
-   /* Override the inherited span styles that stretch to full button width */
-   width: auto;
-   overflow: visible;
-   text-overflow: unset;
-   white-space: unset;
-   text-shadow: none;
-}
-
-.AppFooter-badge {
-   position: absolute;
-   top: -2px;
-   right: -4px;
-   width: 7px;
-   height: 7px;
-   border-radius: 50%;
-   background: #ef4444;
-   border: 1.5px solid var(--color-bg-elevated);
-   font-size: 0;
-   overflow: visible;
-}
 </style>

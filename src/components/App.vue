@@ -109,11 +109,7 @@ const { activeView, setActiveView } = useViews(mainContentRef)
             </div>
          </div>
 
-         <AppFooter
-            :activeView="activeView"
-            :hasPermissionIssue="!fdaGranted"
-            @select-view="setActiveView"
-         />
+         <AppFooter :activeView="activeView" @select-view="setActiveView" />
       </div>
    </Transition>
 </template>
