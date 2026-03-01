@@ -23,7 +23,7 @@ import {
    nextTick,
    useTemplateRef,
 } from 'vue'
-import { PhTrash } from '@phosphor-icons/vue'
+import { PhTrashSimple } from '@phosphor-icons/vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 
 import { formatBytes } from '@/lib/format'
@@ -380,7 +380,7 @@ function onCancel() {
             :disabled="selectedMap.size === 0"
             @click="onReviewClick"
          >
-            <PhTrash :size="18" weight="bold" aria-hidden="true" />
+            <PhTrashSimple :size="18" weight="bold" aria-hidden="true" />
             <span>{{
                t('ScanResultsList', 'reviewSize', { size: formatBytes(selectedSize) })
             }}</span>

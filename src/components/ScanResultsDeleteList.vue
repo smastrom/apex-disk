@@ -17,7 +17,7 @@ import Spinner from './Spinner.vue'
 import { ref, shallowRef, watch, computed, onActivated, onUnmounted, useTemplateRef } from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import { invoke } from '@tauri-apps/api/core'
-import { PhTrash } from '@phosphor-icons/vue'
+import { PhTrashSimple } from '@phosphor-icons/vue'
 
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/useTranslations'
@@ -253,7 +253,7 @@ async function onDeleteClick() {
          >
             <Transition name="ScanResultsDeleteList-caption" mode="out-in">
                <span v-if="!deleting" key="ready" class="ScanResultsDeleteList-captionText">
-                  <PhTrash :size="18" weight="bold" aria-hidden="true" />
+                  <PhTrashSimple :size="18" weight="bold" aria-hidden="true" />
                   {{
                      selectedSize > 0
                         ? t('ScanResultsDeleteList', 'deleteSize', {
@@ -345,8 +345,8 @@ async function onDeleteClick() {
    display: flex;
    align-items: center;
    justify-content: center;
-   height: 50px;
-   padding: 0 var(--spacing-lg);
+   gap: 0.5rem;
+   padding: var(--spacing-md) var(--spacing-lg);
    font-size: 0.9375rem;
    font-weight: 600;
    color: #fff;
