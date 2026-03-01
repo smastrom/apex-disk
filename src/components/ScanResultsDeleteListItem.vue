@@ -15,7 +15,9 @@ Example:
 -->
 
 <script setup lang="ts">
-import { PhFolderSimple, PhFile, PhCircle, PhCheckCircle } from '@phosphor-icons/vue'
+import ScanResultsListItemIconSwitch from '@/components/ScanResultsListItemIconSwitch.vue'
+
+import { PhCircle, PhCheckCircle } from '@phosphor-icons/vue'
 
 import type { DeleteListItem } from '@/types/structs'
 
@@ -63,8 +65,7 @@ const emit = defineEmits<{
          class="ScanResultsDeleteListItem-icon"
          :class="{ 'ScanResultsDeleteListItem-icon--hidden': isHidden(item) }"
       >
-         <PhFolderSimple v-if="!item.is_file" :size="18" weight="regular" aria-hidden="true" />
-         <PhFile v-else :size="18" weight="regular" aria-hidden="true" />
+         <ScanResultsListItemIconSwitch :item="item" :size="18" />
       </div>
       <span class="ScanResultsDeleteListItem-name">{{ item.name }}</span>
       <span class="ScanResultsDeleteListItem-size">{{ formatBytes(item.size) }}</span>

@@ -18,10 +18,9 @@ Example:
 -->
 
 <script setup lang="ts">
+import ScanResultsListItemIconSwitch from '@/components/ScanResultsListItemIconSwitch.vue'
+
 import {
-   PhFolderSimple,
-   PhFolderSimpleUser,
-   PhFile,
    PhCaretRight,
    PhCircle,
    PhCheckCircle,
@@ -39,17 +38,6 @@ defineProps<{
    selectable?: boolean
    formatBytes: (bytes: number) => string
 }>()
-
-/** Hidden = name starts with dot. Protected takes precedence over hidden for folder icon. */
-function folderIcon(item: FolderInfo) {
-   if (item.is_protected) return 'protected'
-   if (item.name.startsWith('.')) return 'hidden'
-   return 'normal'
-}
-
-function fileIcon(item: FolderInfo) {
-   return item.name.startsWith('.') ? 'hidden' : 'normal'
-}
 
 const emit = defineEmits<{
    (e: 'select'): void
@@ -105,20 +93,9 @@ const { t } = useTranslations()
       </button>
       <div
          class="ScanResultsListItem-icon"
-         :class="{
-            'ScanResultsListItem-icon--hidden':
-               (!item.is_file && folderIcon(item) === 'hidden') ||
-               (item.is_file && fileIcon(item) === 'hidden'),
-         }"
+         :class="{ 'ScanResultsListItem-icon--hidden': item.name.startsWith('.') }"
       >
-         <PhFolderSimpleUser
-            v-if="!item.is_file && folderIcon(item) === 'protected'"
-            :size="28"
-            weight="regular"
-            aria-hidden="true"
-         />
-         <PhFolderSimple v-else-if="!item.is_file" :size="28" weight="regular" aria-hidden="true" />
-         <PhFile v-else :size="28" weight="regular" aria-hidden="true" />
+         <ScanResultsListItemIconSwitch :item="item" :size="28" />
       </div>
       <div class="ScanResultsListItem-info">
          <span class="ScanResultsListItem-name">{{ item.name }}</span>
