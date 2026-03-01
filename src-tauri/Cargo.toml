@@ -1,6 +1,6 @@
 [package]
 name = "mac-user-lens"
-version = "0.1.0"
+version = "0.0.8"
 description = "Tool to easily identify and get rid of big, unused files and folders in seconds."
 authors = ["smastrom"]
 edition = "2021"
