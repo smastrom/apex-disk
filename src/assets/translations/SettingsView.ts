@@ -12,7 +12,7 @@ export const SettingsView = {
       fdaGranted: 'Granted',
       fdaMissing: 'Not granted',
       fdaDesc:
-         'Add this app in System Settings, then quit and reopen it. After reopening, a scan will run without any permission dialogs.',
+         'Optional. The app works without it — scans may ask for access to specific folders as needed. Grant it to avoid repeated prompts: add this app in System Settings, then quit and reopen.',
       fdaOpenSettings: 'Open System Settings',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -43,7 +43,7 @@ export const SettingsView = {
       fdaGranted: 'Concesso',
       fdaMissing: 'Non concesso',
       fdaDesc:
-         'Aggiungi questa app in Impostazioni di Sistema, poi esci e riapri l’app. Dopo la riapertura, la scansione funzionerà senza alcun dialogo di autorizzazione.',
+         'Opzionale. L’app funziona anche senza: le scansioni possono chiedere l’accesso alle singole cartelle. Concedilo per evitare richieste ripetute: aggiungi l’app in Impostazioni di Sistema, poi esci e riapri.',
       fdaOpenSettings: 'Apri Impostazioni di Sistema',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -74,7 +74,7 @@ export const SettingsView = {
       fdaGranted: 'Concedido',
       fdaMissing: 'No concedido',
       fdaDesc:
-         'Añade esta app en Ajustes del Sistema, luego cierra y vuelve a abrirla. Tras reabrir, el análisis se ejecutará sin solicitar permisos.',
+         'Opcional. La app funciona sin ello; el análisis puede pedir acceso a carpetas concretas. Concederlo evita solicitudes repetidas: añade la app en Ajustes del Sistema, cierra y vuelve a abrirla.',
       fdaOpenSettings: 'Abrir Ajustes del Sistema',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -105,7 +105,7 @@ export const SettingsView = {
       fdaGranted: '已授予',
       fdaMissing: '未授予',
       fdaDesc:
-         '请在“系统设置”中添加此应用，然后退出并重新打开。重新打开后，扫描将不再弹出权限对话框。',
+         '可选。不授予也可使用，扫描时会按需请求访问特定文件夹。授予后可避免重复提示：在「系统设置」中添加此应用，退出并重新打开即可。',
       fdaOpenSettings: '打开系统设置',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -136,7 +136,7 @@ export const SettingsView = {
       fdaGranted: '許可済み',
       fdaMissing: '未許可',
       fdaDesc:
-         'システム設定でこのアプリを追加し、終了してから再度開いてください。再起動後、スキャンは許可ダイアログなしで実行されます。',
+         '任意です。なくてもアプリは動作し、スキャン時にフォルダごとにアクセスを求めます。許可するとその都度のプロンプトを避けられます：システム設定でこのアプリを追加し、終了してから再起動してください。',
       fdaOpenSettings: 'システム設定を開く',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -167,7 +167,7 @@ export const SettingsView = {
       fdaGranted: 'مُمنوح',
       fdaMissing: 'غير مُمنوح',
       fdaDesc:
-         'أضف هذا التطبيق في إعدادات النظام، ثم أغلق وأعد فتحه. بعد إعادة الفتح، سيعمل المسح دون نوافذ أذونات.',
+         'اختياري. التطبيق يعمل بدونه — قد يطلب المسح الوصول إلى مجلدات معينة عند الحاجة. منحه يتجنب الطلبات المتكررة: أضف التطبيق في إعدادات النظام، ثم أغلق وأعد فتحه.',
       fdaOpenSettings: 'فتح إعدادات النظام',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -198,7 +198,7 @@ export const SettingsView = {
       fdaGranted: 'Предоставлен',
       fdaMissing: 'Не предоставлен',
       fdaDesc:
-         'Добавьте это приложение в «Системные настройки», затем закройте и снова откройте его. После повторного открытия сканирование будет выполняться без запросов разрешений.',
+         'Необязательно. Приложение работает и без него — при сканировании может запрашиваться доступ к отдельным папкам. Включите, чтобы не видеть повторных запросов: добавьте приложение в «Системные настройки», закройте и снова откройте его.',
       fdaOpenSettings: 'Открыть системные настройки',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -229,7 +229,7 @@ export const SettingsView = {
       fdaGranted: 'Accordé',
       fdaMissing: 'Non accordé',
       fdaDesc:
-         'Ajoutez cette app dans Réglages Système, puis quittez et rouvrez-la. Après réouverture, le scan se fera sans aucune demande d’autorisation.',
+         'Optionnel. L’app fonctionne sans — les scans peuvent demander l’accès à certains dossiers au besoin. L’accorder évite les demandes répétées : ajoutez l’app dans Réglages Système, puis quittez et rouvrez-la.',
       fdaOpenSettings: 'Ouvrir les réglages système',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -260,7 +260,7 @@ export const SettingsView = {
       fdaGranted: 'Concedido',
       fdaMissing: 'Não concedido',
       fdaDesc:
-         'Adicione esta app em Definições do Sistema, depois feche e reabra a app. Após reabrir, a análise será feita sem pedidos de permissão.',
+         'Opcional. A app funciona sem ele — a análise pode pedir acesso a pastas específicas quando necessário. Conceder evita pedidos repetidos: adicione a app em Definições do Sistema, feche e reabra.',
       fdaOpenSettings: 'Abrir Definições do Sistema',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -291,7 +291,7 @@ export const SettingsView = {
       fdaGranted: 'Erteilt',
       fdaMissing: 'Nicht erteilt',
       fdaDesc:
-         'Fügen Sie diese App in den Systemeinstellungen hinzu, beenden Sie sie und starten Sie sie neu. Nach dem Neustart wird ein Scan ohne Berechtigungsdialoge ausgeführt.',
+         'Optional. Die App funktioniert auch ohne — Scans können bei Bedarf Zugriff auf bestimmte Ordner anfragen. Erteilen Sie ihn, um wiederholte Abfragen zu vermeiden: App in den Systemeinstellungen hinzufügen, beenden und neu starten.',
       fdaOpenSettings: 'Systemeinstellungen öffnen',
       languageEn: 'English',
       languageIt: 'Italiano',
