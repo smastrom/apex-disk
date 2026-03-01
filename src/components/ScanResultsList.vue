@@ -20,10 +20,8 @@ import {
    watchEffect,
    shallowRef,
    computed,
-   inject,
    nextTick,
    useTemplateRef,
-   type Ref,
 } from 'vue'
 import { PhTrash } from '@phosphor-icons/vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
@@ -32,9 +30,6 @@ import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/useTranslations'
 import { useViewTransition } from '@/lib/useViewTransition'
 
-import { SETTINGS_KEY } from '@/stores/settings'
-
-import type { SettingsStore } from '@/stores/settings'
 import type { DeleteListItem, FolderInfo } from '@/types/structs'
 
 const props = defineProps<{
@@ -46,8 +41,6 @@ const emit = defineEmits<{
    (e: 'review', items: DeleteListItem[]): void
    (e: 'cancel'): void
 }>()
-
-const storeRef = inject<Ref<SettingsStore | null>>(SETTINGS_KEY)
 
 const { t } = useTranslations()
 const { withTransition } = useViewTransition()
@@ -110,9 +103,6 @@ watch(
    },
    { immediate: true }
 )
-const showZeroByteFolders = computed(
-   () => storeRef?.value?.settings?.value?.showZeroByteFolders ?? false
-)
 
 /** Path for display: replaces the home directory prefix with ~ for brevity. */
 const displayPath = computed(() => {
@@ -124,12 +114,8 @@ const displayPath = computed(() => {
    return path
 })
 
-/** Visible items for the current directory, optionally hiding 0-byte folders. */
-const displayedItems = computed(() => {
-   const items = current.value.items
-   if (showZeroByteFolders.value) return items
-   return items.filter((item) => item.is_file || item.size > 0)
-})
+/** Visible items for the current directory (filtering is done at scan time in Rust). */
+const displayedItems = computed(() => current.value.items)
 
 const parentRef = useTemplateRef<HTMLElement>('parentRef')
 

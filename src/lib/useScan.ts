@@ -1,7 +1,10 @@
-import { ref, shallowRef, onUnmounted } from 'vue'
+import { inject, ref, shallowRef, onUnmounted, type Ref } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 
+import { SETTINGS_KEY } from '@/stores/settings'
+
+import type { SettingsStore } from '@/stores/settings'
 import type { FolderInfo, ScanProgress } from '@/types/structs'
 
 const INITIAL_PROGRESS: ScanProgress = {
@@ -13,6 +16,7 @@ const INITIAL_PROGRESS: ScanProgress = {
 }
 
 export function useScan() {
+   const storeRef = inject<Ref<SettingsStore | null>>(SETTINGS_KEY)
    const folders = shallowRef<FolderInfo[]>([])
    const loading = ref(false)
 
@@ -45,7 +49,15 @@ export function useScan() {
       })
 
       try {
-         const result = await invoke<FolderInfo[]>('get_user_folders')
+         const settings = storeRef?.value?.settings?.value
+         const options = settings
+            ? {
+                 show_hidden_files: settings.showHiddenFiles,
+                 show_zero_byte_files: settings.showZeroByteFiles,
+                 show_zero_byte_folders: settings.showZeroByteFolders,
+              }
+            : {}
+         const result = await invoke<FolderInfo[]>('get_user_folders', options)
          if (gen === scanGeneration.value) folders.value = result
       } catch (error) {
          if (gen === scanGeneration.value) console.error('Error loading folders:', error)

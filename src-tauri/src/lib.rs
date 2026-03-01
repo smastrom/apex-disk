@@ -4,6 +4,17 @@ mod permissions;
 mod safe_folders;
 mod scan;
 
+/// Options for the user folder scan. Passed from the frontend (settings).
+#[derive(serde::Deserialize, Clone, Default)]
+pub struct ScanOptions {
+    #[serde(default)]
+    pub show_hidden_files: bool,
+    #[serde(default)]
+    pub show_zero_byte_files: bool,
+    #[serde(default)]
+    pub show_zero_byte_folders: bool,
+}
+
 #[derive(serde::Serialize, serde::Deserialize, Clone)]
 pub struct FolderInfo {
     pub name: String,
@@ -16,10 +27,16 @@ pub struct FolderInfo {
 }
 
 #[tauri::command]
-async fn get_user_folders(app: tauri::AppHandle) -> Result<Vec<FolderInfo>, String> {
-    tauri::async_runtime::spawn_blocking(move || scan::get_user_folders_sync_with_progress(app))
-        .await
-        .map_err(|e| format!("Task join error: {}", e))?
+async fn get_user_folders(
+    app: tauri::AppHandle,
+    options: Option<ScanOptions>,
+) -> Result<Vec<FolderInfo>, String> {
+    let options = options.unwrap_or_default();
+    tauri::async_runtime::spawn_blocking(move || {
+        scan::get_user_folders_sync_with_progress(app, options)
+    })
+    .await
+    .map_err(|e| format!("Task join error: {}", e))?
 }
 
 #[tauri::command]

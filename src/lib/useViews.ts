@@ -1,8 +1,6 @@
-import { ref, type Ref, type ShallowRef } from 'vue'
+import { ref, type ShallowRef } from 'vue'
 
 import { useViewTransition } from '@/lib/useViewTransition'
-
-import type { SettingsStore } from '@/stores/settings'
 
 const VIEW_ORDER = ['scan', 'settings', 'information', 'donate'] as const
 
@@ -11,11 +9,8 @@ function viewIndex(view: string): number {
    return i >= 0 ? i : 0
 }
 
-export function useViews(
-   mainContentRef: Readonly<ShallowRef<HTMLElement | null>>,
-   storeRef?: Ref<SettingsStore | null>
-) {
-   const { withTransition } = useViewTransition(storeRef)
+export function useViews(mainContentRef: Readonly<ShallowRef<HTMLElement | null>>) {
+   const { withTransition } = useViewTransition()
 
    const activeView = ref('settings')
 

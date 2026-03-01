@@ -11,5 +11,4 @@ export interface AppSettings {
    showHiddenFiles: boolean
    showZeroByteFiles: boolean
    showZeroByteFolders: boolean
-   enableAnimations: boolean
 }

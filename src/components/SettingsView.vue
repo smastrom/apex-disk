@@ -57,11 +57,6 @@ function toggleZeroByteFolders() {
       store.value.setShowZeroByteFolders(!settings.value.showZeroByteFolders)
 }
 
-function toggleAnimations() {
-   if (store.value && settings.value)
-      store.value.setEnableAnimations(!settings.value.enableAnimations)
-}
-
 async function openSystemSettings() {
    await openUrl('x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles')
 }
@@ -192,23 +187,9 @@ async function openSystemSettings() {
                   <span class="SettingsToggle-knob" aria-hidden="true" />
                </button>
             </div>
-         </section>
-
-         <!-- Animations -->
-
-         <section class="SettingsGroup">
-            <div class="SettingsGroup-row">
-               <span class="SettingsGroup-label">{{ t('SettingsView', 'enableAnimations') }}</span>
-               <button
-                  type="button"
-                  class="SettingsToggle"
-                  :class="{ 'SettingsToggle--on': settings.enableAnimations }"
-                  :aria-pressed="settings.enableAnimations"
-                  @click="toggleAnimations"
-               >
-                  <span class="SettingsToggle-knob" aria-hidden="true" />
-               </button>
-            </div>
+            <p class="SettingsView-resultsNotice">
+               {{ t('SettingsView', 'resultsEffectiveNextScan') }}
+            </p>
          </section>
       </div>
    </main>
@@ -303,6 +284,14 @@ async function openSystemSettings() {
 }
 
 .SettingsView-fdaDesc {
+   margin: 0;
+   padding: var(--spacing-md) var(--spacing-lg);
+   font-size: 0.75rem;
+   line-height: 1.5;
+   color: var(--color-text-muted);
+}
+
+.SettingsView-resultsNotice {
    margin: 0;
    padding: var(--spacing-md) var(--spacing-lg);
    font-size: 0.75rem;

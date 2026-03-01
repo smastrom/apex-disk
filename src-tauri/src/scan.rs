@@ -17,6 +17,7 @@ use tauri::Emitter;
 
 use crate::safe_folders;
 use crate::FolderInfo;
+use crate::ScanOptions;
 
 /// Max file entries kept per directory. We still count ALL file sizes for
 /// accuracy, but only retain the N largest as tree entries to avoid millions
@@ -41,7 +42,8 @@ fn sort_children(children: &mut [FolderInfo]) {
 /// Recursively builds the folder tree with parallelism at every directory level.
 /// Rayon's work-stealing scheduler naturally balances I/O across cores --
 /// threads that finish small directories steal subtasks from large ones like Library.
-fn build_folder_tree(root: &Path, home: &Path) -> FolderInfo {
+/// Respects options: hidden files, 0 B files, 0 B folders are excluded when disabled.
+fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions) -> FolderInfo {
     let name = root
         .file_name()
         .and_then(|n| n.to_str())
@@ -75,10 +77,18 @@ fn build_folder_tree(root: &Path, home: &Path) -> FolderInfo {
             _ => continue,
         };
 
+        let name = entry.file_name().to_string_lossy().into_owned();
+        if !options.show_hidden_files && name.starts_with('.') {
+            continue;
+        }
+
         if ft.is_file() {
             let size = entry.metadata().map(|m| m.len()).unwrap_or(0);
+            if !options.show_zero_byte_files && size == 0 {
+                continue;
+            }
             file_size += size;
-            file_entries.push((entry.file_name().to_string_lossy().into_owned(), size));
+            file_entries.push((name, size));
         } else if ft.is_dir() {
             dir_paths.push(entry.path());
         }
@@ -107,8 +117,16 @@ fn build_folder_tree(root: &Path, home: &Path) -> FolderInfo {
         })
         .collect();
 
-    let dir_children: Vec<FolderInfo> =
-        dir_paths.par_iter().map(|p| build_folder_tree(p, home)).collect();
+    let dir_children: Vec<FolderInfo> = dir_paths
+        .par_iter()
+        .map(|p| build_folder_tree(p, home, options))
+        .collect();
+
+    let dir_children: Vec<FolderInfo> = if options.show_zero_byte_folders {
+        dir_children
+    } else {
+        dir_children.into_iter().filter(|c| c.size > 0).collect()
+    };
 
     let dir_size: u64 = dir_children.iter().map(|c| c.size).sum();
 
@@ -130,6 +148,7 @@ fn build_folder_tree(root: &Path, home: &Path) -> FolderInfo {
 /// Scans top-level folders in parallel for I/O concurrency, then builds each subtree.
 pub fn get_user_folders_sync_with_progress(
     app: tauri::AppHandle,
+    options: ScanOptions,
 ) -> Result<Vec<FolderInfo>, String> {
     let user_dir = dirs::home_dir().ok_or("Unable to determine user directory")?;
 
@@ -142,9 +161,17 @@ pub fn get_user_folders_sync_with_progress(
             .file_type()
             .map(|ft| ft.is_dir() && !ft.is_symlink())
             .unwrap_or(false);
-        if is_dir_not_symlink {
-            folder_paths.push(entry.path());
+        if !is_dir_not_symlink {
+            continue;
         }
+        let name = entry
+            .file_name()
+            .to_string_lossy()
+            .into_owned();
+        if !options.show_hidden_files && name.starts_with('.') {
+            continue;
+        }
+        folder_paths.push(entry.path());
     }
 
     let total = folder_paths.len();
@@ -152,10 +179,11 @@ pub fn get_user_folders_sync_with_progress(
     let scanned_size_total = AtomicU64::new(0);
     let app_ref = Arc::new(Mutex::new(app));
 
+    let options_ref = &options;
     let mut folders: Vec<FolderInfo> = folder_paths
         .into_par_iter()
         .map(|path| {
-            let info = build_folder_tree(&path, &user_dir);
+            let info = build_folder_tree(&path, &user_dir, options_ref);
 
             let cur = completed.fetch_add(1, Ordering::Relaxed) + 1;
             let total_size = scanned_size_total.fetch_add(info.size, Ordering::Relaxed) + info.size;
@@ -178,5 +206,8 @@ pub fn get_user_folders_sync_with_progress(
         .collect();
 
     sort_children(&mut folders);
+    if !options.show_zero_byte_folders {
+        folders.retain(|f| f.size > 0);
+    }
     Ok(folders)
 }

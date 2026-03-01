@@ -15,7 +15,6 @@ export const DEFAULT_SETTINGS: AppSettings = {
    showHiddenFiles: false,
    showZeroByteFiles: false,
    showZeroByteFolders: false,
-   enableAnimations: true,
 }
 
 /**
