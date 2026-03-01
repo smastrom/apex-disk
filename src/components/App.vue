@@ -17,6 +17,7 @@ import SettingsView from './SettingsView.vue'
 import AppFooter from './AppFooter.vue'
 
 import { ref, shallowRef, provide, onMounted, watch, useTemplateRef } from 'vue'
+import { invoke } from '@tauri-apps/api/core'
 
 import { applyTheme, applyDirection } from '@/lib/theme'
 import { useScan } from '@/lib/useScan'
@@ -37,9 +38,7 @@ provide(SETTINGS_KEY, settingsStore)
 
 const appReady = ref(false)
 
-// We cannot detect FDA without probing a protected path (which would ask for that path, not FDA).
-// Show instructions and open on settings so the user grants FDA and relaunches.
-const fdaGranted = false
+const fdaGranted = ref(false)
 
 onMounted(async () => {
    try {
@@ -50,6 +49,13 @@ onMounted(async () => {
       console.error('Failed to load settings:', err)
    } finally {
       appReady.value = true
+   }
+
+   try {
+      fdaGranted.value = await invoke<boolean>('check_full_disk_access')
+      console.log('[FDA] Result:', fdaGranted.value)
+   } catch (err) {
+      console.error('[FDA] invoke failed:', err)
    }
 })
 
