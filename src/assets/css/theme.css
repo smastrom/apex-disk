@@ -49,28 +49,6 @@
    --content-max-width: 600px;
 }
 
-/* Theme: Mac User Lens Light (Catppuccin Latte–inspired) */
-[data-theme='mac-user-lens-light'] {
-   --color-on-accent: #fff;
-   --color-bg: #f8f8fc;
-   --color-bg-elevated: #f0f0f7;
-   --color-surface: #e6e6f0;
-   --color-surface-hover: #dbdbe6;
-   --color-accent: #8839ef;
-   --color-accent-hover: #9c5cf7;
-   --color-text: #4c4f69;
-   --color-text-muted: #8c8fa1;
-   --color-text-dim: #9ca0b0;
-   --color-accent-glow: rgba(136, 57, 239, 0.3);
-   --color-accent-bg: rgba(136, 57, 239, 0.1);
-   --color-accent-bg-hover: rgba(136, 57, 239, 0.05);
-   --color-border: #ccd0da;
-
-   --btn-gradient-0: #8839ef;
-   --btn-gradient-50: #7628d6;
-   --btn-gradient-100: #8839ef;
-}
-
 /* Theme: Ayu */
 [data-theme='ayu'] {
    --color-bg: #141824;

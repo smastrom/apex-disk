@@ -12,7 +12,6 @@ export const ROOT_THEME = 'mac-user-lens' as const
 /** Supported theme color presets. Single source of truth for theme IDs. */
 export const THEME_COLORS = [
    ROOT_THEME,
-   'mac-user-lens-light',
    'macos-dark',
    'macos-light',
    'ayu',
