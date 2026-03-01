@@ -12,12 +12,17 @@ Example:
 <script setup lang="ts">
 import { useTranslations } from '@/lib/useTranslations'
 
+import Package from '../../package.json'
+
 const { t } = useTranslations()
 </script>
 
 <template>
    <header class="AppHeader-root" data-tauri-drag-region>
-      <h1 class="AppHeader-title">{{ t('AppHeader', 'title') }}</h1>
+      <div class="AppHeader-inner">
+         <h1 class="AppHeader-title">{{ t('AppHeader', 'title') }}</h1>
+         <span class="AppHeader-version">v{{ Package.version }}</span>
+      </div>
    </header>
 </template>
 
@@ -34,12 +39,25 @@ const { t } = useTranslations()
    box-shadow: 0 1px 12px var(--color-bg);
 }
 
+.AppHeader-inner {
+   display: flex;
+   align-items: baseline;
+   gap: var(--spacing-sm);
+}
+
 .AppHeader-title {
    font-size: 1.125rem;
    font-weight: 600;
    color: var(--color-text);
    margin: 0;
    text-shadow: var(--glow-text);
+   pointer-events: none;
+}
+
+.AppHeader-version {
+   font-size: 0.75rem;
+   color: var(--color-text-muted);
+   font-weight: 400;
    pointer-events: none;
 }
 </style>
