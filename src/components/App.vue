@@ -22,6 +22,8 @@ import { invoke } from '@tauri-apps/api/core'
 import { applyTheme, applyDirection } from '@/lib/theme'
 import { useScan } from '@/lib/useScan'
 import { useViews } from '@/lib/useViews'
+import { useUpdater } from '@/lib/useUpdater'
+import { useTranslations } from '@/lib/useTranslations'
 import { createSettingsStore, SETTINGS_KEY } from '@/stores/settings'
 
 import type { SettingsStore } from '@/stores/settings'
@@ -35,6 +37,8 @@ import '@/assets/css/rtl.css'
 
 const settingsStore = shallowRef<SettingsStore | null>(null)
 provide(SETTINGS_KEY, settingsStore)
+
+const { t } = useTranslations(settingsStore)
 
 const appReady = ref(false)
 
@@ -76,6 +80,7 @@ watch(
 const { folders, loading, progress, loadFolders, onAbort, onCancel } = useScan(settingsStore)
 const mainContentRef = useTemplateRef<HTMLElement>('mainContentRef')
 const { activeView, setActiveView } = useViews(mainContentRef)
+const { availableUpdate } = useUpdater(t)
 </script>
 
 <template>
@@ -98,7 +103,7 @@ const { activeView, setActiveView } = useViews(mainContentRef)
                />
 
                <div v-if="activeView === 'settings'" class="App-overlay">
-                  <SettingsView :fdaGranted="fdaGranted" />
+                  <SettingsView :fdaGranted="fdaGranted" :availableUpdate="availableUpdate" />
                </div>
 
                <!--                <div v-else-if="activeView === 'information'" class="App-overlay">

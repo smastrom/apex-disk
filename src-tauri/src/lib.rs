@@ -3,9 +3,12 @@ mod delete;
 mod disk;
 mod menu;
 mod menu_translations;
+mod native_dialog;
 mod permissions;
 mod safe_folders;
 mod scan;
+
+use tauri::Emitter;
 
 /// Options for the user folder scan. Passed from the frontend (settings).
 #[derive(serde::Deserialize, Clone, Default)]
@@ -34,19 +37,30 @@ pub struct FolderInfo {
 }
 
 pub fn run() {
-    tauri::Builder::default()
+    let mut builder = tauri::Builder::default()
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_opener::init())
-        .plugin(tauri_plugin_store::Builder::default().build())
+        .plugin(tauri_plugin_store::Builder::default().build());
+
+    #[cfg(any(target_os = "macos", windows, target_os = "linux"))]
+    {
+        builder = builder
+            .plugin(tauri_plugin_updater::Builder::new().build())
+            .plugin(tauri_plugin_process::init());
+    }
+
+    builder
         .enable_macos_default_menu(false)
         .menu(|handle| menu::build_app_menu(handle, "en"))
         .setup(|app| {
-            app.on_menu_event(|_app, event| {
+            app.on_menu_event(|app, event| {
                 let id = event.id().as_ref();
                 if id == constants::RELEASE_NOTES_MENU_ID {
                     let _ = open::that(constants::RELEASE_NOTES_URL);
                 } else if id == constants::LICENSE_MENU_ID {
                     let _ = open::that(constants::LICENSE_URL);
+                } else if id == constants::CHECK_UPDATES_MENU_ID {
+                    let _ = app.emit("check-for-updates", ());
                 }
             });
             Ok(())
@@ -57,6 +71,8 @@ pub fn run() {
             delete::delete_paths,
             permissions::check_full_disk_access,
             menu::set_menu_language,
+            native_dialog::show_message_dialog,
+            native_dialog::show_ask_dialog,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
