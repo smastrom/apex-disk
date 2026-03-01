@@ -43,6 +43,7 @@ const { t } = useTranslations()
    display: flex;
    align-items: baseline;
    gap: var(--spacing-sm);
+   pointer-events: none;
 }
 
 .AppHeader-title {
