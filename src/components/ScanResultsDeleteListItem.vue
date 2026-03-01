@@ -15,7 +15,7 @@ Example:
 -->
 
 <script setup lang="ts">
-import { PhFolder, PhFile, PhCircle, PhCheckCircle } from '@phosphor-icons/vue'
+import { PhFolderSimple, PhFile, PhCircle, PhCheckCircle } from '@phosphor-icons/vue'
 
 import type { DeleteListItem } from '@/types/structs'
 
@@ -24,6 +24,11 @@ defineProps<{
    selected: boolean
    formatBytes: (bytes: number) => string
 }>()
+
+/** Delete list items are never protected; only hidden (name starts with dot) affects icon. */
+function isHidden(item: DeleteListItem) {
+   return item.name.startsWith('.')
+}
 
 const emit = defineEmits<{
    (e: 'toggle'): void
@@ -54,8 +59,11 @@ const emit = defineEmits<{
             aria-hidden="true"
          />
       </button>
-      <div class="ScanResultsDeleteListItem-icon">
-         <PhFolder v-if="!item.is_file" :size="18" weight="regular" aria-hidden="true" />
+      <div
+         class="ScanResultsDeleteListItem-icon"
+         :class="{ 'ScanResultsDeleteListItem-icon--hidden': isHidden(item) }"
+      >
+         <PhFolderSimple v-if="!item.is_file" :size="18" weight="regular" aria-hidden="true" />
          <PhFile v-else :size="18" weight="regular" aria-hidden="true" />
       </div>
       <span class="ScanResultsDeleteListItem-name">{{ item.name }}</span>
@@ -108,6 +116,10 @@ const emit = defineEmits<{
    border-radius: 4px;
    background: var(--color-surface);
    color: var(--color-accent);
+}
+
+.ScanResultsDeleteListItem-icon--hidden {
+   opacity: 0.5;
 }
 
 .ScanResultsDeleteListItem-name {
