@@ -15,6 +15,7 @@
    justify-content: space-between;
    padding: var(--spacing-md) var(--spacing-lg);
    min-height: 44px;
+   gap: var(--spacing-lg);
 }
 
 .SettingsGroup-row:not(:last-child) {
@@ -29,6 +30,7 @@
 /* macOS-style toggle switch */
 .SettingsToggle {
    position: relative;
+   min-width: 51px;
    width: 51px;
    height: 31px;
    background: var(--color-surface);

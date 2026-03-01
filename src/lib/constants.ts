@@ -1,12 +1,12 @@
 import type { AppSettings } from '@/types/settings'
 
-export const APP_LANGUAGES = ['en', 'it'] as const
+export const APP_LANGUAGES = ['en', 'it', 'es'] as const
 
 export const DEFAULT_LANGUAGE = 'en' as const
 
 export const ROOT_THEME = 'mac-user-lens' as const
 /** Supported theme color presets. Single source of truth for theme IDs. */
-export const THEME_COLORS = [ROOT_THEME, 'ayu', 'simone'] as const
+export const THEME_COLORS = [ROOT_THEME, 'ayu', 'smastrom'] as const
 
 /** Theme that uses :root palette (no data-theme attribute). */
 export const DEFAULT_SETTINGS: AppSettings = {

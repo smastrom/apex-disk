@@ -21,4 +21,15 @@ export const ScanResults = {
       resetSelection: 'Resetta',
       abort: 'Annulla',
    },
+   es: {
+      scanning: 'Analizando… {{current}} de {{total}}',
+      noDataYet: 'Sin datos. Inicia un análisis para explorar el disco.',
+      startScan: 'Iniciar análisis',
+      foldersLoaded: '{{count}} carpetas cargadas',
+      delete: 'Eliminar',
+      deleteSize: 'Eliminar ({{size}})',
+      reviewSize: 'Revisar ({{size}})',
+      resetSelection: 'Restablecer',
+      abort: 'Cancelar',
+   },
 } as const

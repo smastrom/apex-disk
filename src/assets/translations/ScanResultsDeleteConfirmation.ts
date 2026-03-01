@@ -11,4 +11,10 @@ export const ScanResultsDeleteConfirmation = {
       scanAgain: 'Scansiona di nuovo',
       closeApp: 'Esci dall\'app',
    },
+   es: {
+      title: 'Eliminación completada',
+      resume: '{{count}} elementos eliminados, {{size}} liberados',
+      scanAgain: 'Analizar de nuevo',
+      closeApp: 'Cerrar app',
+   },
 } as const

@@ -70,8 +70,8 @@
    --btn-gradient-100: #ffcc66;
 }
 
-/* Theme: Simone (green accent, dark green-tinted base) */
-[data-theme='simone'] {
+/* Theme: smastrom (green accent, dark green-tinted base) */
+[data-theme='smastrom'] {
    --color-bg: hsl(150, 7.1%, 5.5%);
    --color-bg-elevated: hsl(150, 9.7%, 12.2%);
    --color-surface: hsl(150, 9.7%, 16%);

@@ -19,4 +19,14 @@ export const ScanScanningResults = {
       preparing: 'Preparazione scansione...',
       abort: 'Annulla',
    },
+   es: {
+      scanning: 'Analizando… {{current}} de {{total}}',
+      elapsed: '{{seconds}}s transcurridos',
+      scannedSize: 'Tamaño analizado',
+      currentPath: 'Carpeta actual',
+      stage: 'Progreso',
+      estimate: 'Los discos muy grandes pueden tardar varios minutos.',
+      preparing: 'Preparando análisis...',
+      abort: 'Cancelar',
+   },
 } as const

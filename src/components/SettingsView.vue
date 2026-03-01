@@ -35,12 +35,13 @@ const settings = computed((): AppSettings | null => store.value?.settings.value 
 const languageOptions = computed(() => [
    { value: 'en' as Language, label: t('SettingsView', 'languageEn') },
    { value: 'it' as Language, label: t('SettingsView', 'languageIt') },
+   { value: 'es' as Language, label: t('SettingsView', 'languageEs') },
 ])
 
 const themeOptions = computed(() => [
    { value: 'mac-user-lens' as ThemeColor, label: t('SettingsView', 'themeMacUserLens') },
    { value: 'ayu' as ThemeColor, label: t('SettingsView', 'themeAyu') },
-   { value: 'simone' as ThemeColor, label: t('SettingsView', 'themeSimone') },
+   { value: 'smastrom' as ThemeColor, label: t('SettingsView', 'themeSmastrom') },
 ])
 
 function toggleHiddenFiles() {
@@ -49,13 +50,11 @@ function toggleHiddenFiles() {
 }
 
 function toggleUnder1Kb() {
-   if (store.value && settings.value)
-      store.value.setShowUnder1Kb(!settings.value.showUnder1Kb)
+   if (store.value && settings.value) store.value.setShowUnder1Kb(!settings.value.showUnder1Kb)
 }
 
 function toggleZeroByte() {
-   if (store.value && settings.value)
-      store.value.setShowZeroByte(!settings.value.showZeroByte)
+   if (store.value && settings.value) store.value.setShowZeroByte(!settings.value.showZeroByte)
 }
 
 async function openSystemSettings() {

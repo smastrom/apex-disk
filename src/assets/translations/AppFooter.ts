@@ -11,4 +11,10 @@ export const AppFooter = {
       information: 'Informazioni',
       donate: 'Dona',
    },
+   es: {
+      scan: 'Escanear',
+      settings: 'Ajustes',
+      information: 'Información',
+      donate: 'Donar',
+   },
 } as const
