@@ -6,6 +6,9 @@ pub const APP_NAME: &str = "Mac User Lens";
 /// Author line shown in the About dialog (macOS credits field).
 pub const APP_CREDITS: &str = "Simone Mastromattei (smastrom)";
 
+/// Author website or GitHub profile URL.
+pub const AUTHOR_URL: &str = "https://github.com/smastrom";
+
 /// URL opened when the user chooses "Read release notes" from the Help menu.
 pub const RELEASE_NOTES_URL: &str = "https://github.com/smastrom/mac-user-lens/releases";
 

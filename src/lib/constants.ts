@@ -10,13 +10,7 @@ export const RTL_LANGUAGES: ReadonlySet<string> = new Set(['ar'])
 
 export const ROOT_THEME = 'mac-user-lens' as const
 /** Supported theme color presets. Single source of truth for theme IDs. */
-export const THEME_COLORS = [
-   ROOT_THEME,
-   'macos-dark',
-   'macos-light',
-   'ayu',
-   'smastrom',
-] as const
+export const THEME_COLORS = [ROOT_THEME, 'macos-dark', 'macos-light', 'ayu', 'smastrom'] as const
 
 /** Theme that uses :root palette (no data-theme attribute). */
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -59,5 +53,7 @@ export const DONATE_URL = 'https://buymeacoffee.com/smastrom'
  */
 export const APP_NAME = 'Mac User Lens' as const
 export const APP_CREDITS = 'Simone Mastromattei (smastrom)' as const
+/** Author website or GitHub profile. Used in Settings app info. */
+export const AUTHOR_URL = 'https://github.com/smastrom' as const
 export const RELEASE_NOTES_URL = 'https://github.com/smastrom/mac-user-lens/releases' as const
 export const LICENSE_URL = 'https://github.com/smastrom/mac-user-lens/blob/main/LICENSE' as const
