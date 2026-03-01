@@ -90,6 +90,7 @@ watch(
       if (folders.length > 0) {
          backStack.value = []
          forwardStack.value = []
+         selectedMap.clear()
          const rootPath = parentDir(folders[0].path)
          homePath.value = rootPath
          current.value = { items: folders, label: '', path: rootPath }
