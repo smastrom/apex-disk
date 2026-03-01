@@ -61,7 +61,7 @@ watch(
    }
 )
 
-const { folders, loading, progress, loadFolders, onAbort, onCancel } = useScan()
+const { folders, loading, progress, loadFolders, onAbort, onCancel } = useScan(settingsStore)
 const mainContentRef = useTemplateRef<HTMLElement>('mainContentRef')
 const { activeView, setActiveView } = useViews(mainContentRef)
 </script>
