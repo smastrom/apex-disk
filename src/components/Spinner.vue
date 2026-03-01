@@ -73,4 +73,25 @@ defineProps<{
       stroke-dashoffset: -59;
    }
 }
+
+@media (prefers-reduced-motion: reduce) {
+   .Spinner-root {
+      animation-name: Spinner-pulse;
+   }
+
+   .Spinner-circle {
+      animation: none;
+      stroke-dasharray: 42 150;
+   }
+}
+
+@keyframes Spinner-pulse {
+   0%,
+   100% {
+      opacity: 1;
+   }
+   50% {
+      opacity: 0.4;
+   }
+}
 </style>

@@ -68,4 +68,19 @@ withDefaults(defineProps<{ size?: number }>(), { size: 48 })
       stroke-dashoffset: 0;
    }
 }
+
+@media (prefers-reduced-motion: reduce) {
+   .AnimatedCheckCircle-circle {
+      animation-name: AnimatedCheckCircle-fade;
+   }
+}
+
+@keyframes AnimatedCheckCircle-fade {
+   0% {
+      opacity: 0;
+   }
+   100% {
+      opacity: 1;
+   }
+}
 </style>
