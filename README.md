@@ -25,6 +25,7 @@ Mac User Lens scans your entire user folder and presents everything as a navigab
 
 ```bash
 brew install --cask mac-user-lens
+xattr -cr /Applications/Mac\ User\ Lens.app
 ```
 
 ### Manual
