@@ -36,6 +36,7 @@ import '@/assets/css/animations.css'
 import '@/assets/css/rtl.css'
 
 const settingsStore = shallowRef<SettingsStore | null>(null)
+
 provide(SETTINGS_KEY, settingsStore)
 
 const { t } = useTranslations(settingsStore)
