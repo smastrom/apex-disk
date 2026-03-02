@@ -32,6 +32,9 @@ lerna-debug.log*
 # Lock files
 pnpm-lock.yaml
 
+# Environment (signing keys)
+.env
+
 # AI agents
 .claude/
 .cursor/
