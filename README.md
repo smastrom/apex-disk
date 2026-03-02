@@ -13,8 +13,8 @@ Mac User Lens scans your entire user folder and presents everything as a navigab
 ## Features
 
 - **Parallel Rust I/O** — Directory scanning distributes I/O across all available CPU cores for maximum throughput
-- **Smooth frontend** — Built with Vue 3 and fine-tuned for performance and fluid navigation powered by the native [View Transitions API](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API)
-- **Smart selection** — Three-state checkboxes with full parent-child logic, no double-counting of nested folders, and a clear preview of how much space you'll reclaim before deleting anything
+- **Smooth frontend** — Built with Vue 3 and fine-tuned for performance and fluid navigation powered by the native View Transitions API
+- **Smart selection** — Three-state checkboxes with full parent-child logic and a clear preview of how much space you'll reclaim before deleting
 - **Safe by design** — Critical macOS directories (Desktop, Documents, Library, etc.) are protected from deletion with path canonicalization to prevent bypass. Sensitive credential folders (`.ssh`, `.gnupg`, `.aws`, `.kube`) are completely excluded from scan results
 - **10 languages** — English, Italian, Spanish, French, Portuguese, German, Russian, Chinese, Japanese, and Arabic (with RTL support)
 - **Themes** — Multiple color themes to choose from, with more on the way
@@ -55,9 +55,6 @@ cd mac-user-lens
 
 # Install dependencies
 pnpm install
-
-# Run in development mode
-pnpm tauri:dev
 
 # Add the universal macOS target
 rustup target add aarch64-apple-darwin x86_64-apple-darwin
