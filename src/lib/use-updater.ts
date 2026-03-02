@@ -4,11 +4,11 @@ import { invoke } from '@tauri-apps/api/core'
 import { check } from '@tauri-apps/plugin-updater'
 import { relaunch } from '@tauri-apps/plugin-process'
 
-import type { useTranslations } from '@/lib/use-translations'
+import { useTranslations } from '@/lib/use-translations'
 
-type T = ReturnType<typeof useTranslations>['t']
+export function useUpdater() {
+   const { t } = useTranslations()
 
-export function useUpdater(t: T) {
    const availableUpdate = ref<string | null>(null)
 
    let unlistenCheckUpdates: (() => void) | null = null

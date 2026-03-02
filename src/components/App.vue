@@ -10,21 +10,20 @@ Example:
 -->
 
 <script setup lang="ts">
-import AppLoadingScreen from '@/components/AppLoadingScreen.vue'
 import AppHeader from './AppHeader.vue'
 import ScanView from './ScanView.vue'
 import SettingsView from './SettingsView.vue'
 import AppFooter from './AppFooter.vue'
 
-import { useTemplateRef } from 'vue'
+import { useTemplateRef, watch } from 'vue'
 
-import { provideSettingsStore } from '@/lib/provide-settings-store'
+import { useSettingsStore } from '@/stores/settings'
+import { applyTheme, applyDirection } from '@/lib/theme'
 import { useFocusRing } from '@/lib/use-focus-ring'
 import { useFullDiskAccess } from '@/lib/use-full-disk-access'
 import { useScan } from '@/lib/use-scan'
 import { useViews } from '@/lib/use-views'
 import { useUpdater } from '@/lib/use-updater'
-import { useTranslations } from '@/lib/use-translations'
 
 import '@/assets/css/theme.css'
 import '@/assets/css/global.css'
@@ -34,52 +33,49 @@ import '@/assets/css/animations.css'
 import '@/assets/css/rtl.css'
 
 const mainContentRef = useTemplateRef<HTMLElement>('mainContentRef')
+const settingsStore = useSettingsStore()
 
-const { settingsStore, appReady } = provideSettingsStore()
+watch(
+   () => settingsStore.getThemeColor(),
+   (theme) => applyTheme(theme)
+)
+watch(
+   () => settingsStore.settings.value.language,
+   (lang) => applyDirection(lang)
+)
 
 useFocusRing()
 
-const { t } = useTranslations(settingsStore)
 const { fdaGranted } = useFullDiskAccess()
-const { folders, loading, progress, loadFolders, onAbort, onCancel } = useScan(settingsStore)
+const { folders, loading, progress, loadFolders, onAbort, onCancel } = useScan()
 const { activeView, setActiveView } = useViews(mainContentRef)
-const { availableUpdate } = useUpdater(t)
+const { availableUpdate } = useUpdater()
 </script>
 
 <template>
-   <Transition name="app-ready" mode="out-in">
-      <AppLoadingScreen v-if="!appReady" key="loading" />
+   <div class="App-root">
+      <AppHeader />
 
-      <div v-else class="App-root">
-         <AppHeader />
+      <div class="App-main">
+         <div ref="mainContentRef" class="App-mainContent">
+            <ScanView
+               v-show="activeView === 'scan'"
+               :folders="folders"
+               :loading="loading"
+               :progress="progress"
+               @start-scan="loadFolders"
+               @abort="onAbort"
+               @cancel="onCancel"
+            />
 
-         <div class="App-main">
-            <div ref="mainContentRef" class="App-mainContent">
-               <ScanView
-                  v-show="activeView === 'scan'"
-                  :folders="folders"
-                  :loading="loading"
-                  :progress="progress"
-                  @start-scan="loadFolders"
-                  @abort="onAbort"
-                  @cancel="onCancel"
-               />
-
-               <div v-if="activeView === 'settings'" class="App-overlay">
-                  <SettingsView :fdaGranted="fdaGranted" :availableUpdate="availableUpdate" />
-               </div>
-
-               <!--                <div v-else-if="activeView === 'information'" class="App-overlay">
-                  <main class="App-placeholder">
-                     <p>{{ t('App', 'informationComingSoon') }}</p>
-                  </main>
-               </div> -->
+            <div v-if="activeView === 'settings'" class="App-overlay">
+               <SettingsView :fdaGranted="fdaGranted" :availableUpdate="availableUpdate" />
             </div>
          </div>
-
-         <AppFooter :activeView="activeView" @select-view="setActiveView" />
       </div>
-   </Transition>
+
+      <AppFooter :activeView="activeView" @select-view="setActiveView" />
+   </div>
 </template>
 
 <style scoped>
