@@ -1,6 +1,6 @@
 import { load } from '@tauri-apps/plugin-store'
 import { invoke } from '@tauri-apps/api/core'
-import { inject, ref, type Ref, type ShallowRef } from 'vue'
+import { inject, ref, type Ref } from 'vue'
 
 import { getSystemLanguage } from '@/lib/settings'
 
@@ -20,6 +20,8 @@ function normalizeThemeColor(value: unknown): ThemeColor {
 interface LegacyAppSettings extends Partial<AppSettings> {
    showZeroByteFiles?: boolean
    showZeroByteFolders?: boolean
+   /** @deprecated use permanentlyDelete (inverted) */
+   moveToTrash?: boolean
 }
 
 /** Builds AppSettings from stored raw, migrating legacy showZeroByteFiles/showZeroByteFolders into showZeroByte. */
@@ -35,6 +37,9 @@ function normalizeStoredSettings(raw: Partial<LegacyAppSettings> | null): AppSet
          base.themeColor != null
             ? normalizeThemeColor(base.themeColor)
             : DEFAULT_SETTINGS.themeColor,
+      permanentlyDelete:
+         (base as Partial<AppSettings>).permanentlyDelete ??
+         (base.moveToTrash !== undefined ? !base.moveToTrash : DEFAULT_SETTINGS.permanentlyDelete),
       showHiddenFiles: base.showHiddenFiles ?? DEFAULT_SETTINGS.showHiddenFiles,
       showUnder1Kb: base.showUnder1Kb ?? DEFAULT_SETTINGS.showUnder1Kb,
       showZeroByte,
@@ -51,6 +56,7 @@ export interface SettingsStore {
    getThemeColor: () => string
    setLanguage: (lang: Language) => Promise<void>
    setThemeColor: (theme: ThemeColor) => Promise<void>
+   setPermanentlyDelete: (value: boolean) => Promise<void>
    setShowHiddenFiles: (value: boolean) => Promise<void>
    setShowUnder1Kb: (value: boolean) => Promise<void>
    setShowZeroByte: (value: boolean) => Promise<void>
@@ -71,6 +77,10 @@ function createStoreFromSettings(
       },
       setThemeColor: async (theme) => {
          settings.value = { ...settings.value, themeColor: theme }
+         await persist()
+      },
+      setPermanentlyDelete: async (value) => {
+         settings.value = { ...settings.value, permanentlyDelete: value }
          await persist()
       },
       setShowHiddenFiles: async (value) => {
@@ -140,11 +150,13 @@ export async function createSettingsStore(): Promise<SettingsStore> {
    }
 }
 
-/** Injects the settings store provided by App.vue. Must be called inside setup(). */
-export function useSettingsStore(): ShallowRef<SettingsStore | null> {
-   const store = inject<ShallowRef<SettingsStore | null>>(SETTINGS_KEY)
+/** Injects the settings store provided by main.ts. Must be called inside setup(). */
+export function useSettingsStore(): SettingsStore {
+   const store = inject<SettingsStore>(SETTINGS_KEY)
    if (!store) {
-      throw new Error('useSettingsStore() called without a provider. Wrap your app with <App>.')
+      throw new Error(
+         'useSettingsStore() called without a provider. Did you forget app.provide() in main.ts?'
+      )
    }
    return store
 }

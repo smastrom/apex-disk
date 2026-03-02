@@ -8,6 +8,7 @@ export type ThemeColor = (typeof THEME_COLORS)[number]
 export interface AppSettings {
    language: Language
    themeColor: ThemeColor
+   permanentlyDelete: boolean
    showHiddenFiles: boolean
    showUnder1Kb: boolean
    showZeroByte: boolean

@@ -27,7 +27,7 @@ import { useTranslations } from '@/lib/use-translations'
 
 import { useSettingsStore } from '@/stores/settings'
 
-import type { AppSettings, Language, ThemeColor } from '@/types/settings'
+import type { Language, ThemeColor } from '@/types/settings'
 
 defineProps<{
    fdaGranted: boolean
@@ -36,9 +36,8 @@ defineProps<{
 
 const { t } = useTranslations()
 
-const storeRef = useSettingsStore()
-const store = computed(() => storeRef.value ?? null)
-const settings = computed((): AppSettings | null => store.value?.settings.value ?? null)
+const store = useSettingsStore()
+const settings = computed(() => store.settings.value)
 
 const languageOptions = computed(() => [
    { value: 'en' as Language, label: t('SettingsView', 'languageEn') },
@@ -61,17 +60,20 @@ const themeOptions = computed(() => [
    { value: 'smastrom' as ThemeColor, label: t('SettingsView', 'themeSmastrom') },
 ])
 
+function togglePermanentlyDelete() {
+   store.setPermanentlyDelete(!settings.value.permanentlyDelete)
+}
+
 function toggleHiddenFiles() {
-   if (store.value && settings.value)
-      store.value.setShowHiddenFiles(!settings.value.showHiddenFiles)
+   store.setShowHiddenFiles(!settings.value.showHiddenFiles)
 }
 
 function toggleUnder1Kb() {
-   if (store.value && settings.value) store.value.setShowUnder1Kb(!settings.value.showUnder1Kb)
+   store.setShowUnder1Kb(!settings.value.showUnder1Kb)
 }
 
 function toggleZeroByte() {
-   if (store.value && settings.value) store.value.setShowZeroByte(!settings.value.showZeroByte)
+   store.setShowZeroByte(!settings.value.showZeroByte)
 }
 
 async function openSystemSettings() {
@@ -81,10 +83,7 @@ async function openSystemSettings() {
 
 <template>
    <main class="SettingsView-root">
-      <div v-if="!settings" class="SettingsView-loading">
-         {{ t('SettingsView', 'loadingSettings') }}
-      </div>
-      <div v-else class="SettingsView-content">
+      <div class="SettingsView-content">
          <!-- App Settings -->
 
          <section class="SettingsGroup">
@@ -95,7 +94,7 @@ async function openSystemSettings() {
                      class="SettingsSelect"
                      :value="settings.language"
                      @change="
-                        store?.setLanguage(($event.target as HTMLSelectElement).value as Language)
+                        store.setLanguage(($event.target as HTMLSelectElement).value as Language)
                      "
                   >
                      <option v-for="opt in languageOptions" :key="opt.value" :value="opt.value">
@@ -117,7 +116,7 @@ async function openSystemSettings() {
                      class="SettingsSelect"
                      :value="settings.themeColor"
                      @change="
-                        store?.setThemeColor(
+                        store.setThemeColor(
                            ($event.target as HTMLSelectElement).value as ThemeColor
                         )
                      "
@@ -171,6 +170,25 @@ async function openSystemSettings() {
          <!-- Scan Settings -->
 
          <section class="SettingsGroup">
+            <div class="SettingsGroup-row">
+               <div class="SettingsGroup-labelWrapper">
+                  <span class="SettingsGroup-label">{{
+                     t('SettingsView', 'permanentlyDelete')
+                  }}</span>
+                  <p class="SettingsView-settingDesc">
+                     {{ t('SettingsView', 'permanentlyDeleteDesc') }}
+                  </p>
+               </div>
+               <button
+                  type="button"
+                  class="SettingsToggle"
+                  :class="{ 'SettingsToggle--on': settings.permanentlyDelete }"
+                  :aria-pressed="settings.permanentlyDelete"
+                  @click="togglePermanentlyDelete"
+               >
+                  <span class="SettingsToggle-knob" aria-hidden="true" />
+               </button>
+            </div>
             <div class="SettingsGroup-row">
                <span class="SettingsGroup-label">{{ t('SettingsView', 'indexHiddenFiles') }}</span>
                <button
@@ -254,14 +272,6 @@ async function openSystemSettings() {
    background: var(--color-bg);
 }
 
-.SettingsView-loading {
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   padding: var(--spacing-xl);
-   color: var(--color-text-muted);
-}
-
 .SettingsView-content {
    max-width: var(--content-max-width);
    margin: 0 auto;
@@ -337,6 +347,13 @@ async function openSystemSettings() {
 .SettingsView-fdaDesc {
    margin: 0;
    padding: var(--spacing-md) var(--spacing-lg);
+   font-size: 0.75rem;
+   line-height: 1.5;
+   color: var(--color-text-muted);
+}
+
+.SettingsView-settingDesc {
+   margin: 0;
    font-size: 0.75rem;
    line-height: 1.5;
    color: var(--color-text-muted);

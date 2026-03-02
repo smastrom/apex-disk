@@ -33,7 +33,9 @@ pub const PROTECTED_RELATIVE_PATHS: &[&str] = &[
 /// Paths relative to home that are completely excluded from scan results.
 /// These contain irreplaceable credentials or security keys that should
 /// never appear in a disk cleanup tool — not even as browsable entries.
-pub const SKIPPED_RELATIVE_PATHS: &[&str] = &[".ssh", ".gnupg", ".aws", ".kube"];
+/// ".Trash" is excluded because "delete" on items already in Trash means
+/// permanent deletion.
+pub const SKIPPED_RELATIVE_PATHS: &[&str] = &[".ssh", ".gnupg", ".aws", ".kube", ".Trash"];
 
 /// Returns true if the given path matches a skipped directory or is a descendant of one.
 /// Unlike protected paths, skipped paths are never scanned or shown to the user.
