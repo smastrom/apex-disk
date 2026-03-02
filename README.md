@@ -1,4 +1,4 @@
-![Mac User Lens](./icons/128x128@2x.png)
+![Mac User Lens](./src-tauri/icons/128x128@2x.png)
 
 # Mac User Lens
 
