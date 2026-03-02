@@ -1,8 +1,9 @@
 # Mac User Lens — Agent Guidelines
 
-This document defines code style and conventions. **Always follow these rules** when editing this codebase.
+**Always follow these rules** when editing this codebase. This document is split into two sections:
 
----
+1. **Project guidelines** — Platform target, file organization, project-specific implementation details (translations, theme, Tauri), workflow conventions.
+2. **Code rules** — Language-specific style and patterns for Vue, CSS, TypeScript, and Rust.
 
 ### For AI agents
 
@@ -17,6 +18,12 @@ This document defines code style and conventions. **Always follow these rules** 
 The app targets **macOS only**. Do not add or retain platform-specific code or conditionals for Windows or Linux.
 
 ### File organization
+
+#### File naming
+
+- **`.ts` / `.js` files**: Always use **kebab-case** (e.g. `use-scan.ts`, `provide-settings-store.ts`, `format.ts`, `constants.ts`)
+- **Exception — component-coupled files**: When a file is directly consumed by a single component and cannot exist without it (e.g. translation files), name it to match the component: **PascalCase** (e.g. `SettingsView.ts`, `AppFooter.ts`)
+- **`.vue` files**: Always **PascalCase** (e.g. `ScanResultsList.vue`)
 
 #### New files
 
@@ -44,14 +51,15 @@ The app targets **macOS only**. Do not add or retain platform-specific code or c
 
 #### CSS files
 
-| File                         | Purpose                                              |
-| ---------------------------- | ---------------------------------------------------- |
-| `src/assets/css/theme.css`   | Variables (colors, spacing, etc.) and fonts          |
-| `src/assets/css/global.css`  | Styles for `html`, `body`, and other global elements |
-| `src/assets/css/reset.css`   | Style normalization                                  |
-| `src/assets/css/classes.css` | Reusable utility classes used across the project     |
+| File                            | Purpose                                              |
+| ------------------------------- | ---------------------------------------------------- |
+| `src/assets/css/theme.css`      | Variables (colors, spacing, etc.) and fonts          |
+| `src/assets/css/global.css`     | Styles for `html`, `body`, and other global elements |
+| `src/assets/css/reset.css`      | Style normalization                                  |
+| `src/assets/css/classes.css`    | Reusable utility classes used across the project     |
+| `src/assets/css/animations.css` | CSS animations and transitions                       |
 
-**These rules are mandatory.** Do not mix concerns between files.
+Do not mix concerns between files.
 
 ### Project-specific implementation
 
@@ -79,13 +87,13 @@ export const SettingsView = {
 
 ##### Usage in components
 
-1. Import `useTranslations` from `@/lib/useTranslations`
+1. Import `useTranslations` from `@/lib/use-translations`
 2. Call `const { t } = useTranslations()`
 3. Use `t(module, key)` or `t(module, key, vars)` for interpolation
 
 ```vue
 <script setup lang="ts">
-import { useTranslations } from '@/lib/useTranslations'
+import { useTranslations } from '@/lib/use-translations'
 
 const { t } = useTranslations()
 </script>
@@ -208,10 +216,10 @@ applyTheme(currentTheme)
 - **Reacting to user selection in a settings view**:
 
 ```ts
-const settingsStore = inject(SETTINGS_KEY)!
+const storeRef = useSettingsStore()
 
 async function onThemeChange(theme: ThemeColor) {
-   await settingsStore.setThemeColor(theme)
+   await storeRef.value?.setThemeColor(theme)
    applyTheme(theme)
 }
 ```
@@ -295,7 +303,7 @@ For release workflow and instructions, refer to `releases/README.md`.
 
 - **Always use `<script setup lang="ts">`** — no Options API, no plain `<script>`.
 - **Prefer splitting big components** into smaller ones using a "blocks" logic: each sub-component handles a distinct UI block
-- Example: instead of one `ScanView.vue` with 200+ lines, split into `ScanViewHeader.vue`, `ScanViewProgress.vue`, `ScanViewTree.vue` — each with a single responsibility
+- Example: instead of one `UserList.vue` with 200+ lines, split into `UserListHeader.vue`, `UserListFilters.vue`, `UserListTable.vue` — each with a single responsibility
 
 #### Script setup order
 
@@ -328,6 +336,70 @@ watch(/* ... */)
 const emit = defineEmits<{ (e: 'complete'): void }>()
 ```
 
+#### Composables
+
+Composables (`use*` functions in `src/lib/`) encapsulate reusable reactive logic. For deeper patterns and best practices, load the **`vue-best-practices`** skill.
+
+##### When to extract a composable
+
+1. **Global or shared logic** — If the logic is not scoped to a single component but rather affects the app globally or is reused across components, it belongs in a composable. Examples: store bootstrap (`provideAuthStore`), keyboard focus-ring detection (`useFocusRing`), translations (`useTranslations`).
+2. **Grouped lifecycle and reactivity** — When multiple Vue APIs (`onMounted`, `onUnmounted`, `watch`, `ref`, `computed`) serve the **same purpose**, group them into a composable instead of scattering them across the component. For instance, if a feature needs `onMounted` to set up listeners, `onUnmounted` to tear them down, and a `watch` to react to changes — that's one composable, not three unrelated blocks in the component.
+
+##### When to keep logic inline
+
+If the logic is **scoped only to that component** and consists of simple, isolated statements (a single `ref`, a one-off `onMounted`), keep it in the component. Not every `ref` or lifecycle hook needs extraction — extract when there's a grouping or reuse benefit.
+
+```ts
+// ✅ GOOD — global concern extracted to composable
+// src/lib/use-focus-ring.ts
+export function useFocusRing() {
+   onMounted(() => {
+      document.addEventListener('keydown', onKeyDown, true)
+   })
+   onUnmounted(() => {
+      document.removeEventListener('keydown', onKeyDown, true)
+   })
+}
+
+// App.vue — clean, declarative
+useFocusRing()
+```
+
+```ts
+// ❌ BAD — global logic inlined in a component (or worse, in main.ts without lifecycle)
+document.addEventListener('keydown', onKeyDown, true)
+document.addEventListener('mousedown', onPointerDown, true)
+```
+
+##### Provide / inject pattern
+
+For store-like state shared via `provide` / `inject`, use a paired naming convention:
+
+- **`provideXxx()`** — called once in the root component to create and provide the state. This is a setup function, not a `use*` composable, because it is not meant to be injected or reused — it is the provider.
+- **`useXxx()`** — called by any descendant component to inject and consume the state. This is the composable consumers import.
+
+```ts
+// src/stores/auth.ts — consumer composable
+export function useAuthStore(): ShallowRef<AuthStore | null> {
+   const store = inject<ShallowRef<AuthStore | null>>(AUTH_KEY)
+   if (!store) throw new Error('useAuthStore() called without a provider.')
+   return store
+}
+
+// src/lib/provide-auth-store.ts — provider setup
+export function provideAuthStore() {
+   const authStore = shallowRef<AuthStore | null>(null)
+   provide(AUTH_KEY, authStore)
+   // ... onMounted, watchers ...
+   return { authStore, ready }
+}
+```
+
+##### Naming and location
+
+- Prefix with `use-` for composables, `provide-` for provider setup functions (see **File naming** for casing)
+- Place in `src/lib/`, one composable per file
+
 #### Component documentation
 
 Above each component, add a comment block with:
@@ -340,19 +412,18 @@ The format, blank lines, and structure below must be respected exactly. The Exam
 
 ```vue
 <!--
-FolderNode
+TreeNode
 
-Purpose: Recursive tree node for folder/file display. Renders expandable rows with size.
+Purpose: Recursive tree node that renders expandable rows with label and size.
 
-Props: folder (FolderInfo), depth (number?), expandedPaths (Set<string>), formatBytes (fn), toggleExpand (fn)
+Props: node (TreeItem), depth (number?), expandedIds (Set<string>), toggle (fn)
 
 Example:
-   <FolderNode
-      :folder="item"
+   <TreeNode
+      :node="item"
       :depth="0"
-      :expandedPaths="paths"
-      :formatBytes="fmt"
-      :toggleExpand="toggle"
+      :expandedIds="expanded"
+      :toggle="onToggle"
    />
 -->
 
@@ -376,25 +447,28 @@ This applies to all declarations in the script tag — not just exported functio
 // ✅ GOOD — each declaration is documented
 
 /**
- * Checked-state map: Map<path, boolean>.
+ * Selection map: Map<id, boolean>.
  *
- * Performance design choices:
- * - shallowRef(Map) instead of reactive(Map): every toggle replaces the whole
- *   Map reference, which triggers a single reactive notification.
+ * Uses shallowRef(Map) instead of reactive(Map): every toggle replaces the whole
+ * Map reference, which triggers a single reactive notification.
  */
-const checkedMapRef = shallowRef(new Map<string, boolean>())
+const selectionMap = shallowRef(new Map<string, boolean>())
 
-/** Total size of currently checked items. Drives the button label and parent disk-usage bar. */
-const selectedSize = computed(() => { /* ... */ })
+/** Total cost of currently selected items. Drives the summary label. */
+const totalCost = computed(() => {
+   /* ... */
+})
 
-/** Emits size changes to parent so the disk usage bar stays in sync. */
-watch(selectedSize, (size) => emit('update:selectedSize', size), { immediate: true })
+/** Emits cost changes to parent so the progress bar stays in sync. */
+watch(totalCost, (cost) => emit('update:totalCost', cost), { immediate: true })
 
 /**
- * Toggles a single item's checked state by cloning the Map and replacing the ref.
+ * Toggles a single item by cloning the Map and replacing the ref.
  * Clone-and-replace ensures Vue sees a new reference and triggers dependents.
  */
-function toggle(path: string) { /* ... */ }
+function toggle(id: string) {
+   /* ... */
+}
 </script>
 ```
 
@@ -402,10 +476,14 @@ function toggle(path: string) { /* ... */ }
 <script setup lang="ts">
 // ❌ BAD — complex logic with no documentation
 
-const checkedMapRef = shallowRef(new Map<string, boolean>())
-const selectedSize = computed(() => { /* ... */ })
-watch(selectedSize, (size) => emit('update:selectedSize', size), { immediate: true })
-function toggle(path: string) { /* ... */ }
+const selectionMap = shallowRef(new Map<string, boolean>())
+const totalCost = computed(() => {
+   /* ... */
+})
+watch(totalCost, (cost) => emit('update:totalCost', cost), { immediate: true })
+function toggle(id: string) {
+   /* ... */
+}
 </script>
 ```
 
@@ -413,28 +491,26 @@ function toggle(path: string) { /* ... */ }
 
 When the template contains **similar or repeated blocks** of elements (e.g. multiple `<section>`, groups of rows, repeated list items), add a short **HTML comment** above each block describing what that block represents. Use one line, concise wording (e.g. "Section name" or "List of X, Y, Z").
 
-Example (from `SettingsView.vue`):
-
 ```vue
 <template>
-   <main class="SettingsView-root">
-      <div v-else class="SettingsView-content">
-         <!-- FDA -->
+   <main class="Settings-root">
+      <div class="Settings-content">
+         <!-- Account -->
 
-         <section class="SettingsGroup">
-            <!-- ... FDA row, description, buttons ... -->
+         <section class="Settings-group">
+            <!-- ... avatar, name, email ... -->
          </section>
 
-         <!-- App Settings -->
+         <!-- Preferences -->
 
-         <section class="SettingsGroup">
+         <section class="Settings-group">
             <!-- ... language select, theme select ... -->
          </section>
 
-         <!-- Results -->
+         <!-- Danger zone -->
 
-         <section class="SettingsGroup">
-            <!-- ... toggles ... -->
+         <section class="Settings-group">
+            <!-- ... delete account button ... -->
          </section>
       </div>
    </main>
@@ -462,20 +538,20 @@ Decorative icons should be hidden from assistive technologies so that screen rea
 
 #### Props and component usage
 
-- **Prop definitions**: Always camelCase (e.g. `expandedPaths`, `formatBytes`)
-- **Prop bindings in templates**: Use camelCase (e.g. `:expandedPaths`, `:formatBytes`) — JSX-like convention
+- **Prop definitions**: Always camelCase (e.g. `userName`, `isActive`)
+- **Prop bindings in templates**: Use camelCase (e.g. `:userName`, `:isActive`) — JSX-like convention
 - **Boolean props that are `true`**: Omit the value and pass the prop name only (JSX-like shorthand). Use `:prop="false"` when the value is `false`.
-- **Component tags**: Use PascalCase (e.g. `<FolderNode />`, not `<folder-node />`)
+- **Component tags**: Use PascalCase (e.g. `<TreeNode />`, not `<tree-node />`)
 - **Emits**: Use kebab-case (e.g. `emit('select-item')`, not `emit('selectItem')`)
-- **Never use snake_case** for props or component names (e.g. `expanded_paths` is wrong)
+- **Never use snake_case** for props or component names (e.g. `user_name` is wrong)
 
 ```vue
 <!-- ✅ GOOD -->
-<ScanResultsNav showForward showActions :backDisabled="backStack.length === 0" />
-<SomeForm :submitDisabled="false" />
+<NavBar showBack showActions :forwardDisabled="stack.length === 0" />
+<LoginForm :submitDisabled="false" />
 
 <!-- ❌ BAD — redundant :prop="true" -->
-<ScanResultsNav :showForward="true" :showActions="true" :backDisabled="backStack.length === 0" />
+<NavBar :showBack="true" :showActions="true" :forwardDisabled="stack.length === 0" />
 ```
 
 #### Reactivity and lifecycle
@@ -488,18 +564,19 @@ Decorative icons should be hidden from assistive technologies so that screen rea
 
 - **Use `useTemplateRef(name)`** for refs that are bound in the template via `ref="name"` (DOM elements or component instances).
 - Do not use `ref<HTMLElement | null>(null)` (or similar) for template refs — the string-based `useTemplateRef` aligns with Vue’s template ref resolution and avoids manual binding.
+- **Declare all `useTemplateRef` calls before any composable or store call.** Template refs are Vue API declarations (like `defineProps`), not logic — they must not be scattered between composable calls.
 
 ```vue
 <script setup lang="ts">
 import { useTemplateRef } from 'vue'
 
-const mainContentRef = useTemplateRef<HTMLElement>('mainContentRef')
-const resultsListRef = useTemplateRef<InstanceType<typeof ScanResultsList>>('resultsListRef')
+const contentRef = useTemplateRef<HTMLElement>('contentRef')
+const listRef = useTemplateRef<InstanceType<typeof ItemList>>('listRef')
 </script>
 
 <template>
-  <div ref="mainContentRef">...</div>
-  <ScanResultsList ref="resultsListRef" />
+   <div ref="contentRef">...</div>
+   <ItemList ref="listRef" />
 </template>
 ```
 
@@ -508,23 +585,23 @@ const resultsListRef = useTemplateRef<InstanceType<typeof ScanResultsList>>('res
 Sort imports in this order, with a **blank line between each group**:
 
 1. **Components** (local `.vue` / component imports)
-2. **External modules** (Vue first, then 3rd-party like `@tauri-apps/`)
+2. **External modules** (Vue first, then 3rd-party)
 3. **Internal modules** (`@/` paths or relative `./utils/...`)
-4. **Constants** (`import { SETTINGS_KEY } from "@/stores/settings";`, `import { DEFAULT_SETTINGS } from "@/types/settings";`)
-5. **Types** (`import type { SettingsStore } from "@/stores/settings";`, `import type { FolderInfo } from "@/types/structures";`)
+4. **Constants** (`import { API_URL } from "@/lib/constants"`)
+5. **Types** (`import type { User } from "@/types/user"`)
 6. **JSON** (`import Package from 'package.json'`)
 7. **CSS** (`import '@/assets/css/reset.css'`)
 8. **Other** (assets, etc.)
 
 ```ts
-import FolderNode from '@/components/FolderNode.vue'
+import TreeNode from '@/components/TreeNode.vue'
 
 import { ref, onUnmounted } from 'vue'
-import { invoke } from '@tauri-apps/api/core'
+import { someLib } from 'some-lib'
 
-import { formatBytes } from '@/lib/format'
+import { formatDate } from '@/lib/format'
 
-import type { FolderInfo } from '@/types/structures'
+import type { User } from '@/types/user'
 
 import Package from 'package.json'
 
@@ -535,26 +612,26 @@ import '@/assets/css/reset.css'
 
 When renaming a Vue component:
 
-1. **Rename the file** (e.g. `FooterMenu.vue` → `AppFooter.vue`).
-2. **Rename CSS classes** that start with the component (file) name so they still match the new filename (e.g. `FooterMenu-root` → `AppFooter-root`, `FooterMenu-btn` → `AppFooter-btn`). Use the same convention: `ComponentName-nestedElement`.
-3. **Rename translations** in `src/assets/translations/` if the component has a dedicated translation file: rename the file (e.g. `FooterMenu.ts` → `AppFooter.ts`), the exported object name, and add the new module to `index.ts` (and remove the old one). Update all `t('OldName', 'key')` calls in the component to use the new module name.
+1. **Rename the file** (e.g. `OldName.vue` → `NewName.vue`).
+2. **Rename CSS classes** that start with the component name so they match the new filename (e.g. `OldName-root` → `NewName-root`, `OldName-btn` → `NewName-btn`). Use the same convention: `ComponentName-nestedElement`.
+3. **Rename translations** if the component has a dedicated translation file: rename the file, the exported object, and update `index.ts`. Update all `t('OldName', 'key')` calls to use the new module name.
 
 ### CSS
 
 #### Class naming
 
 - Format: `ComponentName-nestedElement`
-- `ComponentName` must match the **filename** (e.g. `FolderNode.vue` → `FolderNode-item`, `FolderNode-row`, `FolderNode-children`)
+- `ComponentName` must match the **filename** (e.g. `UserCard.vue` → `UserCard-root`, `UserCard-avatar`, `UserCard-name`)
 
 ```css
-/* FolderNode.vue */
-.FolderNode-item {
+/* UserCard.vue */
+.UserCard-root {
 }
-.FolderNode-row {
+.UserCard-avatar {
 }
-.FolderNode-arrow {
+.UserCard-name {
 }
-.FolderNode-children {
+.UserCard-actions {
 }
 ```
 
@@ -566,7 +643,7 @@ Use **CSS nesting** — always. Add a **blank line** between selector declaratio
 
 ```css
 /* ✅ GOOD */
-.DeleteResults-cancelBtn {
+.Dialog-cancelBtn {
    flex: 1;
 
    &:disabled {
@@ -576,11 +653,11 @@ Use **CSS nesting** — always. Add a **blank line** between selector declaratio
 }
 
 /* ❌ BAD — flat pseudo-selectors */
-.DeleteResults-cancelBtn {
+.Dialog-cancelBtn {
    flex: 1;
 }
 
-.DeleteResults-cancelBtn:disabled {
+.Dialog-cancelBtn:disabled {
    opacity: 0.5;
    cursor: not-allowed;
 }
@@ -590,7 +667,7 @@ Use **CSS nesting** — always. Add a **blank line** between selector declaratio
 
 ```css
 /* ✅ GOOD */
-.ScanResults-stats {
+.Card-stats {
    display: flex;
    flex-direction: column;
 
@@ -608,16 +685,16 @@ Use **CSS nesting** — always. Add a **blank line** between selector declaratio
 }
 
 /* ❌ BAD — element selectors at root */
-.ScanResults-stats {
+.Card-stats {
    display: flex;
    padding: var(--spacing-md);
 }
 
-.ScanResults-stats p {
+.Card-stats p {
    margin: 0;
 }
 
-.ScanResults-stats span {
+.Card-stats span {
    color: var(--color-text-muted);
 }
 ```
@@ -626,25 +703,25 @@ Use **CSS nesting** — always. Add a **blank line** between selector declaratio
 
 ```css
 /* ✅ GOOD — explicit full class names */
-.ListItem-check {
+.Checkbox-icon {
    cursor: pointer;
 }
 
-.ListItem-check--selected .ListItem-checkFilled {
+.Checkbox-icon--selected .Checkbox-fill {
    color: var(--color-accent);
 }
 
-.ListItem-check--disabled {
+.Checkbox-icon--disabled {
    opacity: 0.5;
    cursor: not-allowed;
 }
 
 /* ❌ BAD — SASS-style modifier nesting */
-.ListItem-check {
+.Checkbox-icon {
    cursor: pointer;
 
    &--selected {
-      .ListItem-checkFilled {
+      .Checkbox-fill {
          color: var(--color-accent);
       }
    }
@@ -696,6 +773,29 @@ Media queries must be **nested inside the selector**, not at the root level. Nev
 - Prefer **function declarations** over `const fn = () => {}`
 - **Prefer `interface`** over `type` when possible (see File organization for placement rules)
 
+#### Blank lines inside functions
+
+Separate **logical groups** within a function body with a blank line. Typical groups: declarations, then actions/mutations, then return. This makes the function's structure scannable at a glance.
+
+```ts
+// ✅ GOOD — declarations separated from actions
+const el = containerRef.value
+const offset = getScrollOffset(el)
+
+el?.classList.add('transitioning')
+await animate(el, offset)
+el?.classList.remove('transitioning')
+```
+
+```ts
+// ❌ BAD — everything crammed together
+const el = containerRef.value
+const offset = getScrollOffset(el)
+el?.classList.add('transitioning')
+await animate(el, offset)
+el?.classList.remove('transitioning')
+```
+
 #### If statements
 
 `if` (and `else`, `else if`) bodies must use curly brackets. The only exception is when the condition and the single statement fit on **one line**.
@@ -705,14 +805,14 @@ Media queries must be **nested inside the selector**, not at the root level. Nev
 if (bytes === 0) return '0 B'
 
 // ✅ GOOD — multiple statements or multi-line: use braces
-if (theme === ROOT_THEME) {
-   document.documentElement.removeAttribute('data-theme')
+if (mode === 'dark') {
+   document.documentElement.classList.add('dark')
 } else {
-   document.documentElement.setAttribute('data-theme', theme)
+   document.documentElement.classList.remove('dark')
 }
 
 // ❌ BAD — body on next line without braces
-if (theme === ROOT_THEME) document.documentElement.removeAttribute('data-theme')
+if (mode === 'dark') document.documentElement.classList.add('dark')
 
 // ❌ BAD — else without braces
 if (x) doSomething()
@@ -742,11 +842,11 @@ Use `=== false` or `=== true` only when you must distinguish from other falsy/tr
 ```ts
 // ❌ BAD — extra variables for shortening
 const s = store.value
-const curr = settings.value ?? s?.settings.value
-if (s && curr) s.setShowHiddenFiles(!curr.showHiddenFiles)
+const u = user.value ?? s?.user.value
+if (s && u) s.setName(!u.name)
 
 // ✅ GOOD — use the expression directly
-if (store.value && settings.value) store.value.setShowHiddenFiles(!settings.value.showHiddenFiles)
+if (store.value && user.value) store.value.setName(!user.value.name)
 ```
 
 #### JSDoc
@@ -777,15 +877,14 @@ function clamp(n: number) {
 
 ```ts
 // Tauri/Rust — must match Rust struct field names
-interface FolderInfo {
-   is_file: boolean
-   children: FolderInfo[]
+interface FileEntry {
+   is_directory: boolean
+   file_size: number
 }
-const data = await invoke<FolderInfo[]>('get_user_folders')
+const data = await invoke<FileEntry[]>('list_files')
 
 // Component-internal only
-const localState = { expandedPaths: new Set(), currentFolder: '' }
-const progress = { current: 0, total: 1, folder: '' }
+const localState = { selectedIds: new Set(), currentPage: 1 }
 ```
 
 ### Rust
