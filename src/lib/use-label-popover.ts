@@ -7,7 +7,7 @@ import { ref, onUnmounted, type Ref } from 'vue'
  * - 400 ms enter debounce, 200 ms leave debounce (macOS-style timing).
  * - Positions the popover just above the trigger element.
  */
-export function useNamePopover() {
+export function useLabelPopover() {
    const popoverRef: Ref<HTMLElement | null> = ref(null)
    const triggerRef: Ref<HTMLElement | null> = ref(null)
    const isOpen = ref(false)

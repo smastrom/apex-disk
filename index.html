@@ -1,14 +1,85 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mac User Lens</title>
-  </head>
+   <head>
+      <meta charset="UTF-8" />
+      <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Mac User Lens</title>
+      <style>
+         .loading-spinner {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1a1a1a;
+         }
+         .loading-spinner svg {
+            width: 40px;
+            height: 40px;
+            stroke: #888;
+            transform-origin: center;
+            animation: spinner-rotate 2s linear infinite;
+         }
+         .loading-spinner circle {
+            animation: spinner-dash 1.5s ease-in-out infinite;
+         }
+         @keyframes spinner-rotate {
+            to {
+               transform: rotate(360deg);
+            }
+         }
+         @keyframes spinner-dash {
+            0% {
+               stroke-dasharray: 0 150;
+               stroke-dashoffset: 0;
+            }
+            47.5% {
+               stroke-dasharray: 42 150;
+               stroke-dashoffset: -16;
+            }
+            95%,
+            100% {
+               stroke-dasharray: 42 150;
+               stroke-dashoffset: -59;
+            }
+         }
+         @media (prefers-reduced-motion: reduce) {
+            .loading-spinner svg {
+               animation-name: spinner-pulse;
+            }
+            .loading-spinner circle {
+               animation: none;
+               stroke-dasharray: 42 150;
+            }
+            @keyframes spinner-pulse {
+               0%,
+               100% {
+                  opacity: 1;
+               }
+               50% {
+                  opacity: 0.4;
+               }
+            }
+         }
+      </style>
+   </head>
 
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+   <body>
+      <div id="app">
+         <div class="loading-spinner">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+               <circle
+                  cx="12"
+                  cy="12"
+                  r="9.5"
+                  fill="none"
+                  stroke-width="3"
+                  stroke-linecap="round"
+               />
+            </svg>
+         </div>
+      </div>
+      <script type="module" src="/src/main.ts"></script>
+   </body>
 </html>
