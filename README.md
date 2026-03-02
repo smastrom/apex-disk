@@ -38,7 +38,7 @@ xattr -cr /Applications/Mac\ User\ Lens.app
 xattr -cr /Applications/Mac\ User\ Lens.app
 ```
 
-> **Note** — The only official and trustworthy distribution of this app is the `.dmg` published in the [GitHub Releases](https://github.com/smastromattei/mac-user-lens/releases) page. Do not download it from any other source.
+> **Note** — The only official distribution channels are [Homebrew](https://brew.sh) and the [GitHub Releases](https://github.com/smastromattei/mac-user-lens/releases) page. Do not download this app from any other source.
 
 ## Building from source
 
