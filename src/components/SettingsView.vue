@@ -20,14 +20,13 @@ import {
    PhWrench as PhGearSix,
 } from '@phosphor-icons/vue'
 
-import { inject, computed, type Ref } from 'vue'
+import { computed } from 'vue'
 import { openUrl } from '@tauri-apps/plugin-opener'
 
-import { useTranslations } from '@/lib/useTranslations'
+import { useTranslations } from '@/lib/use-translations'
 
-import { SETTINGS_KEY } from '@/stores/settings'
+import { useSettingsStore } from '@/stores/settings'
 
-import type { SettingsStore } from '@/stores/settings'
 import type { AppSettings, Language, ThemeColor } from '@/types/settings'
 
 defineProps<{
@@ -37,8 +36,8 @@ defineProps<{
 
 const { t } = useTranslations()
 
-const storeRef = inject<Ref<SettingsStore | null>>(SETTINGS_KEY)
-const store = computed(() => storeRef?.value ?? null)
+const storeRef = useSettingsStore()
+const store = computed(() => storeRef.value ?? null)
 const settings = computed((): AppSettings | null => store.value?.settings.value ?? null)
 
 const languageOptions = computed(() => [

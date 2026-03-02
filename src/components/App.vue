@@ -16,17 +16,15 @@ import ScanView from './ScanView.vue'
 import SettingsView from './SettingsView.vue'
 import AppFooter from './AppFooter.vue'
 
-import { ref, shallowRef, provide, onMounted, watch, useTemplateRef } from 'vue'
-import { invoke } from '@tauri-apps/api/core'
+import { useTemplateRef } from 'vue'
 
-import { applyTheme, applyDirection } from '@/lib/theme'
-import { useScan } from '@/lib/useScan'
-import { useViews } from '@/lib/useViews'
-import { useUpdater } from '@/lib/useUpdater'
-import { useTranslations } from '@/lib/useTranslations'
-import { createSettingsStore, SETTINGS_KEY } from '@/stores/settings'
-
-import type { SettingsStore } from '@/stores/settings'
+import { provideSettingsStore } from '@/lib/provide-settings-store'
+import { useFocusRing } from '@/lib/use-focus-ring'
+import { useFullDiskAccess } from '@/lib/use-full-disk-access'
+import { useScan } from '@/lib/use-scan'
+import { useViews } from '@/lib/use-views'
+import { useUpdater } from '@/lib/use-updater'
+import { useTranslations } from '@/lib/use-translations'
 
 import '@/assets/css/theme.css'
 import '@/assets/css/global.css'
@@ -35,51 +33,15 @@ import '@/assets/css/classes.css'
 import '@/assets/css/animations.css'
 import '@/assets/css/rtl.css'
 
-const settingsStore = shallowRef<SettingsStore | null>(null)
+const mainContentRef = useTemplateRef<HTMLElement>('mainContentRef')
 
-provide(SETTINGS_KEY, settingsStore)
+const { settingsStore, appReady } = provideSettingsStore()
+
+useFocusRing()
 
 const { t } = useTranslations(settingsStore)
-
-const appReady = ref(false)
-
-const fdaGranted = ref(false)
-
-onMounted(async () => {
-   try {
-      settingsStore.value = await createSettingsStore()
-      applyTheme(settingsStore.value!.getThemeColor())
-      applyDirection(settingsStore.value!.settings.value.language)
-   } catch (err) {
-      console.error('Failed to load settings:', err)
-   } finally {
-      appReady.value = true
-   }
-
-   try {
-      fdaGranted.value = await invoke<boolean>('check_full_disk_access')
-      console.log('[FDA] Result:', fdaGranted.value)
-   } catch (err) {
-      console.error('[FDA] invoke failed:', err)
-   }
-})
-
-watch(
-   () => settingsStore.value?.getThemeColor(),
-   (theme) => {
-      if (theme) applyTheme(theme)
-   }
-)
-
-watch(
-   () => settingsStore.value?.settings.value.language,
-   (lang) => {
-      if (lang) applyDirection(lang)
-   }
-)
-
+const { fdaGranted } = useFullDiskAccess()
 const { folders, loading, progress, loadFolders, onAbort, onCancel } = useScan(settingsStore)
-const mainContentRef = useTemplateRef<HTMLElement>('mainContentRef')
 const { activeView, setActiveView } = useViews(mainContentRef)
 const { availableUpdate } = useUpdater(t)
 </script>

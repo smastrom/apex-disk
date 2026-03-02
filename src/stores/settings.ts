@@ -1,6 +1,6 @@
 import { load } from '@tauri-apps/plugin-store'
 import { invoke } from '@tauri-apps/api/core'
-import { ref, type Ref } from 'vue'
+import { inject, ref, type Ref, type ShallowRef } from 'vue'
 
 import { getSystemLanguage } from '@/lib/settings'
 
@@ -138,4 +138,13 @@ export async function createSettingsStore(): Promise<SettingsStore> {
       })
       return createStoreFromSettings(settings, async () => {})
    }
+}
+
+/** Injects the settings store provided by App.vue. Must be called inside setup(). */
+export function useSettingsStore(): ShallowRef<SettingsStore | null> {
+   const store = inject<ShallowRef<SettingsStore | null>>(SETTINGS_KEY)
+   if (!store) {
+      throw new Error('useSettingsStore() called without a provider. Wrap your app with <App>.')
+   }
+   return store
 }
