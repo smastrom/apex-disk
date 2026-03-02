@@ -7,6 +7,7 @@ pub const APP_NAME: &str = "Mac User Lens";
 pub const APP_CREDITS: &str = "Simone Mastromattei (smastrom)";
 
 /// Author website or GitHub profile URL.
+#[allow(dead_code)]
 pub const AUTHOR_URL: &str = "https://github.com/smastrom";
 
 /// URL opened when the user chooses "Read release notes" from the Help menu.
