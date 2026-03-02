@@ -10,7 +10,7 @@ Example:
 -->
 
 <script setup lang="ts">
-import { useTranslations } from '@/lib/useTranslations'
+import { useTranslations } from '@/lib/use-translations'
 
 import Package from '../../package.json'
 

@@ -22,8 +22,8 @@ import ScanResultsListItemIconSwitch from '@/components/ScanResultsListItemIconS
 
 import { PhCaretRight, PhCircle, PhCheckCircle, PhMinusCircle } from '@phosphor-icons/vue'
 
-import { useTranslations } from '@/lib/useTranslations'
-import { useNamePopover } from '@/lib/useNamePopover'
+import { useTranslations } from '@/lib/use-translations'
+import { useNamePopover } from '@/lib/use-name-popover'
 
 import type { FolderInfo } from '@/types/structs'
 
@@ -41,7 +41,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useTranslations()
-const { popoverRef, triggerRef, onPointerEnter, onPointerLeave } = useNamePopover()
+const { onPointerEnter, onPointerLeave } = useNamePopover()
 </script>
 
 <template>

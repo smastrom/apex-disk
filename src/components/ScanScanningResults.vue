@@ -15,7 +15,7 @@ import Spinner from './Spinner.vue'
 import { computed, onActivated, onDeactivated, onUnmounted, ref } from 'vue'
 
 import { formatBytes, formatProgressNumber } from '@/lib/format'
-import { useTranslations } from '@/lib/useTranslations'
+import { useTranslations } from '@/lib/use-translations'
 
 import type { ScanProgress } from '@/types/structs'
 

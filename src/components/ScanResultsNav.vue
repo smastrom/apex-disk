@@ -24,7 +24,7 @@ Example:
 <script setup lang="ts">
 import { PhCaretLeft, PhCaretRight, PhFolderSimple, PhTrashSimple } from '@phosphor-icons/vue'
 
-import { useTranslations } from '@/lib/useTranslations'
+import { useTranslations } from '@/lib/use-translations'
 
 withDefaults(
    defineProps<{

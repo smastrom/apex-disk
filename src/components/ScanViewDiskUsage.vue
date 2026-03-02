@@ -16,7 +16,7 @@ import { openPath } from '@tauri-apps/plugin-opener'
 
 import { formatBytes } from '@/lib/format'
 import { getDiskUsage } from '@/lib/disk'
-import { useTranslations } from '@/lib/useTranslations'
+import { useTranslations } from '@/lib/use-translations'
 
 import type { DiskUsage } from '@/lib/disk'
 

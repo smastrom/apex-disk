@@ -27,8 +27,8 @@ import { PhTrashSimple } from '@phosphor-icons/vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 
 import { formatBytes } from '@/lib/format'
-import { useTranslations } from '@/lib/useTranslations'
-import { useViewTransition } from '@/lib/useViewTransition'
+import { useTranslations } from '@/lib/use-translations'
+import { useViewTransition } from '@/lib/use-view-transition'
 
 import type { DeleteListItem, FolderInfo } from '@/types/structs'
 

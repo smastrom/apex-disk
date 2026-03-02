@@ -4,7 +4,7 @@ import { invoke } from '@tauri-apps/api/core'
 import { check } from '@tauri-apps/plugin-updater'
 import { relaunch } from '@tauri-apps/plugin-process'
 
-import type { useTranslations } from '@/lib/useTranslations'
+import type { useTranslations } from '@/lib/use-translations'
 
 type T = ReturnType<typeof useTranslations>['t']
 

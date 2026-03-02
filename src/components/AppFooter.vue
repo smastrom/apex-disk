@@ -13,7 +13,7 @@ Example:
 import { PhMagnifyingGlass, PhGear, PhHeart /* , PhInfo */ } from '@phosphor-icons/vue'
 import { openUrl } from '@tauri-apps/plugin-opener'
 
-import { useTranslations } from '@/lib/useTranslations'
+import { useTranslations } from '@/lib/use-translations'
 
 import { DONATE_URL } from '@/lib/constants'
 
@@ -126,5 +126,4 @@ async function onDonateClick() {
       text-shadow: 0 0 8px var(--color-accent-glow);
    }
 }
-
 </style>

@@ -20,8 +20,8 @@ import { invoke } from '@tauri-apps/api/core'
 import { PhTrashSimple } from '@phosphor-icons/vue'
 
 import { formatBytes } from '@/lib/format'
-import { useTranslations } from '@/lib/useTranslations'
-import { useReducedMotion } from '@/lib/useReducedMotion'
+import { useTranslations } from '@/lib/use-translations'
+import { useReducedMotion } from '@/lib/use-reduced-motion'
 
 import { DELETE_COUNTDOWN_SECONDS, DELETE_POST_DELETE_SLEEP_MS } from '@/lib/constants'
 

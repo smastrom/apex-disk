@@ -1,6 +1,6 @@
 import { ref, type ShallowRef } from 'vue'
 
-import { useViewTransition } from '@/lib/useViewTransition'
+import { useViewTransition } from '@/lib/use-view-transition'
 
 const VIEW_ORDER = ['scan', 'settings', 'information', 'donate'] as const
 
@@ -19,6 +19,7 @@ export function useViews(mainContentRef: Readonly<ShallowRef<HTMLElement | null>
 
       const el = mainContentRef.value
       const dir = viewIndex(view) > viewIndex(activeView.value) ? 1 : -1
+
       document.documentElement.style.setProperty('--nav-direction', String(dir))
       el?.style.setProperty('view-transition-name', 'app-view')
       await withTransition(async () => {

@@ -12,7 +12,7 @@ Example:
 <script setup lang="ts">
 import { PhMagnifyingGlass, PhShieldWarning } from '@phosphor-icons/vue'
 
-import { useTranslations } from '@/lib/useTranslations'
+import { useTranslations } from '@/lib/use-translations'
 
 const emit = defineEmits<{
    (e: 'start-scan'): void

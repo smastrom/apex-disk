@@ -16,7 +16,7 @@ import { PhMagnifyingGlass, PhX } from '@phosphor-icons/vue'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 
 import { formatBytes } from '@/lib/format'
-import { useTranslations } from '@/lib/useTranslations'
+import { useTranslations } from '@/lib/use-translations'
 
 defineProps<{
    deletedSummary: { count: number; size: number } | null
