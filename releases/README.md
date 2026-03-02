@@ -109,9 +109,9 @@ If the build step fails with an error about the updater signature, missing key, 
 
 ## Files
 
-| File                            | Purpose                                                         |
-| ------------------------------- | --------------------------------------------------------------- |
-| `RELEASES.md`                   | Changelog — add entries here for each release                   |
-| `README.md`                     | This file                                                       |
-| `.github/workflows/release.yml` | GitHub Action — validates, builds, tags, and publishes releases |
+| File                            | Purpose                                                            |
+| ------------------------------- | ------------------------------------------------------------------ |
+| `RELEASES.md`                   | Changelog — add entries here for each release                      |
+| `README.md`                     | This file                                                          |
+| `.github/workflows/release.yml` | GitHub Action — validates, builds, tags, and publishes releases    |
 | `scripts/codesign.sh`           | Ad-hoc codesigns the `.app` with entitlements and hardened runtime |
