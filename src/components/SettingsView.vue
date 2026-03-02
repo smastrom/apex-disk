@@ -135,38 +135,6 @@ async function openSystemSettings() {
             </div>
          </section>
 
-         <!-- FDA -->
-
-         <section class="SettingsGroup">
-            <div class="SettingsGroup-row">
-               <span class="SettingsGroup-label">{{ t('SettingsView', 'fdaLabel') }}</span>
-               <span
-                  class="SettingsView-fdaStatus"
-                  :class="
-                     fdaGranted ? 'SettingsView-fdaStatus--ok' : 'SettingsView-fdaStatus--optional'
-                  "
-               >
-                  <PhCheckCircle v-if="fdaGranted" :size="13" weight="fill" aria-hidden="true" />
-                  <PhCircle v-else :size="13" weight="regular" aria-hidden="true" />
-                  {{
-                     fdaGranted ? t('SettingsView', 'fdaGranted') : t('SettingsView', 'fdaMissing')
-                  }}
-               </span>
-            </div>
-            <template v-if="!fdaGranted">
-               <p class="SettingsView-fdaDesc">
-                  {{ t('SettingsView', 'fdaDesc') }}
-               </p>
-
-               <div class="SettingsView-fdaControls">
-                  <button type="button" class="SettingsView-fdaBtn" @click="openSystemSettings">
-                     <PhGearSix :size="13" weight="fill" aria-hidden="true" />
-                     {{ t('SettingsView', 'fdaOpenSettings') }}
-                  </button>
-               </div>
-            </template>
-         </section>
-
          <!-- Scan Settings -->
 
          <section class="SettingsGroup">
@@ -228,6 +196,38 @@ async function openSystemSettings() {
             <p class="SettingsView-resultsNotice">
                {{ t('SettingsView', 'resultsEffectiveNextScan') }}
             </p>
+         </section>
+
+         <!-- FDA -->
+
+         <section class="SettingsGroup">
+            <div class="SettingsGroup-row">
+               <span class="SettingsGroup-label">{{ t('SettingsView', 'fdaLabel') }}</span>
+               <span
+                  class="SettingsView-fdaStatus"
+                  :class="
+                     fdaGranted ? 'SettingsView-fdaStatus--ok' : 'SettingsView-fdaStatus--optional'
+                  "
+               >
+                  <PhCheckCircle v-if="fdaGranted" :size="13" weight="fill" aria-hidden="true" />
+                  <PhCircle v-else :size="13" weight="regular" aria-hidden="true" />
+                  {{
+                     fdaGranted ? t('SettingsView', 'fdaGranted') : t('SettingsView', 'fdaMissing')
+                  }}
+               </span>
+            </div>
+            <template v-if="!fdaGranted">
+               <p class="SettingsView-fdaDesc">
+                  {{ t('SettingsView', 'fdaDesc') }}
+               </p>
+
+               <div class="SettingsView-fdaControls">
+                  <button type="button" class="SettingsView-fdaBtn" @click="openSystemSettings">
+                     <PhGearSix :size="13" weight="fill" aria-hidden="true" />
+                     {{ t('SettingsView', 'fdaOpenSettings') }}
+                  </button>
+               </div>
+            </template>
          </section>
 
          <!-- Software Update -->
