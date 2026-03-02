@@ -251,6 +251,33 @@ To add or remove protected paths: edit both files. Both simple folder names (`"L
 - **Rust**: `FolderInfo.is_protected` is set when building the tree; `safe_folders::is_path_protected()` strips the home prefix and checks the relative path against the list. Future delete command must reject protected paths.
 - **Frontend**: `ListItem` receives `selectable={!item.is_protected}`; `toggleSelect` ignores protected items.
 
+#### Skipped folders (credential directories)
+
+Some directories contain irreplaceable credentials or security keys that should never appear in a disk cleanup tool. These are **completely excluded from scan results** — they are never scanned, never shown to the user, and their size is not counted.
+
+##### Constants
+
+- **Rust only**: `src-tauri/src/safe_folders.rs` — `SKIPPED_RELATIVE_PATHS`
+- No frontend constant is needed since these paths never reach the UI.
+
+Current list: `.ssh`, `.gnupg`, `.aws`, `.kube`
+
+##### Implementation
+
+- `safe_folders::is_path_skipped()` checks both exact matches and descendants (unlike protected paths, the entire subtree is excluded).
+- The scanner skips these directories at both the top-level enumeration and recursive traversal in `scan.rs`.
+- `delete.rs` also rejects skipped paths as a safety net, even though they should never reach the frontend.
+
+##### Differences from protected folders
+
+| | Protected | Skipped |
+|---|---|---|
+| Appears in scan results | Yes | No |
+| Contents browsable | Yes | No |
+| Contents deletable | Yes | No |
+| Folder itself deletable | No | No |
+| Frontend constant needed | Yes | No |
+
 #### Tauri bundle targets
 
 The `"app"` target **must** remain in `bundle.targets` alongside `"dmg"` in `tauri.conf.json`. The `"app"` target produces the `.app` bundle, and when `createUpdaterArtifacts` is `true`, Tauri generates the `.app.tar.gz` and `.app.tar.gz.sig` files from it. Without `"app"`, the updater signature is never created and the release workflow fails.

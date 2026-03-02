@@ -30,6 +30,31 @@ pub const PROTECTED_RELATIVE_PATHS: &[&str] = &[
     "Public",
 ];
 
+/// Paths relative to home that are completely excluded from scan results.
+/// These contain irreplaceable credentials or security keys that should
+/// never appear in a disk cleanup tool — not even as browsable entries.
+pub const SKIPPED_RELATIVE_PATHS: &[&str] = &[".ssh", ".gnupg", ".aws", ".kube"];
+
+/// Returns true if the given path matches a skipped directory or is a descendant of one.
+/// Unlike protected paths, skipped paths are never scanned or shown to the user.
+pub fn is_path_skipped(path: &Path, home: &Path) -> bool {
+    let home_str = home.to_string_lossy();
+    let path_str = path.to_string_lossy();
+    let rel = match path_str.strip_prefix(home_str.as_ref()) {
+        Some(r) => r.trim_start_matches('/'),
+        None => return false,
+    };
+    if rel.is_empty() {
+        return false;
+    }
+    for skipped in SKIPPED_RELATIVE_PATHS {
+        if rel == *skipped || rel.starts_with(&format!("{}/", skipped)) {
+            return true;
+        }
+    }
+    false
+}
+
 /// Returns true if the given path exactly matches one of the protected paths.
 /// Descendants of protected paths are NOT protected.
 pub fn is_path_protected(path: &Path, home: &Path) -> bool {

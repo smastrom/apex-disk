@@ -93,7 +93,11 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions) -> FolderI
             file_size += size;
             file_entries.push((name, size));
         } else if ft.is_dir() {
-            dir_paths.push(entry.path());
+            let path = entry.path();
+            if safe_folders::is_path_skipped(&path, home) {
+                continue;
+            }
+            dir_paths.push(path);
         }
     }
 
@@ -168,11 +172,15 @@ pub fn get_user_folders_sync_with_progress(
         if !is_dir_not_symlink {
             continue;
         }
+        let path = entry.path();
         let name = entry.file_name().to_string_lossy().into_owned();
         if !options.show_hidden_files && name.starts_with('.') {
             continue;
         }
-        folder_paths.push(entry.path());
+        if safe_folders::is_path_skipped(&path, &user_dir) {
+            continue;
+        }
+        folder_paths.push(path);
     }
 
     let total = folder_paths.len();

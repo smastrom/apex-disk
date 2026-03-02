@@ -36,6 +36,7 @@ fn delete_paths_sync(items: Vec<DeletePathItem>) {
                 Err(_) => return false,
             };
             !safe_folders::is_path_protected(&canonical, &home)
+                && !safe_folders::is_path_skipped(&canonical, &home)
         })
         .partition(|i| i.is_file);
 
