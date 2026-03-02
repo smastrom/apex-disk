@@ -15,8 +15,8 @@ jobs:
 
       - name: Validate versions
         run: |
-          # Parse latest version from RELEASES.md
-          TAG=$(grep -m 1 '^## v' releases/RELEASES.md | sed 's/^## //')
+          # Parse latest version from RELEASES.md (last ## v heading = most recent)
+          TAG=$(grep '^## v' releases/RELEASES.md | tail -1 | sed 's/^## //')
           VERSION="${TAG#v}"
 
           if [ -z "$VERSION" ]; then
