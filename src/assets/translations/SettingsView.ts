@@ -32,6 +32,7 @@ export const SettingsView = {
       themeMacosLight: 'macOS Light',
       themeMacosGraphite: 'macOS Graphite',
       themeSmastrom: 'smastrom',
+      themeCoralOrange: 'Coral Orange',
       updateLabel: 'Software Update',
       updateUpToDate: 'Updated',
       updateAvailableHint:
@@ -70,6 +71,7 @@ export const SettingsView = {
       themeMacosLight: 'macOS Light',
       themeMacosGraphite: 'macOS Graphite',
       themeSmastrom: 'smastrom',
+      themeCoralOrange: 'Coral Orange',
       updateLabel: 'Aggiornamento software',
       updateUpToDate: 'Aggiornato',
       updateAvailableHint:
@@ -108,6 +110,7 @@ export const SettingsView = {
       themeMacosLight: 'macOS Light',
       themeMacosGraphite: 'macOS Graphite',
       themeSmastrom: 'smastrom',
+      themeCoralOrange: 'Coral Orange',
       updateLabel: 'Actualizaci\u00F3n de software',
       updateUpToDate: 'Actualizado',
       updateAvailableHint:
@@ -146,6 +149,7 @@ export const SettingsView = {
       themeMacosLight: 'macOS Light',
       themeMacosGraphite: 'macOS Graphite',
       themeSmastrom: 'smastrom',
+      themeCoralOrange: 'Coral Orange',
       updateLabel: '\u8F6F\u4EF6\u66F4\u65B0',
       updateUpToDate: '\u66F4\u65B0',
       updateAvailableHint:
@@ -184,6 +188,7 @@ export const SettingsView = {
       themeMacosLight: 'macOS Light',
       themeMacosGraphite: 'macOS Graphite',
       themeSmastrom: 'smastrom',
+      themeCoralOrange: 'Coral Orange',
       updateLabel: '\u30BD\u30D5\u30C8\u30A6\u30A7\u30A2\u30A2\u30C3\u30D7\u30C7\u30FC\u30C8',
       updateUpToDate: '\u30A2\u30C3\u30D7\u30C7\u30FC\u30C8',
       updateAvailableHint:
@@ -222,6 +227,7 @@ export const SettingsView = {
       themeMacosLight: 'macOS Light',
       themeMacosGraphite: 'macOS Graphite',
       themeSmastrom: 'smastrom',
+      themeCoralOrange: 'Coral Orange',
       updateLabel:
          '\u062A\u062D\u062F\u064A\u062B \u0627\u0644\u0628\u0631\u0646\u0627\u0645\u062C',
       updateUpToDate: '\u0627\u0644\u062A\u062D\u062F\u064A\u062B\u0627\u062A',
@@ -261,6 +267,7 @@ export const SettingsView = {
       themeMacosLight: 'macOS Light',
       themeMacosGraphite: 'macOS Graphite',
       themeSmastrom: 'smastrom',
+      themeCoralOrange: 'Coral Orange',
       updateLabel: '\u041E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435 \u041F\u041E',
       updateUpToDate: '\u041E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435',
       updateAvailableHint:
@@ -299,6 +306,7 @@ export const SettingsView = {
       themeMacosLight: 'macOS Light',
       themeMacosGraphite: 'macOS Graphite',
       themeSmastrom: 'smastrom',
+      themeCoralOrange: 'Coral Orange',
       updateLabel: 'Mise \u00E0 jour logicielle',
       updateUpToDate: 'Mise \u00E0 jour',
       updateAvailableHint:
@@ -337,6 +345,7 @@ export const SettingsView = {
       themeMacosLight: 'macOS Light',
       themeMacosGraphite: 'macOS Graphite',
       themeSmastrom: 'smastrom',
+      themeCoralOrange: 'Coral Orange',
       updateLabel: 'Atualiza\u00E7\u00E3o de software',
       updateUpToDate: 'Atualiza\u00E7\u00E3o',
       updateAvailableHint:
@@ -375,6 +384,7 @@ export const SettingsView = {
       themeMacosLight: 'macOS Light',
       themeMacosGraphite: 'macOS Graphite',
       themeSmastrom: 'smastrom',
+      themeCoralOrange: 'Coral Orange',
       updateLabel: 'Softwareupdate',
       updateUpToDate: 'Update',
       updateAvailableHint:

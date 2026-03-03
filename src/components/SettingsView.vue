@@ -57,6 +57,7 @@ const themeOptions = computed(() => [
    { value: 'macos-dark' as ThemeColor, label: t('SettingsView', 'themeMacosDark') },
    { value: 'macos-light' as ThemeColor, label: t('SettingsView', 'themeMacosLight') },
    { value: 'macos-graphite' as ThemeColor, label: t('SettingsView', 'themeMacosGraphite') },
+   { value: 'coral-orange' as ThemeColor, label: t('SettingsView', 'themeCoralOrange') },
    { value: 'ayu' as ThemeColor, label: t('SettingsView', 'themeAyu') },
    { value: 'smastrom' as ThemeColor, label: t('SettingsView', 'themeSmastrom') },
 ])

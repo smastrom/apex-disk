@@ -15,6 +15,7 @@ export const THEME_COLORS = [
    'macos-dark',
    'macos-light',
    'macos-graphite',
+   'coral-orange',
    'ayu',
    'smastrom',
 ] as const
