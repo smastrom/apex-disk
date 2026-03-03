@@ -10,6 +10,10 @@ Over time, your home folder quietly fills up with forgotten caches, old installe
 
 Mac User Lens scans your entire user folder and presents everything as a navigable, size-sorted tree. You can drill into any directory, immediately spot what's taking up the most space, and clean it up — all from a single window.
 
+## Preview
+
+![Mac User Lens](./src/assets/images/app-showcase-transparent.png)
+
 ## Features
 
 - **Parallel Rust I/O** — Directory scanning distributes I/O across all available CPU cores for maximum throughput
