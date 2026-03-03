@@ -134,41 +134,16 @@ t('MainView', 'scanning', { current: 1, total: 10 }) // → "Scanning… 1 of 10
 
 #### Theme
 
-The app theme is controlled by CSS variables in `src/assets/css/theme.css` and persisted in the settings store via `themeColor` in `src/types/settings.ts`.
+The app theme is controlled by CSS variables in `src/assets/css/theme.css` and persisted in the settings store via `themeColor` in `src/types/settings.ts`. The helper `applyTheme(theme)` in `src/lib/theme.ts` toggles the `data-theme` attribute on `html` (removed when theme is `ROOT_THEME`, set to the theme ID otherwise).
 
-##### CSS variables
+##### Managing themes
 
-- The **default palette** lives under `:root` in `theme.css` and is used when the theme is `ROOT_THEME` (`'mac-disk-tree'`).
-- **Additional themes** use a `data-theme` attribute on `html` and override only the variables they need:
+1. **Palette source** — The default palette lives under `:root` in `theme.css` and is used when the theme is `ROOT_THEME` (`'mac-disk-tree'`). Additional themes use `html[data-theme='<id>'] { ... }` and override only the variables they need (e.g. `--color-bg`, `--color-accent`, `--color-text`, and related glow/button variables).
+2. **Settings and types** — Theme options are defined in `src/types/settings.ts` (`THEME_COLORS`, `ThemeColor`, `AppSettings.themeColor`) and in `src/lib/constants.ts` (`THEME_COLORS` is the single source of truth; see **Constants** in Project guidelines). The settings store (`src/stores/settings.ts`) exposes `getThemeColor` and `setThemeColor`; `themeColor` is loaded from disk and validated against `THEME_COLORS`.
+3. **Applying the theme** — On startup, read the current theme (e.g. `store.getThemeColor()`) and call `applyTheme(currentTheme)`. When the user changes theme in settings, call `setThemeColor(newTheme)` then `applyTheme(newTheme)`.
+4. **Adding a new theme** — Add the theme ID to `THEME_COLORS` in `src/lib/constants.ts`; add a `html[data-theme='<id>'] { ... }` block in `theme.css` overriding only the variables that differ from `:root`; add the option and translation key in `SettingsView` (theme picker and `SettingsView.ts`). Optionally set it as default in `DEFAULT_SETTINGS.themeColor`.
 
-```css
-:root {
-   --color-bg: #050508;
-   --color-text: #f8fafc;
-   /* ... */
-}
-
-html[data-theme='ayu'] {
-   --color-bg: #0b0e14;
-   --color-text: #e6edf7;
-   /* override only what changes for this theme */
-}
-```
-
-The helper `applyTheme(theme)` in `src/lib/theme.ts` is responsible for toggling the `data-theme` attribute:
-
-```ts
-// src/lib/theme.ts
-export function applyTheme(theme: string): void {
-   if (theme === ROOT_THEME) {
-      document.documentElement.removeAttribute('data-theme')
-   } else {
-      document.documentElement.setAttribute('data-theme', theme)
-   }
-}
-```
-
-##### Settings and types
+##### Settings and types (reference)
 
 Theme options are defined in `src/types/settings.ts` and consumed by the settings store in `src/stores/settings.ts`:
 
