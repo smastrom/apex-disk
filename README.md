@@ -13,12 +13,15 @@ MacDiskTree scans your entire user folder and presents everything as a navigable
 ## Features
 
 - **Hyper-fast scanning** — Directory scanning distributes I/O across all available CPU cores for maximum throughput
-- **Smooth UI** — Vue 3 front-end, fine-tuned for performance and fluid navigation via native View Transitions API
+- **Smooth UI** — Fine-tuned for performance, clean design, and fluid navigation
 - **Smart selection** — Three-state checkboxes with full parent-child logic and a clear preview of how much space you'll reclaim before deleting
 - **Safe by design** — Move to Trash by default, critical root macOS (Desktop, Documents, Library, etc.) are protected from deletion with path canonicalization to prevent bypass. Sensitive credential folders (`.ssh`, `.aws`, etc.) are completely ignored
 - **10 languages** — English, Italian, Spanish, French, Portuguese, German, Russian, Chinese, Japanese, and Arabic (with RTL support)
 - **Accessible** — Fully accessible and keyboard navigable
 - **Themes** — Multiple color themes to choose from, with more on the way
+
+> [!WARNING]
+> This app can delete files and folders. Use it carefully and review your selections before confirming deletion.
 
 ## Preview
 
