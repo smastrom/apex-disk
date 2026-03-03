@@ -9,12 +9,18 @@ export function useReducedMotion() {
 
    onMounted(() => {
       const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+
       prefersReducedMotion.value = mq.matches
-      const onChange = (e: MediaQueryListEvent) => {
-         prefersReducedMotion.value = e.matches
+
+      const onChange = (event: MediaQueryListEvent) => {
+         prefersReducedMotion.value = event.matches
       }
+
       mq.addEventListener('change', onChange)
-      onUnmounted(() => mq.removeEventListener('change', onChange))
+
+      onUnmounted(() => {
+         mq.removeEventListener('change', onChange)
+      })
    })
 
    return prefersReducedMotion
