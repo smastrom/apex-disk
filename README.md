@@ -21,7 +21,7 @@ MacDiskTree scans your entire user folder and presents everything as a navigable
 - **Themes** — Multiple color themes to choose from, with more on the way
 
 > [!WARNING]
-> This app can delete files and folders. Use it carefully and review your selections before confirming deletion.
+> This app can delete files and folders. Use it carefully and review your selections before confirming deletion. I do not take responsibility for any file loss.
 
 ## Preview
 
@@ -40,7 +40,7 @@ xattr -cr /Applications/MacDiskTree.app
 ```
 
 > [!NOTE]
-> The only official distribution channel is the [GitHub Releases](https://github.com/smastrom/mac-disk-tree/releases) page.
+> **Only install from [GitHub Releases](https://github.com/smastrom/mac-disk-tree/releases).** Copies from other sites or app stores may be tampered with (malware, backdoors). There is no other official distribution channel.
 
 ## Building from source
 
