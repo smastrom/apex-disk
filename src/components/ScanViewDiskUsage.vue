@@ -18,7 +18,7 @@ import { formatBytes } from '@/lib/format'
 import { getDiskUsage } from '@/lib/disk'
 import { useTranslations } from '@/lib/use-translations'
 
-import type { DiskUsage } from '@/lib/disk'
+import type { DiskUsage } from '@/types/disk'
 
 const props = defineProps<{
    selectedSize?: number
