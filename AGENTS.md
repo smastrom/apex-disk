@@ -202,13 +202,18 @@ async function onThemeChange(theme: ThemeColor) {
 ##### Adding a new theme
 
 1. **Define the theme ID** in `src/types/settings.ts`:
-   - Add it to `THEME_COLORS` (e.g. `'dracula'`) and update any unions if needed.
-   - Optionally set it as the default by changing `DEFAULT_SETTINGS.themeColor`.
+
+- Add it to `THEME_COLORS` (e.g. `'dracula'`) and update any unions if needed.
+- Optionally set it as the default by changing `DEFAULT_SETTINGS.themeColor`.
+
 2. **Add CSS overrides** in `src/assets/css/theme.css`:
-   - Create a new block `html[data-theme='dracula'] { ... }` and override only the variables that differ from `:root`.
+
+- Create a new block `html[data-theme='dracula'] { ... }` and override only the variables that differ from `:root`.
+
 3. **Expose in the UI**:
-   - Use `THEME_COLORS` (or a local list) to render theme options in `SettingsView.vue`.
-   - When the user selects a theme, call `setThemeColor(newTheme)` and then `applyTheme(newTheme)`.
+
+- Use `THEME_COLORS` (or a local list) to render theme options in `SettingsView.vue`.
+- When the user selects a theme, call `setThemeColor(newTheme)` and then `applyTheme(newTheme)`.
 
 #### Safe / protected folders
 
@@ -326,6 +331,7 @@ const emit = defineEmits<{ (e: 'complete', items: Item[]): void }>()
 
 const { t } = useTranslations()
 const list = ref<Item[]>([])
+
 watch(/* ... */)
 ```
 
@@ -358,6 +364,7 @@ export function useFocusRing() {
    onMounted(() => {
       document.addEventListener('keydown', onKeyDown, true)
    })
+
    onUnmounted(() => {
       document.removeEventListener('keydown', onKeyDown, true)
    })
@@ -384,15 +391,20 @@ For store-like state shared via `provide` / `inject`, use a paired naming conven
 // src/stores/auth.ts — consumer composable
 export function useAuthStore(): ShallowRef<AuthStore | null> {
    const store = inject<ShallowRef<AuthStore | null>>(AUTH_KEY)
+
    if (!store) throw new Error('useAuthStore() called without a provider.')
+
    return store
 }
 
 // src/lib/provide-auth-store.ts — provider setup
 export function provideAuthStore() {
    const authStore = shallowRef<AuthStore | null>(null)
+
    provide(AUTH_KEY, authStore)
+
    // ... onMounted, watchers ...
+
    return { authStore, ready }
 }
 ```
@@ -638,10 +650,13 @@ When renaming a Vue component:
 /* UserCard.vue */
 .UserCard-root {
 }
+
 .UserCard-avatar {
 }
+
 .UserCard-name {
 }
+
 .UserCard-actions {
 }
 ```
@@ -786,80 +801,49 @@ Media queries must be **nested inside the selector**, not at the root level. Nev
 
 #### Blank lines in code
 
-Applies to **any block** (function body, module top-level, callback, loop body, etc.). Use a single blank line only when **switching from one logical group to another**. Do **not** add a blank between consecutive same-type, same-scope one-line statements.
+Applies to **any block** (function body, module top-level, callback, loop body).
 
-- **No blank** between: multiple `const`/`let`, multiple function or method calls, multiple property assignments — when they form one logical group.
-- **Add a blank** when switching groups: (1) between a declaration block and the next group (guard, calls, or mutations); (2) after an early return (or guard) before the next group; (3) before a final return. So in a block that has declarations, then a guard, then a return: blank after declarations, blank after the guard, then the return.
-
-```ts
-// ✅ GOOD — one group of declarations, blank, then group of actions
-const el = containerRef.value
-const offset = getScrollOffset(el)
-
-el?.classList.add('transitioning')
-await animate(el, offset)
-el?.classList.remove('transitioning')
-```
+**Keyword rule:** A blank line is added **between** groups of statements that share the same keyword/type (`const`, `let`, expression/call, `return`, etc.). **No blank** between statements of the same type — they form one group. When the statement type changes, insert one blank line.
 
 ```ts
-// ✅ GOOD — same-type one-liners stay together; blank only at group boundaries
-export function formatBytes(bytes: number): string {
-   if (bytes === 0) return '0 B'
+// ✅ GOOD
+function process(value: number) {
+   if (value <= 0) return null
 
-   const k = 1024
-   const sizes = ['B', 'KB', 'MB', 'GB']
-   const i = Math.floor(Math.log(bytes) / Math.log(k))
+   const base = Math.floor(value)
+   const remainder = value - base
 
-   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`
+   let result = 0
+   let multiplier = 1
+
+   result += base * multiplier
+   multiplier *= 2
+   result += remainder * multiplier
+
+   console.log(result)
+
+   const store = createSettingsStore()
+
+   store.connect()
+   store.sync()
+
+   return result
 }
 ```
 
 ```ts
-// ✅ GOOD — top-level: init group, blank, then app creation group
-const store = await createSettingsStore()
-applyTheme(store.getThemeColor())
-applyDirection(store.settings.value.language)
-
-const app = createApp(App)
-app.provide(SETTINGS_KEY, store)
-app.mount('#app')
-```
-
-```ts
-// ❌ BAD — no blank between groups (declarations vs actions)
-const el = containerRef.value
-const offset = getScrollOffset(el)
-el?.classList.add('transitioning')
-```
-
-```ts
-// ✅ GOOD — declarations, blank, guard, blank, final return (e.g. inside computed/callback)
-const newFreeSpace = computed(() => {
-   const u = usage.value
-   const sel = props.selectedSize ?? 0
-
-   if (!u || sel === 0) return null
-
-   return u.free + sel
-})
-```
-
-```ts
-// ❌ BAD — blank inside the same group (const/const)
-const k = 1024
-
-const sizes = ['B', 'KB', 'MB', 'GB']
-const i = Math.floor(Math.log(bytes) / Math.log(k))
-```
-
-```ts
-// ❌ BAD — no blank after declarations or after guard (computed/callback)
-const newFreeSpace = computed(() => {
-   const u = usage.value
-   const sel = props.selectedSize ?? 0
-   if (!u || sel === 0) return null
-   return u.free + sel
-})
+// ❌ BAD — no blank between groups of different statement type
+function process(value: number) {
+   if (value <= 0) return null
+   const base = Math.floor(value)
+   const remainder = value - base
+   let result = 0
+   let multiplier = 1
+   result += base * multiplier
+   multiplier *= 2
+   result += remainder * multiplier
+   return result
+}
 ```
 
 #### If statements
