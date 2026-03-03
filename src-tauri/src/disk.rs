@@ -6,23 +6,24 @@ use std::path::{Path, PathBuf};
 
 use nix::sys::statvfs;
 
+/// Parses the volume name from diskutil info stdout. Used by get_volume_name and by tests.
+pub fn parse_volume_name(stdout: &str) -> Option<String> {
+    for line in stdout.lines() {
+        if let Some(name) = line.trim_start().strip_prefix("Volume Name:") {
+            let name = name.trim();
+            let display = if name.ends_with(" - Data") {
+                name.strip_suffix(" - Data").unwrap_or(name)
+            } else {
+                name
+            };
+            return Some(display.to_string());
+        }
+    }
+    None
+}
+
 fn get_volume_name(path: &Path) -> String {
     use std::process::Command;
-
-    fn parse_volume_name(stdout: &str) -> Option<String> {
-        for line in stdout.lines() {
-            if let Some(name) = line.trim_start().strip_prefix("Volume Name:") {
-                let name = name.trim();
-                let display = if name.ends_with(" - Data") {
-                    name.strip_suffix(" - Data").unwrap_or(name)
-                } else {
-                    name
-                };
-                return Some(display.to_string());
-            }
-        }
-        None
-    }
 
     let paths: Vec<&str> = path
         .to_str()

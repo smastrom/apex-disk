@@ -22,21 +22,21 @@ pub struct DeletePathItem {
 }
 
 /// Filters items, removing any whose path is protected or skipped.
-fn filter_items(items: Vec<DeletePathItem>) -> Option<(Vec<DeletePathItem>, Vec<DeletePathItem>)> {
-    let home = dirs::home_dir()?;
-
+/// Takes `home` so tests can pass a temp dir; production calls with `dirs::home_dir()?`.
+pub fn filter_items(
+    home: &Path,
+    items: Vec<DeletePathItem>,
+) -> Option<(Vec<DeletePathItem>, Vec<DeletePathItem>)> {
     let (files, dirs): (Vec<_>, Vec<_>) = items
         .into_iter()
         .filter(|i| {
             let p = Path::new(&i.path);
-            // Canonicalize first so ../../ sequences can't bypass is_path_protected.
-            // If the path doesn't exist or can't be resolved, skip it.
             let canonical = match p.canonicalize() {
                 Ok(c) => c,
                 Err(_) => return false,
             };
-            !safe_folders::is_path_protected(&canonical, &home)
-                && !safe_folders::is_path_skipped(&canonical, &home)
+            !safe_folders::is_path_protected(&canonical, home)
+                && !safe_folders::is_path_skipped(&canonical, home)
         })
         .partition(|i| i.is_file);
 
@@ -44,24 +44,26 @@ fn filter_items(items: Vec<DeletePathItem>) -> Option<(Vec<DeletePathItem>, Vec<
 }
 
 /// Moves items to the macOS Trash via the system API.
-fn trash_paths_sync(items: Vec<DeletePathItem>) {
-    let (files, dirs) = match filter_items(items) {
+/// Takes `home` so tests can pass a temp dir; production uses `dirs::home_dir()`.
+pub fn trash_paths_sync_with_home(home: &Path, items: Vec<DeletePathItem>) {
+    let (files, dirs) = match filter_items(home, items) {
         Some(v) => v,
         None => return,
     };
 
     let paths: Vec<_> = files
         .iter()
-        .map(|i| &*i.path)
-        .chain(dirs.iter().map(|i| &*i.path))
+        .map(|i| i.path.as_str())
+        .chain(dirs.iter().map(|i| i.path.as_str()))
         .collect();
 
     let _ = trash::delete_all(&paths);
 }
 
 /// Permanently deletes the given paths. Skips protected folders. Fails silently per path.
-fn permanent_delete_sync(items: Vec<DeletePathItem>) {
-    let (files, dirs) = match filter_items(items) {
+/// Takes `home` so tests can pass a temp dir; production uses `dirs::home_dir()`.
+pub fn permanent_delete_sync_with_home(home: &Path, items: Vec<DeletePathItem>) {
+    let (files, dirs) = match filter_items(home, items) {
         Some(v) => v,
         None => return,
     };
@@ -76,6 +78,22 @@ fn permanent_delete_sync(items: Vec<DeletePathItem>) {
     dir_paths.par_iter().for_each(|p| {
         let _ = std::fs::remove_dir_all(p);
     });
+}
+
+fn trash_paths_sync(items: Vec<DeletePathItem>) {
+    let home = match dirs::home_dir() {
+        Some(h) => h,
+        None => return,
+    };
+    trash_paths_sync_with_home(&home, items);
+}
+
+fn permanent_delete_sync(items: Vec<DeletePathItem>) {
+    let home = match dirs::home_dir() {
+        Some(h) => h,
+        None => return,
+    };
+    permanent_delete_sync_with_home(&home, items);
 }
 
 /// Reads the `permanentlyDelete` setting from the persisted store. Defaults to `false`.

@@ -153,16 +153,15 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions) -> FolderI
     }
 }
 
-/// Scans top-level folders in parallel for I/O concurrency, then builds each subtree.
-pub fn get_user_folders_sync_with_progress(
-    app: tauri::AppHandle,
-    options: ScanOptions,
+/// Scans top-level folders under `home` with the given options. No progress events.
+/// Used by tests and by get_user_folders_sync_with_progress (which adds progress emission).
+pub fn scan_user_folders_from_home(
+    home: &Path,
+    options: &ScanOptions,
 ) -> Result<Vec<FolderInfo>, String> {
-    let user_dir = dirs::home_dir().ok_or("Unable to determine user directory")?;
-
     let mut folder_paths: Vec<std::path::PathBuf> = Vec::new();
     for entry in
-        std::fs::read_dir(&user_dir).map_err(|e| format!("Failed to read user directory: {}", e))?
+        std::fs::read_dir(home).map_err(|e| format!("Failed to read user directory: {}", e))?
     {
         let entry = entry.map_err(|e| format!("Failed to read directory entry: {}", e))?;
         let is_dir_not_symlink = entry
@@ -177,11 +176,57 @@ pub fn get_user_folders_sync_with_progress(
         if !options.show_hidden_files && name.starts_with('.') {
             continue;
         }
-        if safe_folders::is_path_skipped(&path, &user_dir) {
+        if safe_folders::is_path_skipped(&path, home) {
             continue;
         }
         folder_paths.push(path);
     }
+
+    let options_ref = options;
+    let mut folders: Vec<FolderInfo> = folder_paths
+        .par_iter()
+        .map(|path| build_folder_tree(path, home, options_ref))
+        .collect();
+
+    sort_children(&mut folders);
+    folders.retain(|f| {
+        (options.show_zero_byte || f.size > 0) && (options.show_under_1kb || f.size >= 1024)
+    });
+    Ok(folders)
+}
+
+/// Scans top-level folders in parallel for I/O concurrency, then builds each subtree.
+pub fn get_user_folders_sync_with_progress(
+    app: tauri::AppHandle,
+    options: ScanOptions,
+) -> Result<Vec<FolderInfo>, String> {
+    let user_dir = dirs::home_dir().ok_or("Unable to determine user directory")?;
+
+    let folder_paths: Vec<std::path::PathBuf> = {
+        let mut paths = Vec::new();
+        for entry in std::fs::read_dir(&user_dir)
+            .map_err(|e| format!("Failed to read user directory: {}", e))?
+        {
+            let entry = entry.map_err(|e| format!("Failed to read directory entry: {}", e))?;
+            let is_dir_not_symlink = entry
+                .file_type()
+                .map(|ft| ft.is_dir() && !ft.is_symlink())
+                .unwrap_or(false);
+            if !is_dir_not_symlink {
+                continue;
+            }
+            let path = entry.path();
+            let name = entry.file_name().to_string_lossy().into_owned();
+            if !options.show_hidden_files && name.starts_with('.') {
+                continue;
+            }
+            if safe_folders::is_path_skipped(&path, &user_dir) {
+                continue;
+            }
+            paths.push(path);
+        }
+        paths
+    };
 
     let total = folder_paths.len();
     let completed = AtomicUsize::new(0);

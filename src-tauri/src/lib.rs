@@ -1,12 +1,12 @@
-mod constants;
-mod delete;
-mod disk;
+pub mod constants;
+pub mod delete;
+pub mod disk;
 mod menu;
-mod menu_translations;
+pub mod menu_translations;
 mod native_dialog;
 mod permissions;
-mod safe_folders;
-mod scan;
+pub mod safe_folders;
+pub mod scan;
 
 use tauri::Emitter;
 
