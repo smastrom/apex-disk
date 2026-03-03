@@ -10,28 +10,21 @@ Over time, your home folder quietly fills up with forgotten caches, old installe
 
 MacDiskTree scans your entire user folder and presents everything as a navigable, size-sorted tree. You can drill into any directory, immediately spot what's taking up the most space, and clean it up — all from a single window.
 
-## Preview
-
-![MacDiskTree](./src/assets/images/app-showcase-transparent.png)
-
 ## Features
 
-- **Parallel Rust I/O** — Directory scanning distributes I/O across all available CPU cores for maximum throughput
-- **Smooth frontend** — Built with Vue 3 and fine-tuned for performance and fluid navigation powered by the native View Transitions API
+- **Hyper-fast scanning** — Directory scanning distributes I/O across all available CPU cores for maximum throughput
+- **Smooth UI** — Fine-tuned for performance and fluid navigation via native View Transitions API
 - **Smart selection** — Three-state checkboxes with full parent-child logic and a clear preview of how much space you'll reclaim before deleting
-- **Safe by design** — Critical macOS directories (Desktop, Documents, Library, etc.) are protected from deletion with path canonicalization to prevent bypass. Sensitive credential folders (`.ssh`, `.gnupg`, `.aws`, `.kube`) are completely excluded from scan results
+- **Safe by design** — Move to Trash by default, critical root macOS (Desktop, Documents, Library, etc.) are protected from deletion with path canonicalization to prevent bypass. Sensitive credential folders (`.ssh`, `.aws`, etc.) are completely ignored
 - **10 languages** — English, Italian, Spanish, French, Portuguese, German, Russian, Chinese, Japanese, and Arabic (with RTL support)
 - **Accessible** — Fully accessible and keyboard navigable
 - **Themes** — Multiple color themes to choose from, with more on the way
 
+## Preview
+
+![MacDiskTree](./src/assets/images/app-cover.png)
+
 ## Installation
-
-### Homebrew
-
-```bash
-brew install --cask mac-disk-tree
-xattr -cr /Applications/MacDiskTree.app
-```
 
 ### Manual
 
@@ -43,7 +36,8 @@ xattr -cr /Applications/MacDiskTree.app
 xattr -cr /Applications/MacDiskTree.app
 ```
 
-> **Note** — The only official distribution channels are [Homebrew](https://brew.sh) and the [GitHub Releases](https://github.com/smastromattei/mac-disk-tree/releases) page. Do not download this app from any other source.
+> [!NOTE]
+> The only official distribution channel is the [GitHub Releases](https://github.com/smastromattei/mac-disk-tree/releases) page.
 
 ## Building from source
 
@@ -68,11 +62,6 @@ rustup target add aarch64-apple-darwin x86_64-apple-darwin
 # Build the universal macOS binary
 pnpm tauri:build
 ```
-
-## Credits
-
-- [Hugeicons](https://hugeicons.com) — App icon
-- [Phosphor Icons](https://phosphoricons.com) — UI icons
 
 ## License
 
