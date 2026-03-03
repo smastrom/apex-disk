@@ -119,23 +119,45 @@
    --btn-gradient-100: #007aff;
 }
 
+/* Theme: macOS Graphite — cool blue-grey, native macOS feel */
+[data-theme='macos-graphite'] {
+   --color-on-accent: #fff;
+   --color-bg: #1e2127;
+   --color-bg-elevated: #262a31;
+   --color-surface: #2e333b;
+   --color-surface-hover: #383e47;
+   --color-accent: #76839b;
+   --color-accent-hover: #8d99ae;
+   --color-text: #e1e4ea;
+   --color-text-muted: #76839b;
+   --color-text-dim: #505a6b;
+   --color-accent-glow: rgba(118, 131, 155, 0.35);
+   --color-accent-bg: rgba(118, 131, 155, 0.12);
+   --color-accent-bg-hover: rgba(118, 131, 155, 0.06);
+   --color-border: #2e333b;
+
+   --btn-gradient-0: #76839b;
+   --btn-gradient-50: #68758b;
+   --btn-gradient-100: #76839b;
+}
+
 /* Theme: smastrom (green accent, dark green-tinted base) */
 [data-theme='smastrom'] {
    --color-bg: hsl(150, 12%, 7.5%);
    --color-bg-elevated: hsl(150, 12%, 11%);
    --color-surface: hsl(150, 10%, 15.5%);
    --color-surface-hover: hsl(150, 10%, 20.5%);
-   --color-accent: hsl(142, 80%, 50%);
-   --color-accent-hover: hsl(142, 80%, 56%);
-   --color-text: hsl(142, 18%, 82%);
-   --color-text-muted: hsl(142, 14%, 58%);
-   --color-text-dim: hsl(142, 10%, 42%);
-   --color-accent-glow: hsla(142, 80%, 50%, 0.4);
-   --color-accent-bg: hsla(142, 80%, 50%, 0.12);
-   --color-accent-bg-hover: hsla(142, 80%, 50%, 0.06);
-   --color-border: hsl(141, 8%, 22%);
+   --color-accent: hsl(152, 68%, 48%);
+   --color-accent-hover: hsl(152, 68%, 55%);
+   --color-text: hsl(150, 14%, 84%);
+   --color-text-muted: hsl(150, 12%, 55%);
+   --color-text-dim: hsl(150, 8%, 40%);
+   --color-accent-glow: hsla(152, 68%, 48%, 0.35);
+   --color-accent-bg: hsla(152, 68%, 48%, 0.12);
+   --color-accent-bg-hover: hsla(152, 68%, 48%, 0.06);
+   --color-border: hsl(150, 8%, 22%);
 
-   --btn-gradient-0: hsl(142, 80%, 50%);
-   --btn-gradient-50: hsl(142, 80%, 44%);
-   --btn-gradient-100: hsl(142, 80%, 50%);
+   --btn-gradient-0: hsl(152, 68%, 48%);
+   --btn-gradient-50: hsl(152, 68%, 41%);
+   --btn-gradient-100: hsl(152, 68%, 48%);
 }

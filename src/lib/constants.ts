@@ -10,7 +10,14 @@ export const RTL_LANGUAGES: ReadonlySet<string> = new Set(['ar'])
 
 export const ROOT_THEME = 'mac-user-lens' as const
 /** Supported theme color presets. Single source of truth for theme IDs. */
-export const THEME_COLORS = [ROOT_THEME, 'macos-dark', 'macos-light', 'ayu', 'smastrom'] as const
+export const THEME_COLORS = [
+   ROOT_THEME,
+   'macos-dark',
+   'macos-light',
+   'macos-graphite',
+   'ayu',
+   'smastrom',
+] as const
 
 /** Theme that uses :root palette (no data-theme attribute). */
 export const DEFAULT_SETTINGS: AppSettings = {
