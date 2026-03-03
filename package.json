@@ -1,6 +1,6 @@
 {
    "name": "mac-disk-tree",
-   "version": "0.0.81",
+   "version": "0.0.9",
    "private": false,
    "description": "macOS tool to easily identify and get rid of big, unused files and folders in seconds.",
    "keywords": [
