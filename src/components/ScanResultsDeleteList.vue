@@ -221,6 +221,7 @@ async function onDeleteClick() {
          :pathLabel="t('ScanResultsDeleteList', 'navTitle')"
          :isActionsShown="true"
          :isResetDisabled="true"
+         :isResetShown="false"
          @back="emit('back', getCheckedItems())"
          @cancel="emit('cancel')"
       />

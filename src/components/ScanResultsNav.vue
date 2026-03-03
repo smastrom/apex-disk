@@ -36,8 +36,10 @@ withDefaults(
       pathIcon?: 'folder' | 'trash'
       isActionsShown?: boolean
       isResetDisabled?: boolean
+      isResetShown?: boolean
+      isCancelShown?: boolean
    }>(),
-   { pathIcon: 'folder' }
+   { pathIcon: 'folder', isResetShown: true, isCancelShown: true }
 )
 
 const emit = defineEmits<{
@@ -92,6 +94,7 @@ const { t } = useTranslations()
       </div>
       <div v-if="isActionsShown" class="ScanResultsNav-actions">
          <button
+            v-if="isResetShown"
             type="button"
             class="ScanResultsNav-resetBtn"
             :disabled="isResetDisabled"
@@ -99,7 +102,12 @@ const { t } = useTranslations()
          >
             {{ t('ScanResultsList', 'resetSelection') }}
          </button>
-         <button type="button" class="ScanResultsNav-cancelBtn" @click="emit('cancel')">
+         <button
+            v-if="isCancelShown"
+            type="button"
+            class="ScanResultsNav-cancelBtn"
+            @click="emit('cancel')"
+         >
             {{ t('ScanResultsList', 'cancel') }}
          </button>
       </div>
