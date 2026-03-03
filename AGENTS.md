@@ -257,6 +257,18 @@ Current list: `.ssh`, `.gnupg`, `.aws`, `.kube`
 | Folder itself deletable  | No        | No      |
 | Frontend constant needed | Yes       | No      |
 
+#### Rust and Tauri tests
+
+Whenever you touch **Rust code**, **Tauri commands**, or **any code under `src-tauri/`** (including `tauri.conf.json`, Cargo.toml, or frontend code that invokes Tauri commands), you **must**:
+
+1. **Run the Rust tests** (e.g. `pnpm test:unit` or `cd src-tauri && cargo test`).
+2. **Check if they fail.** If they do, read the failing test(s) and their docs (module and `///` doc comments in `src-tauri/tests/`).
+3. **Act on the result:**
+   - **a) Tests exist:** Check that test documentation (file-level and per-test doc comments) still matches the current behavior. If the failure is due to a **refactor** (your change is correct and the test expectation is outdated) or an **obsolete test** (the scenario no longer applies), **refactor or remove the test** and update docs. Do not leave tests red or with misleading docs.
+   - **b) Tests do not exist:** For the code you changed (e.g. a new or modified Tauri command, or a module under `src-tauri/src/`), **add at least one test** in `src-tauri/tests/` that covers the behavior in a safe way (see existing tests: temp dirs for I/O, no real user home, doc comments explaining what the test does and what “pass” means). Document the new test(s) with module and test-level doc comments.
+
+Rust unit tests live in `src-tauri/tests/`; they run on push/PR and manual dispatch via `.github/workflows/tests.yml`. See README **Testing** and the test files for patterns and coverage.
+
 #### Tauri bundle targets
 
 The `"app"` target **must** remain in `bundle.targets` alongside `"dmg"` in `tauri.conf.json`. The `"app"` target produces the `.app` bundle, and when `createUpdaterArtifacts` is `true`, Tauri generates the `.app.tar.gz` and `.app.tar.gz.sig` files from it. Without `"app"`, the updater signature is never created and the release workflow fails.
