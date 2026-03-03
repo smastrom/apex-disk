@@ -259,7 +259,7 @@ async function openSystemSettings() {
          </section>
 
          <!-- App info (name, version, author, links) -->
-         <SettingsFooter />
+         <!-- <SettingsFooter /> -->
       </div>
    </main>
 </template>
