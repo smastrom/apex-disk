@@ -32,6 +32,17 @@ function isHidden(item: DeleteListItem) {
    return item.name.startsWith('.')
 }
 
+/** Extracts the parent directory from a full path, stripping the home prefix to show relative location. */
+function parentPath(path: string): string {
+   const slash = path.lastIndexOf('/')
+   if (slash <= 0) return '/'
+   const dir = path.slice(0, slash)
+   const home = dir.match(/^\/Users\/[^/]+/)?.[0]
+   if (!home) return dir
+   const rel = dir.slice(home.length + 1)
+   return rel || '/'
+}
+
 const emit = defineEmits<{
    (e: 'toggle'): void
 }>()
@@ -67,7 +78,10 @@ const emit = defineEmits<{
       >
          <ScanResultsListItemIconSwitch :item="item" :size="18" />
       </div>
-      <span class="ScanResultsDeleteListItem-name">{{ item.name }}</span>
+      <div class="ScanResultsDeleteListItem-info">
+         <span class="ScanResultsDeleteListItem-name">{{ item.name }}</span>
+         <span class="ScanResultsDeleteListItem-path">{{ parentPath(item.path) }}</span>
+      </div>
       <span class="ScanResultsDeleteListItem-size">{{ formatBytes(item.size) }}</span>
    </div>
 </template>
@@ -78,9 +92,10 @@ const emit = defineEmits<{
    align-items: center;
    gap: var(--spacing-xs);
    padding: var(--spacing-xs) var(--spacing-sm);
-   min-height: 40px;
+   min-height: 48px;
    cursor: pointer;
    transition: background 0.2s;
+   border-bottom: 1px solid var(--color-accent-bg);
 
    &:hover {
       background: var(--color-accent-bg-hover);
@@ -121,12 +136,26 @@ const emit = defineEmits<{
    opacity: 0.5;
 }
 
-.ScanResultsDeleteListItem-name {
+.ScanResultsDeleteListItem-info {
    flex: 1;
    min-width: 0;
+   display: flex;
+   flex-direction: column;
+   gap: 1px;
+}
+
+.ScanResultsDeleteListItem-name {
    font-size: 0.8125rem;
    font-weight: 500;
    color: var(--color-text);
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+.ScanResultsDeleteListItem-path {
+   font-size: 0.6875rem;
+   color: var(--color-text-dim);
    white-space: nowrap;
    overflow: hidden;
    text-overflow: ellipsis;
