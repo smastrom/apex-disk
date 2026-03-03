@@ -48,7 +48,8 @@ function normalizeStoredSettings(raw: Partial<LegacyAppSettings> | null): AppSet
    }
 }
 
-const STORE_PATH = 'settings.json'
+/** Dev and production share the same app data dir (bundle identifier). Use a separate file in dev so the built app gets fresh defaults (system language, default theme). */
+const STORE_PATH = import.meta.env.DEV ? 'settings.dev.json' : 'settings.json'
 
 /** Injection key for the settings store. Provided value is Ref<SettingsStore | null>. */
 export const SETTINGS_KEY = Symbol('settings')
