@@ -6,6 +6,7 @@ const VIEW_ORDER = ['scan', 'settings', 'information', 'donate'] as const
 
 function viewIndex(view: string): number {
    const i = VIEW_ORDER.indexOf(view as (typeof VIEW_ORDER)[number])
+
    return i >= 0 ? i : 0
 }
 

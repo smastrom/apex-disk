@@ -76,6 +76,7 @@ const selectedMap = reactive(new Map<string, FolderInfo>())
 /** Extracts the parent directory from a path string. */
 function parentDir(path: string): string {
    const i = path.lastIndexOf('/')
+
    return i <= 0 ? '' : path.slice(0, i)
 }
 
@@ -148,6 +149,7 @@ const rowVirtualizer = useVirtualizer(
  */
 function hasSelectedAncestor(path: string): boolean {
    let dir = path
+
    for (;;) {
       const slash = dir.lastIndexOf('/')
       if (slash <= 0) return false
@@ -163,11 +165,13 @@ function hasSelectedAncestor(path: string): boolean {
  */
 function buildSelectedItemsForDelete(): DeleteListItem[] {
    const out: DeleteListItem[] = []
+
    for (const [path, item] of selectedMap) {
       if (!hasSelectedAncestor(path)) {
          out.push({ path, name: item.name, size: item.size, is_file: item.is_file })
       }
    }
+
    return out.sort((a, b) => b.size - a.size)
 }
 
@@ -188,16 +192,20 @@ const someSelectedPaths = shallowRef(new Set<string>())
 
 watchEffect(() => {
    const set = new Set<string>()
+
    for (const [path] of selectedMap) {
       let dir = path
+
       for (;;) {
          const slash = dir.lastIndexOf('/')
+
          if (slash <= 0) break
          dir = dir.slice(0, slash)
          if (selectedMap.has(dir)) break
          set.add(dir)
       }
    }
+
    someSelectedPaths.value = set
 })
 
@@ -220,6 +228,7 @@ watch(selectedSize, (size) => emit('update:selectedSize', size), { immediate: tr
 /** Removes all selectedMap entries whose path is inside `folderPath`. */
 function deselectDescendants(folderPath: string) {
    const prefix = folderPath + '/'
+
    for (const [path] of selectedMap) {
       if (path.startsWith(prefix)) selectedMap.delete(path)
    }
@@ -233,6 +242,7 @@ function deselectDescendants(folderPath: string) {
  */
 function toggleSelect(item: FolderInfo) {
    if (item.is_protected) return
+
    if (selectedMap.has(item.path)) {
       selectedMap.delete(item.path)
    } else if (someSelectedPaths.value.has(item.path)) {
@@ -249,6 +259,7 @@ function toggleSelect(item: FolderInfo) {
  */
 function setSelectedItems(items: DeleteListItem[]) {
    selectedMap.clear()
+
    for (const item of items) {
       selectedMap.set(item.path, {
          name: item.name,
@@ -283,6 +294,7 @@ function clearListTransitionNames() {
 /** Navigates into a folder's children with a forward view transition. */
 async function goInto(item: FolderInfo) {
    if (item.is_file) return
+
    document.documentElement.style.setProperty('--nav-direction', '1')
    enableListTransitionNames()
    await withTransition(async () => {
@@ -296,6 +308,7 @@ async function goInto(item: FolderInfo) {
 /** Navigates to the previous directory with a backward view transition. */
 async function goBack() {
    if (backStack.value.length === 0) return
+
    document.documentElement.style.setProperty('--nav-direction', '-1')
    enableListTransitionNames()
    await withTransition(async () => {
@@ -308,6 +321,7 @@ async function goBack() {
 /** Re-enters a previously visited directory with a forward view transition. */
 async function goForward() {
    if (forwardStack.value.length === 0) return
+
    document.documentElement.style.setProperty('--nav-direction', '1')
    enableListTransitionNames()
    await withTransition(async () => {

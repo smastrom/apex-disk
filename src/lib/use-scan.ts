@@ -39,7 +39,6 @@ export function useScan() {
 
       scanGeneration.value += 1
       const gen = scanGeneration.value // snapshot — all callbacks below bail if gen is stale
-
       loading.value = true
       progress.value = { ...INITIAL_PROGRESS }
 
@@ -49,13 +48,13 @@ export function useScan() {
 
       try {
          const settings = settingsStore.settings.value
-
          const options = {
             show_hidden_files: settings.showHiddenFiles,
             show_under_1kb: settings.showUnder1Kb,
             show_zero_byte: settings.showZeroByte,
          }
          const result = await invoke<FolderInfo[]>('get_user_folders', { options })
+
          if (gen === scanGeneration.value) folders.value = result
       } catch (error) {
          if (gen === scanGeneration.value) console.error('Error loading folders:', error)
@@ -72,6 +71,7 @@ export function useScan() {
       scanGeneration.value += 1
       unlistenProgress?.()
       unlistenProgress = null
+
       folders.value = []
       loading.value = false
       progress.value = { ...INITIAL_PROGRESS }

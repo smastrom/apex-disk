@@ -12,6 +12,7 @@ export function applyTheme(theme: string): void {
 /** Sets dir and lang attributes on <html> based on the active language. */
 export function applyDirection(lang: string): void {
    const dir = RTL_LANGUAGES.has(lang) ? 'rtl' : 'ltr'
+
    document.documentElement.setAttribute('dir', dir)
    document.documentElement.setAttribute('lang', lang)
 }

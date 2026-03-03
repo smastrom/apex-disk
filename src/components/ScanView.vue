@@ -88,6 +88,7 @@ function onDeleteComplete(items: DeleteListItem[]) {
       count: items.length,
       size: items.reduce((sum, i) => sum + i.size, 0),
    }
+
    selectedSize.value = 0
    diskUsageRef.value?.refresh()
    viewState.value = 'deleteComplete'
@@ -145,6 +146,7 @@ onDeactivated(() => {
                @back="onBackFromDelete"
                @update:selectedSize="onSelectedSizeUpdate"
                @complete="onDeleteComplete"
+               @cancel="$emit('cancel')"
             />
 
             <ScanResultsDeleteConfirmation

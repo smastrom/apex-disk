@@ -41,6 +41,7 @@ const percent = computed(() => {
 function startTimer() {
    elapsedSeconds.value = 0
    if (elapsedInterval) clearInterval(elapsedInterval)
+
    elapsedInterval = setInterval(() => {
       elapsedSeconds.value += 1
    }, 1000)

@@ -18,6 +18,9 @@ Example:
 import ScanResultsListItemIconSwitch from '@/components/ScanResultsListItemIconSwitch.vue'
 
 import { PhCircle, PhCheckCircle } from '@phosphor-icons/vue'
+import { useTemplateRef } from 'vue'
+
+import { useLabelPopover } from '@/lib/use-label-popover'
 
 import type { DeleteListItem } from '@/types/structs'
 
@@ -32,20 +35,19 @@ function isHidden(item: DeleteListItem) {
    return item.name.startsWith('.')
 }
 
-/** Extracts the parent directory from a full path, stripping the home prefix to show relative location. */
-function parentPath(path: string): string {
-   const slash = path.lastIndexOf('/')
-   if (slash <= 0) return '/'
-   const dir = path.slice(0, slash)
-   const home = dir.match(/^\/Users\/[^/]+/)?.[0]
-   if (!home) return dir
-   const rel = dir.slice(home.length + 1)
-   return rel || '/'
+/** Formats a full path for display: /Users/<name>/… → ~/… */
+function displayPath(path: string): string {
+   return path.replace(/^\/Users\/[^/]+/, '~')
 }
 
 const emit = defineEmits<{
    (e: 'toggle'): void
 }>()
+
+const triggerRef = useTemplateRef<HTMLElement>('triggerRef')
+const popoverRef = useTemplateRef<HTMLElement>('popoverRef')
+
+const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRef)
 </script>
 
 <template>
@@ -79,10 +81,25 @@ const emit = defineEmits<{
          <ScanResultsListItemIconSwitch :item="item" :size="18" />
       </div>
       <div class="ScanResultsDeleteListItem-info">
-         <span class="ScanResultsDeleteListItem-name">{{ item.name }}</span>
-         <span class="ScanResultsDeleteListItem-path">{{ parentPath(item.path) }}</span>
+         <span
+            ref="triggerRef"
+            class="ScanResultsDeleteListItem-name"
+            @pointerenter="onPointerEnter"
+            @pointerleave="onPointerLeave"
+            >{{ item.name }}</span
+         >
+         <span class="ScanResultsDeleteListItem-path">{{ displayPath(item.path) }}</span>
       </div>
       <span class="ScanResultsDeleteListItem-size">{{ formatBytes(item.size) }}</span>
+      <div
+         ref="popoverRef"
+         popover="manual"
+         class="ScanResultsDeleteListItem-popover"
+         @pointerenter="onPointerEnter"
+         @pointerleave="onPointerLeave"
+      >
+         {{ item.name }}
+      </div>
    </div>
 </template>
 
@@ -165,5 +182,50 @@ const emit = defineEmits<{
    flex-shrink: 0;
    font-size: 0.75rem;
    color: var(--color-text-muted);
+}
+
+/* ── Name popover ── */
+
+.ScanResultsDeleteListItem-popover {
+   position: fixed;
+   margin: 0;
+   padding: 6px 10px;
+   max-width: 420px;
+   border: 1px solid var(--color-border);
+   border-radius: 6px;
+   background: var(--color-bg-elevated);
+   color: var(--color-text);
+   font-size: 0.75rem;
+   font-weight: 500;
+   line-height: 1.4;
+   word-break: break-all;
+   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+   transform: translateY(-100%);
+   pointer-events: auto;
+
+   opacity: 0;
+   filter: blur(4px);
+   transition:
+      opacity 0.2s var(--ease-standard),
+      filter 0.2s var(--ease-standard);
+}
+
+.ScanResultsDeleteListItem-popover:popover-open {
+   opacity: 1;
+   filter: blur(0);
+}
+
+@starting-style {
+   .ScanResultsDeleteListItem-popover:popover-open {
+      opacity: 0;
+      filter: blur(4px);
+   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+   .ScanResultsDeleteListItem-popover {
+      transition: none;
+      filter: none;
+   }
 }
 </style>

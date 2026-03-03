@@ -45,6 +45,7 @@ export function createT(lang: Language) {
    ): string {
       const mod = translations[module] as Record<Language, Record<string, string>>
       const str = mod[lang]?.[key] ?? mod.en?.[key] ?? key
+
       return vars ? interpolate(str, vars) : str
    }
 }

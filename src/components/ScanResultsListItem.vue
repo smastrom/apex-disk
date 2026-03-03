@@ -21,6 +21,7 @@ Example:
 import ScanResultsListItemIconSwitch from '@/components/ScanResultsListItemIconSwitch.vue'
 
 import { PhCaretRight, PhCircle, PhCheckCircle, PhMinusCircle } from '@phosphor-icons/vue'
+import { useTemplateRef } from 'vue'
 
 import { useTranslations } from '@/lib/use-translations'
 import { useLabelPopover } from '@/lib/use-label-popover'
@@ -40,8 +41,11 @@ const emit = defineEmits<{
    (e: 'navigate'): void
 }>()
 
+const triggerRef = useTemplateRef<HTMLElement>('triggerRef')
+const popoverRef = useTemplateRef<HTMLElement>('popoverRef')
+
 const { t } = useTranslations()
-const { triggerRef, popoverRef, onPointerEnter, onPointerLeave } = useLabelPopover()
+const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRef)
 </script>
 
 <template>

@@ -270,13 +270,13 @@ Current list: `.ssh`, `.gnupg`, `.aws`, `.kube`
 
 ##### Differences from protected folders
 
-| | Protected | Skipped |
-|---|---|---|
-| Appears in scan results | Yes | No |
-| Contents browsable | Yes | No |
-| Contents deletable | Yes | No |
-| Folder itself deletable | No | No |
-| Frontend constant needed | Yes | No |
+|                          | Protected | Skipped |
+| ------------------------ | --------- | ------- |
+| Appears in scan results  | Yes       | No      |
+| Contents browsable       | Yes       | No      |
+| Contents deletable       | Yes       | No      |
+| Folder itself deletable  | No        | No      |
+| Frontend constant needed | Yes       | No      |
 
 #### Tauri bundle targets
 
@@ -426,6 +426,15 @@ export function provideAuthStore() {
 
 - Prefix with `use-` for composables, `provide-` for provider setup functions (see **File naming** for casing)
 - Place in `src/lib/`, one composable per file
+
+##### Composables that control DOM elements
+
+When a composable controls **HTMLElements** (e.g. positioning a popover, measuring a node), **do not** create or return refs from inside the composable. The component owns the template and the elements; it must declare the refs (with `useTemplateRef`) and pass them in as parameters. The composable receives `Ref<HTMLElement | null>` (or similar) and uses them internally.
+
+- **Component**: Declare `triggerRef` and `popoverRef` with `useTemplateRef` (before any composable call), bind them in the template, then call `useLabelPopover(triggerRef, popoverRef)`.
+- **Composable**: Accept refs as parameters; return only state and handlers (e.g. `isOpen`, `onPointerEnter`, `onPointerLeave`).
+
+This keeps ownership of DOM refs in the component, makes the composable easier to test and reuse, and aligns with the rule that template refs are declared in the component.
 
 #### Component documentation
 
@@ -800,12 +809,15 @@ Media queries must be **nested inside the selector**, not at the root level. Nev
 - Prefer **function declarations** over `const fn = () => {}`
 - **Prefer `interface`** over `type` when possible (see File organization for placement rules)
 
-#### Blank lines inside functions
+#### Blank lines in code
 
-Separate **logical groups** within a function body with a blank line. Typical groups: declarations, then actions/mutations, then return. This makes the function's structure scannable at a glance.
+Applies to **any block** (function body, module top-level, callback, loop body, etc.). Use a single blank line only when **switching from one logical group to another**. Do **not** add a blank between consecutive same-type, same-scope one-line statements.
+
+- **No blank** between: multiple `const`/`let`, multiple function or method calls, multiple property assignments — when they form one logical group.
+- **Add a blank** when switching groups: e.g. after an early return, between a declaration block and the next group (calls/mutations), between distinct groups of statements, before a final return.
 
 ```ts
-// ✅ GOOD — declarations separated from actions
+// ✅ GOOD — one group of declarations, blank, then group of actions
 const el = containerRef.value
 const offset = getScrollOffset(el)
 
@@ -815,12 +827,42 @@ el?.classList.remove('transitioning')
 ```
 
 ```ts
-// ❌ BAD — everything crammed together
+// ✅ GOOD — same-type one-liners stay together; blank only at group boundaries
+export function formatBytes(bytes: number): string {
+   if (bytes === 0) return '0 B'
+
+   const k = 1024
+   const sizes = ['B', 'KB', 'MB', 'GB']
+   const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`
+}
+```
+
+```ts
+// ✅ GOOD — top-level: init group, blank, then app creation group
+const store = await createSettingsStore()
+applyTheme(store.getThemeColor())
+applyDirection(store.settings.value.language)
+
+const app = createApp(App)
+app.provide(SETTINGS_KEY, store)
+app.mount('#app')
+```
+
+```ts
+// ❌ BAD — no blank between groups (declarations vs actions)
 const el = containerRef.value
 const offset = getScrollOffset(el)
 el?.classList.add('transitioning')
-await animate(el, offset)
-el?.classList.remove('transitioning')
+```
+
+```ts
+// ❌ BAD — blank inside the same group (const/const)
+const k = 1024
+
+const sizes = ['B', 'KB', 'MB', 'GB']
+const i = Math.floor(Math.log(bytes) / Math.log(k))
 ```
 
 #### If statements
@@ -839,7 +881,9 @@ if (mode === 'dark') {
 }
 
 // ❌ BAD — body on next line without braces
-if (mode === 'dark') document.documentElement.classList.add('dark')
+if (mode === 'dark')
+   // prettier-ignore
+   document.documentElement.classList.add('dark')
 
 // ❌ BAD — else without braces
 if (x) doSomething()
@@ -885,9 +929,11 @@ Add JSDoc to all functions **except** those that are: (a) defined and used only 
 /** Formats bytes into human-readable string (e.g. "1.2 GB"). */
 export function formatBytes(bytes: number): string {
    if (bytes === 0) return '0 B'
+
    const k = 1024
    const sizes = ['B', 'KB', 'MB', 'GB']
    const i = Math.floor(Math.log(bytes) / Math.log(k))
+
    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`
 }
 

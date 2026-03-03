@@ -38,7 +38,6 @@ export function useUpdater() {
          update = null
       }
 
-      // Sync the reactive state with the latest check result
       availableUpdate.value = update?.version ?? null
 
       if (!update) {
@@ -51,6 +50,7 @@ export function useUpdater() {
       }
 
       const body = update.body ? `\n\n${update.body}` : ''
+
       const shouldDownload = await invoke<boolean>('show_ask_dialog', {
          title: t('App', 'updateAvailable'),
          body: t('App', 'updateVersion', { version: update.version }) + body,

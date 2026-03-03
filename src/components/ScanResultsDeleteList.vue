@@ -36,6 +36,7 @@ const emit = defineEmits<{
    (e: 'back', checkedItems: DeleteListItem[]): void
    (e: 'update:selectedSize', value: number): void
    (e: 'complete', items: DeleteListItem[]): void
+   (e: 'cancel'): void
 }>()
 
 const { t } = useTranslations()
@@ -54,6 +55,7 @@ function startCountdown() {
       clearInterval(countdownInterval)
       countdownInterval = null
    }
+
    countdownRemaining.value = DELETE_COUNTDOWN_SECONDS
    countdownInterval = setInterval(() => {
       countdownRemaining.value -= 1
@@ -69,6 +71,7 @@ function stopCountdown() {
       clearInterval(countdownInterval)
       countdownInterval = null
    }
+
    countdownRemaining.value = 0
 }
 
@@ -167,6 +170,7 @@ const checkedCount = computed(() => {
 function toggle(path: string) {
    const prev = checkedMapRef.value
    const next = new Map(prev)
+
    next.set(path, !prev.get(path))
    checkedMapRef.value = next
 }
@@ -174,6 +178,7 @@ function toggle(path: string) {
 /** Returns checked items for the back-navigation emit (restores selection in ScanResultsList). */
 function getCheckedItems(): DeleteListItem[] {
    const map = checkedMapRef.value
+
    return props.items.filter((item) => map.get(item.path))
 }
 
@@ -186,6 +191,7 @@ const deleteReady = computed(() => countdownRemaining.value <= 0)
  */
 async function onDeleteClick() {
    if (!deleteReady.value || deleting.value || checkedCount.value === 0) return
+
    deleting.value = true
    const toDelete = props.items.filter((item) => checkedMapRef.value.get(item.path))
 
@@ -209,8 +215,10 @@ async function onDeleteClick() {
          :backDisabled="false"
          pathIcon="trash"
          :pathLabel="t('ScanResultsDeleteList', 'navTitle')"
-         :showActions="false"
+         showActions
+         :resetDisabled="true"
          @back="emit('back', getCheckedItems())"
+         @cancel="emit('cancel')"
       />
       <div
          class="ScanResultsDeleteList-listWrap"

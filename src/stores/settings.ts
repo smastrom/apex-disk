@@ -13,6 +13,7 @@ function normalizeThemeColor(value: unknown): ThemeColor {
    if (typeof value === 'string' && (THEME_COLORS as readonly string[]).includes(value)) {
       return value as ThemeColor
    }
+
    return DEFAULT_SETTINGS.themeColor
 }
 
@@ -31,6 +32,7 @@ function normalizeStoredSettings(raw: Partial<LegacyAppSettings> | null): AppSet
       (base as Partial<AppSettings>).showZeroByte ??
       (base.showZeroByteFiles || base.showZeroByteFolders) ??
       DEFAULT_SETTINGS.showZeroByte
+
    return {
       language: base.language ?? DEFAULT_SETTINGS.language,
       themeColor:
@@ -110,6 +112,7 @@ export async function createSettingsStore(): Promise<SettingsStore> {
             setTimeout(() => reject(new Error('Store load timeout')), LOAD_TIMEOUT_MS)
          ),
       ])
+
       const raw = (await store.get('app')) as Partial<LegacyAppSettings> | null
       const systemLanguage = await getSystemLanguage()
       const settings = ref<AppSettings>(
@@ -127,18 +130,21 @@ export async function createSettingsStore(): Promise<SettingsStore> {
       const result = createStoreFromSettings(settings, persist)
 
       invoke('set_menu_language', { lang: settings.value.language }).catch(() => {})
-
       result.load = async () => {
          await store.reload()
+
          const raw = (await store.get('app')) as Partial<LegacyAppSettings> | null
+
          if (raw && typeof raw === 'object') {
             const systemLanguage = await getSystemLanguage()
+
             settings.value = normalizeStoredSettings({
                ...raw,
                language: raw.language ?? systemLanguage,
             })
          }
       }
+
       return result
    } catch {
       const systemLanguage = await getSystemLanguage()
@@ -146,6 +152,7 @@ export async function createSettingsStore(): Promise<SettingsStore> {
          ...DEFAULT_SETTINGS,
          language: systemLanguage,
       })
+
       return createStoreFromSettings(settings, async () => {})
    }
 }
@@ -158,5 +165,6 @@ export function useSettingsStore(): SettingsStore {
          'useSettingsStore() called without a provider. Did you forget app.provide() in main.ts?'
       )
    }
+
    return store
 }

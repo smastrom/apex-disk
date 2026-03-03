@@ -6,10 +6,14 @@ import { ref, onUnmounted, type Ref } from 'vue'
  * - Only shows when the element's text is actually truncated (scrollWidth > clientWidth).
  * - 400 ms enter debounce, 200 ms leave debounce (macOS-style timing).
  * - Positions the popover just above the trigger element.
+ *
+ * @param triggerRef — Ref to the trigger element (e.g. the truncated label). Must be declared in the component with useTemplateRef.
+ * @param popoverRef — Ref to the popover element. Must be declared in the component with useTemplateRef.
  */
-export function useLabelPopover() {
-   const popoverRef: Ref<HTMLElement | null> = ref(null)
-   const triggerRef: Ref<HTMLElement | null> = ref(null)
+export function useLabelPopover(
+   triggerRef: Ref<HTMLElement | null>,
+   popoverRef: Ref<HTMLElement | null>
+) {
    const isOpen = ref(false)
 
    let enterTimer: ReturnType<typeof setTimeout> | null = null
@@ -18,12 +22,13 @@ export function useLabelPopover() {
 
    const ENTER_DELAY = 400
    const LEAVE_DELAY = 200
-   /** Same as row horizontal margin (--spacing-sm) so popover aligns with content. */
-   const EDGE_MARGIN = 8
+   /** Matches content padding (--spacing-md) so the popover aligns with the UI. */
+   const EDGE_MARGIN = 16
 
    function isTruncated(): boolean {
       const el = triggerRef.value
       if (!el) return false
+
       return el.scrollWidth > el.clientWidth
    }
 
@@ -33,24 +38,30 @@ export function useLabelPopover() {
       if (!trigger || !popover) return
 
       const rect = trigger.getBoundingClientRect()
+
       popover.style.left = `${rect.left}px`
       popover.style.top = `${rect.top - 4}px`
    }
 
-   /** Keeps popover within viewport horizontal bounds (same margin as row content). */
+   /** Keeps popover within viewport horizontal bounds with consistent margins. */
    function clampToViewport() {
       const popover = popoverRef.value
       if (!popover) return
 
+      const maxWidth = window.innerWidth - EDGE_MARGIN * 2
+      popover.style.maxWidth = `${maxWidth}px`
+
       const rect = popover.getBoundingClientRect()
       const maxLeft = window.innerWidth - EDGE_MARGIN - rect.width
       const left = Math.max(EDGE_MARGIN, Math.min(rect.left, maxLeft))
+
       popover.style.left = `${left}px`
    }
 
    function show() {
       const popover = popoverRef.value
       if (!popover || isOpen.value) return
+
       positionPopover()
       popover.showPopover()
       isOpen.value = true
@@ -61,6 +72,7 @@ export function useLabelPopover() {
    function hide() {
       const popover = popoverRef.value
       if (!popover || !isOpen.value) return
+
       popover.hidePopover()
       isOpen.value = false
       removeScrollListener()
@@ -71,6 +83,7 @@ export function useLabelPopover() {
       clearTimers()
       const popover = popoverRef.value
       if (!popover || !isOpen.value) return
+
       popover.hidePopover()
       isOpen.value = false
       removeScrollListener()
@@ -139,8 +152,6 @@ export function useLabelPopover() {
    })
 
    return {
-      popoverRef,
-      triggerRef,
       isOpen,
       onPointerEnter,
       onPointerLeave,

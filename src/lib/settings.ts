@@ -12,7 +12,9 @@ export async function getSystemLanguage(): Promise<Language> {
    try {
       const systemLocale = await locale()
       if (!systemLocale) return DEFAULT_LANGUAGE
+
       const primary = systemLocale.split(/[-_]/)[0]?.toLowerCase()
+
       return APP_LANGUAGES.includes(primary as Language) ? (primary as Language) : DEFAULT_LANGUAGE
    } catch {
       return DEFAULT_LANGUAGE
