@@ -37,7 +37,7 @@ const percent = computed(() => {
 
    const raw = Math.max(0, Math.min(100, (props.progress.current / props.progress.total) * 100))
 
-   return raw >= 100 ? 99 : raw
+   return raw >= 100 ? 99 : Math.round(raw)
 })
 
 function startTimer() {
