@@ -43,28 +43,36 @@ defineExpose({ refresh: fetchUsage })
 /** Main bar: shrinks when selecting to show remaining used after delete. */
 const mainBarPercent = computed(() => {
    const u = usage.value
+
    if (!u || u.total === 0) return 0
+
    const sel = props.selectedSize ?? 0
    const usedAfterDelete = u.total - u.free - sel
+
    return Math.max(0, Math.min(100, (usedAfterDelete / u.total) * 100))
 })
 
 /** Lighter bar behind: full current used. Extends past main when selecting = "to be wiped". */
 const lighterBarPercent = computed(() => {
    const u = usage.value
+
    if (!u || u.total === 0) return 0
+
    return Math.min(100, ((u.total - u.free) / u.total) * 100)
 })
 
 const newFreeSpace = computed(() => {
    const u = usage.value
    const sel = props.selectedSize ?? 0
+
    if (!u || sel === 0) return null
+
    return u.free + sel
 })
 
 async function openHomeInFinder() {
    if (!usage.value?.home_path) return
+
    try {
       await openPath(usage.value.home_path)
    } catch (err) {

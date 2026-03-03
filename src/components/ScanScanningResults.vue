@@ -34,7 +34,9 @@ let elapsedInterval: ReturnType<typeof setInterval> | null = null
 
 const percent = computed(() => {
    if (props.progress.total <= 0) return 0
+
    const raw = Math.max(0, Math.min(100, (props.progress.current / props.progress.total) * 100))
+
    return raw >= 100 ? 99 : raw
 })
 

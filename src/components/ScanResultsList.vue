@@ -3,10 +3,10 @@ ScanResultsList
 
 Purpose: Main content area. Folder/file list with back/forward navigation, selection, and Delete button.
 
-Props: folders (FolderInfo[]), loading (boolean), progress (ScanProgress)
+Props: folders (FolderInfo[])
 
 Example:
- <ScanResultsList :folders="folders" :loading="loading" :progress="progress" @start-scan="loadFolders" />
+ <ScanResultsList :folders="folders" @update:selectedSize="onSelectedSizeUpdate" @review="onReview" @cancel="onCancel" />
 -->
 
 <script setup lang="ts">
@@ -110,9 +110,11 @@ watch(
 const displayPath = computed(() => {
    const path = current.value.path
    const home = homePath.value
+
    if (!path) return '/'
    if (path === home) return '~'
    if (home && path.startsWith(home + '/')) return '~' + path.slice(home.length)
+
    return path
 })
 
@@ -215,10 +217,12 @@ watchEffect(() => {
  */
 const selectedSize = computed(() => {
    let total = 0
+
    for (const [path, item] of selectedMap) {
       if (hasSelectedAncestor(path)) continue
       total += item.size
    }
+
    return total
 })
 
@@ -343,13 +347,13 @@ function onCancel() {
 <template>
    <div class="ScanResultsList-root">
       <ScanResultsNav
-         showForward
-         :backDisabled="backStack.length === 0"
-         :forwardDisabled="forwardStack.length === 0"
+         :isForwardShown="true"
+         :isBackDisabled="backStack.length === 0"
+         :isForwardDisabled="forwardStack.length === 0"
          :pathLabel="displayPath"
          :pathTitle="current.path"
-         showActions
-         :resetDisabled="selectedMap.size === 0"
+         :isActionsShown="true"
+         :isResetDisabled="selectedMap.size === 0"
          @back="goBack"
          @forward="goForward"
          @reset="selectedMap.clear()"
@@ -375,9 +379,9 @@ function onCancel() {
                >
                   <ScanResultsListItem
                      :item="displayedItems[virtualRow.index]"
-                     :selected="isSelectedForUI(displayedItems[virtualRow.index].path)"
-                     :someSelected="someSelectedPaths.has(displayedItems[virtualRow.index].path)"
-                     :selectable="!displayedItems[virtualRow.index].is_protected"
+                     :isSelected="isSelectedForUI(displayedItems[virtualRow.index].path)"
+                     :isSomeSelected="someSelectedPaths.has(displayedItems[virtualRow.index].path)"
+                     :isSelectable="!displayedItems[virtualRow.index].is_protected"
                      :formatBytes="formatBytes"
                      @select="() => toggleSelect(displayedItems[virtualRow.index])"
                      @navigate="() => goInto(displayedItems[virtualRow.index])"

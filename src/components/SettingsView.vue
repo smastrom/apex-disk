@@ -3,10 +3,10 @@ SettingsView
 
 Purpose: Settings screen with Language, Theme, Scan Settings (hidden files, 0 B, under 1 KB), and Permissions. macOS-style grouped list.
 
-Props: fdaGranted (boolean), availableUpdate (string | null)
+Props: isFdaGranted (boolean), availableUpdate (string | null)
 
 Example:
- <SettingsView :fdaGranted="fdaGranted" :availableUpdate="null" />
+ <SettingsView :isFdaGranted="isFdaGranted" :availableUpdate="null" />
 -->
 
 <script setup lang="ts">
@@ -30,7 +30,7 @@ import { useSettingsStore } from '@/stores/settings'
 import type { Language, ThemeColor } from '@/types/settings'
 
 defineProps<{
-   fdaGranted: boolean
+   isFdaGranted: boolean
    availableUpdate: string | null
 }>()
 
@@ -207,17 +207,21 @@ async function openSystemSettings() {
                <span
                   class="SettingsView-fdaStatus"
                   :class="
-                     fdaGranted ? 'SettingsView-fdaStatus--ok' : 'SettingsView-fdaStatus--optional'
+                     isFdaGranted
+                        ? 'SettingsView-fdaStatus--ok'
+                        : 'SettingsView-fdaStatus--optional'
                   "
                >
-                  <PhCheckCircle v-if="fdaGranted" :size="13" weight="fill" aria-hidden="true" />
+                  <PhCheckCircle v-if="isFdaGranted" :size="13" weight="fill" aria-hidden="true" />
                   <PhCircle v-else :size="13" weight="regular" aria-hidden="true" />
                   {{
-                     fdaGranted ? t('SettingsView', 'fdaGranted') : t('SettingsView', 'fdaMissing')
+                     isFdaGranted
+                        ? t('SettingsView', 'fdaGranted')
+                        : t('SettingsView', 'fdaMissing')
                   }}
                </span>
             </div>
-            <template v-if="!fdaGranted">
+            <template v-if="!isFdaGranted">
                <p class="SettingsView-fdaDesc">
                   {{ t('SettingsView', 'fdaDesc') }}
                </p>

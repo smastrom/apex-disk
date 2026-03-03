@@ -814,7 +814,7 @@ Media queries must be **nested inside the selector**, not at the root level. Nev
 Applies to **any block** (function body, module top-level, callback, loop body, etc.). Use a single blank line only when **switching from one logical group to another**. Do **not** add a blank between consecutive same-type, same-scope one-line statements.
 
 - **No blank** between: multiple `const`/`let`, multiple function or method calls, multiple property assignments — when they form one logical group.
-- **Add a blank** when switching groups: e.g. after an early return, between a declaration block and the next group (calls/mutations), between distinct groups of statements, before a final return.
+- **Add a blank** when switching groups: (1) between a declaration block and the next group (guard, calls, or mutations); (2) after an early return (or guard) before the next group; (3) before a final return. So in a block that has declarations, then a guard, then a return: blank after declarations, blank after the guard, then the return.
 
 ```ts
 // ✅ GOOD — one group of declarations, blank, then group of actions
@@ -858,11 +858,33 @@ el?.classList.add('transitioning')
 ```
 
 ```ts
+// ✅ GOOD — declarations, blank, guard, blank, final return (e.g. inside computed/callback)
+const newFreeSpace = computed(() => {
+   const u = usage.value
+   const sel = props.selectedSize ?? 0
+
+   if (!u || sel === 0) return null
+
+   return u.free + sel
+})
+```
+
+```ts
 // ❌ BAD — blank inside the same group (const/const)
 const k = 1024
 
 const sizes = ['B', 'KB', 'MB', 'GB']
 const i = Math.floor(Math.log(bytes) / Math.log(k))
+```
+
+```ts
+// ❌ BAD — no blank after declarations or after guard (computed/callback)
+const newFreeSpace = computed(() => {
+   const u = usage.value
+   const sel = props.selectedSize ?? 0
+   if (!u || sel === 0) return null
+   return u.free + sel
+})
 ```
 
 #### If statements
@@ -889,6 +911,15 @@ if (mode === 'dark')
 if (x) doSomething()
 else doOther()
 ```
+
+#### Boolean variable and prop names
+
+Every boolean object property, Vue prop, or variable must be named with a **leading verb** so the meaning is clear at the call site. Prefer `is*`, `has*`, or `can*` (e.g. `isActive`, `isLoaded`, `hasPermissions`, `canEdit`).
+
+- **Good**: `isSelected`, `isLoading`, `isFdaGranted`, `hasSomeSelected`, `isBackDisabled`
+- **Bad**: `selected`, `loading`, `active`, `disabled`, `granted` (noun/adjective alone)
+
+Apply to: component props, reactive refs, object properties, and local variables that hold a boolean.
 
 #### Boolean expressions
 

@@ -3,12 +3,12 @@ ScanResultsDeleteListItem
 
 Purpose: Compact list row for delete review. Checkbox (default on), icon, name, size.
 
-Props: item (DeleteListItem), selected (boolean), formatBytes (fn)
+Props: item (DeleteListItem), isSelected (boolean), formatBytes (fn)
 
 Example:
  <ScanResultsDeleteListItem
    :item="entry"
-   :selected="checkedSet.has(entry.path)"
+   :isSelected="checkedSet.has(entry.path)"
    :formatBytes="formatBytes"
    @toggle="toggle(entry.path)"
  />
@@ -26,7 +26,7 @@ import type { DeleteListItem } from '@/types/structs'
 
 defineProps<{
    item: DeleteListItem
-   selected: boolean
+   isSelected: boolean
    formatBytes: (bytes: number) => string
 }>()
 
@@ -55,12 +55,12 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
       <button
          type="button"
          class="ScanResultsDeleteListItem-check"
-         :class="{ 'ScanResultsDeleteListItem-check--selected': selected }"
-         :aria-pressed="selected"
+         :class="{ 'ScanResultsDeleteListItem-check--selected': isSelected }"
+         :aria-pressed="isSelected"
          @click.stop="emit('toggle')"
       >
          <PhCircle
-            v-if="!selected"
+            v-if="!isSelected"
             :size="16"
             weight="regular"
             class="ScanResultsDeleteListItem-checkEmpty"

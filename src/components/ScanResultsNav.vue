@@ -3,17 +3,17 @@ ScanResultsNav
 
 Purpose: Shared nav bar for scan results views. Back (and optional forward), center path/title, optional reset/abort actions.
 
-Props: showForward (boolean), backDisabled (boolean), forwardDisabled (boolean?), pathLabel (string), pathTitle (string?), pathIcon ('folder' | 'trash'?), showActions (boolean), resetDisabled (boolean?)
+Props: isForwardShown (boolean?), isBackDisabled (boolean?), isForwardDisabled (boolean?), pathLabel (string), pathTitle (string?), pathIcon ('folder' | 'trash'?), isActionsShown (boolean?), isResetDisabled (boolean?)
 
 Example:
  <ScanResultsNav
-   showForward
-   :backDisabled="backStack.length === 0"
-   :forwardDisabled="forwardStack.length === 0"
+   :isForwardShown="true"
+   :isBackDisabled="backStack.length === 0"
+   :isForwardDisabled="forwardStack.length === 0"
    :pathLabel="displayPath"
    :pathTitle="current.path"
-   showActions
-   :resetDisabled="selectedMap.size === 0"
+   :isActionsShown="true"
+   :isResetDisabled="selectedMap.size === 0"
    @back="goBack"
    @forward="goForward"
    @reset="selectedMap.clear()"
@@ -28,14 +28,14 @@ import { useTranslations } from '@/lib/use-translations'
 
 withDefaults(
    defineProps<{
-      showForward?: boolean
-      backDisabled?: boolean
-      forwardDisabled?: boolean
+      isForwardShown?: boolean
+      isBackDisabled?: boolean
+      isForwardDisabled?: boolean
       pathLabel: string
       pathTitle?: string
       pathIcon?: 'folder' | 'trash'
-      showActions?: boolean
-      resetDisabled?: boolean
+      isActionsShown?: boolean
+      isResetDisabled?: boolean
    }>(),
    { pathIcon: 'folder' }
 )
@@ -56,17 +56,17 @@ const { t } = useTranslations()
          <button
             type="button"
             class="ScanResultsNav-btn"
-            :disabled="backDisabled"
+            :disabled="isBackDisabled"
             aria-label="Back"
             @click="emit('back')"
          >
             <PhCaretLeft :size="18" weight="regular" aria-hidden="true" />
          </button>
          <button
-            v-if="showForward"
+            v-if="isForwardShown"
             type="button"
             class="ScanResultsNav-btn"
-            :disabled="forwardDisabled"
+            :disabled="isForwardDisabled"
             aria-label="Forward"
             @click="emit('forward')"
          >
@@ -90,11 +90,11 @@ const { t } = useTranslations()
          />
          <span class="ScanResultsNav-pathText">{{ pathLabel }}</span>
       </div>
-      <div v-if="showActions" class="ScanResultsNav-actions">
+      <div v-if="isActionsShown" class="ScanResultsNav-actions">
          <button
             type="button"
             class="ScanResultsNav-resetBtn"
-            :disabled="resetDisabled"
+            :disabled="isResetDisabled"
             @click="emit('reset')"
          >
             {{ t('ScanResultsList', 'resetSelection') }}

@@ -17,7 +17,7 @@ const INITIAL_PROGRESS: ScanProgress = {
 export function useScan() {
    const settingsStore = useSettingsStore()
    const folders = shallowRef<FolderInfo[]>([])
-   const loading = ref(false)
+   const isLoading = ref(false)
 
    /**
     * Generation counter that invalidates in-flight scans. Bumped on every new scan
@@ -39,7 +39,7 @@ export function useScan() {
 
       scanGeneration.value += 1
       const gen = scanGeneration.value // snapshot — all callbacks below bail if gen is stale
-      loading.value = true
+      isLoading.value = true
       progress.value = { ...INITIAL_PROGRESS }
 
       unlistenProgress = await listen<ScanProgress>('folder-scan-progress', (event) => {
@@ -57,12 +57,12 @@ export function useScan() {
 
          if (gen === scanGeneration.value) folders.value = result
       } catch (error) {
-         if (gen === scanGeneration.value) console.error('Error loading folders:', error)
+         if (gen === scanGeneration.value) console.error('Error isLoading folders:', error)
       } finally {
          if (gen === scanGeneration.value) {
             unlistenProgress?.()
             unlistenProgress = null
-            loading.value = false
+            isLoading.value = false
          }
       }
    }
@@ -73,7 +73,7 @@ export function useScan() {
       unlistenProgress = null
 
       folders.value = []
-      loading.value = false
+      isLoading.value = false
       progress.value = { ...INITIAL_PROGRESS }
    }
 
@@ -91,7 +91,7 @@ export function useScan() {
 
    return {
       folders,
-      loading,
+      isLoading,
       progress,
       loadFolders,
       onAbort,

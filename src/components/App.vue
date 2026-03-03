@@ -48,8 +48,8 @@ watch(
 useFocusRing()
 useDisableNativeContextMenu()
 
-const { fdaGranted } = useFullDiskAccess()
-const { folders, loading, progress, loadFolders, onAbort, onCancel } = useScan()
+const { isFdaGranted } = useFullDiskAccess()
+const { folders, isLoading, progress, loadFolders, onAbort, onCancel } = useScan()
 const { activeView, setActiveView } = useViews(mainContentRef)
 const { availableUpdate } = useUpdater()
 </script>
@@ -63,7 +63,7 @@ const { availableUpdate } = useUpdater()
             <ScanView
                v-show="activeView === 'scan'"
                :folders="folders"
-               :loading="loading"
+               :isLoading="isLoading"
                :progress="progress"
                @start-scan="loadFolders"
                @abort="onAbort"
@@ -71,7 +71,7 @@ const { availableUpdate } = useUpdater()
             />
 
             <div v-if="activeView === 'settings'" class="App-overlay">
-               <SettingsView :fdaGranted="fdaGranted" :availableUpdate="availableUpdate" />
+               <SettingsView :isFdaGranted="isFdaGranted" :availableUpdate="availableUpdate" />
             </div>
          </div>
       </div>

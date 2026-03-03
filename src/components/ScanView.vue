@@ -3,12 +3,12 @@ ScanView
 
 Purpose: Common scan shell. Always shows ScanViewDiskUsage at top; body switches between ScanResults, ScanResultsDelete, or ScanResultsDeleteConfirmation.
 
-Props: folders (FolderInfo[]), loading (boolean), progress (ScanProgress)
+Props: folders (FolderInfo[]), isLoading (boolean), progress (ScanProgress)
 
 Example:
  <ScanView
    :folders="folders"
-   :loading="loading"
+   :isLoading="isLoading"
    :progress="progress"
    @start-scan="loadFolders"
    @abort="onAbort"
@@ -29,7 +29,7 @@ import type { DeleteListItem, FolderInfo, ScanProgress } from '@/types/structs'
 
 const props = defineProps<{
    folders: FolderInfo[]
-   loading: boolean
+   isLoading: boolean
    progress: ScanProgress
 }>()
 
@@ -114,7 +114,7 @@ onDeactivated(() => {
       <Transition name="fade" mode="out-in">
          <KeepAlive>
             <ScanScanningResults
-               v-if="loading"
+               v-if="isLoading"
                class="ScanView-body"
                :progress="progress"
                @abort="$emit('abort')"
@@ -142,7 +142,7 @@ onDeactivated(() => {
                v-else-if="viewState === 'delete'"
                class="ScanView-body"
                :items="deleteItems"
-               :active="viewState === 'delete'"
+               :isActive="viewState === 'delete'"
                @back="onBackFromDelete"
                @update:selectedSize="onSelectedSizeUpdate"
                @complete="onDeleteComplete"

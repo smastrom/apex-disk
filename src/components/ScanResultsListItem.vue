@@ -3,14 +3,14 @@ ScanResultsListItem
 
 Purpose: Single row for folder or file. Selection circle, icon, name, item count (folders), size, nav chevron (folders).
 
-Props: item (FolderInfo), selected (boolean), someSelected (boolean?), selectable (boolean?), formatBytes (fn)
+Props: item (FolderInfo), isSelected (boolean), isSomeSelected (boolean?), isSelectable (boolean?), formatBytes (fn)
 
 Example:
  <ScanResultsListItem
    :item="folder"
-   :selected="selectedPaths.has(folder.path)"
-   :someSelected="someSelectedPaths.has(folder.path)"
-   :selectable="!folder.is_protected"
+   :isSelected="selectedPaths.has(folder.path)"
+   :isSomeSelected="someSelectedPaths.has(folder.path)"
+   :isSelectable="!folder.is_protected"
    :formatBytes="formatBytes"
    @select="toggleSelect"
    @navigate="goInto"
@@ -30,9 +30,9 @@ import type { FolderInfo } from '@/types/structs'
 
 defineProps<{
    item: FolderInfo
-   selected: boolean
-   someSelected?: boolean
-   selectable?: boolean
+   isSelected: boolean
+   isSomeSelected?: boolean
+   isSelectable?: boolean
    formatBytes: (bytes: number) => string
 }>()
 
@@ -52,7 +52,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
    <div
       class="ScanResultsListItem-root"
       :class="{
-         'ScanResultsListItem-root--selected': selected,
+         'ScanResultsListItem-root--selected': isSelected,
          'ScanResultsListItem-root--folder': !item.is_file,
       }"
       @click="!item.is_file && emit('navigate')"
@@ -61,24 +61,24 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
          type="button"
          class="ScanResultsListItem-check"
          :class="{
-            'ScanResultsListItem-check--selected': selected,
-            'ScanResultsListItem-check--some-selected': !selected && someSelected,
-            'ScanResultsListItem-check--disabled': !selectable,
+            'ScanResultsListItem-check--selected': isSelected,
+            'ScanResultsListItem-check--some-selected': !isSelected && isSomeSelected,
+            'ScanResultsListItem-check--disabled': !isSelectable,
          }"
-         :aria-pressed="selected || someSelected"
-         :disabled="!selectable"
-         :aria-disabled="!selectable"
-         @click.stop="selectable && emit('select')"
+         :aria-pressed="isSelected || isSomeSelected"
+         :disabled="!isSelectable"
+         :aria-disabled="!isSelectable"
+         @click.stop="isSelectable && emit('select')"
       >
          <PhCircle
-            v-if="!selected && !someSelected"
+            v-if="!isSelected && !isSomeSelected"
             :size="22"
             weight="regular"
             class="ScanResultsListItem-checkEmpty"
             aria-hidden="true"
          />
          <PhMinusCircle
-            v-else-if="someSelected"
+            v-else-if="isSomeSelected"
             :size="22"
             weight="fill"
             class="ScanResultsListItem-checkPartial"

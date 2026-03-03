@@ -3,10 +3,10 @@ ScanResultsDeleteList
 
 Purpose: Fullscreen list of items scheduled for delete. Checkboxes (default on) update progress and button size. Red Delete button with countdown then spinner when processing.
 
-Props: items (DeleteListItem[]), active (boolean?) — when true, countdown starts
+Props: items (DeleteListItem[]), isActive (boolean?) — when true, countdown starts
 
 Example:
- <ScanResultsDeleteList :items="deleteItems" :active="isDeleteView" @update:selectedSize="onSize" @complete="onComplete" />
+ <ScanResultsDeleteList :items="deleteItems" :isActive="isDeleteView" @update:selectedSize="onSize" @complete="onComplete" />
 -->
 
 <script setup lang="ts">
@@ -29,7 +29,7 @@ import type { DeleteListItem } from '@/types/structs'
 
 const props = defineProps<{
    items: DeleteListItem[]
-   active?: boolean
+   isActive?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -76,9 +76,9 @@ function stopCountdown() {
 }
 
 watch(
-   () => props.active,
-   (active) => {
-      if (active) startCountdown()
+   () => props.isActive,
+   (isActive) => {
+      if (isActive) startCountdown()
       else stopCountdown()
    },
    { immediate: true }
@@ -86,11 +86,11 @@ watch(
 
 /**
  * KeepAlive re-activation: the watcher above won't fire when the component is
- * restored from cache because `props.active` stays `true` → `true` (no change).
+ * restored from cache because `props.isActive` stays `true` → `true` (no change).
  * Restart the countdown explicitly on re-activation.
  */
 onActivated(() => {
-   if (props.active) startCountdown()
+   if (props.isActive) startCountdown()
 })
 
 onUnmounted(stopCountdown)
@@ -106,7 +106,7 @@ onUnmounted(stopCountdown)
  *   and in size/count computeds without needing a secondary index.
  */
 const checkedMapRef = shallowRef(new Map<string, boolean>())
-const deleting = ref(false)
+const isDeleting = ref(false)
 
 const prefersReducedMotion = useReducedMotion()
 
@@ -144,9 +144,11 @@ watch(
 const selectedSize = computed(() => {
    const map = checkedMapRef.value
    let total = 0
+
    for (const item of props.items) {
       if (map.get(item.path)) total += item.size
    }
+
    return total
 })
 
@@ -157,9 +159,11 @@ watch(selectedSize, (size) => emit('update:selectedSize', size), { immediate: tr
 const checkedCount = computed(() => {
    const map = checkedMapRef.value
    let n = 0
+
    for (const item of props.items) {
       if (map.get(item.path)) n++
    }
+
    return n
 })
 
@@ -190,9 +194,9 @@ const deleteReady = computed(() => countdownRemaining.value <= 0)
  * sees the spinner), then emits `complete` with the deleted items.
  */
 async function onDeleteClick() {
-   if (!deleteReady.value || deleting.value || checkedCount.value === 0) return
+   if (!deleteReady.value || isDeleting.value || checkedCount.value === 0) return
 
-   deleting.value = true
+   isDeleting.value = true
    const toDelete = props.items.filter((item) => checkedMapRef.value.get(item.path))
 
    const items = toDelete.map((item) => ({
@@ -202,7 +206,7 @@ async function onDeleteClick() {
    await invoke('delete_paths', { items }).catch(() => {})
 
    await new Promise((r) => setTimeout(r, DELETE_POST_DELETE_SLEEP_MS))
-   // Keep deleting=true visually — the parent will tear down this component
+   // Keep isDeleting=true visually — the parent will tear down this component
    // after handling `complete`. Resetting here would flash the ready state.
    emit('complete', toDelete)
 }
@@ -211,18 +215,18 @@ async function onDeleteClick() {
 <template>
    <div class="ScanResultsDeleteList-root">
       <ScanResultsNav
-         :showForward="false"
-         :backDisabled="false"
+         :isForwardShown="false"
+         :isBackDisabled="false"
          pathIcon="trash"
          :pathLabel="t('ScanResultsDeleteList', 'navTitle')"
-         showActions
-         :resetDisabled="true"
+         :isActionsShown="true"
+         :isResetDisabled="true"
          @back="emit('back', getCheckedItems())"
          @cancel="emit('cancel')"
       />
       <div
          class="ScanResultsDeleteList-listWrap"
-         :class="{ 'ScanResultsDeleteList-listWrap--deleting': deleting }"
+         :class="{ 'ScanResultsDeleteList-listWrap--deleting': isDeleting }"
       >
          <div ref="parentRef" class="ScanResultsDeleteList-list ScanResultsDeleteList-listScroll">
             <div
@@ -243,7 +247,7 @@ async function onDeleteClick() {
                >
                   <ScanResultsDeleteListItem
                      :item="items[virtualRow.index]"
-                     :selected="!!checkedMapRef.get(items[virtualRow.index].path)"
+                     :isSelected="!!checkedMapRef.get(items[virtualRow.index].path)"
                      :formatBytes="formatBytes"
                      @toggle="toggle(items[virtualRow.index].path)"
                   />
@@ -255,12 +259,12 @@ async function onDeleteClick() {
          <button
             type="button"
             class="ScanResultsDeleteList-deleteBtn"
-            :data-deleting="deleting || undefined"
-            :disabled="countdownRemaining > 0 || checkedCount === 0 || deleting"
+            :data-deleting="isDeleting || undefined"
+            :disabled="countdownRemaining > 0 || checkedCount === 0 || isDeleting"
             @click="onDeleteClick"
          >
             <Transition name="ScanResultsDeleteList-caption" mode="out-in">
-               <span v-if="!deleting" key="ready" class="ScanResultsDeleteList-captionText">
+               <span v-if="!isDeleting" key="ready" class="ScanResultsDeleteList-captionText">
                   <PhTrashSimple :size="18" weight="bold" aria-hidden="true" />
                   {{
                      selectedSize > 0
@@ -330,7 +334,7 @@ async function onDeleteClick() {
    }
 }
 
-.ScanResultsDeleteList-listWrap--deleting {
+.ScanResultsDeleteList-listWrap--isDeleting {
    opacity: 0.5;
    pointer-events: none;
 }
