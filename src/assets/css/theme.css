@@ -17,7 +17,7 @@
    /* Glow system */
    --color-accent-glow: rgba(0, 194, 201, 0.38);
    --color-accent-bg: rgba(0, 194, 201, 0.12);
-   --color-accent-bg-hover: rgba(0, 194, 201, 0.06);
+   --color-accent-bg-hover: rgba(0, 194, 201, 0.03);
    --color-border: #2e3238;
    --glow-sm: 0 0 8px var(--color-accent-glow);
    --glow-md: 0 0 14px var(--color-accent-glow);
