@@ -10,7 +10,7 @@ Example:
 -->
 
 <script setup lang="ts">
-import SettingsFooter from '@/components/SettingsFooter.vue'
+// import SettingsFooter from '@/components/SettingsFooter.vue'
 
 import {
    PhArrowCircleUp,
