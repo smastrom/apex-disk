@@ -208,7 +208,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
 }
 
 .ScanResultsListItem-icon--hidden {
-   opacity: 0.5;
+   opacity: 0.4;
 }
 
 .ScanResultsListItem-info {
