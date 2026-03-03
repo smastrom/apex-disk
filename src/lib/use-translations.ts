@@ -15,6 +15,7 @@ export function useTranslations() {
    const settingsStore = useSettingsStore()
    const lang = computed(() => settingsStore.settings.value.language)
    const t = computed(() => createT(lang.value))
+
    return {
       t: (module: TranslationModule, key: string, vars?: Record<string, string | number>) =>
          t.value(module, key, vars),
