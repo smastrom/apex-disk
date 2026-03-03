@@ -21,6 +21,7 @@ Mac User Lens scans your entire user folder and presents everything as a navigab
 - **Smart selection** — Three-state checkboxes with full parent-child logic and a clear preview of how much space you'll reclaim before deleting
 - **Safe by design** — Critical macOS directories (Desktop, Documents, Library, etc.) are protected from deletion with path canonicalization to prevent bypass. Sensitive credential folders (`.ssh`, `.gnupg`, `.aws`, `.kube`) are completely excluded from scan results
 - **10 languages** — English, Italian, Spanish, French, Portuguese, German, Russian, Chinese, Japanese, and Arabic (with RTL support)
+- **Accessible** — Fully accessible and keyboard navigable
 - **Themes** — Multiple color themes to choose from, with more on the way
 
 ## Installation
@@ -70,8 +71,8 @@ pnpm tauri:build
 
 ## Credits
 
+- [Hugeicons](https://hugeicons.com) — App icon
 - [Phosphor Icons](https://phosphoricons.com) — UI icons
-- [Hugeicons](https://hugeicons.com) — Mac User Lens app icon
 
 ## License
 
