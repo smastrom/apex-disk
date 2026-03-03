@@ -31,7 +31,7 @@ MacDiskTree scans your entire user folder and presents everything as a navigable
 
 ### Manual
 
-1. Download the latest `.dmg` from [Releases](https://github.com/smastromattei/mac-disk-tree/releases)
+1. Download the latest `.dmg` from [Releases](https://github.com/smastrom/mac-disk-tree/releases)
 2. Drag the app to your Applications folder
 3. Before opening, run this command in Terminal to bypass macOS Gatekeeper:
 
@@ -40,7 +40,7 @@ xattr -cr /Applications/MacDiskTree.app
 ```
 
 > [!NOTE]
-> The only official distribution channel is the [GitHub Releases](https://github.com/smastromattei/mac-disk-tree/releases) page.
+> The only official distribution channel is the [GitHub Releases](https://github.com/smastrom/mac-disk-tree/releases) page.
 
 ## Building from source
 
@@ -68,4 +68,4 @@ pnpm tauri:build
 
 ## License
 
-[MIT](./LICENSE) — Simone Mastromattei
+[MIT](./LICENSE)
