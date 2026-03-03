@@ -1,7 +1,7 @@
 <!--
 SettingsView
 
-Purpose: Settings screen with Language, Theme, Scan Settings (hidden files, 0 B, under 1 KB), and Permissions. macOS-style grouped list.
+Purpose: Settings screen with Language, Theme, Delete behavior (permanent delete), Scan Settings (hidden files, 0 B, under 1 KB), and Permissions. macOS-style grouped list.
 
 Props: isFdaGranted (boolean), availableUpdate (string | null)
 
@@ -137,7 +137,7 @@ async function openSystemSettings() {
             </div>
          </section>
 
-         <!-- Scan Settings -->
+         <!-- Delete behavior -->
 
          <section class="SettingsGroup">
             <div class="SettingsGroup-row">
@@ -159,6 +159,11 @@ async function openSystemSettings() {
                   <span class="SettingsToggle-knob" aria-hidden="true" />
                </button>
             </div>
+         </section>
+
+         <!-- Scan Settings -->
+
+         <section class="SettingsGroup">
             <div class="SettingsGroup-row">
                <span class="SettingsGroup-label">{{ t('SettingsView', 'indexHiddenFiles') }}</span>
                <button
