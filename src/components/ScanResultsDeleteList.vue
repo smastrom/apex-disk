@@ -302,11 +302,24 @@ async function onDeleteClick() {
 }
 
 .ScanResultsDeleteList-listWrap {
+   position: relative;
    flex: 1;
    min-height: 0;
    display: flex;
    flex-direction: column;
    transition: opacity 0.25s;
+
+   &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 12px;
+      background: linear-gradient(var(--color-bg), transparent);
+      z-index: 1;
+      pointer-events: none;
+   }
 }
 
 .ScanResultsDeleteList-listWrap--deleting {

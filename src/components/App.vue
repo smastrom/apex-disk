@@ -24,6 +24,7 @@ import { useFullDiskAccess } from '@/lib/use-full-disk-access'
 import { useScan } from '@/lib/use-scan'
 import { useViews } from '@/lib/use-views'
 import { useUpdater } from '@/lib/use-updater'
+import { useDisableNativeContextMenu } from '@/lib/use-context-menu'
 
 import '@/assets/css/theme.css'
 import '@/assets/css/global.css'
@@ -45,6 +46,7 @@ watch(
 )
 
 useFocusRing()
+useDisableNativeContextMenu()
 
 const { fdaGranted } = useFullDiskAccess()
 const { folders, loading, progress, loadFolders, onAbort, onCancel } = useScan()
