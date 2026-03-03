@@ -8,16 +8,16 @@
    --color-bg-elevated: #22252a;
    --color-surface: #2a2e34;
    --color-surface-hover: #353a42;
-   --color-accent: #00c2c9;
-   --color-accent-hover: #26cad1;
+   --color-accent: #2aa8ae;
+   --color-accent-hover: #44b5ba;
    --color-text: #f5f5f7;
    --color-text-muted: #9ca0a6;
    --color-text-dim: #6e7379;
 
    /* Glow system */
-   --color-accent-glow: rgba(0, 194, 201, 0.38);
-   --color-accent-bg: rgba(0, 194, 201, 0.12);
-   --color-accent-bg-hover: rgba(0, 194, 201, 0.03);
+   --color-accent-glow: rgba(42, 168, 174, 0.38);
+   --color-accent-bg: rgba(42, 168, 174, 0.12);
+   --color-accent-bg-hover: rgba(42, 168, 174, 0.03);
    --color-border: #2e3238;
    --glow-sm: 0 0 8px var(--color-accent-glow);
    --glow-md: 0 0 14px var(--color-accent-glow);
@@ -38,9 +38,9 @@
    --spacing-xl: 32px;
 
    /* Gradient button (accent-based) */
-   --btn-gradient-0: #00c2c9;
-   --btn-gradient-50: #00aab0;
-   --btn-gradient-100: #00c2c9;
+   --btn-gradient-0: #2aa8ae;
+   --btn-gradient-50: #239da3;
+   --btn-gradient-100: #2aa8ae;
 
    /* Focus ring (keyboard focus indicator) */
    --focus-ring-color: var(--color-accent);
