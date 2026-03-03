@@ -222,7 +222,6 @@ Specific macOS home directory paths cannot be selected or deleted. Both top-leve
 ##### Constants
 
 - **Rust**: `src-tauri/src/safe_folders.rs` — `PROTECTED_RELATIVE_PATHS` (paths relative to home)
-- **Frontend**: `src/lib/constants.ts` — `PROTECTED_FOLDER_NAMES` (must match Rust for reference)
 
 To add or remove protected paths: edit both files. Both simple folder names (`"Library"`) and nested paths (`"Library/Application Support"`) are valid entries — protection is exact-match only, descendants are not affected.
 

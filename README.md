@@ -63,7 +63,7 @@ pnpm install
 rustup target add aarch64-apple-darwin x86_64-apple-darwin
 
 # Build the universal macOS binary
-pnpm tauri:build
+pnpm tauri:build:local
 ```
 
 ## License
