@@ -1,8 +1,8 @@
 {
    "$schema": "https://schema.tauri.app/config/2",
-   "productName": "Mac User Lens",
+   "productName": "MacDiskTree",
    "version": "0.0.81",
-   "identifier": "com.smastrom.mac-user-lens",
+   "identifier": "com.smastrom.mac-disk-tree",
    "build": {
       "beforeDevCommand": "pnpm dev",
       "devUrl": "http://localhost:1420",
@@ -12,7 +12,7 @@
    "app": {
       "windows": [
          {
-            "title": "Mac User Lens",
+            "title": "MacDiskTree",
             "hiddenTitle": true,
             "width": 425,
             "height": 825,
@@ -42,7 +42,7 @@
       "updater": {
          "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDUyNzIxOTQ0MkZDM0I5MjYKUldRbXVjTXZSQmx5VXJIcXJrTUljamFPOERVbVpmaWkyRENpMGNPdkZ3M3VYOW8zaHNxTmlEWmsK",
          "endpoints": [
-            "https://github.com/smastrom/mac-user-lens/releases/latest/download/latest.json"
+            "https://github.com/smastrom/mac-disk-tree/releases/latest/download/latest.json"
          ]
       }
    }

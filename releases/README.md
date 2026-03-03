@@ -1,6 +1,6 @@
 # Release System
 
-This folder contains the release infrastructure for Mac User Lens.
+This folder contains the release infrastructure for MacDiskTree.
 
 ## How It Works
 
@@ -13,7 +13,7 @@ The in-app updater requires **signed** artifacts. Do this once before your first
 1. Generate signing keys:
 
    ```sh
-   pnpm tauri signer generate -w ~/.tauri/mac-user-lens.key
+   pnpm tauri signer generate -w ~/.tauri/mac-disk-tree.key
    ```
 
 2. Copy the **public key** contents into `src-tauri/tauri.conf.json` → `plugins.updater.pubkey` (single-line, `\n`-escaped). The public key is safe to commit.
@@ -77,7 +77,7 @@ git push
 
 ### Step 5: Trigger the release
 
-1. Go to https://github.com/smastrom/mac-user-lens/actions
+1. Go to https://github.com/smastrom/mac-disk-tree/actions
 2. Select the **Release** workflow
 3. Click **Run workflow**
 

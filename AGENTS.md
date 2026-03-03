@@ -1,4 +1,4 @@
-# Mac User Lens — Agent Guidelines
+# MacDiskTree — Agent Guidelines
 
 **Always follow these rules** when editing this codebase. This document is split into two sections:
 
@@ -138,7 +138,7 @@ The app theme is controlled by CSS variables in `src/assets/css/theme.css` and p
 
 ##### CSS variables
 
-- The **default palette** lives under `:root` in `theme.css` and is used when the theme is `ROOT_THEME` (`'mac-user-lens'`).
+- The **default palette** lives under `:root` in `theme.css` and is used when the theme is `ROOT_THEME` (`'mac-disk-tree'`).
 - **Additional themes** use a `data-theme` attribute on `html` and override only the variables they need:
 
 ```css
@@ -174,9 +174,9 @@ Theme options are defined in `src/types/settings.ts` and consumed by the setting
 
 ```ts
 // src/types/settings.ts
-export const THEME_COLORS = ['mac-user-lens', 'ayu'] as const
+export const THEME_COLORS = ['mac-disk-tree', 'ayu'] as const
 export type ThemeColor = (typeof THEME_COLORS)[number]
-export const ROOT_THEME: ThemeColor = 'mac-user-lens'
+export const ROOT_THEME: ThemeColor = 'mac-disk-tree'
 
 export interface AppSettings {
    language: Language
@@ -186,7 +186,7 @@ export interface AppSettings {
 
 export const DEFAULT_SETTINGS: AppSettings = {
    language: 'en',
-   themeColor: 'mac-user-lens',
+   themeColor: 'mac-disk-tree',
    /* ... */
 }
 ```
@@ -288,7 +288,7 @@ The macOS menu bar is built in Rust (`src-tauri/src/menu.rs`) and localized via 
 
 ##### Structure
 
-Menu bar order: **App** (`Mac User Lens`) → **Window** → **Help**.
+Menu bar order: **App** (`MacDiskTree`) → **Window** → **Help**.
 
 - **App submenu**: About, separator, Services, separator, Hide / Hide Others / Show All, separator, Quit
 - **Window submenu**: Minimize, Close Window (uses `WINDOW_SUBMENU_ID` for macOS system integration)

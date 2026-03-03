@@ -1,3 +1,3 @@
 fn main() {
-    mac_user_lens_lib::run()
+    mac_disk_tree_lib::run()
 }

@@ -8,7 +8,7 @@ import { DEFAULT_SETTINGS, THEME_COLORS } from '@/lib/constants'
 
 import type { AppSettings, ThemeColor, Language } from '@/types/settings'
 
-/** Normalizes stored theme value: valid theme, legacy (oceanic/catppuccin) → mac-user-lens, or default. */
+/** Normalizes stored theme value: valid theme, legacy (oceanic/catppuccin) → mac-disk-tree, or default. */
 function normalizeThemeColor(value: unknown): ThemeColor {
    if (typeof value === 'string' && (THEME_COLORS as readonly string[]).includes(value)) {
       return value as ThemeColor

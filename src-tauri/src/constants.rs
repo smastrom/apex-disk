@@ -1,7 +1,7 @@
 //! App-level constants shared with the frontend. Keep in sync with src/lib/constants.ts.
 
 /// App name shown in the menu bar and About dialog. Keep in sync with tauri.conf.json productName.
-pub const APP_NAME: &str = "Mac User Lens";
+pub const APP_NAME: &str = "MacDiskTree";
 
 /// Author line shown in the About dialog (macOS credits field).
 pub const APP_CREDITS: &str = "Simone Mastromattei (smastrom)";
@@ -11,10 +11,10 @@ pub const APP_CREDITS: &str = "Simone Mastromattei (smastrom)";
 pub const AUTHOR_URL: &str = "https://github.com/smastrom";
 
 /// URL opened when the user chooses "Read release notes" from the Help menu.
-pub const RELEASE_NOTES_URL: &str = "https://github.com/smastrom/mac-user-lens/releases";
+pub const RELEASE_NOTES_URL: &str = "https://github.com/smastrom/mac-disk-tree/releases";
 
 /// URL opened when the user chooses "Read license" from the Help menu.
-pub const LICENSE_URL: &str = "https://github.com/smastrom/mac-user-lens/blob/main/LICENSE";
+pub const LICENSE_URL: &str = "https://github.com/smastrom/mac-disk-tree/blob/main/LICENSE";
 
 /// Menu item id for the release notes action. Handled in lib.rs setup.
 pub const RELEASE_NOTES_MENU_ID: &str = "release-notes";

@@ -8,7 +8,7 @@ export const DEFAULT_LANGUAGE = 'en' as const
 /** Languages that use right-to-left script direction. */
 export const RTL_LANGUAGES: ReadonlySet<string> = new Set(['ar'])
 
-export const ROOT_THEME = 'mac-user-lens' as const
+export const ROOT_THEME = 'mac-disk-tree' as const
 /** Supported theme color presets. Single source of truth for theme IDs. */
 export const THEME_COLORS = [
    ROOT_THEME,
@@ -59,9 +59,9 @@ export const DONATE_URL = 'https://buymeacoffee.com/smastrom'
 /**
  * App-level constants shared with Rust. Keep in sync with src-tauri/src/constants.rs.
  */
-export const APP_NAME = 'Mac User Lens' as const
+export const APP_NAME = 'MacDiskTree' as const
 export const APP_CREDITS = 'Simone Mastromattei (smastrom)' as const
 /** Author website or GitHub profile. Used in Settings app info. */
 export const AUTHOR_URL = 'https://github.com/smastrom' as const
-export const RELEASE_NOTES_URL = 'https://github.com/smastrom/mac-user-lens/releases' as const
-export const LICENSE_URL = 'https://github.com/smastrom/mac-user-lens/blob/main/LICENSE' as const
+export const RELEASE_NOTES_URL = 'https://github.com/smastrom/mac-disk-tree/releases' as const
+export const LICENSE_URL = 'https://github.com/smastrom/mac-disk-tree/blob/main/LICENSE' as const

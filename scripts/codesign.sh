@@ -11,7 +11,7 @@
 set -euo pipefail
 
 BUNDLE_DIR="src-tauri/target/universal-apple-darwin/release/bundle/macos"
-APP="$BUNDLE_DIR/Mac User Lens.app"
+APP="$BUNDLE_DIR/MacDiskTree.app"
 
 if [ ! -d "$APP" ]; then
   echo "App bundle not found at $APP"

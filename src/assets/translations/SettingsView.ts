@@ -26,7 +26,7 @@ export const SettingsView = {
       languageFr: 'Français',
       languagePt: 'Português',
       languageDe: 'Deutsch',
-      themeMacUserLens: 'Mac User Lens',
+      themeMacDiskTree: 'MacDiskTree',
       themeAyu: 'Ayu',
       themeMacosDark: 'macOS Dark',
       themeMacosLight: 'macOS Light',
@@ -35,7 +35,7 @@ export const SettingsView = {
       updateLabel: 'Software Update',
       updateUpToDate: 'Updated',
       updateAvailableHint:
-         'Version {{version}} is available. Use the menu Mac User Lens \u203A Check for Updates\u2026 to update.',
+         'Version {{version}} is available. Use the menu MacDiskTree \u203A Check for Updates\u2026 to update.',
    },
    it: {
       loadingSettings: 'Caricamento impostazioni…',
@@ -64,7 +64,7 @@ export const SettingsView = {
       languageFr: 'Français',
       languagePt: 'Português',
       languageDe: 'Deutsch',
-      themeMacUserLens: 'Mac User Lens',
+      themeMacDiskTree: 'MacDiskTree',
       themeAyu: 'Ayu',
       themeMacosDark: 'macOS Dark',
       themeMacosLight: 'macOS Light',
@@ -73,7 +73,7 @@ export const SettingsView = {
       updateLabel: 'Aggiornamento software',
       updateUpToDate: 'Aggiornato',
       updateAvailableHint:
-         'La versione {{version}} \u00E8 disponibile. Usa il menu Mac User Lens \u203A Controlla aggiornamenti\u2026 per aggiornare.',
+         'La versione {{version}} \u00E8 disponibile. Usa il menu MacDiskTree \u203A Controlla aggiornamenti\u2026 per aggiornare.',
    },
    es: {
       loadingSettings: 'Cargando ajustes…',
@@ -102,7 +102,7 @@ export const SettingsView = {
       languageFr: 'Français',
       languagePt: 'Português',
       languageDe: 'Deutsch',
-      themeMacUserLens: 'Mac User Lens',
+      themeMacDiskTree: 'MacDiskTree',
       themeAyu: 'Ayu',
       themeMacosDark: 'macOS Dark',
       themeMacosLight: 'macOS Light',
@@ -111,7 +111,7 @@ export const SettingsView = {
       updateLabel: 'Actualizaci\u00F3n de software',
       updateUpToDate: 'Actualizado',
       updateAvailableHint:
-         'La versi\u00F3n {{version}} est\u00E1 disponible. Usa el men\u00FA Mac User Lens \u203A Buscar actualizaciones\u2026 para actualizar.',
+         'La versi\u00F3n {{version}} est\u00E1 disponible. Usa el men\u00FA MacDiskTree \u203A Buscar actualizaciones\u2026 para actualizar.',
    },
    zh: {
       loadingSettings: '正在加载设置…',
@@ -140,7 +140,7 @@ export const SettingsView = {
       languageFr: 'Français',
       languagePt: 'Português',
       languageDe: 'Deutsch',
-      themeMacUserLens: 'Mac User Lens',
+      themeMacDiskTree: 'MacDiskTree',
       themeAyu: 'Ayu',
       themeMacosDark: 'macOS Dark',
       themeMacosLight: 'macOS Light',
@@ -149,7 +149,7 @@ export const SettingsView = {
       updateLabel: '\u8F6F\u4EF6\u66F4\u65B0',
       updateUpToDate: '\u66F4\u65B0',
       updateAvailableHint:
-         '\u7248\u672C {{version}} \u53EF\u7528\u3002\u8BF7\u4F7F\u7528\u83DC\u5355 Mac User Lens \u203A \u68C0\u67E5\u66F4\u65B0\u2026 \u8FDB\u884C\u66F4\u65B0\u3002',
+         '\u7248\u672C {{version}} \u53EF\u7528\u3002\u8BF7\u4F7F\u7528\u83DC\u5355 MacDiskTree \u203A \u68C0\u67E5\u66F4\u65B0\u2026 \u8FDB\u884C\u66F4\u65B0\u3002',
    },
    ja: {
       loadingSettings: '設定を読み込み中…',
@@ -178,7 +178,7 @@ export const SettingsView = {
       languageFr: 'Français',
       languagePt: 'Português',
       languageDe: 'Deutsch',
-      themeMacUserLens: 'Mac User Lens',
+      themeMacDiskTree: 'MacDiskTree',
       themeAyu: 'Ayu',
       themeMacosDark: 'macOS Dark',
       themeMacosLight: 'macOS Light',
@@ -187,7 +187,7 @@ export const SettingsView = {
       updateLabel: '\u30BD\u30D5\u30C8\u30A6\u30A7\u30A2\u30A2\u30C3\u30D7\u30C7\u30FC\u30C8',
       updateUpToDate: '\u30A2\u30C3\u30D7\u30C7\u30FC\u30C8',
       updateAvailableHint:
-         '\u30D0\u30FC\u30B8\u30E7\u30F3 {{version}} \u304C\u5229\u7528\u53EF\u80FD\u3067\u3059\u3002\u30E1\u30CB\u30E5\u30FC Mac User Lens \u203A \u66F4\u65B0\u3092\u78BA\u8A8D\u2026 \u304B\u3089\u66F4\u65B0\u3057\u3066\u304F\u3060\u3055\u3044\u3002',
+         '\u30D0\u30FC\u30B8\u30E7\u30F3 {{version}} \u304C\u5229\u7528\u53EF\u80FD\u3067\u3059\u3002\u30E1\u30CB\u30E5\u30FC MacDiskTree \u203A \u66F4\u65B0\u3092\u78BA\u8A8D\u2026 \u304B\u3089\u66F4\u65B0\u3057\u3066\u304F\u3060\u3055\u3044\u3002',
    },
    ar: {
       loadingSettings: 'جاري تحميل الإعدادات…',
@@ -216,7 +216,7 @@ export const SettingsView = {
       languageFr: 'Français',
       languagePt: 'Português',
       languageDe: 'Deutsch',
-      themeMacUserLens: 'Mac User Lens',
+      themeMacDiskTree: 'MacDiskTree',
       themeAyu: 'Ayu',
       themeMacosDark: 'macOS Dark',
       themeMacosLight: 'macOS Light',
@@ -226,7 +226,7 @@ export const SettingsView = {
          '\u062A\u062D\u062F\u064A\u062B \u0627\u0644\u0628\u0631\u0646\u0627\u0645\u062C',
       updateUpToDate: '\u0627\u0644\u062A\u062D\u062F\u064A\u062B\u0627\u062A',
       updateAvailableHint:
-         '\u0627\u0644\u0625\u0635\u062F\u0627\u0631 {{version}} \u0645\u062A\u0627\u062D. \u0627\u0633\u062A\u062E\u062F\u0645 \u0627\u0644\u0642\u0627\u0626\u0645\u0629 Mac User Lens \u203A \u0627\u0644\u0628\u062D\u062B \u0639\u0646 \u062A\u062D\u062F\u064A\u062B\u0627\u062A\u2026 \u0644\u0644\u062A\u062D\u062F\u064A\u062B.',
+         '\u0627\u0644\u0625\u0635\u062F\u0627\u0631 {{version}} \u0645\u062A\u0627\u062D. \u0627\u0633\u062A\u062E\u062F\u0645 \u0627\u0644\u0642\u0627\u0626\u0645\u0629 MacDiskTree \u203A \u0627\u0644\u0628\u062D\u062B \u0639\u0646 \u062A\u062D\u062F\u064A\u062B\u0627\u062A\u2026 \u0644\u0644\u062A\u062D\u062F\u064A\u062B.',
    },
    ru: {
       loadingSettings: 'Загрузка настроек…',
@@ -255,7 +255,7 @@ export const SettingsView = {
       languageFr: 'Français',
       languagePt: 'Português',
       languageDe: 'Deutsch',
-      themeMacUserLens: 'Mac User Lens',
+      themeMacDiskTree: 'MacDiskTree',
       themeAyu: 'Ayu',
       themeMacosDark: 'macOS Dark',
       themeMacosLight: 'macOS Light',
@@ -264,7 +264,7 @@ export const SettingsView = {
       updateLabel: '\u041E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435 \u041F\u041E',
       updateUpToDate: '\u041E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435',
       updateAvailableHint:
-         '\u0414\u043E\u0441\u0442\u0443\u043F\u043D\u0430 \u0432\u0435\u0440\u0441\u0438\u044F {{version}}. \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u043C\u0435\u043D\u044E Mac User Lens \u203A \u041F\u043E\u0438\u0441\u043E\u043A \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0439\u2026 \u0434\u043B\u044F \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F.',
+         '\u0414\u043E\u0441\u0442\u0443\u043F\u043D\u0430 \u0432\u0435\u0440\u0441\u0438\u044F {{version}}. \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u043C\u0435\u043D\u044E MacDiskTree \u203A \u041F\u043E\u0438\u0441\u043E\u043A \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0439\u2026 \u0434\u043B\u044F \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F.',
    },
    fr: {
       loadingSettings: 'Chargement des paramètres…',
@@ -293,7 +293,7 @@ export const SettingsView = {
       languageFr: 'Français',
       languagePt: 'Português',
       languageDe: 'Deutsch',
-      themeMacUserLens: 'Mac User Lens',
+      themeMacDiskTree: 'MacDiskTree',
       themeAyu: 'Ayu',
       themeMacosDark: 'macOS Dark',
       themeMacosLight: 'macOS Light',
@@ -302,7 +302,7 @@ export const SettingsView = {
       updateLabel: 'Mise \u00E0 jour logicielle',
       updateUpToDate: 'Mise \u00E0 jour',
       updateAvailableHint:
-         'La version {{version}} est disponible. Utilisez le menu Mac User Lens \u203A Rechercher des mises \u00E0 jour\u2026 pour mettre \u00E0 jour.',
+         'La version {{version}} est disponible. Utilisez le menu MacDiskTree \u203A Rechercher des mises \u00E0 jour\u2026 pour mettre \u00E0 jour.',
    },
    pt: {
       loadingSettings: 'A carregar definições…',
@@ -331,7 +331,7 @@ export const SettingsView = {
       languageFr: 'Français',
       languagePt: 'Português',
       languageDe: 'Deutsch',
-      themeMacUserLens: 'Mac User Lens',
+      themeMacDiskTree: 'MacDiskTree',
       themeAyu: 'Ayu',
       themeMacosDark: 'macOS Dark',
       themeMacosLight: 'macOS Light',
@@ -340,7 +340,7 @@ export const SettingsView = {
       updateLabel: 'Atualiza\u00E7\u00E3o de software',
       updateUpToDate: 'Atualiza\u00E7\u00E3o',
       updateAvailableHint:
-         'A vers\u00E3o {{version}} est\u00E1 dispon\u00EDvel. Use o menu Mac User Lens \u203A Verificar atualiza\u00E7\u00F5es\u2026 para atualizar.',
+         'A vers\u00E3o {{version}} est\u00E1 dispon\u00EDvel. Use o menu MacDiskTree \u203A Verificar atualiza\u00E7\u00F5es\u2026 para atualizar.',
    },
    de: {
       loadingSettings: 'Einstellungen werden geladen…',
@@ -369,7 +369,7 @@ export const SettingsView = {
       languageFr: 'Français',
       languagePt: 'Português',
       languageDe: 'Deutsch',
-      themeMacUserLens: 'Mac User Lens',
+      themeMacDiskTree: 'MacDiskTree',
       themeAyu: 'Ayu',
       themeMacosDark: 'macOS Dark',
       themeMacosLight: 'macOS Light',
@@ -378,6 +378,6 @@ export const SettingsView = {
       updateLabel: 'Softwareupdate',
       updateUpToDate: 'Update',
       updateAvailableHint:
-         'Version {{version}} ist verf\u00FCgbar. Verwenden Sie das Men\u00FC Mac User Lens \u203A Nach Updates suchen\u2026 zum Aktualisieren.',
+         'Version {{version}} ist verf\u00FCgbar. Verwenden Sie das Men\u00FC MacDiskTree \u203A Nach Updates suchen\u2026 zum Aktualisieren.',
    },
 } as const

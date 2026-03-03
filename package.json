@@ -1,5 +1,5 @@
 {
-   "name": "mac-user-lens",
+   "name": "mac-disk-tree",
    "version": "0.0.81",
    "private": false,
    "description": "macOS tool to easily identify and get rid of big, unused files and folders in seconds.",
@@ -19,9 +19,9 @@
       "usage",
       "vue"
    ],
-   "homepage": "https://github.com/smastrom/mac-user-lens",
+   "homepage": "https://github.com/smastrom/mac-disk-tree",
    "bugs": {
-      "url": "https://github.com/smastrom/mac-user-lens/issues"
+      "url": "https://github.com/smastrom/mac-disk-tree/issues"
    },
    "license": "MIT",
    "author": {
@@ -31,7 +31,7 @@
    },
    "repository": {
       "type": "git",
-      "url": "https://github.com/smastrom/mac-user-lens.git"
+      "url": "https://github.com/smastrom/mac-disk-tree.git"
    },
    "scripts": {
       "build": "vue-tsc --noEmit && vite build",
@@ -44,7 +44,7 @@
       "prepare": "husky",
       "tauri": "tauri",
       "tauri:build": "tauri build --target universal-apple-darwin",
-      "tauri:build:local": "APPLE_SIGNING_IDENTITY='-' TAURI_SIGNING_PRIVATE_KEY=$(cat ~/.tauri/mac-user-lens.key) pnpm tauri:build",
+      "tauri:build:local": "APPLE_SIGNING_IDENTITY='-' TAURI_SIGNING_PRIVATE_KEY=$(cat ~/.tauri/mac-disk-tree.key) pnpm tauri:build",
       "tauri:clean": "cargo clean --manifest-path src-tauri/Cargo.toml",
       "tauri:dev": "tauri dev",
       "tauri:icons": "tauri icon ./src-tauri/icons/app-icon.png && cd ./src-tauri/icons && rm -rf android && rm -rf ios",

@@ -1,141 +1,141 @@
 name: Release
 
 on:
-  workflow_dispatch:
+   workflow_dispatch:
 
 jobs:
-  release:
-    runs-on: macos-latest
-    permissions:
-      contents: write
+   release:
+      runs-on: macos-latest
+      permissions:
+         contents: write
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      steps:
+         - name: Checkout
+           uses: actions/checkout@v4
 
-      - name: Validate versions
-        run: |
-          # Parse latest version from RELEASES.md (last ## v heading = most recent)
-          TAG=$(grep '^## v' releases/RELEASES.md | tail -1 | sed 's/^## //')
-          VERSION="${TAG#v}"
+         - name: Validate versions
+           run: |
+              # Parse latest version from RELEASES.md (last ## v heading = most recent)
+              TAG=$(grep '^## v' releases/RELEASES.md | tail -1 | sed 's/^## //')
+              VERSION="${TAG#v}"
 
-          if [ -z "$VERSION" ]; then
-            echo "::error::No version heading found in RELEASES.md. Expected format: ## vX.Y.Z"
-            exit 1
-          fi
+              if [ -z "$VERSION" ]; then
+                echo "::error::No version heading found in RELEASES.md. Expected format: ## vX.Y.Z"
+                exit 1
+              fi
 
-          echo "RELEASES.md version: $TAG ($VERSION)"
+              echo "RELEASES.md version: $TAG ($VERSION)"
 
-          # Read versions from source files
-          PKG_VERSION=$(node -p "require('./package.json').version")
-          TAURI_VERSION=$(node -p "require('./src-tauri/tauri.conf.json').version")
-          CARGO_VERSION=$(grep -m 1 '^version' src-tauri/Cargo.toml | sed 's/version = "\(.*\)"/\1/')
+              # Read versions from source files
+              PKG_VERSION=$(node -p "require('./package.json').version")
+              TAURI_VERSION=$(node -p "require('./src-tauri/tauri.conf.json').version")
+              CARGO_VERSION=$(grep -m 1 '^version' src-tauri/Cargo.toml | sed 's/version = "\(.*\)"/\1/')
 
-          FAILED=0
+              FAILED=0
 
-          if [ "$PKG_VERSION" != "$VERSION" ]; then
-            echo "::error::package.json version ($PKG_VERSION) does not match RELEASES.md ($VERSION)"
-            FAILED=1
-          fi
+              if [ "$PKG_VERSION" != "$VERSION" ]; then
+                echo "::error::package.json version ($PKG_VERSION) does not match RELEASES.md ($VERSION)"
+                FAILED=1
+              fi
 
-          if [ "$TAURI_VERSION" != "$VERSION" ]; then
-            echo "::error::tauri.conf.json version ($TAURI_VERSION) does not match RELEASES.md ($VERSION)"
-            FAILED=1
-          fi
+              if [ "$TAURI_VERSION" != "$VERSION" ]; then
+                echo "::error::tauri.conf.json version ($TAURI_VERSION) does not match RELEASES.md ($VERSION)"
+                FAILED=1
+              fi
 
-          if [ "$CARGO_VERSION" != "$VERSION" ]; then
-            echo "::error::Cargo.toml version ($CARGO_VERSION) does not match RELEASES.md ($VERSION)"
-            FAILED=1
-          fi
+              if [ "$CARGO_VERSION" != "$VERSION" ]; then
+                echo "::error::Cargo.toml version ($CARGO_VERSION) does not match RELEASES.md ($VERSION)"
+                FAILED=1
+              fi
 
-          if [ "$FAILED" -eq 1 ]; then
-            exit 1
-          fi
+              if [ "$FAILED" -eq 1 ]; then
+                exit 1
+              fi
 
-          # Check tag doesn't already exist
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "::error::Tag $TAG already exists"
-            exit 1
-          fi
+              # Check tag doesn't already exist
+              if git rev-parse "$TAG" >/dev/null 2>&1; then
+                echo "::error::Tag $TAG already exists"
+                exit 1
+              fi
 
-          echo "All versions match: $VERSION"
-          echo "TAG=$TAG" >> "$GITHUB_ENV"
+              echo "All versions match: $VERSION"
+              echo "TAG=$TAG" >> "$GITHUB_ENV"
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
+         - name: Setup Node
+           uses: actions/setup-node@v4
+           with:
+              node-version: 22
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+         - name: Setup pnpm
+           uses: pnpm/action-setup@v4
 
-      - name: Install frontend dependencies
-        run: pnpm install
+         - name: Install frontend dependencies
+           run: pnpm install
 
-      - name: Run tests
-        run: pnpm test
+         - name: Run tests
+           run: pnpm test
 
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: aarch64-apple-darwin,x86_64-apple-darwin
+         - name: Setup Rust
+           uses: dtolnay/rust-toolchain@stable
+           with:
+              targets: aarch64-apple-darwin,x86_64-apple-darwin
 
-      - name: Rust cache
-        uses: swatinem/rust-cache@v2
-        with:
-          workspaces: src-tauri
+         - name: Rust cache
+           uses: swatinem/rust-cache@v2
+           with:
+              workspaces: src-tauri
 
-      - name: Build universal macOS binary
-        env:
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
-          APPLE_SIGNING_IDENTITY: "-"
-        run: pnpm tauri:build
+         - name: Build universal macOS binary
+           env:
+              TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+              TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+              APPLE_SIGNING_IDENTITY: '-'
+           run: pnpm tauri:build
 
-      - name: Generate updater latest.json
-        run: |
-          BUNDLE_DIR="src-tauri/target/universal-apple-darwin/release/bundle/macos"
-          SIG_FILE="$BUNDLE_DIR/Mac User Lens.app.tar.gz.sig"
-          if [ ! -f "$SIG_FILE" ]; then
-            echo "::error::Updater signature not found. Ensure TAURI_SIGNING_PRIVATE_KEY is set in repo secrets."
-            exit 1
-          fi
-          SIGNATURE=$(cat "$SIG_FILE")
-          URL="https://github.com/smastrom/mac-user-lens/releases/download/${TAG}/Mac%20User%20Lens.app.tar.gz"
-          jq -n \
-            --arg version "$VERSION" \
-            --arg url "$URL" \
-            --arg signature "$SIGNATURE" \
-            '{version: $version, platforms: {"darwin-aarch64": {url: $url, signature: $signature}, "darwin-x86_64": {url: $url, signature: $signature}}}' \
-            > latest.json
+         - name: Generate updater latest.json
+           run: |
+              BUNDLE_DIR="src-tauri/target/universal-apple-darwin/release/bundle/macos"
+              SIG_FILE="$BUNDLE_DIR/MacDiskTree.app.tar.gz.sig"
+              if [ ! -f "$SIG_FILE" ]; then
+                echo "::error::Updater signature not found. Ensure TAURI_SIGNING_PRIVATE_KEY is set in repo secrets."
+                exit 1
+              fi
+              SIGNATURE=$(cat "$SIG_FILE")
+              URL="https://github.com/smastrom/mac-disk-tree/releases/download/${TAG}/MacDiskTree.app.tar.gz"
+              jq -n \
+                --arg version "$VERSION" \
+                --arg url "$URL" \
+                --arg signature "$SIGNATURE" \
+                '{version: $version, platforms: {"darwin-aarch64": {url: $url, signature: $signature}, "darwin-x86_64": {url: $url, signature: $signature}}}' \
+                > latest.json
 
-      - name: Extract release notes
-        run: |
-          # Extract content between the current version heading and the next version heading (or EOF)
-          awk "
-            /^## ${TAG}\$/ { found=1; next }
-            found && /^## v/ { exit }
-            found { print }
-          " releases/RELEASES.md > release_notes.md
+         - name: Extract release notes
+           run: |
+              # Extract content between the current version heading and the next version heading (or EOF)
+              awk "
+                /^## ${TAG}\$/ { found=1; next }
+                found && /^## v/ { exit }
+                found { print }
+              " releases/RELEASES.md > release_notes.md
 
-          if [ ! -s release_notes.md ]; then
-            echo "::error::No release notes found for ${TAG}"
-            exit 1
-          fi
+              if [ ! -s release_notes.md ]; then
+                echo "::error::No release notes found for ${TAG}"
+                exit 1
+              fi
 
-      - name: Create tag
-        run: |
-          git tag "$TAG"
-          git push origin "$TAG"
+         - name: Create tag
+           run: |
+              git tag "$TAG"
+              git push origin "$TAG"
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ env.TAG }}
-          body_path: release_notes.md
-          generate_release_notes: false
-          files: |
-            src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
-            src-tauri/target/universal-apple-darwin/release/bundle/macos/Mac User Lens.app.tar.gz
-            src-tauri/target/universal-apple-darwin/release/bundle/macos/Mac User Lens.app.tar.gz.sig
-            latest.json
+         - name: Create GitHub Release
+           uses: softprops/action-gh-release@v2
+           with:
+              tag_name: ${{ env.TAG }}
+              body_path: release_notes.md
+              generate_release_notes: false
+              files: |
+                 src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+                 src-tauri/target/universal-apple-darwin/release/bundle/macos/MacDiskTree.app.tar.gz
+                 src-tauri/target/universal-apple-darwin/release/bundle/macos/MacDiskTree.app.tar.gz.sig
+                 latest.json

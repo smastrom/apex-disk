@@ -1,6 +1,6 @@
-![Mac User Lens](./src-tauri/icons/128x128.png)
+![MacDiskTree](./src-tauri/icons/128x128.png)
 
-# Mac User Lens
+# MacDiskTree
 
 A macOS tool to easily identify and get rid of big, unused files and folders in seconds.
 
@@ -8,11 +8,11 @@ A macOS tool to easily identify and get rid of big, unused files and folders in 
 
 Over time, your home folder quietly fills up with forgotten caches, old installers, duplicate images, leftover app data, and all sorts of files you didn't even know were there. macOS doesn't make it easy to figure out where all that space went.
 
-Mac User Lens scans your entire user folder and presents everything as a navigable, size-sorted tree. You can drill into any directory, immediately spot what's taking up the most space, and clean it up — all from a single window.
+MacDiskTree scans your entire user folder and presents everything as a navigable, size-sorted tree. You can drill into any directory, immediately spot what's taking up the most space, and clean it up — all from a single window.
 
 ## Preview
 
-![Mac User Lens](./src/assets/images/app-showcase-transparent.png)
+![MacDiskTree](./src/assets/images/app-showcase-transparent.png)
 
 ## Features
 
@@ -29,21 +29,21 @@ Mac User Lens scans your entire user folder and presents everything as a navigab
 ### Homebrew
 
 ```bash
-brew install --cask mac-user-lens
-xattr -cr /Applications/Mac\ User\ Lens.app
+brew install --cask mac-disk-tree
+xattr -cr /Applications/MacDiskTree.app
 ```
 
 ### Manual
 
-1. Download the latest `.dmg` from [Releases](https://github.com/smastromattei/mac-user-lens/releases)
+1. Download the latest `.dmg` from [Releases](https://github.com/smastromattei/mac-disk-tree/releases)
 2. Drag the app to your Applications folder
 3. Before opening, run this command in Terminal to bypass macOS Gatekeeper:
 
 ```bash
-xattr -cr /Applications/Mac\ User\ Lens.app
+xattr -cr /Applications/MacDiskTree.app
 ```
 
-> **Note** — The only official distribution channels are [Homebrew](https://brew.sh) and the [GitHub Releases](https://github.com/smastromattei/mac-user-lens/releases) page. Do not download this app from any other source.
+> **Note** — The only official distribution channels are [Homebrew](https://brew.sh) and the [GitHub Releases](https://github.com/smastromattei/mac-disk-tree/releases) page. Do not download this app from any other source.
 
 ## Building from source
 
@@ -56,8 +56,8 @@ xattr -cr /Applications/Mac\ User\ Lens.app
 
 ```bash
 # Clone the repository
-git clone https://github.com/smastrom/mac-user-lens.git
-cd mac-user-lens
+git clone https://github.com/smastrom/mac-disk-tree.git
+cd mac-disk-tree
 
 # Install dependencies
 pnpm install

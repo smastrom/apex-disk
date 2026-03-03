@@ -53,7 +53,7 @@ const languageOptions = computed(() => [
 ])
 
 const themeOptions = computed(() => [
-   { value: 'mac-user-lens' as ThemeColor, label: t('SettingsView', 'themeMacUserLens') },
+   { value: 'mac-disk-tree' as ThemeColor, label: t('SettingsView', 'themeMacDiskTree') },
    { value: 'macos-dark' as ThemeColor, label: t('SettingsView', 'themeMacosDark') },
    { value: 'macos-light' as ThemeColor, label: t('SettingsView', 'themeMacosLight') },
    { value: 'macos-graphite' as ThemeColor, label: t('SettingsView', 'themeMacosGraphite') },
