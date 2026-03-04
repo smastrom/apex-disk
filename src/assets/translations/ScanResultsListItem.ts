@@ -3,79 +3,78 @@ export const ScanResultsListItem = {
       itemOne: '1 item',
       itemsCount: '{{count}} items',
       fdaRequiredTooltip:
-         'This folder requires Full Disk Access to delete. You can navigate into it and delete individual files.',
+         'This folder requires Full Disk Access to be deleted. You can explore it and delete its contents.',
       protectedTooltip:
-         'This system folder is required for macOS to work properly and cannot be deleted. You can navigate inside it and delete individual files and subfolders.',
+         'This system folder is required for macOS to work correctly and cannot be deleted. You can explore it and delete its contents.',
    },
    it: {
       itemOne: '1 elemento',
       itemsCount: '{{count}} elementi',
       fdaRequiredTooltip:
-         'Questa cartella richiede Accesso Completo al Disco per essere eliminata. Puoi navigarci dentro ed eliminare i singoli file.',
+         'La cartella richiede Accesso Completo al Disco per essere eliminata. Puoi esplorarla ed eliminare i suoi oggetti.',
       protectedTooltip:
-         'Questa cartella di sistema è necessaria per il corretto funzionamento di macOS e non può essere eliminata. You can navigate inside it and delete individual files and subfolders.',
+         'La cartella di sistema è necessaria per il corretto funzionamento di macOS e non può essere eliminata. Puoi esplorarla ed eliminare i suoi oggetti.',
    },
    es: {
       itemOne: '1 elemento',
       itemsCount: '{{count}} elementos',
       fdaRequiredTooltip:
-         'Esta carpeta requiere Acceso Completo al Disco para eliminarla. Puedes navegar dentro y eliminar archivos individuales.',
+         'Esta carpeta requiere Acceso Completo al Disco para ser eliminada. Puedes explorarla y eliminar su contenido.',
       protectedTooltip:
-         'Esta carpeta del sistema es necesaria para que macOS funcione correctamente y no se puede eliminar. You can navigate inside it and delete individual files and subfolders.',
+         'Esta carpeta del sistema es necesaria para el correcto funcionamiento de macOS y no se puede eliminar. Puedes explorarla y eliminar su contenido.',
    },
    zh: {
       itemOne: '1 项',
       itemsCount: '{{count}} 项',
-      fdaRequiredTooltip: '删除此文件夹需要完全磁盘访问权限。您可以进入其中并删除单个文件。',
-      protectedTooltip:
-         '此系统文件夹是 macOS 正常运行所必需的，无法删除。您可以进入其中并删除单个文件。',
+      fdaRequiredTooltip: '删除此文件夹需要完全磁盘访问权限。您可以浏览并删除其内容。',
+      protectedTooltip: '此系统文件夹是macOS正常运行所必需的，无法删除。您可以浏览并删除其内容。',
    },
    ja: {
       itemOne: '1 項目',
       itemsCount: '{{count}} 項目',
       fdaRequiredTooltip:
-         'このフォルダを削除するにはフルディスクアクセスが必要です。中に移動して個別のファイルを削除できます。',
+         'このフォルダーを削除するには、フルディスクアクセスが必要です。探索してその内容を削除できます。',
       protectedTooltip:
-         'このシステムフォルダはmacOSが正常に動作するために必要であり、削除できません。您可以进入其中并删除单个文件。',
+         'このシステムフォルダーはmacOSが正常に機能するために必要であり、削除できません。探索してその内容を削除できます。',
    },
    ar: {
       itemOne: 'عنصر واحد',
       itemsCount: '{{count}} عناصر',
       fdaRequiredTooltip:
-         'يتطلب هذا المجلد الوصول الكامل إلى القرص للحذف. يمكنك التنقل داخله وحذف الملفات الفردية.',
+         'يتطلب هذا المجلد الوصول الكامل إلى القرص ليتم حذفه. يمكنك استكشافه وحذف محتوياته.',
       protectedTooltip:
-         'مجلد النظام هذا مطلوب لعمل macOS بشكل صحيح ولا يمكن حذفه. يمكنك التنقل داخله وحذف الملفات الفردية.',
+         'هذا المجلد النظام ضروري ليعمل macOS بشكل صحيح ولا يمكن حذفه. يمكنك استكشافه وحذف محتوياته.',
    },
    ru: {
       itemOne: '1 элемент',
       itemsCount: '{{count}} элементов',
       fdaRequiredTooltip:
-         'Для удаления этой папки требуется полный доступ к диску. Вы можете перейти в неё и удалить отдельные файлы.',
+         'Для удаления этой папки требуется полный доступ к диску. Вы можете исследовать ее и удалить ее содержимое.',
       protectedTooltip:
-         'Эта системная папка необходима для правильной работы macOS и не может быть удалена. Вы можете перейти в неё и удалить отдельные файлы.',
+         'Эта системная папка необходима для правильной работы macOS и не может быть удалена. Вы можете исследовать ее и удалить ее содержимое.',
    },
    fr: {
       itemOne: '1 élément',
       itemsCount: '{{count}} éléments',
       fdaRequiredTooltip:
-         'Ce dossier nécessite un accès complet au disque pour être supprimé. Vous pouvez y naviguer et supprimer des fichiers individuels.',
+         'Ce dossier nécessite un accès complet au disque pour être supprimé. Vous pouvez l\u0027explorer et supprimer son contenu.',
       protectedTooltip:
-         'Ce dossier système est nécessaire au bon fonctionnement de macOS et ne peut pas être supprimé. Vous pouvez y naviguer et supprimer des fichiers individuels.',
+         'Ce dossier système est nécessaire au bon fonctionnement de macOS et ne peut pas être supprimé. Vous pouvez l\u0027explorer et supprimer son contenu.',
    },
    pt: {
       itemOne: '1 item',
       itemsCount: '{{count}} itens',
       fdaRequiredTooltip:
-         'Esta pasta requer Acesso Completo ao Disco para ser excluída. Você pode navegar dentro dela e excluir arquivos individuais.',
+         'Esta pasta requer Acesso Total ao Disco para ser excluída. Você pode explorá-la e excluir seu conteúdo.',
       protectedTooltip:
-         'Esta pasta do sistema é necessária para o funcionamento adequado do macOS e não pode ser excluída. Você pode navegar dentro dela e excluir arquivos individuais.',
+         'Esta pasta do sistema é necessária para o funcionamento correto do macOS e não pode ser excluída. Você pode explorá-la e excluir seu conteúdo.',
    },
    de: {
       itemOne: '1 Element',
       itemsCount: '{{count}} Elemente',
       fdaRequiredTooltip:
-         'Dieser Ordner erfordert vollen Festplattenzugriff zum Löschen. Sie können hineinnavigieren und einzelne Dateien löschen.',
+         'Dieser Ordner erfordert vollen Festplattenzugriff, um gelöscht zu werden. Sie können ihn erkunden und seinen Inhalt löschen.',
       protectedTooltip:
-         'Dieser Systemordner ist für das ordnungsgemäße Funktionieren von macOS erforderlich und kann nicht gelöscht werden. Sie können hineinnavigieren und einzelne Dateien löschen.',
+         'Dieser Systemordner ist für die korrekte Funktion von macOS erforderlich und kann nicht gelöscht werden. Sie können ihn erkunden und seinen Inhalt löschen.',
    },
 } as const
