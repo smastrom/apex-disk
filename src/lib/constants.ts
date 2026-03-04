@@ -34,7 +34,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
 export const DELETE_COUNTDOWN_MS = 1500
 
 /** Ms to wait after delete_paths completes before emitting complete and clearing spinner. */
-export const DELETE_POST_DELETE_SLEEP_MS = 2000
+export const DELETE_POST_DELETE_SLEEP_MS = 500
 
 /** Donate / support link. Opens in default browser when user taps Donate. */
 export const DONATE_URL = 'https://buymeacoffee.com/smastrom'
