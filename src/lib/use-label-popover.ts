@@ -100,6 +100,7 @@ export function useLabelPopover(
          if (/auto|scroll/.test(overflow + overflowY)) break
          ancestor = ancestor.parentElement
       }
+
       const target = ancestor ?? document
 
       target.addEventListener('scroll', dismiss, { passive: true, once: true })
@@ -116,6 +117,7 @@ export function useLabelPopover(
          clearTimeout(enterTimer)
          enterTimer = null
       }
+
       if (leaveTimer) {
          clearTimeout(leaveTimer)
          leaveTimer = null

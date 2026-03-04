@@ -15,7 +15,7 @@ function onPointerDown() {
  * `<html>` on keydown and removes it on pointer down, so click-focused elements stay ring-free.
  * Call once in the root component (App.vue).
  */
-export function useFocusRing() {
+export function setupFocusRing() {
    onMounted(() => {
       document.addEventListener('keydown', onKeyDown, true)
       document.addEventListener('mousedown', onPointerDown, true)

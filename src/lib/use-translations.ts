@@ -2,7 +2,7 @@ import { computed } from 'vue'
 
 import { createT } from '@/assets/translations'
 
-import { useSettingsStore } from '@/stores/settings'
+import { useAppSettings } from '@/stores/settings'
 
 import type { TranslationModule } from '@/assets/translations'
 
@@ -12,7 +12,7 @@ import type { TranslationModule } from '@/assets/translations'
  * @param storeRef - Optional ref to the settings store; when provided (e.g. by the providing component), inject is skipped.
  */
 export function useTranslations() {
-   const settingsStore = useSettingsStore()
+   const settingsStore = useAppSettings()
    const lang = computed(() => settingsStore.settings.value.language)
    const t = computed(() => createT(lang.value))
 
