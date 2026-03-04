@@ -14,7 +14,16 @@ import ScanResultsDeleteListItem from './ScanResultsDeleteListItem.vue'
 import ScanResultsNav from './ScanResultsNav.vue'
 import Spinner from './Spinner.vue'
 
-import { ref, shallowRef, watch, computed, onActivated, onUnmounted, useTemplateRef } from 'vue'
+import {
+   ref,
+   shallowRef,
+   watch,
+   computed,
+   onActivated,
+   onDeactivated,
+   onUnmounted,
+   useTemplateRef,
+} from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import { invoke } from '@tauri-apps/api/core'
 import { PhTrashSimple } from '@phosphor-icons/vue'
@@ -23,7 +32,7 @@ import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/use-translations'
 import { useReducedMotion } from '@/lib/use-reduced-motion'
 
-import { DELETE_COUNTDOWN_SECONDS, DELETE_POST_DELETE_SLEEP_MS } from '@/lib/constants'
+import { DELETE_COUNTDOWN_MS, DELETE_POST_DELETE_SLEEP_MS } from '@/lib/constants'
 
 import type { DeleteListItem } from '@/types/structs'
 
@@ -42,7 +51,7 @@ const emit = defineEmits<{
 const { t } = useTranslations()
 
 /**
- * Safety countdown: the delete button stays disabled for DELETE_COUNTDOWN_SECONDS
+ * Safety countdown: the delete button stays disabled for DELETE_COUNTDOWN_MS
  * after the view becomes active. Prevents accidental taps when the user just
  * navigated in. A plain `let` timer ID is fine — it's never read reactively.
  */
@@ -56,9 +65,9 @@ function startCountdown() {
       countdownInterval = null
    }
 
-   countdownRemaining.value = DELETE_COUNTDOWN_SECONDS
+   countdownRemaining.value = DELETE_COUNTDOWN_MS
    countdownInterval = setInterval(() => {
-      countdownRemaining.value -= 1
+      countdownRemaining.value -= 1000
       if (countdownRemaining.value <= 0 && countdownInterval) {
          clearInterval(countdownInterval)
          countdownInterval = null
@@ -94,6 +103,16 @@ onActivated(() => {
 })
 
 onUnmounted(stopCountdown)
+
+/**
+ * Cleanup when component becomes inactive (KeepAlive scenario).
+ * Reset crucial states to prevent stale state when returning to this view.
+ */
+onDeactivated(() => {
+   stopCountdown()
+   isDeleting.value = false
+   checkedMapRef.value.clear()
+})
 
 /**
  * Checked-state map: Map<path, boolean>.
