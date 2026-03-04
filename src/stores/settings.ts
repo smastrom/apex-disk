@@ -44,7 +44,7 @@ function normalizeStoredSettings(raw: Partial<LegacyAppSettings> | null): AppSet
    }
 }
 
-const STORE_PATH = import.meta.env.DEV ? 'settings.dev.json' : 'settings.json'
+const STORE_PATH = 'settings.json'
 
 export interface AppSettingsStore {
    settings: Ref<AppSettings>

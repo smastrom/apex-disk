@@ -12,9 +12,6 @@ pub mod xattr;
 
 use tauri::Emitter;
 
-#[cfg(debug_assertions)]
-pub const SETTINGS_STORE_PATH: &str = "settings.dev.json";
-#[cfg(not(debug_assertions))]
 pub const SETTINGS_STORE_PATH: &str = "settings.json";
 
 pub const APP_LANGUAGE_INITIALIZED_KEY: &str = "appLanguageInitialized";
