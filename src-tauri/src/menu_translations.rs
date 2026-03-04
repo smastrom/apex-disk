@@ -1,183 +1,132 @@
 //! Menu label translations for all supported languages.
 //!
-//! Each language returns a `MenuLabels` struct with localized strings for the
-//! native menu bar. Keep in sync with the frontend language list in
+//! ## Multilanguage Behavior
+//!
+//! This file provides translations ONLY for custom menu items that cannot be
+//! automatically localized by macOS. There are two categories of menu items:
+//!
+//! **Custom items (translated here)**:
+//! - Check for Updates, Release Notes, License (app-specific functionality)
+//! - Window and Help submenu titles (these are custom submenu headers)
+//! - These follow the APP language setting and update immediately when language changes
+//!
+//! **Native items (NOT translated here)**:
+//! - About, Services, Hide, Show All, Quit, Minimize, Close Window
+//! - These use `None` as label in menu.rs and are automatically localized by macOS
+//! - They follow the macOS SYSTEM language, not the app language setting
+//!
+//! ## Language Coordination
+//!
+//! - The `lang` parameter comes from the current app language setting
+//! - This is typically the same as system language on first launch, or user's chosen language
+//! - When user changes app language, `set_menu_language` rebuilds menu with new translations
+//! - Native items remain in system language; custom items follow app language
+//!
+//! Keep translations in sync with frontend language list in
 //! `src/lib/constants.ts` (`APP_LANGUAGES`).
 
-/// Localized labels for every custom or overridden menu item.
+/// Localized labels for custom menu items only.
+///
+/// These items require manual translation because they're app-specific or
+/// submenu headers that macOS cannot automatically localize.
+///
+/// Native items (About, Hide, Quit, Minimize, etc.) use `None` as label
+/// in menu.rs and are automatically localized by macOS to system language.
 pub struct MenuLabels {
-    pub help: &'static str,
-    pub window: &'static str,
-    pub minimize: &'static str,
-    pub close_window: &'static str,
-    pub hide: &'static str,
-    pub hide_others: &'static str,
-    pub show_all: &'static str,
     pub check_for_updates: &'static str,
     pub release_notes: &'static str,
     pub license: &'static str,
     pub website_label: &'static str,
-    pub services: &'static str,
-    pub quit: &'static str,
+    pub window: &'static str,
+    pub help: &'static str,
 }
 
-/// Returns menu labels for the given language code.
+/// Returns menu labels for custom items only.
+///
+/// Native menu items (About, Hide, Quit, etc.) are automatically localized
+/// by macOS and should use `None` as label in menu.rs.
 pub fn labels_for(lang: &str) -> MenuLabels {
     match lang {
         "it" => MenuLabels {
-            help: "Aiuto",
-            window: "Finestra",
-            minimize: "Riduci a icona",
-            close_window: "Chiudi finestra",
-            hide: "Nascondi MacDiskTree",
-            hide_others: "Nascondi altri",
-            show_all: "Mostra tutti",
             check_for_updates: "Controlla aggiornamenti…",
             release_notes: "Note di versione",
             license: "Licenza",
             website_label: "Note di versione",
-            services: "Servizi",
-            quit: "Esci da MacDiskTree",
+            window: "Finestra",
+            help: "Aiuto",
         },
         "es" => MenuLabels {
-            help: "Ayuda",
-            window: "Ventana",
-            minimize: "Minimizar",
-            close_window: "Cerrar ventana",
-            hide: "Ocultar MacDiskTree",
-            hide_others: "Ocultar otros",
-            show_all: "Mostrar todo",
             check_for_updates: "Buscar actualizaciones…",
-            release_notes: "Notas de versi\u{f3}n",
+            release_notes: "Notas de versión",
             license: "Licencia",
-            website_label: "Notas de versi\u{f3}n",
-            services: "Servicios",
-            quit: "Salir de MacDiskTree",
+            website_label: "Notas de versión",
+            window: "Ventana",
+            help: "Ayuda",
         },
         "fr" => MenuLabels {
-            help: "Aide",
-            window: "Fen\u{ea}tre",
-            minimize: "R\u{e9}duire",
-            close_window: "Fermer la fen\u{ea}tre",
-            hide: "Masquer MacDiskTree",
-            hide_others: "Masquer les autres",
-            show_all: "Tout afficher",
-            check_for_updates: "Rechercher des mises \u{e0} jour…",
+            check_for_updates: "Rechercher des mises à jour…",
             release_notes: "Notes de version",
             license: "Licence",
             website_label: "Notes de version",
-            services: "Services",
-            quit: "Quitter MacDiskTree",
+            window: "Fenêtre",
+            help: "Aide",
         },
         "pt" => MenuLabels {
-            help: "Ajuda",
+            check_for_updates: "Verificar atualizações…",
+            release_notes: "Notas de versão",
+            license: "Licença",
+            website_label: "Notas de versão",
             window: "Janela",
-            minimize: "Minimizar",
-            close_window: "Fechar janela",
-            hide: "Ocultar MacDiskTree",
-            hide_others: "Ocultar outros",
-            show_all: "Mostrar tudo",
-            check_for_updates: "Verificar atualiza\u{e7}\u{f5}es…",
-            release_notes: "Notas de vers\u{e3}o",
-            license: "Licen\u{e7}a",
-            website_label: "Notas de vers\u{e3}o",
-            services: "Servi\u{e7}os",
-            quit: "Sair do MacDiskTree",
+            help: "Ajuda",
         },
         "de" => MenuLabels {
-            help: "Hilfe",
-            window: "Fenster",
-            minimize: "In Dock ablegen",
-            close_window: "Fenster schlie\u{df}en",
-            hide: "MacDiskTree ausblenden",
-            hide_others: "Andere ausblenden",
-            show_all: "Alle einblenden",
             check_for_updates: "Nach Updates suchen…",
             release_notes: "Versionshinweise",
             license: "Lizenz",
             website_label: "Versionshinweise",
-            services: "Dienste",
-            quit: "MacDiskTree beenden",
+            window: "Fenster",
+            help: "Hilfe",
         },
-        // Помощь, Окно, etc.
         "ru" => MenuLabels {
-            help: "\u{41f}\u{43e}\u{43c}\u{43e}\u{449}\u{44c}",
-            window: "\u{41e}\u{43a}\u{43d}\u{43e}",
-            minimize: "\u{421}\u{432}\u{435}\u{440}\u{43d}\u{443}\u{442}\u{44c}",
-            close_window: "\u{417}\u{430}\u{43a}\u{440}\u{44b}\u{442}\u{44c} \u{43e}\u{43a}\u{43d}\u{43e}",
-            hide: "\u{421}\u{43a}\u{440}\u{44b}\u{442}\u{44c} MacDiskTree",
-            hide_others: "\u{421}\u{43a}\u{440}\u{44b}\u{442}\u{44c} \u{43e}\u{441}\u{442}\u{430}\u{43b}\u{44c}\u{43d}\u{44b}\u{435}",
-            show_all: "\u{41f}\u{43e}\u{43a}\u{430}\u{437}\u{430}\u{442}\u{44c} \u{432}\u{441}\u{435}",
-            check_for_updates: "\u{41f}\u{43e}\u{438}\u{441}\u{43e}\u{43a} \u{43e}\u{431}\u{43d}\u{43e}\u{432}\u{43b}\u{435}\u{43d}\u{438}\u{439}…",
-            release_notes: "\u{417}\u{430}\u{43c}\u{435}\u{442}\u{43a}\u{438} \u{43e} \u{432}\u{44b}\u{43f}\u{443}\u{441}\u{43a}\u{435}",
-            license: "\u{41b}\u{438}\u{446}\u{435}\u{43d}\u{437}\u{438}\u{44f}",
-            website_label: "\u{417}\u{430}\u{43c}\u{435}\u{442}\u{43a}\u{438} \u{43e} \u{432}\u{44b}\u{43f}\u{443}\u{441}\u{43a}\u{435}",
-            services: "\u{421}\u{43b}\u{443}\u{436}\u{431}\u{44b}",
-            quit: "\u{417}\u{430}\u{432}\u{435}\u{440}\u{448}\u{438}\u{442}\u{44c} MacDiskTree",
+            check_for_updates: "Поиск обновлений…",
+            release_notes: "Заметки о выпуске",
+            license: "Лицензия",
+            website_label: "Заметки о выпуске",
+            window: "Окно",
+            help: "Справка",
         },
-        // 帮助, 窗口, etc.
         "zh" => MenuLabels {
-            help: "\u{5e2e}\u{52a9}",
-            window: "\u{7a97}\u{53e3}",
-            minimize: "\u{6700}\u{5c0f}\u{5316}",
-            close_window: "\u{5173}\u{95ed}\u{7a97}\u{53e3}",
-            hide: "\u{9690}\u{85cf} MacDiskTree",
-            hide_others: "\u{9690}\u{85cf}\u{5176}\u{4ed6}",
-            show_all: "\u{663e}\u{793a}\u{5168}\u{90e8}",
-            check_for_updates: "\u{68c0}\u{67e5}\u{66f4}\u{65b0}…",
-            release_notes: "\u{53d1}\u{884c}\u{8bf4}\u{660e}",
-            license: "\u{8bb8}\u{53ef}\u{8bc1}",
-            website_label: "\u{53d1}\u{884c}\u{8bf4}\u{660e}",
-            services: "\u{670d}\u{52a1}",
-            quit: "\u{9000}\u{51fa} MacDiskTree",
+            check_for_updates: "检查更新…",
+            release_notes: "发行说明",
+            license: "许可证",
+            website_label: "发行说明",
+            window: "窗口",
+            help: "帮助",
         },
-        // ヘルプ, ウィンドウ, etc.
         "ja" => MenuLabels {
-            help: "\u{30d8}\u{30eb}\u{30d7}",
-            window: "\u{30a6}\u{30a3}\u{30f3}\u{30c9}\u{30a6}",
-            minimize: "\u{6700}\u{5c0f}\u{5316}",
-            close_window: "\u{30a6}\u{30a3}\u{30f3}\u{30c9}\u{30a6}\u{3092}\u{9589}\u{3058}\u{308b}",
-            hide: "MacDiskTree\u{3092}\u{96a0}\u{3059}",
-            hide_others: "\u{307b}\u{304b}\u{3092}\u{96a0}\u{3059}",
-            show_all: "\u{3059}\u{3079}\u{3066}\u{3092}\u{8868}\u{793a}",
-            check_for_updates: "\u{66f4}\u{65b0}\u{3092}\u{78ba}\u{8a8d}…",
-            release_notes: "\u{30ea}\u{30ea}\u{30fc}\u{30b9}\u{30ce}\u{30fc}\u{30c8}",
-            license: "\u{30e9}\u{30a4}\u{30bb}\u{30f3}\u{30b9}",
-            website_label: "\u{30ea}\u{30ea}\u{30fc}\u{30b9}\u{30ce}\u{30fc}\u{30c8}",
-            services: "\u{30b5}\u{30fc}\u{30d3}\u{30b9}",
-            quit: "MacDiskTree\u{3092}\u{7d42}\u{4e86}",
+            check_for_updates: "更新を確認…",
+            release_notes: "リリースノート",
+            license: "ライセンス",
+            website_label: "リリースノート",
+            window: "ウインドウ",
+            help: "ヘルプ",
         },
-        // مساعدة, نافذة, etc.
         "ar" => MenuLabels {
-            help: "\u{645}\u{633}\u{627}\u{639}\u{62f}\u{629}",
-            window: "\u{646}\u{627}\u{641}\u{630}\u{629}",
-            minimize: "\u{62a}\u{635}\u{63a}\u{64a}\u{631}",
-            close_window: "\u{625}\u{63a}\u{644}\u{627}\u{642} \u{627}\u{644}\u{646}\u{627}\u{641}\u{630}\u{629}",
-            hide: "\u{625}\u{62e}\u{641}\u{627}\u{621} MacDiskTree",
-            hide_others: "\u{625}\u{62e}\u{641}\u{627}\u{621} \u{627}\u{644}\u{622}\u{62e}\u{631}\u{64a}\u{646}",
-            show_all: "\u{625}\u{638}\u{647}\u{627}\u{631} \u{627}\u{644}\u{643}\u{644}",
-            check_for_updates: "\u{627}\u{644}\u{628}\u{62d}\u{62b} \u{639}\u{646} \u{62a}\u{62d}\u{62f}\u{64a}\u{62b}\u{627}\u{62a}…",
-            release_notes: "\u{645}\u{644}\u{627}\u{62d}\u{638}\u{627}\u{62a} \u{627}\u{644}\u{625}\u{635}\u{62f}\u{627}\u{631}",
-            license: "\u{627}\u{644}\u{631}\u{62e}\u{635}\u{629}",
-            website_label: "\u{645}\u{644}\u{627}\u{62d}\u{638}\u{627}\u{62a} \u{627}\u{644}\u{625}\u{635}\u{62f}\u{627}\u{631}",
-            services: "\u{62e}\u{62f}\u{645}\u{627}\u{62a}",
-            quit: "\u{625}\u{646}\u{647}\u{627}\u{621} MacDiskTree",
+            check_for_updates: "البحث عن تحديثات…",
+            release_notes: "ملاحظات الإصدار",
+            license: "الرخصة",
+            website_label: "ملاحظات الإصدار",
+            window: "نافذة",
+            help: "المساعدة",
         },
         // English is the default
         _ => MenuLabels {
-            help: "Help",
-            window: "Window",
-            minimize: "Minimize",
-            close_window: "Close Window",
-            hide: "Hide MacDiskTree",
-            hide_others: "Hide Others",
-            show_all: "Show All",
             check_for_updates: "Check for Updates…",
             release_notes: "Release Notes",
             license: "License",
             website_label: "Release Notes",
-            services: "Services",
-            quit: "Quit MacDiskTree",
+            window: "Window",
+            help: "Help",
         },
     }
 }
