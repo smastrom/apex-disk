@@ -10,13 +10,15 @@ Example:
 -->
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { PhHardDrive } from '@phosphor-icons/vue'
 import { openPath } from '@tauri-apps/plugin-opener'
+import { getCurrentWindow } from '@tauri-apps/api/window'
 
 import { formatBytes } from '@/lib/format'
 import { getDiskUsage } from '@/lib/disk'
 import { useTranslations } from '@/lib/use-translations'
+import { debounce } from '@/lib/utils'
 
 import type { DiskUsage } from '@/types/disk'
 
@@ -36,9 +38,26 @@ async function fetchUsage() {
    }
 }
 
-onMounted(fetchUsage)
+const debouncedFetchUsage = debounce(fetchUsage, 200)
 
-defineExpose({ refresh: fetchUsage })
+onMounted(() => {
+   fetchUsage()
+
+   // Refresh disk usage when the window is focused (e.g. user emptied trash in Finder)
+   const unlisten = getCurrentWindow().onFocusChanged(({ payload: focused }) => {
+      if (focused) {
+         debouncedFetchUsage()
+      }
+   })
+
+   onUnmounted(async () => {
+      ;(await unlisten)()
+   })
+})
+
+defineExpose({
+   refresh: fetchUsage,
+})
 
 /** Main bar: shrinks when selecting to show remaining used after delete. */
 const mainBarPercent = computed(() => {
