@@ -17,14 +17,12 @@ import AppFooter from './AppFooter.vue'
 
 import { useTemplateRef, watch } from 'vue'
 
-import { useSettingsStore } from '@/stores/settings'
+import { useAppSettings } from '@/stores/settings'
+import { useAppViews } from '@/lib/use-app-views'
+import { useAppUpdater } from '@/lib/use-app-updater'
+import { disableNativeContextMenu } from '@/lib/use-context-menu'
 import { applyTheme, applyDirection } from '@/lib/theme'
-import { useFocusRing } from '@/lib/use-focus-ring'
-import { useFullDiskAccess } from '@/lib/use-full-disk-access'
-import { useScan } from '@/lib/use-scan'
-import { useViews } from '@/lib/use-views'
-import { useUpdater } from '@/lib/use-updater'
-import { useDisableNativeContextMenu } from '@/lib/use-context-menu'
+import { setupFocusRing } from '@/lib/use-focus-ring'
 
 import '@/assets/css/theme.css'
 import '@/assets/css/global.css'
@@ -34,24 +32,24 @@ import '@/assets/css/animations.css'
 import '@/assets/css/rtl.css'
 
 const mainContentRef = useTemplateRef<HTMLElement>('mainContentRef')
-const settingsStore = useSettingsStore()
+const settingsStore = useAppSettings()
 
 watch(
    () => settingsStore.getThemeColor(),
    (theme) => applyTheme(theme)
 )
+
 watch(
    () => settingsStore.settings.value.language,
    (lang) => applyDirection(lang)
 )
 
-useFocusRing()
-useDisableNativeContextMenu()
+const { activeView, setActiveView } = useAppViews(mainContentRef)
 
-const { isFdaGranted } = useFullDiskAccess()
-const { folders, isScanning, progress, loadFolders, onAbort, onCancel } = useScan()
-const { activeView, setActiveView } = useViews(mainContentRef)
-const { availableUpdate } = useUpdater()
+const { availableUpdate } = useAppUpdater()
+
+disableNativeContextMenu()
+setupFocusRing()
 </script>
 
 <template>
@@ -60,19 +58,10 @@ const { availableUpdate } = useUpdater()
 
       <div class="App-main">
          <div ref="mainContentRef" class="App-mainContent">
-            <ScanView
-               v-show="activeView === 'scan'"
-               :activeView="activeView"
-               :folders="folders"
-               :isScanning="isScanning"
-               :progress="progress"
-               @start-scan="loadFolders"
-               @abort="onAbort"
-               @cancel="onCancel"
-            />
+            <ScanView v-show="activeView === 'scan'" :activeView="activeView" />
 
             <div v-if="activeView === 'settings'" class="App-overlay">
-               <SettingsView :isFdaGranted="isFdaGranted" :availableUpdate="availableUpdate" />
+               <SettingsView :availableUpdate="availableUpdate" />
             </div>
          </div>
       </div>

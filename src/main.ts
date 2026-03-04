@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 
-import App from './components/App.vue'
+import AppShell from './components/AppShell.vue'
 
 import { initTauriAppSettings } from '@/stores/settings'
 import { applyTheme, applyDirection } from '@/lib/theme'
@@ -10,5 +10,5 @@ const store = await initTauriAppSettings()
 applyTheme(store.getThemeColor())
 applyDirection(store.settings.value.language)
 
-const app = createApp(App)
+const app = createApp(AppShell)
 app.mount('#app')

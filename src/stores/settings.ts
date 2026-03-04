@@ -3,6 +3,7 @@ import { invoke } from '@tauri-apps/api/core'
 import { ref, type Ref } from 'vue'
 
 import { DEFAULT_SETTINGS, THEME_COLORS } from '@/lib/constants'
+
 import type { AppSettings, ThemeColor, Language } from '@/types/settings'
 
 /** Normalizes stored theme value. */
@@ -113,15 +114,12 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
  * Hook to use app settings. Returns the settings ref and methods to update them.
  * Must be called after initTauriAppSettings() has been awaited.
  */
-export function useTauriAppSettings(): AppSettingsStore {
+export function useAppSettings(): AppSettingsStore {
    if (!globalStore) {
       throw new Error(
-         'useTauriAppSettings() called before initTauriAppSettings() was initialized in main.ts'
+         'useAppSettings() called before initTauriAppSettings() was initialized in main.ts'
       )
    }
 
    return globalStore
 }
-
-/** Legacy helper for existing components */
-export const useSettingsStore = useTauriAppSettings
