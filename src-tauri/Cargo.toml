@@ -33,6 +33,11 @@ libc = "0.2"
 objc2 = "0.6"
 objc2-foundation = { version = "0.3", features = ["NSString", "NSData"] }
 objc2-app-kit = { version = "0.3", features = ["NSAlert", "NSImage", "NSButton"] }
+tauri-plugin-webdriver = { version = "0.2", optional = true }
+
+[features]
+default = []
+e2e = ["tauri-plugin-webdriver"]
 
 [target.'cfg(any(target_os = "macos", windows, target_os = "linux"))'.dependencies]
 tauri-plugin-updater = "2"

@@ -49,6 +49,11 @@ pub fn run() {
             .plugin(tauri_plugin_process::init());
     }
 
+    #[cfg(feature = "e2e")]
+    {
+        builder = builder.plugin(tauri_plugin_webdriver::init());
+    }
+
     builder
         .enable_macos_default_menu(false)
         .menu(|handle| menu::build_app_menu(handle, "en"))
