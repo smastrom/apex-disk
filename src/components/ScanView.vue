@@ -28,6 +28,7 @@ import { ref, watch, onDeactivated, useTemplateRef } from 'vue'
 import type { DeleteListItem, FolderInfo, ScanProgress } from '@/types/structs'
 
 const props = defineProps<{
+   activeView: string
    folders: FolderInfo[]
    isLoading: boolean
    progress: ScanProgress
@@ -98,6 +99,16 @@ function onScanAgain() {
    viewState.value = 'results'
    emit('cancel')
 }
+
+watch(
+   () => props.activeView,
+   (newView, oldView) => {
+      if (oldView === 'scan' && newView !== 'scan' && viewState.value === 'deleteComplete') {
+         viewState.value = 'results'
+         emit('cancel')
+      }
+   }
+)
 
 onDeactivated(() => {
    if (viewState.value === 'deleteComplete') {

@@ -62,6 +62,7 @@ const { availableUpdate } = useUpdater()
          <div ref="mainContentRef" class="App-mainContent">
             <ScanView
                v-show="activeView === 'scan'"
+               :activeView="activeView"
                :folders="folders"
                :isLoading="isLoading"
                :progress="progress"
