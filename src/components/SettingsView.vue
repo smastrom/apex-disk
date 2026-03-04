@@ -24,20 +24,22 @@ import { computed } from 'vue'
 import { openUrl } from '@tauri-apps/plugin-opener'
 
 import { useTranslations } from '@/lib/use-translations'
+import { useFullDiskAccess } from '@/lib/use-full-disk-access'
 
-import { useSettingsStore } from '@/stores/settings'
+import { useAppSettings } from '@/stores/settings'
 
 import type { Language, ThemeColor } from '@/types/settings'
 
 defineProps<{
-   isFdaGranted: boolean
    availableUpdate: string | null
 }>()
 
 const { t } = useTranslations()
 
-const store = useSettingsStore()
+const store = useAppSettings()
 const settings = computed(() => store.settings.value)
+
+const { isFdaGranted } = await useFullDiskAccess()
 
 const languageOptions = computed(() => [
    { value: 'en' as Language, label: t('SettingsView', 'languageEn') },
