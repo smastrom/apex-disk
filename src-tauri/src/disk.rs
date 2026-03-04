@@ -58,20 +58,35 @@ pub struct DiskUsage {
 }
 
 #[tauri::command]
-pub fn get_disk_usage() -> Result<DiskUsage, String> {
+pub async fn get_disk_usage() -> Result<DiskUsage, String> {
     let home: PathBuf = dirs::home_dir().ok_or("Unable to determine home directory")?;
-    let vfs = statvfs::statvfs(&home).map_err(|e| format!("Failed to get disk stats: {}", e))?;
-    let block_size = vfs.fragment_size() as u64;
-    let total = vfs.blocks() as u64 * block_size;
-    let free = vfs.blocks_available() as u64 * block_size;
 
-    let user_name = home
-        .file_name()
-        .map(|s| s.to_string_lossy().into_owned())
-        .unwrap_or_else(|| std::env::var("USER").unwrap_or_else(|_| "User".to_string()));
+    // Spawn blocking operations on a separate thread
+    let (total, free, volume_name, user_name, home_path) = tokio::task::spawn_blocking(move || {
+        let vfs =
+            statvfs::statvfs(&home).map_err(|e| format!("Failed to get disk stats: {}", e))?;
+        let block_size = vfs.fragment_size() as u64;
+        let total = vfs.blocks() as u64 * block_size;
+        let free = vfs.blocks_available() as u64 * block_size;
 
-    let volume_name = get_volume_name(&home);
-    let home_path = home.to_string_lossy().into_owned();
+        let user_name = home
+            .file_name()
+            .map(|s| s.to_string_lossy().into_owned())
+            .unwrap_or_else(|| std::env::var("USER").unwrap_or_else(|_| "User".to_string()));
+
+        let volume_name = get_volume_name(&home);
+        let home_path = home.to_string_lossy().into_owned();
+
+        Ok::<(u64, u64, String, String, String), String>((
+            total,
+            free,
+            volume_name,
+            user_name,
+            home_path,
+        ))
+    })
+    .await
+    .map_err(|e| format!("Task failed to join: {}", e))??;
 
     Ok(DiskUsage {
         total,
