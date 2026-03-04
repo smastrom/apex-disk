@@ -107,11 +107,13 @@ function closeApp() {
 }
 
 .ScanResultsDeleteConfirmation-scanBtn {
+   height: var(--cta-btn-height);
+   width: 100%;
    display: flex;
    align-items: center;
    justify-content: center;
    gap: 0.5rem;
-   margin-top: var(--spacing-sm);
+   margin-top: var(--spacing-xl);
    padding: var(--spacing-md) var(--spacing-lg);
    font-size: 0.9375rem;
 }

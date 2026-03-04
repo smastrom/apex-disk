@@ -368,6 +368,7 @@ async function onDeleteClick() {
 }
 
 .ScanResultsDeleteList-deleteBtn {
+   height: var(--cta-btn-height);
    width: 100%;
    display: flex;
    align-items: center;
