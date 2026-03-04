@@ -1,0 +1,13 @@
+{
+   "compilerOptions": {
+      "target": "ES2022",
+      "module": "ESNext",
+      "moduleResolution": "node",
+      "strict": true,
+      "skipLibCheck": true,
+      "types": ["node", "@wdio/globals/types", "@wdio/mocha-framework"],
+      "allowSyntheticDefaultImports": true
+   },
+   "include": ["**/*.ts"],
+   "exclude": ["node_modules"]
+}
