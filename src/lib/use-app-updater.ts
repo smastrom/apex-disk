@@ -6,7 +6,7 @@ import { relaunch } from '@tauri-apps/plugin-process'
 
 import { useTranslations } from '@/lib/use-translations'
 
-export function useUpdater() {
+export function useAppUpdater() {
    const { t } = useTranslations()
 
    const availableUpdate = ref<string | null>(null)
@@ -61,6 +61,8 @@ export function useUpdater() {
       if (!shouldDownload) return
 
       await update.downloadAndInstall()
+
+      // TODO: Remove update dialog, make it manual from GitHub releases
 
       const shouldRestart = await invoke<boolean>('show_ask_dialog', {
          title: t('App', 'updateDialogTitle'),

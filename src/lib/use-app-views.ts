@@ -10,7 +10,7 @@ function viewIndex(view: string): number {
    return i >= 0 ? i : 0
 }
 
-export function useViews(mainContentRef: Readonly<ShallowRef<HTMLElement | null>>) {
+export function useAppViews(mainContentRef: Readonly<ShallowRef<HTMLElement | null>>) {
    const { withTransition } = useViewTransition()
 
    const activeView = ref('scan')

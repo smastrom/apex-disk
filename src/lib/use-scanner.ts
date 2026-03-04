@@ -2,7 +2,7 @@ import { ref, shallowRef } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 
-import { useSettingsStore } from '@/stores/settings'
+import { useAppSettings } from '@/stores/settings'
 
 import type { FolderInfo, ScanProgress } from '@/types/structs'
 
@@ -14,8 +14,9 @@ const INITIAL_PROGRESS: ScanProgress = {
    scanned_size_total: 0,
 }
 
-export function useScan() {
-   const settingsStore = useSettingsStore()
+export function useScanner() {
+   const settingsStore = useAppSettings()
+
    const folders = shallowRef<FolderInfo[]>([])
    const isScanning = ref(false)
 
