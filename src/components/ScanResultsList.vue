@@ -457,6 +457,12 @@ function onCancel() {
 
 .ScanResultsList-listItem {
    will-change: transform;
+   position: relative;
+
+   &:first-of-type {
+      /* Greater than listWrap:before z-index, to prevent first item from partially being hidden by the gradient */
+      z-index: 2;
+   }
 }
 
 .ScanResultsList-footer {
