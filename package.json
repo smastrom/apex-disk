@@ -46,7 +46,7 @@
       "tauri:build": "tauri build --target universal-apple-darwin",
       "tauri:build:local": "APPLE_SIGNING_IDENTITY='-' TAURI_SIGNING_PRIVATE_KEY=$(cat ~/.tauri/mac-disk-tree.key) pnpm tauri:build",
       "tauri:clean": "cargo clean --manifest-path src-tauri/Cargo.toml",
-      "tauri:dev": "tauri dev",
+      "tauri:dev": "tauri dev --config src-tauri/tauri.conf.dev.json",
       "tauri:icons": "tauri icon ./src-tauri/icons/app-icon.png && cd ./src-tauri/icons && rm -rf android && rm -rf ios",
       "test:e2e": "wdio run e2e/wdio.conf.ts",
       "test:unit": "cargo test --manifest-path src-tauri/Cargo.toml"
