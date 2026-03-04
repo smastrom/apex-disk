@@ -16,6 +16,7 @@ use rayon::prelude::*;
 use tauri::Emitter;
 
 use crate::safe_folders;
+use crate::xattr;
 use crate::FolderInfo;
 use crate::ScanOptions;
 
@@ -43,7 +44,7 @@ fn sort_children(children: &mut [FolderInfo]) {
 /// Rayon's work-stealing scheduler naturally balances I/O across cores --
 /// threads that finish small directories steal subtasks from large ones like Library.
 /// Respects options: hidden files, items under 1 KB, and 0 B files/folders are excluded when disabled.
-fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions) -> FolderInfo {
+fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: bool) -> FolderInfo {
     let name = root
         .file_name()
         .and_then(|n| n.to_str())
@@ -55,6 +56,7 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions) -> FolderI
         Err(_) => {
             let path = root.to_string_lossy().into_owned();
             let is_protected = safe_folders::is_path_protected(root, home);
+            let is_fda_required = xattr::has_container_manager_attribute(root) && !has_fda;
             return FolderInfo {
                 name,
                 path,
@@ -63,6 +65,7 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions) -> FolderI
                 children: Vec::new(),
                 is_file: false,
                 is_protected,
+                is_fda_required,
             };
         }
     };
@@ -106,12 +109,14 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions) -> FolderI
 
     let root_path = root.to_string_lossy();
     let is_root_protected = safe_folders::is_path_protected(root, home);
+    let is_root_fda_required = xattr::has_container_manager_attribute(root) && !has_fda;
     let files: Vec<FolderInfo> = file_entries
         .into_iter()
         .map(|(fname, size)| {
             let path = format!("{}/{}", root_path, fname);
             let file_path = Path::new(&path);
             let is_protected = safe_folders::is_path_protected(file_path, home);
+            let is_fda_required = xattr::has_container_manager_attribute(file_path) && !has_fda;
             FolderInfo {
                 path,
                 name: fname,
@@ -120,13 +125,14 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions) -> FolderI
                 children: Vec::new(),
                 is_file: true,
                 is_protected,
+                is_fda_required,
             }
         })
         .collect();
 
     let dir_children: Vec<FolderInfo> = dir_paths
         .par_iter()
-        .map(|p| build_folder_tree(p, home, options))
+        .map(|p| build_folder_tree(p, home, options, has_fda))
         .collect();
 
     let dir_children: Vec<FolderInfo> = dir_children
@@ -150,6 +156,7 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions) -> FolderI
         children,
         is_file: false,
         is_protected: is_root_protected,
+        is_fda_required: is_root_fda_required,
     }
 }
 
@@ -158,6 +165,7 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions) -> FolderI
 pub fn scan_user_folders_from_home(
     home: &Path,
     options: &ScanOptions,
+    has_fda: bool,
 ) -> Result<Vec<FolderInfo>, String> {
     let mut folder_paths: Vec<std::path::PathBuf> = Vec::new();
     for entry in
@@ -185,7 +193,7 @@ pub fn scan_user_folders_from_home(
     let options_ref = options;
     let mut folders: Vec<FolderInfo> = folder_paths
         .par_iter()
-        .map(|path| build_folder_tree(path, home, options_ref))
+        .map(|path| build_folder_tree(path, home, options_ref, has_fda))
         .collect();
 
     sort_children(&mut folders);
@@ -200,6 +208,8 @@ pub fn get_user_folders_sync_with_progress(
     app: tauri::AppHandle,
     options: ScanOptions,
 ) -> Result<Vec<FolderInfo>, String> {
+    // Check FDA status once at the beginning
+    let has_fda = crate::permissions::check_full_disk_access_sync().unwrap_or(false);
     let user_dir = dirs::home_dir().ok_or("Unable to determine user directory")?;
 
     let folder_paths: Vec<std::path::PathBuf> = {
@@ -237,7 +247,7 @@ pub fn get_user_folders_sync_with_progress(
     let mut folders: Vec<FolderInfo> = folder_paths
         .into_par_iter()
         .map(|path| {
-            let info = build_folder_tree(&path, &user_dir, options_ref);
+            let info = build_folder_tree(&path, &user_dir, options_ref, has_fda);
 
             let cur = completed.fetch_add(1, Ordering::Relaxed) + 1;
             let total_size = scanned_size_total.fetch_add(info.size, Ordering::Relaxed) + info.size;

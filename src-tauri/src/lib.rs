@@ -7,6 +7,7 @@ mod native_dialog;
 mod permissions;
 pub mod safe_folders;
 pub mod scan;
+pub mod xattr;
 
 use tauri::Emitter;
 
@@ -34,6 +35,7 @@ pub struct FolderInfo {
     pub children: Vec<FolderInfo>,
     pub is_file: bool,
     pub is_protected: bool,
+    pub is_fda_required: bool,
 }
 
 pub fn run() {

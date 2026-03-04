@@ -21,7 +21,7 @@ Example:
 import ScanResultsListItemIconSwitch from '@/components/ScanResultsListItemIconSwitch.vue'
 
 import { PhCaretRight, PhCircle, PhCheckCircle, PhMinusCircle } from '@phosphor-icons/vue'
-import { useTemplateRef } from 'vue'
+import { ref, useTemplateRef } from 'vue'
 
 import { useTranslations } from '@/lib/use-translations'
 import { useLabelPopover } from '@/lib/use-label-popover'
@@ -43,9 +43,87 @@ const emit = defineEmits<{
 
 const triggerRef = useTemplateRef<HTMLElement>('triggerRef')
 const popoverRef = useTemplateRef<HTMLElement>('popoverRef')
+const checkboxTriggerRef = useTemplateRef<HTMLElement>('checkboxTriggerRef')
+const checkboxPopoverRef = useTemplateRef<HTMLElement>('checkboxPopoverRef')
 
 const { t } = useTranslations()
 const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRef)
+
+// Simple tooltip for checkbox (not dependent on text truncation)
+const showCheckboxTooltip = ref(false)
+let checkboxTimer: ReturnType<typeof setTimeout> | null = null
+
+function onCheckboxPointerEnter() {
+   if (checkboxTimer) clearTimeout(checkboxTimer)
+   checkboxTimer = setTimeout(() => {
+      showCheckboxTooltip.value = true
+
+      // Position the popover relative to the checkbox with viewport clamping
+      const trigger = checkboxTriggerRef.value
+      const popover = checkboxPopoverRef.value
+      if (trigger && popover) {
+         const rect = trigger.getBoundingClientRect()
+         const EDGE_MARGIN = 16
+
+         // Set initial position
+         popover.style.left = `${rect.left}px`
+         popover.style.top = `${rect.top - 4}px`
+
+         // Clamp to viewport
+         const maxWidth = window.innerWidth - EDGE_MARGIN * 2
+         popover.style.maxWidth = `${maxWidth}px`
+
+         const popoverRect = popover.getBoundingClientRect()
+         const maxLeft = window.innerWidth - EDGE_MARGIN - popoverRect.width
+         const left = Math.max(EDGE_MARGIN, Math.min(rect.left, maxLeft))
+
+         popover.style.left = `${left}px`
+      }
+
+      popover?.showPopover()
+
+      // Add scroll listener to dismiss when scrolling
+      addCheckboxScrollListener()
+   }, 400)
+}
+
+function addCheckboxScrollListener() {
+   const trigger = checkboxTriggerRef.value
+   if (!trigger) return
+
+   // Walk up to find the nearest scrollable ancestor
+   let ancestor: HTMLElement | null = trigger.parentElement
+   while (ancestor) {
+      const { overflow, overflowY } = getComputedStyle(ancestor)
+      if (/auto|scroll/.test(overflow + overflowY)) break
+      ancestor = ancestor.parentElement
+   }
+   const target = ancestor ?? document
+
+   target.addEventListener('scroll', dismissCheckboxTooltip, { passive: true, once: true })
+}
+
+function onCheckboxPointerLeave() {
+   if (checkboxTimer) {
+      clearTimeout(checkboxTimer)
+      checkboxTimer = null
+   }
+   if (showCheckboxTooltip.value) {
+      showCheckboxTooltip.value = false
+      checkboxPopoverRef.value?.hidePopover()
+   }
+}
+
+function dismissCheckboxTooltip() {
+   if (checkboxTimer) {
+      clearTimeout(checkboxTimer)
+      checkboxTimer = null
+   }
+   if (showCheckboxTooltip.value) {
+      showCheckboxTooltip.value = false
+      checkboxPopoverRef.value?.hidePopover()
+   }
+}
 </script>
 
 <template>
@@ -59,6 +137,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
       @click="!item.is_file && emit('navigate')"
    >
       <button
+         ref="checkboxTriggerRef"
          type="button"
          class="ScanResultsListItem-check"
          data-testid="results-row-checkbox"
@@ -71,6 +150,8 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
          :disabled="!isSelectable"
          :aria-disabled="!isSelectable"
          @click.stop="isSelectable && emit('select')"
+         @pointerenter="!isSelectable && onCheckboxPointerEnter()"
+         @pointerleave="!isSelectable && onCheckboxPointerLeave()"
       >
          <PhCircle
             v-if="!isSelected && !isSomeSelected"
@@ -134,6 +215,18 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
          @pointerleave="onPointerLeave"
       >
          {{ item.name }}
+      </div>
+      <div
+         v-if="!isSelectable"
+         ref="checkboxPopoverRef"
+         popover="manual"
+         class="ScanResultsListItem-checkboxPopover"
+      >
+         {{
+            item.is_fda_required
+               ? t('ScanResultsListItem', 'fdaRequiredTooltip')
+               : t('ScanResultsListItem', 'protectedTooltip')
+         }}
       </div>
    </div>
 </template>
@@ -292,6 +385,49 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
 
 @media (prefers-reduced-motion: reduce) {
    .ScanResultsListItem-popover {
+      transition: none;
+      filter: none;
+   }
+}
+
+/* ── Checkbox tooltip popover ── */
+
+.ScanResultsListItem-checkboxPopover {
+   position: fixed;
+   margin: 0;
+   padding: 8px 12px;
+   max-width: 280px;
+   border: 1px solid var(--color-border);
+   border-radius: 6px;
+   background: var(--color-bg-elevated);
+   color: var(--color-text);
+   font-size: 0.75rem;
+   font-weight: 500;
+   line-height: 1.5;
+   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+   transform: translateY(-100%);
+   pointer-events: auto;
+   opacity: 0;
+   filter: blur(4px);
+   transition:
+      opacity 0.2s var(--ease-standard),
+      filter 0.2s var(--ease-standard);
+}
+
+.ScanResultsListItem-checkboxPopover:popover-open {
+   opacity: 1;
+   filter: blur(0);
+}
+
+@starting-style {
+   .ScanResultsListItem-checkboxPopover:popover-open {
+      opacity: 0;
+      filter: blur(4px);
+   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+   .ScanResultsListItem-checkboxPopover {
       transition: none;
       filter: none;
    }

@@ -271,6 +271,7 @@ function setSelectedItems(items: DeleteListItem[]) {
          size: item.size,
          is_file: item.is_file,
          is_protected: false,
+         is_fda_required: false,
          children: [],
       })
    }
@@ -381,7 +382,10 @@ function onCancel() {
                      :item="displayedItems[virtualRow.index]"
                      :isSelected="isSelectedForUI(displayedItems[virtualRow.index].path)"
                      :isSomeSelected="someSelectedPaths.has(displayedItems[virtualRow.index].path)"
-                     :isSelectable="!displayedItems[virtualRow.index].is_protected"
+                     :isSelectable="
+                        !displayedItems[virtualRow.index].is_protected &&
+                        !displayedItems[virtualRow.index].is_fda_required
+                     "
                      :formatBytes="formatBytes"
                      @select="() => toggleSelect(displayedItems[virtualRow.index])"
                      @navigate="() => goInto(displayedItems[virtualRow.index])"

@@ -5,7 +5,7 @@ use std::ffi::CString;
 /// Probes FDA by attempting to open a TCC-protected directory via POSIX `opendir`.
 /// Unlike `std::fs::read_dir`, raw `opendir` bypasses the App Sandbox layer
 /// and hits the TCC check directly.
-fn check_full_disk_access_sync() -> Option<bool> {
+pub fn check_full_disk_access_sync() -> Option<bool> {
     let home = dirs::home_dir()?;
     let c_path = CString::new(home.join("Library/Safari").to_string_lossy().as_bytes()).ok()?;
 

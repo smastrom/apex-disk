@@ -1,9 +1,9 @@
 <!--
 ScanResultsListItemIconSwitch
 
-Purpose: Renders a single folder or file icon by type. Folders: PhFolderSimpleUser (protected) or PhFolderSimple. Files: by extension PhFileText, PhFileAudio, PhFileVideo, PhFileArchive, PhFileImage, or PhFile.
+Purpose: Renders a single folder or file icon by type. Folders: PhFolderSimpleLock (FDA-required), PhFolderSimpleUser (protected) or PhFolderSimple. Files: by extension PhFileText, PhFileAudio, PhFileVideo, PhFileArchive, PhFileImage, or PhFile.
 
-Props: item ({ name: string, is_file: boolean, is_protected?: boolean }), size (number?)
+Props: item ({ name: string, is_file: boolean, is_protected?: boolean, is_fda_required?: boolean }), size (number?)
 
 Example:
  <div class="ScanResultsListItem-icon" :class="{ 'ScanResultsListItem-icon--hidden': item.name.startsWith('.') }">
@@ -15,6 +15,7 @@ Example:
 import {
    PhFolderSimple,
    PhFolderSimpleUser,
+   PhFolderSimpleLock,
    PhFile,
    PhFileText,
    PhFileAudio,
@@ -24,7 +25,7 @@ import {
 } from '@phosphor-icons/vue'
 
 defineProps<{
-   item: { name: string; is_file: boolean; is_protected?: boolean }
+   item: { name: string; is_file: boolean; is_protected?: boolean; is_fda_required?: boolean }
    size?: number
 }>()
 
@@ -137,8 +138,14 @@ function fileIconComponent(name: string) {
 </script>
 
 <template>
+   <PhFolderSimpleLock
+      v-if="!item.is_file && item.is_fda_required"
+      :size="size ?? 24"
+      weight="regular"
+      aria-hidden="true"
+   />
    <PhFolderSimpleUser
-      v-if="!item.is_file && item.is_protected"
+      v-else-if="!item.is_file && item.is_protected"
       :size="size ?? 24"
       weight="regular"
       aria-hidden="true"

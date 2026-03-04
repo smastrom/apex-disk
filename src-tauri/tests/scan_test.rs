@@ -25,7 +25,7 @@ fn scan_returns_folder_info_shape() {
         show_zero_byte: true,
     };
 
-    let result = scan::scan_user_folders_from_home(home, &options).expect("scan");
+    let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     assert!(!result.is_empty());
 
     for folder in &result {
@@ -50,7 +50,7 @@ fn scan_protected_roots_have_is_protected_true() {
         show_zero_byte: true,
     };
 
-    let result = scan::scan_user_folders_from_home(home, &options).expect("scan");
+    let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
 
     let names: std::collections::HashSet<_> = result.iter().map(|f| f.name.as_str()).collect();
     let protected_roots = [
@@ -84,7 +84,7 @@ fn scan_skipped_dir_not_present() {
         show_zero_byte: true,
     };
 
-    let result = scan::scan_user_folders_from_home(home, &options).expect("scan");
+    let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     let names: std::collections::HashSet<_> = result.iter().map(|f| f.name.as_str()).collect();
     assert!(
         !names.contains(".ssh"),
@@ -109,7 +109,7 @@ fn scan_library_children_exclude_skipped_keychains() {
         show_zero_byte: true,
     };
 
-    let result = scan::scan_user_folders_from_home(home, &options).expect("scan");
+    let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     let library = result
         .iter()
         .find(|f| f.name == "Library")
@@ -133,7 +133,7 @@ fn scan_show_under_1kb_false_filters_small() {
         show_zero_byte: true,
     };
 
-    let result = scan::scan_user_folders_from_home(home, &options).expect("scan");
+    let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     let mydata = result.iter().find(|f| f.name == "MyData");
     if let Some(m) = mydata {
         let child_names: Vec<_> = m.children.iter().map(|c| c.name.as_str()).collect();
@@ -156,7 +156,7 @@ fn scan_show_zero_byte_false_filters_zero() {
         show_zero_byte: false,
     };
 
-    let result = scan::scan_user_folders_from_home(home, &options).expect("scan");
+    let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     let mydata = result.iter().find(|f| f.name == "MyData");
     if let Some(m) = mydata {
         let child_names: Vec<_> = m.children.iter().map(|c| c.name.as_str()).collect();
@@ -175,7 +175,7 @@ fn scan_children_sorted_by_size_desc_then_name() {
     let home = home_dir.path();
     let options = ScanOptions::default();
 
-    let result = scan::scan_user_folders_from_home(home, &options).expect("scan");
+    let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     for folder in &result {
         let children = &folder.children;
         for w in children.windows(2) {

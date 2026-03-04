@@ -7,6 +7,7 @@ export interface FolderInfo {
    children: FolderInfo[]
    is_file: boolean
    is_protected: boolean
+   is_fda_required: boolean
 }
 
 /** Single item in the delete review list (flattened from selection). */
