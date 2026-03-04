@@ -9,7 +9,7 @@
 //! same I/O is used; the OS grants access process-wide when FDA is granted.
 
 use std::path::Path;
-use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 
 use rayon::prelude::*;
@@ -24,6 +24,9 @@ use crate::ScanOptions;
 /// accuracy, but only retain the N largest as tree entries to avoid millions
 /// of allocations and a massive IPC payload.
 const MAX_FILES_PER_DIR: usize = 50;
+
+/// Global cancellation flag for ongoing scans
+static SCAN_CANCELLED: AtomicBool = AtomicBool::new(false);
 
 #[derive(serde::Serialize, serde::Deserialize, Clone)]
 struct FolderScanProgress {
@@ -45,6 +48,20 @@ fn sort_children(children: &mut [FolderInfo]) {
 /// threads that finish small directories steal subtasks from large ones like Library.
 /// Respects options: hidden files, items under 1 KB, and 0 B files/folders are excluded when disabled.
 fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: bool) -> FolderInfo {
+    // Check if scan has been cancelled
+    if SCAN_CANCELLED.load(Ordering::Relaxed) {
+        return FolderInfo {
+            name: "Cancelled".to_string(),
+            path: root.to_string_lossy().into_owned(),
+            size: 0,
+            icon: None,
+            children: Vec::new(),
+            is_file: false,
+            is_protected: false,
+            is_fda_required: false,
+        };
+    }
+
     let name = root
         .file_name()
         .and_then(|n| n.to_str())
@@ -282,8 +299,18 @@ pub async fn get_user_folders(
     app: tauri::AppHandle,
     options: Option<crate::ScanOptions>,
 ) -> Result<Vec<crate::FolderInfo>, String> {
+    // Reset cancellation flag at the start of a new scan
+    SCAN_CANCELLED.store(false, Ordering::Relaxed);
+
     let options = options.unwrap_or_default();
     tauri::async_runtime::spawn_blocking(move || get_user_folders_sync_with_progress(app, options))
         .await
         .map_err(|e| format!("Task join error: {}", e))?
+}
+
+/// Tauri command: cancels any ongoing scan and cleans up resources.
+#[tauri::command]
+pub fn cancel_scan() -> Result<(), String> {
+    SCAN_CANCELLED.store(true, Ordering::Relaxed);
+    Ok(())
 }

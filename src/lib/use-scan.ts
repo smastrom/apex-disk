@@ -53,6 +53,7 @@ export function useScan() {
             show_under_1kb: settings.showUnder1Kb,
             show_zero_byte: settings.showZeroByte,
          }
+
          const result = await invoke<FolderInfo[]>('get_user_folders', { options })
 
          if (gen === scanGeneration.value) folders.value = result
@@ -67,7 +68,7 @@ export function useScan() {
       }
    }
 
-   function onAbort() {
+   async function onAbort() {
       scanGeneration.value += 1
       unlistenProgress?.()
       unlistenProgress = null
@@ -75,10 +76,13 @@ export function useScan() {
       folders.value = []
       isLoading.value = false
       progress.value = { ...INITIAL_PROGRESS }
-   }
 
-   function onCancel() {
-      folders.value = []
+      // Cancel any ongoing Rust scan to free memory
+      try {
+         await invoke('cancel_scan')
+      } catch (error) {
+         console.warn('Failed to cancel scan:', error)
+      }
    }
 
    onUnmounted(() => {
@@ -95,6 +99,6 @@ export function useScan() {
       progress,
       loadFolders,
       onAbort,
-      onCancel,
+      onCancel: onAbort,
    }
 }
