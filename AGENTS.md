@@ -191,7 +191,7 @@ applyTheme(currentTheme)
 - **Reacting to user selection in a settings view**:
 
 ```ts
-const storeRef = useSettingsStore()
+const storeRef = useAppSettings()
 
 async function onThemeChange(theme: ThemeColor) {
    await storeRef.value?.setThemeColor(theme)
@@ -361,7 +361,7 @@ Composables (`use*` functions in `src/lib/`) encapsulate reusable reactive logic
 
 ##### When to extract a composable
 
-1. **Global or shared logic** — If the logic is not scoped to a single component but rather affects the app globally or is reused across components, it belongs in a composable. Examples: store bootstrap (`provideAuthStore`), keyboard focus-ring detection (`useFocusRing`), translations (`useTranslations`).
+1. **Global or shared logic** — If the logic is not scoped to a single component but rather affects the app globally or is reused across components, it belongs in a composable. Examples: store bootstrap (`provideAuthStore`), keyboard focus-ring detection (`setupFocusRing`), translations (`useTranslations`).
 2. **Grouped lifecycle and reactivity** — When multiple Vue APIs (`onMounted`, `onUnmounted`, `watch`, `ref`, `computed`) serve the **same purpose**, group them into a composable instead of scattering them across the component. For instance, if a feature needs `onMounted` to set up listeners, `onUnmounted` to tear them down, and a `watch` to react to changes — that's one composable, not three unrelated blocks in the component.
 
 ##### When to keep logic inline
@@ -371,7 +371,7 @@ If the logic is **scoped only to that component** and consists of simple, isolat
 ```ts
 // ✅ GOOD — global concern extracted to composable
 // src/lib/use-focus-ring.ts
-export function useFocusRing() {
+export function setupFocusRing() {
    onMounted(() => {
       document.addEventListener('keydown', onKeyDown, true)
    })
@@ -382,7 +382,7 @@ export function useFocusRing() {
 }
 
 // App.vue — clean, declarative
-useFocusRing()
+setupFocusRing()
 ```
 
 ```ts
