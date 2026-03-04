@@ -3,15 +3,12 @@ ScanView
 
 Purpose: Common scan shell. Always shows ScanViewDiskUsage at top; body switches between ScanResults, ScanResultsDelete, or ScanResultsDeleteConfirmation.
 
-Props: folders (FolderInfo[]), isLoading (boolean), progress (ScanProgress)
+Props: activeView (string), diskUsage (DiskUsage | null)
 
 Example:
  <ScanView
-   :folders="folders"
-   :isScanning="isScanning"
-   :progress="progress"
-   @start-scan="loadFolders"
-   @abort="onAbort"
+   :activeView="activeView"
+   :diskUsage="diskUsage"
  />
 -->
 
@@ -23,65 +20,82 @@ import ScanResultsList from './ScanResultsList.vue'
 import ScanScanningResults from './ScanScanningResults.vue'
 import ScanLaunch from './ScanLaunch.vue'
 
-import { toRef, ref, computed, watch, onDeactivated, useTemplateRef } from 'vue'
+import { ref, watch, onDeactivated, useTemplateRef } from 'vue'
 
-import { useTauriAppSettings } from '@/stores/settings'
+import { useAppSettings } from '@/stores/settings'
+import { useScanner } from '@/lib/use-scanner'
+import { useDiskUsage } from '@/lib/use-disk-usage'
 
-import type { DeleteListItem, FolderInfo, ScanProgress } from '@/types/structs'
+import type { DeleteListItem } from '@/types/structs'
+import type { DiskUsage } from '@/types/disk'
 
 const props = defineProps<{
    activeView: string
-   folders: FolderInfo[]
-   isScanning: boolean
-   progress: ScanProgress
+   diskUsage?: DiskUsage | null
 }>()
 
-const settingsStore = useTauriAppSettings()
+const settingsStore = useAppSettings()
 
-const emit = defineEmits<{
-   (e: 'start-scan'): void
-   (e: 'abort'): void
-   (e: 'cancel'): void
-}>()
+const { usage: diskUsage } = await useDiskUsage()
+const { folders, isScanning, progress, loadFolders, onAbort, onCancel } = useScanner()
 
-enum ViewState {
-   // LAUNCH - handled in viewStateLaunch computed
-   // SCANNING - handled in viewStateScanning computed
+enum ScanViewState {
+   LAUNCH = 'launch',
+   SCANNING = 'scanning',
    RESULTS = 'results',
    DELETE = 'delete',
    DELETE_COMPLETE = 'deleteComplete',
 }
 
-const viewStateLaunch = computed(
-   () => viewState.value === ViewState.RESULTS && props.folders.length === 0
-)
+// Centralized view state computation - single source of truth
 
-const viewStateScanning = toRef(props, 'isScanning')
-const viewState = ref<ViewState>(ViewState.RESULTS)
+const scanViewState = ref<ScanViewState>(ScanViewState.LAUNCH)
+
+watch([() => isScanning.value, () => folders.value.length], ([isScanning, folderCount]) => {
+   if (isScanning) {
+      scanViewState.value = ScanViewState.SCANNING
+   } else if (folderCount === 0) {
+      scanViewState.value = ScanViewState.LAUNCH
+   } else {
+      scanViewState.value = ScanViewState.RESULTS
+   }
+})
 
 const deleteItems = ref<DeleteListItem[]>([])
 const deletedSummary = ref<{ count: number; size: number } | null>(null)
 const selectedSize = ref(0)
-
-const diskUsageRef = useTemplateRef<InstanceType<typeof ScanViewDiskUsage>>('diskUsageRef')
+const diskUsageRefreshKey = ref(0)
 const resultsListRef = useTemplateRef<InstanceType<typeof ScanResultsList>>('resultsListRef')
 const pendingSelection = ref<DeleteListItem[] | null>(null)
 
 /** When Abort/cancel clears folders and we return to ScanLaunch, reset all scan state. */
+
+function resetInternalState() {
+   selectedSize.value = 0
+   scanViewState.value = ScanViewState.LAUNCH
+   deleteItems.value = []
+   deletedSummary.value = null
+   pendingSelection.value = null
+   // Refresh disk usage to reflect changes after deletion
+   diskUsageRefreshKey.value++
+}
+
 watch(
-   () => props.folders.length,
-   (len) => {
-      if (len === 0) {
-         selectedSize.value = 0
-         viewState.value = ViewState.RESULTS
-         deleteItems.value = []
-         deletedSummary.value = null
-         pendingSelection.value = null
-         diskUsageRef.value?.refresh()
+   () => folders.value.length,
+   (length) => {
+      if (length === 0) {
+         resetInternalState()
       }
-   },
-   { immediate: true }
+   }
 )
+
+onDeactivated(() => {
+   // If switching app view from this component and we're in DeleteResults page
+   if (scanViewState.value === ScanViewState.DELETE_COMPLETE) {
+      scanViewState.value = ScanViewState.LAUNCH
+      onCancel()
+   }
+})
 
 function onSelectedSizeUpdate(value: number) {
    selectedSize.value = value
@@ -89,12 +103,12 @@ function onSelectedSizeUpdate(value: number) {
 
 function onReview(items: DeleteListItem[]) {
    deleteItems.value = items
-   viewState.value = ViewState.DELETE
+   scanViewState.value = ScanViewState.DELETE
 }
 
 function onBackFromDelete(checkedItems: DeleteListItem[]) {
    pendingSelection.value = checkedItems
-   viewState.value = ViewState.RESULTS
+   scanViewState.value = ScanViewState.RESULTS
 }
 
 watch(resultsListRef, (ref) => {
@@ -116,86 +130,59 @@ function onDeleteComplete(items: DeleteListItem[]) {
    if (settingsStore.settings.value.permanentlyDelete) {
       selectedSize.value = 0
    }
-   diskUsageRef.value?.refresh()
+   diskUsageRefreshKey.value++
 
-   viewState.value = ViewState.DELETE_COMPLETE
+   scanViewState.value = ScanViewState.DELETE_COMPLETE
 }
 
 function onRestart() {
-   viewState.value = ViewState.RESULTS
-   diskUsageRef.value?.refresh()
-   emit('cancel')
+   scanViewState.value = ScanViewState.RESULTS
+   diskUsageRefreshKey.value++
+   onCancel()
 }
-
-watch(
-   () => props.activeView,
-   (newView, oldView) => {
-      // Refresh disk usage when returning to the scan view if we are on the launch screen
-      if (newView === 'scan' && props.folders.length === 0 && !props.isScanning) {
-         diskUsageRef.value?.refresh()
-      }
-
-      if (
-         oldView === 'scan' &&
-         newView !== 'scan' &&
-         viewState.value === ViewState.DELETE_COMPLETE
-      ) {
-         viewState.value = ViewState.RESULTS
-         emit('cancel')
-      }
-   }
-)
-
-onDeactivated(() => {
-   if (viewState.value === ViewState.DELETE_COMPLETE) {
-      viewState.value = ViewState.RESULTS
-      emit('cancel')
-   }
-})
 </script>
 
 <template>
    <main class="ScanView-root">
-      <ScanViewDiskUsage ref="diskUsageRef" :selectedSize="selectedSize" />
+      <ScanViewDiskUsage :usage="diskUsage" :selectedSize="selectedSize" />
 
       <Transition name="fade" mode="out-in">
          <KeepAlive>
-            <ScanScanningResults
-               v-if="viewStateScanning"
+            <ScanLaunch
+               v-if="scanViewState === ScanViewState.LAUNCH"
                class="ScanView-body"
-               :progress="progress"
-               @abort="$emit('abort')"
+               @start-scan="loadFolders"
             />
 
-            <ScanLaunch
-               v-else-if="viewStateLaunch"
+            <ScanScanningResults
+               v-else-if="scanViewState === ScanViewState.SCANNING"
                class="ScanView-body"
-               @start-scan="$emit('start-scan')"
+               :progress="progress"
+               @abort="onAbort"
             />
 
             <ScanResultsList
                ref="resultsListRef"
-               v-else-if="viewState === ViewState.RESULTS && folders.length > 0"
+               v-else-if="scanViewState === ScanViewState.RESULTS"
                class="ScanView-body"
                :folders="folders"
                @update:selectedSize="onSelectedSizeUpdate"
                @review="onReview"
-               @cancel="$emit('cancel')"
+               @cancel="onCancel"
             />
 
             <ScanResultsDeleteList
-               v-else-if="viewState === ViewState.DELETE"
+               v-else-if="scanViewState === ScanViewState.DELETE"
                class="ScanView-body"
                :items="deleteItems"
-               :isActive="viewState === ViewState.DELETE"
                @back="onBackFromDelete"
                @update:selectedSize="onSelectedSizeUpdate"
                @complete="onDeleteComplete"
-               @cancel="$emit('cancel')"
+               @cancel="onCancel"
             />
 
             <ScanResultsDeleteConfirmation
-               v-else-if="viewState === ViewState.DELETE_COMPLETE"
+               v-else-if="scanViewState === ScanViewState.DELETE_COMPLETE"
                class="ScanView-body"
                :deletedSummary="deletedSummary"
                @restart="onRestart"

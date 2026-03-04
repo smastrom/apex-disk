@@ -3,10 +3,10 @@ ScanResultsDeleteList
 
 Purpose: Fullscreen list of items scheduled for delete. Checkboxes (default on) update progress and button size. Red Delete button with countdown then spinner when processing.
 
-Props: items (DeleteListItem[]), isActive (boolean?) — when true, countdown starts
+Props: items (DeleteListItem[]) — countdown starts automatically when component is rendered
 
 Example:
- <ScanResultsDeleteList :items="deleteItems" :isActive="isDeleteView" @update:selectedSize="onSize" @complete="onComplete" />
+ <ScanResultsDeleteList :items="deleteItems" @update:selectedSize="onSize" @complete="onComplete" />
 -->
 
 <script setup lang="ts">
@@ -19,6 +19,7 @@ import {
    shallowRef,
    watch,
    computed,
+   onMounted,
    onActivated,
    onDeactivated,
    onUnmounted,
@@ -31,7 +32,7 @@ import { PhTrashSimple } from '@phosphor-icons/vue'
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/use-translations'
 import { useReducedMotion } from '@/lib/use-reduced-motion'
-import { useTauriAppSettings } from '@/stores/settings'
+import { useAppSettings } from '@/stores/settings'
 
 import { DELETE_COUNTDOWN_MS, DELETE_POST_DELETE_SLEEP_MS } from '@/lib/constants'
 
@@ -39,7 +40,6 @@ import type { DeleteListItem } from '@/types/structs'
 
 const props = defineProps<{
    items: DeleteListItem[]
-   isActive?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -50,7 +50,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useTranslations()
-const settingsStore = useTauriAppSettings()
+const settingsStore = useAppSettings()
 
 /**
  * Safety countdown: the delete button stays disabled for DELETE_COUNTDOWN_MS
@@ -86,23 +86,13 @@ function stopCountdown() {
    countdownRemaining.value = 0
 }
 
-watch(
-   () => props.isActive,
-   (isActive) => {
-      if (isActive) startCountdown()
-      else stopCountdown()
-   },
-   { immediate: true }
-)
+// Start countdown automatically when component is mounted
+onMounted(startCountdown)
 
 /**
- * KeepAlive re-activation: the watcher above won't fire when the component is
- * restored from cache because `props.isActive` stays `true` → `true` (no change).
- * Restart the countdown explicitly on re-activation.
+ * KeepAlive re-activation: restart the countdown when component is re-activated.
  */
-onActivated(() => {
-   if (props.isActive) startCountdown()
-})
+onActivated(startCountdown)
 
 onUnmounted(stopCountdown)
 

@@ -17,7 +17,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window'
 
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/use-translations'
-import { useTauriAppSettings } from '@/stores/settings'
+import { useAppSettings } from '@/stores/settings'
 
 defineProps<{
    deletedSummary: { count: number; size: number } | null
@@ -28,7 +28,7 @@ defineEmits<{
 }>()
 
 const { t } = useTranslations()
-const settingsStore = useTauriAppSettings()
+const settingsStore = useAppSettings()
 
 function closeApp() {
    getCurrentWindow().close()

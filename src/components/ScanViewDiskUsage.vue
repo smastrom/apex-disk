@@ -1,67 +1,34 @@
 <!--
 ScanViewDiskUsage
 
-Purpose: Progress bar showing current disk usage (home volume). Shows "new free" in accent when items are selected for delete. Exposes refresh() to re-fetch after delete.
+Purpose: Progress bar showing current disk usage (home volume). Shows "new free" in accent when items are selected for delete.
 
-Props: selectedSize (number?)
+Props: usage (DiskUsage | null), selectedSize (number?)
 
 Example:
- <ScanViewDiskUsage ref="diskUsageRef" :selectedSize="selectedSize" />
+ <ScanViewDiskUsage :usage="diskUsage" :selectedSize="selectedSize" />
 -->
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { computed } from 'vue'
 import { PhHardDrive } from '@phosphor-icons/vue'
 import { openPath } from '@tauri-apps/plugin-opener'
-import { getCurrentWindow } from '@tauri-apps/api/window'
 
 import { formatBytes } from '@/lib/format'
-import { getDiskUsage } from '@/lib/disk'
 import { useTranslations } from '@/lib/use-translations'
-import { debounce } from '@/lib/utils'
 
 import type { DiskUsage } from '@/types/disk'
 
 const props = defineProps<{
+   usage?: DiskUsage | null
    selectedSize?: number
 }>()
 
 const { t } = useTranslations()
 
-const usage = ref<DiskUsage | null>(null)
-
-async function fetchUsage() {
-   try {
-      usage.value = await getDiskUsage()
-   } catch (err) {
-      console.error('Failed to get disk usage:', err)
-   }
-}
-
-const debouncedFetchUsage = debounce(fetchUsage, 200)
-
-onMounted(() => {
-   fetchUsage()
-
-   // Refresh disk usage when the window is focused (e.g. user emptied trash in Finder)
-   const unlisten = getCurrentWindow().onFocusChanged(({ payload: focused }) => {
-      if (focused) {
-         debouncedFetchUsage()
-      }
-   })
-
-   onUnmounted(async () => {
-      ;(await unlisten)()
-   })
-})
-
-defineExpose({
-   refresh: fetchUsage,
-})
-
 /** Main bar: shrinks when selecting to show remaining used after delete. */
 const mainBarPercent = computed(() => {
-   const u = usage.value
+   const u = props.usage
 
    if (!u || u.total === 0) return 0
 
@@ -73,7 +40,7 @@ const mainBarPercent = computed(() => {
 
 /** Lighter bar behind: full current used. Extends past main when selecting = "to be wiped". */
 const lighterBarPercent = computed(() => {
-   const u = usage.value
+   const u = props.usage
 
    if (!u || u.total === 0) return 0
 
@@ -81,7 +48,7 @@ const lighterBarPercent = computed(() => {
 })
 
 const newFreeSpace = computed(() => {
-   const u = usage.value
+   const u = props.usage
    const sel = props.selectedSize ?? 0
 
    if (!u || sel === 0) return null
@@ -90,10 +57,10 @@ const newFreeSpace = computed(() => {
 })
 
 async function openHomeInFinder() {
-   if (!usage.value?.home_path) return
+   if (!props.usage?.home_path) return
 
    try {
-      await openPath(usage.value.home_path)
+      await openPath(props.usage.home_path)
    } catch (err) {
       console.error('Failed to open home in Finder:', err)
    }
@@ -101,10 +68,10 @@ async function openHomeInFinder() {
 </script>
 
 <template>
-   <div v-if="usage" class="ScanViewDiskUsage-root" data-testid="disk-usage">
+   <div v-if="props.usage" class="ScanViewDiskUsage-root" data-testid="disk-usage">
       <div class="ScanViewDiskUsage-header">
          <button type="button" class="ScanViewDiskUsage-userBadge" @click="openHomeInFinder">
-            /{{ usage.user_name }}
+            /{{ props.usage.user_name }}
          </button>
 
          <span class="ScanViewDiskUsage-volume">
@@ -114,17 +81,17 @@ async function openHomeInFinder() {
                class="ScanViewDiskUsage-volumeIcon"
                aria-hidden="true"
             />
-            {{ usage.volume_name }}
+            {{ props.usage.volume_name }}
          </span>
       </div>
       <div class="ScanViewDiskUsage-infoRow">
          <span class="ScanViewDiskUsage-info">
             <span class="ScanViewDiskUsage-label">{{ t('ScanViewDiskUsage', 'total') }}</span>
-            <span class="ScanViewDiskUsage-value">{{ formatBytes(usage.total) }}</span>
+            <span class="ScanViewDiskUsage-value">{{ formatBytes(props.usage.total) }}</span>
          </span>
          <span class="ScanViewDiskUsage-info">
             <span class="ScanViewDiskUsage-label">{{ t('ScanViewDiskUsage', 'free') }}</span>
-            <span class="ScanViewDiskUsage-value">{{ formatBytes(usage.free) }}</span>
+            <span class="ScanViewDiskUsage-value">{{ formatBytes(props.usage.free) }}</span>
          </span>
          <span
             v-if="newFreeSpace !== null"
