@@ -41,6 +41,7 @@ async function onDonateClick() {
       <button
          class="AppFooter-btn"
          :class="{ 'AppFooter-btn--active': activeView === 'scan' }"
+         data-testid="footer-scan"
          @click="emit('select-view', 'scan')"
       >
          <PhMagnifyingGlass :size="24" weight="regular" aria-hidden="true" />
@@ -49,6 +50,7 @@ async function onDonateClick() {
       <button
          class="AppFooter-btn"
          :class="{ 'AppFooter-btn--active': activeView === 'settings' }"
+         data-testid="footer-settings"
          @click="emit('select-view', 'settings')"
       >
          <PhGear :size="24" weight="regular" aria-hidden="true" />

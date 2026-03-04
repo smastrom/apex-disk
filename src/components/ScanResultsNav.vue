@@ -53,13 +53,14 @@ const { t } = useTranslations()
 </script>
 
 <template>
-   <nav class="ScanResultsNav-root">
+   <nav class="ScanResultsNav-root" data-testid="results-nav">
       <div class="ScanResultsNav-controls">
          <button
             type="button"
             class="ScanResultsNav-btn"
             :disabled="isBackDisabled"
             aria-label="Back"
+            data-testid="nav-back"
             @click="emit('back')"
          >
             <PhCaretLeft :size="18" weight="regular" aria-hidden="true" />
@@ -70,12 +71,13 @@ const { t } = useTranslations()
             class="ScanResultsNav-btn"
             :disabled="isForwardDisabled"
             aria-label="Forward"
+            data-testid="nav-forward"
             @click="emit('forward')"
          >
             <PhCaretRight :size="18" weight="regular" aria-hidden="true" />
          </button>
       </div>
-      <div class="ScanResultsNav-path" :title="pathTitle">
+      <div class="ScanResultsNav-path" :title="pathTitle" data-testid="nav-path-label">
          <PhTrashSimple
             v-if="pathIcon === 'trash'"
             :size="16"
@@ -106,6 +108,7 @@ const { t } = useTranslations()
             v-if="isCancelShown"
             type="button"
             class="ScanResultsNav-cancelBtn"
+            data-testid="results-cancel"
             @click="emit('cancel')"
          >
             {{ t('ScanResultsList', 'cancel') }}

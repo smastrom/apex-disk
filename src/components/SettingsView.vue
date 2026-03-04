@@ -84,7 +84,7 @@ async function openSystemSettings() {
 </script>
 
 <template>
-   <main class="SettingsView-root">
+   <main class="SettingsView-root" data-testid="settings-view">
       <div class="SettingsView-content">
          <!-- App Settings -->
 

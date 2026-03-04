@@ -82,7 +82,7 @@ async function openHomeInFinder() {
 </script>
 
 <template>
-   <div v-if="usage" class="ScanViewDiskUsage-root">
+   <div v-if="usage" class="ScanViewDiskUsage-root" data-testid="disk-usage">
       <div class="ScanViewDiskUsage-header">
          <button type="button" class="ScanViewDiskUsage-userBadge" @click="openHomeInFinder">
             /{{ usage.user_name }}
@@ -110,6 +110,7 @@ async function openHomeInFinder() {
          <span
             v-if="newFreeSpace !== null"
             class="ScanViewDiskUsage-info ScanViewDiskUsage-newFree"
+            data-testid="disk-new-free"
          >
             <span class="ScanViewDiskUsage-label">{{ t('ScanViewDiskUsage', 'newFree') }}</span>
             <span class="ScanViewDiskUsage-value ScanViewDiskUsage-newFreeValue">

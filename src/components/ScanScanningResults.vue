@@ -62,13 +62,13 @@ onUnmounted(stopTimer)
 </script>
 
 <template>
-   <section class="ScanScanningResults-root">
+   <section class="ScanScanningResults-root" data-testid="scanning-results">
       <div class="ScanScanningResults-progressBlock">
          <div class="ScanScanningResults-progressHeader">
             <span class="ScanScanningResults-spinnerWrap">
                <Spinner :size="18" />
             </span>
-            <p class="ScanScanningResults-progressTitle">
+            <p class="ScanScanningResults-progressTitle" data-testid="scan-progress">
                {{
                   t('ScanScanningResults', 'scanning', {
                      current: formatProgressNumber(progress.current),
@@ -104,7 +104,12 @@ onUnmounted(stopTimer)
 
       <p class="ScanScanningResults-estimate">{{ t('ScanScanningResults', 'estimate') }}</p>
 
-      <button type="button" class="ScanScanningResults-abortBtn" @click="emit('abort')">
+      <button
+         type="button"
+         class="ScanScanningResults-abortBtn"
+         data-testid="scan-abort"
+         @click="emit('abort')"
+      >
          {{ t('ScanScanningResults', 'abort') }}
       </button>
    </section>

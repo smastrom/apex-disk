@@ -55,11 +55,13 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
          'ScanResultsListItem-root--selected': isSelected,
          'ScanResultsListItem-root--folder': !item.is_file,
       }"
+      :data-testid="item.is_file ? 'results-row-file' : 'results-row-folder'"
       @click="!item.is_file && emit('navigate')"
    >
       <button
          type="button"
          class="ScanResultsListItem-check"
+         data-testid="results-row-checkbox"
          :class="{
             'ScanResultsListItem-check--selected': isSelected,
             'ScanResultsListItem-check--some-selected': !isSelected && isSomeSelected,

@@ -345,7 +345,7 @@ function onCancel() {
 </script>
 
 <template>
-   <div class="ScanResultsList-root">
+   <div class="ScanResultsList-root" data-testid="results-list">
       <ScanResultsNav
          :isForwardShown="true"
          :isBackDisabled="backStack.length === 0"
@@ -396,6 +396,7 @@ function onCancel() {
             type="button"
             class="ScanResultsList-deleteBtn GradientButton"
             :disabled="selectedMap.size === 0"
+            data-testid="review-selection"
             @click="onReviewClick"
          >
             <PhTrashSimple :size="18" weight="bold" aria-hidden="true" />

@@ -22,7 +22,7 @@ const { t } = useTranslations()
 </script>
 
 <template>
-   <section class="ScanLaunch-root">
+   <section class="ScanLaunch-root" data-testid="scan-launch">
       <div class="ScanLaunch-notice">
          <p class="ScanLaunch-noticeTitle">
             <PhShieldWarning :size="16" weight="regular" aria-hidden="true" />
@@ -33,7 +33,12 @@ const { t } = useTranslations()
          </p>
       </div>
 
-      <button type="button" class="ScanLaunch-scanBtn GradientButton" @click="emit('start-scan')">
+      <button
+         type="button"
+         class="ScanLaunch-scanBtn GradientButton"
+         data-testid="start-scan"
+         @click="emit('start-scan')"
+      >
          <PhMagnifyingGlass :size="18" weight="regular" aria-hidden="true" />
          {{ t('ScanLaunch', 'startScan') }}
       </button>

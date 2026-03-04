@@ -51,6 +51,7 @@ function closeApp() {
          <button
             type="button"
             class="ScanResultsDeleteConfirmation-scanBtn GradientButton"
+            data-testid="scan-again"
             @click="$emit('scan-again')"
          >
             <PhMagnifyingGlass :size="18" weight="regular" aria-hidden="true" />

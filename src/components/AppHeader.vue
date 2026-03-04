@@ -31,9 +31,9 @@ async function openReleaseNotes(e: MouseEvent) {
 </script>
 
 <template>
-   <header class="AppHeader-root" data-tauri-drag-region>
+   <header class="AppHeader-root" data-tauri-drag-region data-testid="app-header">
       <div class="AppHeader-inner">
-         <h1 class="AppHeader-title">{{ t('AppHeader', 'title') }}</h1>
+         <h1 class="AppHeader-title" data-testid="app-title">{{ t('AppHeader', 'title') }}</h1>
          <a
             :href="RELEASE_NOTES_URL"
             class="AppHeader-version"

@@ -213,7 +213,7 @@ async function onDeleteClick() {
 </script>
 
 <template>
-   <div class="ScanResultsDeleteList-root">
+   <div class="ScanResultsDeleteList-root" data-testid="delete-list">
       <ScanResultsNav
          :isForwardShown="false"
          :isBackDisabled="false"
@@ -262,6 +262,7 @@ async function onDeleteClick() {
             class="ScanResultsDeleteList-deleteBtn"
             :data-deleting="isDeleting || undefined"
             :disabled="countdownRemaining > 0 || checkedCount === 0 || isDeleting"
+            data-testid="confirm-delete"
             @click="onDeleteClick"
          >
             <Transition name="ScanResultsDeleteList-caption" mode="out-in">

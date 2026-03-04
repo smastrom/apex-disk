@@ -51,10 +51,15 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
 </script>
 
 <template>
-   <div class="ScanResultsDeleteListItem-root" @click="emit('toggle')">
+   <div
+      class="ScanResultsDeleteListItem-root"
+      data-testid="delete-list-row"
+      @click="emit('toggle')"
+   >
       <button
          type="button"
          class="ScanResultsDeleteListItem-check"
+         data-testid="delete-list-row-checkbox"
          :class="{ 'ScanResultsDeleteListItem-check--selected': isSelected }"
          :aria-pressed="isSelected"
          @click.stop="emit('toggle')"
