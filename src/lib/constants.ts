@@ -30,8 +30,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
    showZeroByte: false,
 }
 
-/** Seconds to show countdown on the Delete button before it becomes clickable. */
-export const DELETE_COUNTDOWN_SECONDS = 1
+/** Ms to show countdown on the Delete button before it becomes clickable. */
+export const DELETE_COUNTDOWN_MS = 1500
 
 /** Ms to wait after delete_paths completes before emitting complete and clearing spinner. */
 export const DELETE_POST_DELETE_SLEEP_MS = 2000
