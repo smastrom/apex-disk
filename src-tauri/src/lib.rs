@@ -10,7 +10,7 @@ pub mod safe_folders;
 pub mod scan;
 pub mod xattr;
 
-use tauri::Emitter;
+use tauri::{Emitter, Manager};
 
 pub const SETTINGS_STORE_PATH: &str = "settings.json";
 
@@ -81,6 +81,14 @@ pub fn run() {
                     let _ = open::that(constants::LICENSE_URL);
                 } else if id == constants::CHECK_UPDATES_MENU_ID {
                     let _ = app.emit("check-for-updates", ());
+                } else if id == "minimize" {
+                    if let Some(window) = app.webview_windows().values().next() {
+                        let _ = window.minimize();
+                    }
+                } else if id == "close_window" {
+                    if let Some(window) = app.webview_windows().values().next() {
+                        let _ = window.close();
+                    }
                 }
             });
             Ok(())

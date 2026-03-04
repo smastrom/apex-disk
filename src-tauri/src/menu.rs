@@ -90,9 +90,15 @@ pub fn build_app_menu(
         ],
     )?;
 
-    // ── Window submenu ── (native items use system language)
-    let minimize = PredefinedMenuItem::minimize(handle, None)?;
-    let close_window = PredefinedMenuItem::close_window(handle, None)?;
+    // ── Window submenu ── (custom items need translation)
+    let minimize = MenuItem::with_id(handle, "minimize", labels.minimize, true, None::<&str>)?;
+    let close_window = MenuItem::with_id(
+        handle,
+        "close_window",
+        labels.close_window,
+        true,
+        None::<&str>,
+    )?;
     let window_submenu = Submenu::with_id_and_items(
         handle,
         tauri::menu::WINDOW_SUBMENU_ID,

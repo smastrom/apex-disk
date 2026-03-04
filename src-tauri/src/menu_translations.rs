@@ -30,7 +30,7 @@
 /// These items require manual translation because they're app-specific or
 /// submenu headers that macOS cannot automatically localize.
 ///
-/// Native items (About, Hide, Quit, Minimize, etc.) use `None` as label
+/// Native items (About, Hide, Quit, etc.) use `None` as label
 /// in menu.rs and are automatically localized by macOS to system language.
 pub struct MenuLabels {
     pub check_for_updates: &'static str,
@@ -38,6 +38,8 @@ pub struct MenuLabels {
     pub license: &'static str,
     pub website_label: &'static str,
     pub window: &'static str,
+    pub minimize: &'static str,
+    pub close_window: &'static str,
     pub help: &'static str,
 }
 
@@ -53,6 +55,8 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             license: "Licenza",
             website_label: "Note di versione",
             window: "Finestra",
+            minimize: "Minimizza",
+            close_window: "Chiudi finestra",
             help: "Aiuto",
         },
         "es" => MenuLabels {
@@ -61,6 +65,8 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             license: "Licencia",
             website_label: "Notas de versión",
             window: "Ventana",
+            minimize: "Minimizar",
+            close_window: "Cerrar ventana",
             help: "Ayuda",
         },
         "fr" => MenuLabels {
@@ -69,6 +75,8 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             license: "Licence",
             website_label: "Notes de version",
             window: "Fenêtre",
+            minimize: "Réduire",
+            close_window: "Fermer la fenêtre",
             help: "Aide",
         },
         "pt" => MenuLabels {
@@ -77,6 +85,8 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             license: "Licença",
             website_label: "Notas de versão",
             window: "Janela",
+            minimize: "Minimizar",
+            close_window: "Fechar janela",
             help: "Ajuda",
         },
         "de" => MenuLabels {
@@ -85,6 +95,8 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             license: "Lizenz",
             website_label: "Versionshinweise",
             window: "Fenster",
+            minimize: "Minimieren",
+            close_window: "Fenster schließen",
             help: "Hilfe",
         },
         "ru" => MenuLabels {
@@ -93,6 +105,8 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             license: "Лицензия",
             website_label: "Заметки о выпуске",
             window: "Окно",
+            minimize: "Свернуть",
+            close_window: "Закрыть окно",
             help: "Справка",
         },
         "zh" => MenuLabels {
@@ -101,6 +115,8 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             license: "许可证",
             website_label: "发行说明",
             window: "窗口",
+            minimize: "最小化",
+            close_window: "关闭窗口",
             help: "帮助",
         },
         "ja" => MenuLabels {
@@ -109,6 +125,8 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             license: "ライセンス",
             website_label: "リリースノート",
             window: "ウインドウ",
+            minimize: "最小化",
+            close_window: "ウィンドウを閉じる",
             help: "ヘルプ",
         },
         "ar" => MenuLabels {
@@ -117,6 +135,8 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             license: "الرخصة",
             website_label: "ملاحظات الإصدار",
             window: "نافذة",
+            minimize: "تصغير",
+            close_window: "إغلاق النافذة",
             help: "المساعدة",
         },
         // English is the default
@@ -126,6 +146,8 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             license: "License",
             website_label: "Release Notes",
             window: "Window",
+            minimize: "Minimize",
+            close_window: "Close Window",
             help: "Help",
         },
     }
