@@ -49,7 +49,7 @@ useFocusRing()
 useDisableNativeContextMenu()
 
 const { isFdaGranted } = useFullDiskAccess()
-const { folders, isLoading, progress, loadFolders, onAbort, onCancel } = useScan()
+const { folders, isScanning, progress, loadFolders, onAbort, onCancel } = useScan()
 const { activeView, setActiveView } = useViews(mainContentRef)
 const { availableUpdate } = useUpdater()
 </script>
@@ -64,7 +64,7 @@ const { availableUpdate } = useUpdater()
                v-show="activeView === 'scan'"
                :activeView="activeView"
                :folders="folders"
-               :isLoading="isLoading"
+               :isScanning="isScanning"
                :progress="progress"
                @start-scan="loadFolders"
                @abort="onAbort"

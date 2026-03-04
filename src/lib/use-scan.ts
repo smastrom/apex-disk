@@ -1,4 +1,4 @@
-import { ref, shallowRef, onUnmounted, onDeactivated } from 'vue'
+import { ref, shallowRef } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 
@@ -17,7 +17,7 @@ const INITIAL_PROGRESS: ScanProgress = {
 export function useScan() {
    const settingsStore = useSettingsStore()
    const folders = shallowRef<FolderInfo[]>([])
-   const isLoading = ref(false)
+   const isScanning = ref(false)
 
    /**
     * Generation counter that invalidates in-flight scans. Bumped on every new scan
@@ -39,7 +39,7 @@ export function useScan() {
 
       scanGeneration.value += 1
       const gen = scanGeneration.value // snapshot — all callbacks below bail if gen is stale
-      isLoading.value = true
+      isScanning.value = true
       progress.value = { ...INITIAL_PROGRESS }
 
       unlistenProgress = await listen<ScanProgress>('folder-scan-progress', (event) => {
@@ -63,7 +63,7 @@ export function useScan() {
          if (gen === scanGeneration.value) {
             unlistenProgress?.()
             unlistenProgress = null
-            isLoading.value = false
+            isScanning.value = false
          }
       }
    }
@@ -74,7 +74,7 @@ export function useScan() {
       unlistenProgress = null
 
       folders.value = []
-      isLoading.value = false
+      isScanning.value = false
       progress.value = { ...INITIAL_PROGRESS }
 
       // Cancel any ongoing Rust scan to free memory
@@ -85,17 +85,9 @@ export function useScan() {
       }
    }
 
-   onUnmounted(() => {
-      unlistenProgress?.()
-   })
-
-   onDeactivated(() => {
-      unlistenProgress?.()
-   })
-
    return {
       folders,
-      isLoading,
+      isScanning,
       progress,
       loadFolders,
       onAbort,
