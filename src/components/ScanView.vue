@@ -95,7 +95,7 @@ function onDeleteComplete(items: DeleteListItem[]) {
    viewState.value = 'deleteComplete'
 }
 
-function onScanAgain() {
+function onRestart() {
    viewState.value = 'results'
    emit('cancel')
 }
@@ -164,7 +164,7 @@ onDeactivated(() => {
                v-else-if="viewState === 'deleteComplete'"
                class="ScanView-body"
                :deletedSummary="deletedSummary"
-               @scan-again="onScanAgain"
+               @restart="onRestart"
             />
          </KeepAlive>
       </Transition>

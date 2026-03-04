@@ -6,7 +6,7 @@ Purpose: Post-delete screen. Shows resume (items count, size freed) and Scan aga
 Props: deletedSummary ({ count: number, size: number } | null)
 
 Example:
- <ScanResultsDeleteConfirmation :deletedSummary="summary" @scan-again="onScanAgain" />
+ <ScanResultsDeleteConfirmation :deletedSummary="summary" @restart="onRestart" />
 -->
 
 <script setup lang="ts">
@@ -17,16 +17,18 @@ import { getCurrentWindow } from '@tauri-apps/api/window'
 
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/use-translations'
+import { useTauriAppSettings } from '@/stores/settings'
 
 defineProps<{
    deletedSummary: { count: number; size: number } | null
 }>()
 
 defineEmits<{
-   (e: 'scan-again'): void
+   (e: 'restart'): void
 }>()
 
 const { t } = useTranslations()
+const settingsStore = useTauriAppSettings()
 
 function closeApp() {
    getCurrentWindow().close()
@@ -38,24 +40,33 @@ function closeApp() {
       <div class="ScanResultsDeleteConfirmation-content">
          <AnimatedCheckCircle :size="48" class="ScanResultsDeleteConfirmation-icon" />
          <h2 class="ScanResultsDeleteConfirmation-title">
-            {{ t('ScanResultsDeleteConfirmation', 'title') }}
+            {{
+               settingsStore.settings.value.permanentlyDelete
+                  ? t('ScanResultsDeleteConfirmation', 'title')
+                  : t('ScanResultsDeleteConfirmation', 'titleMoveToTrash')
+            }}
          </h2>
          <p v-if="deletedSummary" class="ScanResultsDeleteConfirmation-resume">
             {{
-               t('ScanResultsDeleteConfirmation', 'resume', {
-                  count: deletedSummary.count,
-                  size: formatBytes(deletedSummary.size),
-               })
+               settingsStore.settings.value.permanentlyDelete
+                  ? t('ScanResultsDeleteConfirmation', 'resume', {
+                       count: deletedSummary.count,
+                       size: formatBytes(deletedSummary.size),
+                    })
+                  : t('ScanResultsDeleteConfirmation', 'resumeMoveToTrash', {
+                       count: deletedSummary.count,
+                       size: formatBytes(deletedSummary.size),
+                    })
             }}
          </p>
          <button
             type="button"
             class="ScanResultsDeleteConfirmation-scanBtn GradientButton"
-            data-testid="scan-again"
-            @click="$emit('scan-again')"
+            data-testid="restart"
+            @click="$emit('restart')"
          >
             <PhMagnifyingGlass :size="18" weight="regular" aria-hidden="true" />
-            {{ t('ScanResultsDeleteConfirmation', 'scanAgain') }}
+            {{ t('ScanResultsDeleteConfirmation', 'restart') }}
          </button>
          <button type="button" class="ScanResultsDeleteConfirmation-closeBtn" @click="closeApp">
             <PhX :size="16" weight="bold" aria-hidden="true" />

@@ -31,6 +31,7 @@ import { PhTrashSimple } from '@phosphor-icons/vue'
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/use-translations'
 import { useReducedMotion } from '@/lib/use-reduced-motion'
+import { useTauriAppSettings } from '@/stores/settings'
 
 import { DELETE_COUNTDOWN_MS, DELETE_POST_DELETE_SLEEP_MS } from '@/lib/constants'
 
@@ -49,6 +50,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useTranslations()
+const settingsStore = useTauriAppSettings()
 
 /**
  * Safety countdown: the delete button stays disabled for DELETE_COUNTDOWN_MS
@@ -237,7 +239,11 @@ async function onDeleteClick() {
          :isForwardShown="false"
          :isBackDisabled="false"
          pathIcon="trash"
-         :pathLabel="t('ScanResultsDeleteList', 'navTitle')"
+         :pathLabel="
+            settingsStore.settings.value.permanentlyDelete
+               ? t('ScanResultsDeleteList', 'navTitle')
+               : t('ScanResultsDeleteList', 'navTitleMoveToTrash')
+         "
          :isActionsShown="true"
          :isResetDisabled="true"
          :isResetShown="false"
@@ -289,10 +295,16 @@ async function onDeleteClick() {
                   <PhTrashSimple :size="18" weight="bold" aria-hidden="true" />
                   {{
                      selectedSize > 0
-                        ? t('ScanResultsDeleteList', 'deleteSize', {
-                             size: formatBytes(selectedSize),
-                          })
-                        : t('ScanResultsDeleteList', 'delete')
+                        ? settingsStore.settings.value.permanentlyDelete
+                           ? t('ScanResultsDeleteList', 'deleteSize', {
+                                size: formatBytes(selectedSize),
+                             })
+                           : t('ScanResultsDeleteList', 'moveToTrashSize', {
+                                size: formatBytes(selectedSize),
+                             })
+                        : settingsStore.settings.value.permanentlyDelete
+                          ? t('ScanResultsDeleteList', 'delete')
+                          : t('ScanResultsDeleteList', 'moveToTrash')
                   }}
                </span>
                <span
@@ -302,10 +314,16 @@ async function onDeleteClick() {
                >
                   {{
                      selectedSize > 0
-                        ? t('ScanResultsDeleteList', 'deletingSize', {
-                             size: formatBytes(selectedSize),
-                          })
-                        : t('ScanResultsDeleteList', 'deleting')
+                        ? settingsStore.settings.value.permanentlyDelete
+                           ? t('ScanResultsDeleteList', 'deletingSize', {
+                                size: formatBytes(selectedSize),
+                             })
+                           : t('ScanResultsDeleteList', 'movingToTrashSize', {
+                                size: formatBytes(selectedSize),
+                             })
+                        : settingsStore.settings.value.permanentlyDelete
+                          ? t('ScanResultsDeleteList', 'deleting')
+                          : t('ScanResultsDeleteList', 'movingToTrash')
                   }}
                </span>
                <Spinner
