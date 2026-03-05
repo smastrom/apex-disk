@@ -25,6 +25,8 @@ import { ref, useTemplateRef } from 'vue'
 
 import { useTranslations } from '@/lib/use-translations'
 import { useLabelPopover } from '@/lib/use-label-popover'
+import { formatDate } from '@/lib/format'
+import { useAppSettings } from '@/stores/app-settings'
 
 import type { FolderInfo } from '@/types/structs'
 
@@ -48,6 +50,8 @@ const checkboxPopoverRef = useTemplateRef<HTMLElement>('checkboxPopoverRef')
 
 const { t } = useTranslations()
 const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRef)
+const store = useAppSettings()
+const currentLanguage = store.settings.value.language
 
 // Simple tooltip for checkbox (not dependent on text truncation)
 const showCheckboxTooltip = ref(false)
@@ -189,12 +193,17 @@ function dismissCheckboxTooltip() {
             @pointerleave="onPointerLeave"
             >{{ item.name }}</span
          >
-         <span v-if="!item.is_file" class="ScanResultsListItem-count">
-            {{
-               item.children.length === 1
-                  ? t('ScanResultsListItem', 'itemOne')
-                  : t('ScanResultsListItem', 'itemsCount', { count: item.children.length })
-            }}
+         <span class="ScanResultsListItem-details">
+            <span v-if="!item.is_file">
+               {{
+                  item.children.length === 1
+                     ? t('ScanResultsListItem', 'itemOne')
+                     : t('ScanResultsListItem', 'itemsCount', { count: item.children.length })
+               }}<span v-if="item.last_modified">,</span>
+            </span>
+            <span style="opacity: 0.5" v-if="item.last_modified">
+               {{ ' ' }} {{ formatDate(item.last_modified, currentLanguage) }}
+            </span>
          </span>
       </div>
       <div class="ScanResultsListItem-meta">
@@ -323,8 +332,8 @@ function dismissCheckboxTooltip() {
    text-overflow: ellipsis;
 }
 
-.ScanResultsListItem-count {
-   font-size: 0.8125rem;
+.ScanResultsListItem-details {
+   font-size: 0.75rem;
    color: var(--color-text-muted);
 }
 
