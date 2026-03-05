@@ -39,3 +39,5 @@ pnpm-lock.yaml
 .claude/
 .cursor/
 .windsurf/
+.gemini/
+.cascade/
