@@ -1,5 +1,9 @@
 /** Formats bytes into human-readable string (e.g. "1.2 GB"). */
-export function formatBytes(bytes: number): string {
+export function formatBytes(bytes: unknown): string {
+   if (typeof bytes === 'string') bytes = parseFloat(bytes)
+   if (typeof bytes !== 'number') return 'Unknown'
+   if (isNaN(bytes)) return 'Unknown'
+
    if (bytes === 0) return '0 B'
 
    const k = 1024

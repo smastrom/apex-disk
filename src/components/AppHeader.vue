@@ -10,36 +10,15 @@ Example:
 -->
 
 <script setup lang="ts">
-import { openUrl } from '@tauri-apps/plugin-opener'
-
 import { useTranslations } from '@/lib/use-translations'
 
-import { RELEASE_NOTES_URL, APP_VERSION } from '@/lib/constants'
-
 const { t } = useTranslations()
-
-async function openReleaseNotes(e: MouseEvent) {
-   e.preventDefault()
-   try {
-      await openUrl(RELEASE_NOTES_URL)
-   } catch (err) {
-      console.error('Failed to open release notes:', err)
-   }
-}
 </script>
 
 <template>
    <header class="AppHeader-root" data-tauri-drag-region data-testid="app-header">
       <div class="AppHeader-inner">
          <h1 class="AppHeader-title" data-testid="app-title">{{ t('AppHeader', 'title') }}</h1>
-         <a
-            :href="RELEASE_NOTES_URL"
-            class="AppHeader-version"
-            :aria-label="t('AppHeader', 'versionLinkLabel')"
-            @click="openReleaseNotes"
-         >
-            v{{ APP_VERSION }}
-         </a>
       </div>
    </header>
 </template>

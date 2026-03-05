@@ -16,7 +16,7 @@
    justify-content: space-between;
    padding: var(--spacing-md) var(--spacing-lg);
    min-height: 44px;
-   gap: var(--spacing-lg);
+   gap: var(--spacing-xl);
 }
 
 .SettingsGroup-row--canWrap {

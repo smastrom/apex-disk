@@ -10,8 +10,6 @@ Example:
 -->
 
 <script setup lang="ts">
-// import SettingsFooter from '@/components/SettingsFooter.vue'
-
 import {
    PhArrowCircleUp,
    PhArrowFatDown,
@@ -291,9 +289,6 @@ async function openReleasesPage() {
                </button>
             </div>
          </section>
-
-         <!-- App info (name, version, author, links) -->
-         <!-- <SettingsFooter /> -->
       </div>
    </main>
 </template>
