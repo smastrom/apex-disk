@@ -28,7 +28,7 @@ import { useDiskUsage } from '@/lib/use-disk-usage'
 import type { DeleteListItem } from '@/types/structs'
 import type { DiskUsage } from '@/types/disk'
 
-const props = defineProps<{
+defineProps<{
    activeView: string
    diskUsage?: DiskUsage | null
 }>()
@@ -61,7 +61,6 @@ watch([() => isScanning.value, () => folders.value.length], ([isScanning, folder
 const deleteItems = ref<DeleteListItem[]>([])
 const deletedSummary = ref<{ count: number; size: number } | null>(null)
 const selectedSize = ref(0)
-const diskUsageRefreshKey = ref(0)
 const resultsListRef = useTemplateRef<InstanceType<typeof ScanResultsList>>('resultsListRef')
 const pendingSelection = ref<DeleteListItem[] | null>(null)
 
@@ -73,8 +72,6 @@ function resetInternalState() {
    deleteItems.value = []
    deletedSummary.value = null
    pendingSelection.value = null
-   // Refresh disk usage to reflect changes after deletion
-   diskUsageRefreshKey.value++
 }
 
 watch(
@@ -122,17 +119,11 @@ function onDeleteComplete(items: DeleteListItem[]) {
       size: items.reduce((sum, i) => sum + i.size, 0),
    }
 
-   // Space is freed immediately if permanently deleting.
-   // If moving to trash, space is only freed after emptying the trash,
-   // but we still refresh to get the most accurate current state.
-   diskUsageRefreshKey.value++
-
    scanViewState.value = ScanViewState.DELETE_COMPLETE
 }
 
 function onRestart() {
    scanViewState.value = ScanViewState.RESULTS
-   diskUsageRefreshKey.value++
    onCancel()
 }
 </script>
