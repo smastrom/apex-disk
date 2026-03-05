@@ -1,4 +1,4 @@
-![MacDiskTree](./src-tauri/icons/128x128.png)
+MacDiskTree
 
 # MacDiskTree
 
@@ -13,19 +13,20 @@ MacDiskTree scans your entire user folder and presents everything as a navigable
 ## Features
 
 - **Hyper-fast scanning** — Directory scanning distributes I/O across all available CPU cores for maximum throughput
-- **Smooth UI** — Lightweight Vue frontend, fine-tuned for performance, with clean design, animations, and fluid navigation
-- **Smart selection** — Three-state checkboxes with full parent-child logic and a clear preview of how much space you'll reclaim before deleting
-- **Safe by design** — Move to Trash by default, reserved macOS folders (Desktop, Documents, Library, etc.) are smartly protected from root deletion. Sensitive credential folders (`.ssh`, `.aws`, etc.) are completely ignored
-- **10 languages** — English, Italian, Spanish, French, Portuguese, German, Russian, Chinese, Japanese, and Arabic (with RTL support)
-- **Accessible** — Fully accessible and keyboard navigable
+- **Smooth UI** — Performance-minded interface with fluid animations, a clean design, and snappy navigation
+- **Smart selection** — Three-state checkboxes with full parent-child logic and a real-time preview of how much space you'll reclaim
+- **Safe by design** — Uses "Move to Trash" and protects reserved macOS folders (Desktop, Documents, Library, etc.) from root deletion. Sensitive credential folders (.ssh, .aws, etc.) are completely ignored
+- **Optional Full Disk Access** — Works without extra permissions by default, but you can grant access to bypass system prompts or manage restricted folders
+- **10 languages** — Support for English, Italian, Spanish, French, Portuguese, German, Russian, Chinese, Japanese, and Arabic (with RTL support)
+- **Accessible** — Engineered for everyone with complete keyboard navigation and screen reader support
 - **Themes** — Multiple color themes to choose from, with more on the way
 
-> [!WARNING]
-> This app can delete files and folders. Use it carefully and review your selections before confirming deletion. I do not take responsibility for any file loss.
+> [!WARNING]  
+> This app can delete files and folders. Use it carefully and review your selections before confirming deletion. The author does not take responsibility for any file loss.
 
 ## Preview
 
-![MacDiskTree](./src/assets/images/app-cover.png)
+MacDiskTree
 
 ## Installation
 
@@ -51,6 +52,10 @@ xattr -cr /Applications/MacDiskTree.app
 - [Node.js](https://nodejs.org) >= 22
 - [pnpm](https://pnpm.io) >= 10
 
+### For contributors (no signing credentials)
+
+Anyone who clones the repo can build and run the app without access to the maintainer’s signing keys:
+
 ```bash
 # Clone the repository
 git clone https://github.com/smastrom/mac-disk-tree.git
@@ -62,8 +67,21 @@ pnpm install
 # Add the universal macOS target
 rustup target add aarch64-apple-darwin x86_64-apple-darwin
 
-# Build the universal macOS binary
-pnpm tauri:build:local
+# Build (skips updater artifacts so no signing key is required)
+pnpm tauri:build
+
+# Ad-hoc sign the .app so it runs with the correct bundle ID and entitlements
+./scripts/codesign.sh
+```
+
+The built app is at `src-tauri/target/universal-apple-darwin/release/bundle/macos/MacDiskTree.app`. This build does not produce updater artifacts (no in-app update); it is for local use and development.
+
+### For the maintainer (signed build + updater)
+
+To produce a signed app and updater artifacts (e.g. for a release), the maintainer uses `tauri:build:release`, which requires the updater private key at `~/.tauri/mac-disk-tree.key` and will prompt for its password:
+
+```bash
+pnpm tauri:build:release
 ```
 
 ## License
