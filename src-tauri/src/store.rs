@@ -19,7 +19,6 @@ pub fn get_default_settings() -> serde_json::Value {
     json!({
         "language": constants::DEFAULT_LANGUAGE,
         "themeColor": constants::DEFAULT_THEME,
-        "permanentlyDelete": false,
         "showHiddenFiles": false,
         "showUnder1Kb": false,
         "showZeroByte": false,
@@ -33,9 +32,9 @@ pub fn initialize_store_with_handle<R: Runtime>(app: &tauri::AppHandle<R>) -> Re
         .map_err(|e| e.to_string())?;
 
     // Initialize with defaults if store is empty or corrupted
-    let current = store.get("app").unwrap_or_else(|| json!({}));
+    let current = store.get("app").unwrap_or_else(|| serde_json::Value::Null);
 
-    if !current.is_object() {
+    if current.is_null() || !current.is_object() || current.as_object().unwrap().is_empty() {
         let defaults = get_default_settings();
         store.set("app", defaults);
         store.save().map_err(|e| e.to_string())?;

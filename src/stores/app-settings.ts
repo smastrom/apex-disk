@@ -8,7 +8,6 @@ export interface AppSettingsStore {
    getThemeColor: () => ThemeColor
    setLanguage: (lang: Language) => Promise<void>
    setThemeColor: (theme: ThemeColor) => Promise<void>
-   setPermanentlyDelete: (value: boolean) => Promise<void>
    setShowHiddenFiles: (value: boolean) => Promise<void>
    setShowUnder1Kb: (value: boolean) => Promise<void>
    setShowZeroByte: (value: boolean) => Promise<void>
@@ -41,10 +40,6 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
       },
       setThemeColor: async (theme) => {
          settings.value = { ...settings.value, themeColor: theme }
-         await saveSettings()
-      },
-      setPermanentlyDelete: async (value) => {
-         settings.value = { ...settings.value, permanentlyDelete: value }
          await saveSettings()
       },
       setShowHiddenFiles: async (value) => {

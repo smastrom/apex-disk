@@ -25,7 +25,6 @@ fn default_settings_match_constants() {
 
     assert_eq!(defaults["language"], json!(constants::DEFAULT_LANGUAGE));
     assert_eq!(defaults["themeColor"], json!(constants::DEFAULT_THEME));
-    assert_eq!(defaults["permanentlyDelete"], json!(false));
     assert_eq!(defaults["showHiddenFiles"], json!(false));
     assert_eq!(defaults["showUnder1Kb"], json!(false));
     assert_eq!(defaults["showZeroByte"], json!(false));
@@ -36,6 +35,14 @@ fn default_settings_match_constants() {
 fn initialize_store_writes_defaults_for_empty_store() {
     let app = create_app_with_store();
     let handle = app.handle();
+
+    // Clear the store to ensure it's empty
+    let store_handle = handle
+        .store(mac_disk_tree_lib::SETTINGS_STORE_PATH)
+        .expect("open settings store");
+    store_handle.set("app", serde_json::json!({}));
+    store_handle.save().expect("clear store");
+    store_handle.close_resource();
 
     store::initialize_store_with_handle(&handle).expect("initialize store");
 
@@ -58,11 +65,18 @@ fn get_settings_merges_existing_with_defaults() {
     let app = create_app_with_store();
     let handle = app.handle();
 
+    // Clear the store to ensure it's empty
+    let store_handle = handle
+        .store(mac_disk_tree_lib::SETTINGS_STORE_PATH)
+        .expect("open settings store");
+    store_handle.set("app", serde_json::json!({}));
+    store_handle.save().expect("clear store");
+    store_handle.close_resource();
+
     store::initialize_store_with_handle(&handle).expect("initialize store");
 
     let partial = json!({
-        "language": constants::DEFAULT_LANGUAGE,
-        "permanentlyDelete": true
+        "language": constants::DEFAULT_LANGUAGE
     });
 
     store::set_settings_with_handle(&handle, partial).expect("set partial settings");
@@ -70,7 +84,6 @@ fn get_settings_merges_existing_with_defaults() {
     let merged = store::get_settings_with_handle(&handle).expect("get merged settings");
 
     assert_eq!(merged["language"], json!(constants::DEFAULT_LANGUAGE));
-    assert_eq!(merged["permanentlyDelete"], json!(true));
     assert_eq!(merged["themeColor"], json!(constants::DEFAULT_THEME));
     assert_eq!(merged["showHiddenFiles"], json!(false));
     assert_eq!(merged["showUnder1Kb"], json!(false));
@@ -84,12 +97,19 @@ fn set_and_get_settings_round_trip() {
     let app = create_app_with_store();
     let handle = app.handle();
 
+    // Clear the store to ensure it's empty
+    let store_handle = handle
+        .store(mac_disk_tree_lib::SETTINGS_STORE_PATH)
+        .expect("open settings store");
+    store_handle.set("app", serde_json::json!({}));
+    store_handle.save().expect("clear store");
+    store_handle.close_resource();
+
     store::initialize_store_with_handle(&handle).expect("initialize store");
 
     let custom = json!({
         "language": "it",
         "themeColor": constants::DEFAULT_THEME,
-        "permanentlyDelete": true,
         "showHiddenFiles": true,
         "showUnder1Kb": true,
         "showZeroByte": true
