@@ -26,7 +26,7 @@ The in-app updater requires **signed** artifacts. Do this once before your first
 
 Tauri v2 skips `codesign` when no `APPLE_SIGNING_IDENTITY` is set, leaving the binary with only the linker's default adhoc signature. This causes macOS TCC to use a wrong, unstable identifier — breaking Full Disk Access and per-folder permission grants.
 
-Both `pnpm tauri:build:local` and CI set `APPLE_SIGNING_IDENTITY="-"` so Tauri ad-hoc signs the `.app` with the correct bundle identifier, embedded entitlements (`src-tauri/Entitlements.plist`), and hardened runtime **before** packaging into DMG and `.tar.gz`. This ensures all release artifacts contain the properly signed app.
+Both `pnpm tauri:build:release` and CI set `APPLE_SIGNING_IDENTITY="-"` so Tauri ad-hoc signs the `.app` with the correct bundle identifier, embedded entitlements (`src-tauri/Entitlements.plist`), and hardened runtime **before** packaging into DMG and `.tar.gz`. This ensures all release artifacts contain the properly signed app.
 
 `scripts/codesign.sh` is a fallback for when someone runs `pnpm tauri:build` directly without the env var. It only signs the loose `.app` (not the DMG or `.tar.gz`).
 
