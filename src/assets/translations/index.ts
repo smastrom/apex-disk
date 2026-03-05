@@ -9,8 +9,9 @@ import { ScanResultsListItem } from './ScanResultsListItem'
 import { ScanResultsDeleteList } from './ScanResultsDeleteList'
 import { ScanResultsDeleteConfirmation } from './ScanResultsDeleteConfirmation'
 import { SettingsView } from './SettingsView'
-import { SettingsFooter } from './SettingsFooter'
+import { InformationFooter } from './InformationFooter'
 import { AppFooter } from './AppFooter'
+import { InformationView } from './InformationView'
 
 import type { Language } from '@/types/settings'
 
@@ -26,8 +27,9 @@ export const translations = {
    ScanResultsDeleteList,
    ScanResultsDeleteConfirmation,
    SettingsView,
-   SettingsFooter,
+   InformationFooter,
    AppFooter,
+   InformationView,
 } as const
 
 export type TranslationModule = keyof typeof translations
