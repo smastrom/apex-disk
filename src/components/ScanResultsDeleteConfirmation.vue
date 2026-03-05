@@ -17,7 +17,6 @@ import { getCurrentWindow } from '@tauri-apps/api/window'
 
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/use-translations'
-import { useAppSettings } from '@/stores/app-settings'
 
 defineProps<{
    deletedSummary: { count: number; size: number } | null
@@ -28,7 +27,6 @@ defineEmits<{
 }>()
 
 const { t } = useTranslations()
-const settingsStore = useAppSettings()
 
 function closeApp() {
    getCurrentWindow().close()
@@ -40,23 +38,14 @@ function closeApp() {
       <div class="ScanResultsDeleteConfirmation-content">
          <AnimatedCheckCircle :size="48" class="ScanResultsDeleteConfirmation-icon" />
          <h2 class="ScanResultsDeleteConfirmation-title">
-            {{
-               settingsStore.settings.value.permanentlyDelete
-                  ? t('ScanResultsDeleteConfirmation', 'title')
-                  : t('ScanResultsDeleteConfirmation', 'titleMoveToTrash')
-            }}
+            {{ t('ScanResultsDeleteConfirmation', 'titleMoveToTrash') }}
          </h2>
          <p v-if="deletedSummary" class="ScanResultsDeleteConfirmation-resume">
             {{
-               settingsStore.settings.value.permanentlyDelete
-                  ? t('ScanResultsDeleteConfirmation', 'resume', {
-                       count: deletedSummary.count,
-                       size: formatBytes(deletedSummary.size),
-                    })
-                  : t('ScanResultsDeleteConfirmation', 'resumeMoveToTrash', {
-                       count: deletedSummary.count,
-                       size: formatBytes(deletedSummary.size),
-                    })
+               t('ScanResultsDeleteConfirmation', 'resumeMoveToTrash', {
+                  count: deletedSummary.count,
+                  size: formatBytes(deletedSummary.size),
+               })
             }}
          </p>
          <button

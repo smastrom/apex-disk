@@ -22,7 +22,6 @@ import ScanLaunch from './ScanLaunch.vue'
 
 import { ref, watch, onDeactivated, useTemplateRef } from 'vue'
 
-import { useAppSettings } from '@/stores/app-settings'
 import { useScanner } from '@/lib/use-scanner'
 import { useDiskUsage } from '@/lib/use-disk-usage'
 
@@ -33,8 +32,6 @@ const props = defineProps<{
    activeView: string
    diskUsage?: DiskUsage | null
 }>()
-
-const settingsStore = useAppSettings()
 
 const { usage: diskUsage } = await useDiskUsage()
 const { folders, isScanning, progress, loadFolders, onAbort, onCancel } = useScanner()
@@ -128,9 +125,6 @@ function onDeleteComplete(items: DeleteListItem[]) {
    // Space is freed immediately if permanently deleting.
    // If moving to trash, space is only freed after emptying the trash,
    // but we still refresh to get the most accurate current state.
-   if (settingsStore.settings.value.permanentlyDelete) {
-      selectedSize.value = 0
-   }
    diskUsageRefreshKey.value++
 
    scanViewState.value = ScanViewState.DELETE_COMPLETE
