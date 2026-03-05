@@ -3,10 +3,10 @@ SettingsView
 
 Purpose: Settings screen with Language, Theme, Delete behavior (permanent delete), Scan Settings (hidden files, 0 B, under 1 KB), and Permissions. macOS-style grouped list.
 
-Props: isFdaGranted (boolean), availableUpdate (string | null)
+Props: isFdaGranted (boolean), newAvailableVersion (string | null)
 
 Example:
- <SettingsView :isFdaGranted="isFdaGranted" :availableUpdate="null" />
+ <SettingsView :isFdaGranted="isFdaGranted" :newAvailableVersion="null" />
 -->
 
 <script setup lang="ts">
@@ -14,32 +14,38 @@ Example:
 
 import {
    PhArrowCircleUp,
+   PhArrowFatDown,
    PhCaretDown,
    PhCheckCircle,
    PhCircle,
    PhWrench as PhGearSix,
+   PhArrowClockwise,
 } from '@phosphor-icons/vue'
 
 import { computed } from 'vue'
 import { openUrl } from '@tauri-apps/plugin-opener'
 
 import { useTranslations } from '@/lib/use-translations'
-import { useFullDiskAccess } from '@/lib/use-full-disk-access'
+import { useAppSettings } from '@/stores/app-settings'
 
-import { useAppSettings } from '@/stores/settings'
+import { RELEASE_NOTES_URL, APP_VERSION } from '@/lib/constants'
 
 import type { Language, ThemeColor } from '@/types/settings'
 
 defineProps<{
-   availableUpdate: string | null
+   newAvailableVersion: string | null
+   isFdaGranted: boolean
+   isChecking: boolean
+}>()
+
+const emit = defineEmits<{
+   (e: 'check-for-updates'): void
 }>()
 
 const { t } = useTranslations()
 
 const store = useAppSettings()
 const settings = computed(() => store.settings.value)
-
-const { isFdaGranted } = await useFullDiskAccess()
 
 const languageOptions = computed(() => [
    { value: 'en' as Language, label: t('SettingsView', 'languageEn') },
@@ -82,6 +88,10 @@ function toggleZeroByte() {
 
 async function openSystemSettings() {
    await openUrl('x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles')
+}
+
+async function openReleasesPage() {
+   await openUrl(RELEASE_NOTES_URL)
 }
 </script>
 
@@ -251,24 +261,63 @@ async function openSystemSettings() {
                <span
                   class="SettingsView-updateStatus"
                   :class="
-                     availableUpdate
+                     newAvailableVersion
                         ? 'SettingsView-updateStatus--available'
                         : 'SettingsView-updateStatus--ok'
                   "
                >
                   <PhArrowCircleUp
-                     v-if="availableUpdate"
+                     v-if="newAvailableVersion"
                      :size="13"
                      weight="fill"
                      aria-hidden="true"
                   />
                   <PhCheckCircle v-else :size="13" weight="fill" aria-hidden="true" />
-                  {{ availableUpdate ? availableUpdate : t('SettingsView', 'updateUpToDate') }}
+                  {{
+                     isChecking
+                        ? t('SettingsView', 'updateChecking')
+                        : newAvailableVersion
+                          ? newAvailableVersion
+                          : t('SettingsView', 'updateUpToDate')
+                  }}
                </span>
             </div>
-            <p v-if="availableUpdate" class="SettingsView-updateDesc">
-               {{ t('SettingsView', 'updateAvailableHint', { version: availableUpdate }) }}
+            <p v-if="newAvailableVersion" class="SettingsView-updateDesc">
+               {{ t('SettingsView', 'updateAvailableHint', { version: newAvailableVersion }) }}
             </p>
+            <p v-else class="SettingsView-updateDesc">
+               {{ t('SettingsView', 'updateLatestVersion', { version: APP_VERSION }) }}
+            </p>
+            <div class="SettingsView-updateControls">
+               <button
+                  v-if="!newAvailableVersion"
+                  type="button"
+                  class="SettingsView-fdaBtn"
+                  :disabled="isChecking"
+                  @click="emit('check-for-updates')"
+               >
+                  <PhArrowClockwise
+                     :size="13"
+                     weight="fill"
+                     aria-hidden="true"
+                     :class="{ 'SettingsView-spinning': isChecking }"
+                  />
+                  {{
+                     isChecking
+                        ? t('SettingsView', 'updateChecking')
+                        : t('SettingsView', 'updateCheckButton')
+                  }}
+               </button>
+               <button
+                  v-if="newAvailableVersion"
+                  type="button"
+                  class="SettingsView-fdaBtn"
+                  @click="openReleasesPage"
+               >
+                  <PhArrowFatDown :size="13" weight="fill" aria-hidden="true" />
+                  {{ t('SettingsView', 'updateDownloadsButton') }}
+               </button>
+            </div>
          </section>
 
          <!-- App info (name, version, author, links) -->
@@ -403,5 +452,26 @@ async function openSystemSettings() {
    font-size: 0.75rem;
    line-height: 1.5;
    color: var(--color-text-muted);
+}
+
+.SettingsView-updateControls {
+   display: flex;
+   justify-content: space-between;
+   gap: 6px;
+   padding: 0 var(--spacing-lg);
+   margin-bottom: var(--spacing-md);
+}
+
+.SettingsView-spinning {
+   animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+   from {
+      transform: rotate(0deg);
+   }
+   to {
+      transform: rotate(360deg);
+   }
 }
 </style>
