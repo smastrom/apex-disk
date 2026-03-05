@@ -47,6 +47,9 @@
    --focus-ring-width: 2px;
    --focus-ring-offset: 2px;
 
+   /* Footer navigation active color */
+   --footer-nav-active-color: var(--color-accent);
+
    /* AppLayout */
    --header-height: 56px;
    --footer-height: 64px;
@@ -141,6 +144,9 @@
    --btn-gradient-0: #76839b;
    --btn-gradient-50: #68758b;
    --btn-gradient-100: #76839b;
+
+   /* Footer navigation active color */
+   --footer-nav-active-color: #fff;
 }
 
 /* Theme: smastrom (green accent, dark green-tinted base; accent shifted towards hsl(142 75% 53%)) */

@@ -114,10 +114,10 @@ async function onDonateClick() {
 }
 
 .AppFooter-btn--active {
-   color: var(--color-accent);
+   color: var(--footer-nav-active-color);
 
    &:hover {
-      color: var(--color-accent);
+      color: var(--footer-nav-active-color);
    }
 
    :deep(svg) {
