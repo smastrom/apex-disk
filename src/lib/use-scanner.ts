@@ -2,7 +2,7 @@ import { ref, shallowRef } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 
-import { useAppSettings } from '@/stores/settings'
+import { useAppSettings } from '@/stores/app-settings'
 
 import type { FolderInfo, ScanProgress } from '@/types/structs'
 

@@ -4,24 +4,22 @@ import { ref, onMounted, onUnmounted } from 'vue'
  * Reactive composable that tracks the user's `prefers-reduced-motion` preference.
  * Returns a ref that updates live when the system setting changes.
  */
+
 export function useReducedMotion() {
-   const prefersReducedMotion = ref(false)
+   const query = window.matchMedia('(prefers-reduced-motion: reduce)')
+   const prefersReducedMotion = ref(query.matches)
+
+   const onChange = (event: MediaQueryListEvent) => {
+      prefersReducedMotion.value = event.matches
+   }
 
    onMounted(() => {
-      const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-
-      prefersReducedMotion.value = mq.matches
-
-      const onChange = (event: MediaQueryListEvent) => {
-         prefersReducedMotion.value = event.matches
-      }
-
-      mq.addEventListener('change', onChange)
-
-      onUnmounted(() => {
-         mq.removeEventListener('change', onChange)
-      })
+      query.addEventListener('change', onChange)
    })
 
-   return prefersReducedMotion
+   onUnmounted(() => {
+      query.removeEventListener('change', onChange)
+   })
+
+   return { prefersReducedMotion }
 }

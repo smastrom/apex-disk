@@ -17,9 +17,22 @@ export interface UseDiskUsageReturn {
 export async function useDiskUsage(options: UseDiskUsageOptions = {}): Promise<UseDiskUsageReturn> {
    const { refreshKey } = options
 
-   const usage = ref<DiskUsage | null>(await getDiskUsage())
+   let unlisten = () => {}
 
-   async function fetchUsage() {
+   // Register lifecycle hooks before any await
+   onMounted(async () => {
+      unlisten = await getCurrentWindow().onFocusChanged(({ payload: focused }) => {
+         if (focused) debouncedFetchUsage()
+      })
+   })
+
+   onUnmounted(() => {
+      unlisten()
+   })
+
+   const usage = ref<DiskUsage | null>(null)
+
+   async function setDiskUsage() {
       try {
          usage.value = await getDiskUsage()
       } catch (err) {
@@ -27,15 +40,10 @@ export async function useDiskUsage(options: UseDiskUsageOptions = {}): Promise<U
       }
    }
 
-   const debouncedFetchUsage = debounce(fetchUsage, 200)
+   const debouncedFetchUsage = debounce(setDiskUsage, 200)
 
-   let unlisten = () => {}
-
-   onMounted(async () => {
-      unlisten = await getCurrentWindow().onFocusChanged(({ payload: focused }) => {
-         if (focused) debouncedFetchUsage()
-      })
-   })
+   // Initial fetch after hooks are registered
+   await setDiskUsage()
 
    // Watch refreshKey changes to trigger refresh
    if (refreshKey) {
@@ -43,15 +51,11 @@ export async function useDiskUsage(options: UseDiskUsageOptions = {}): Promise<U
          () => refreshKey.value,
          () => {
             if (refreshKey.value !== undefined) {
-               fetchUsage()
+               setDiskUsage()
             }
          }
       )
    }
-
-   onUnmounted(() => {
-      unlisten()
-   })
 
    return {
       usage,
