@@ -8,6 +8,7 @@ export interface FolderInfo {
    is_file: boolean
    is_protected: boolean
    is_fda_required: boolean
+   last_modified?: number
 }
 
 /** Single item in the delete review list (flattened from selection). */

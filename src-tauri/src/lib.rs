@@ -43,6 +43,7 @@ pub struct FolderInfo {
     pub is_file: bool,
     pub is_protected: bool,
     pub is_fda_required: bool,
+    pub last_modified: Option<i64>,
 }
 
 pub fn run() {

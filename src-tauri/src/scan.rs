@@ -59,6 +59,7 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: b
             is_file: false,
             is_protected: false,
             is_fda_required: false,
+            last_modified: None,
         };
     }
 
@@ -68,12 +69,21 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: b
         .unwrap_or("Unknown")
         .to_string();
 
+    // Get metadata once for the root directory
+    let root_metadata = std::fs::metadata(root);
+
     let entries = match std::fs::read_dir(root) {
         Ok(rd) => rd,
         Err(_) => {
             let path = root.to_string_lossy().into_owned();
             let is_protected = safe_folders::is_path_protected(root, home);
             let is_fda_required = xattr::has_container_manager_attribute(root) && !has_fda;
+            let last_modified: Option<i64> = root_metadata
+                .ok()
+                .and_then(|m: std::fs::Metadata| m.modified().ok())
+                .and_then(|t: std::time::SystemTime| t.duration_since(std::time::UNIX_EPOCH).ok())
+                .map(|d: std::time::Duration| d.as_secs() as i64);
+
             return FolderInfo {
                 name,
                 path,
@@ -83,11 +93,12 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: b
                 is_file: false,
                 is_protected,
                 is_fda_required,
+                last_modified,
             };
         }
     };
 
-    let mut file_entries: Vec<(String, u64)> = Vec::new();
+    let mut file_entries: Vec<(String, u64, Option<i64>)> = Vec::new();
     let mut dir_paths: Vec<std::path::PathBuf> = Vec::new();
     let mut file_size = 0u64;
 
@@ -103,7 +114,17 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: b
         }
 
         if ft.is_file() {
-            let size = entry.metadata().map(|m| m.len()).unwrap_or(0);
+            let metadata = match entry.metadata() {
+                Ok(m) => m,
+                Err(_) => continue,
+            };
+            let size = metadata.len();
+            let last_modified: Option<i64> = metadata
+                .modified()
+                .ok()
+                .and_then(|t: std::time::SystemTime| t.duration_since(std::time::UNIX_EPOCH).ok())
+                .map(|d: std::time::Duration| d.as_secs() as i64);
+
             if !options.show_zero_byte && size == 0 {
                 continue;
             }
@@ -111,7 +132,7 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: b
                 continue;
             }
             file_size += size;
-            file_entries.push((name, size));
+            file_entries.push((name, size, last_modified));
         } else if ft.is_dir() {
             let path = entry.path();
             if safe_folders::is_path_skipped(&path, home) {
@@ -129,7 +150,7 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: b
     let is_root_fda_required = xattr::has_container_manager_attribute(root) && !has_fda;
     let files: Vec<FolderInfo> = file_entries
         .into_iter()
-        .map(|(fname, size)| {
+        .map(|(fname, size, last_modified)| {
             let path = format!("{}/{}", root_path, fname);
             let file_path = Path::new(&path);
             let is_protected = safe_folders::is_path_protected(file_path, home);
@@ -143,6 +164,7 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: b
                 is_file: true,
                 is_protected,
                 is_fda_required,
+                last_modified,
             }
         })
         .collect();
@@ -165,6 +187,12 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: b
     children.extend(dir_children);
     sort_children(&mut children);
 
+    let root_last_modified: Option<i64> = root_metadata
+        .ok()
+        .and_then(|m: std::fs::Metadata| m.modified().ok())
+        .and_then(|t: std::time::SystemTime| t.duration_since(std::time::UNIX_EPOCH).ok())
+        .map(|d: std::time::Duration| d.as_secs() as i64);
+
     FolderInfo {
         name,
         path: root_path.into_owned(),
@@ -174,6 +202,7 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: b
         is_file: false,
         is_protected: is_root_protected,
         is_fda_required: is_root_fda_required,
+        last_modified: root_last_modified,
     }
 }
 
