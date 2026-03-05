@@ -14,7 +14,12 @@ pub const AUTHOR_URL: &str = "https://github.com/smastrom";
 pub const RELEASE_NOTES_URL: &str = "https://github.com/smastrom/mac-disk-tree/releases";
 
 /// URL opened when the user chooses "Read license" from the Help menu.
+#[allow(dead_code)]
 pub const LICENSE_URL: &str = "https://github.com/smastrom/mac-disk-tree/blob/main/LICENSE";
+
+/// Safe fallback date when release date fetching fails.
+#[allow(dead_code)]
+pub const FALLBACK_RELEASE_DATE: &str = "2026";
 
 /// Menu item id for the release notes action. Handled in lib.rs setup.
 pub const RELEASE_NOTES_MENU_ID: &str = "release-notes";
