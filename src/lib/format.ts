@@ -20,3 +20,8 @@ export function formatBytes(bytes: unknown): string {
 export function formatProgressNumber(n: number): string {
    return n % 1 === 0 ? String(Math.round(n)) : n.toFixed(1)
 }
+
+/** Formats a year range for display: single year when same (e.g. 2026 → "2026"), otherwise range (e.g. 2026 - 2027 → "2026 - 2027"). */
+export function formatYearRange(start: number, end: number): string {
+   return start === end ? String(start) : `${start} - ${end}`
+}

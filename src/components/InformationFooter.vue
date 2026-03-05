@@ -13,6 +13,7 @@ Example:
 import { openUrl } from '@tauri-apps/plugin-opener'
 
 import { useTranslations } from '@/lib/use-translations'
+import { formatYearRange } from '@/lib/format'
 
 import {
    APP_CREDITS,
@@ -75,11 +76,6 @@ async function openDonate() {
          <span class="InformationFooter-name">{{ APP_NAME }}</span>
          <span class="InformationFooter-version">v{{ APP_VERSION }}</span>
       </p>
-      <p class="InformationFooter-line InformationFooter-credits">
-         <button type="button" class="InformationFooter-creditsBtn" @click="openAuthorUrl">
-            {{ RELEASE_YEAR }} - {{ APP_CREDITS }}
-         </button>
-      </p>
       <div class="InformationFooter-links">
          <button type="button" class="InformationFooter-link" @click="openReleaseNotes">
             {{ t('InformationFooter', 'releaseNotes') }}
@@ -97,6 +93,9 @@ async function openDonate() {
             {{ t('InformationFooter', 'donate') }}
          </button>
       </div>
+      <p class="InformationFooter-line InformationFooter-credits">
+         © {{ formatYearRange(RELEASE_YEAR, new Date().getFullYear()) }} {{ APP_CREDITS }}
+      </p>
    </footer>
 </template>
 
@@ -129,27 +128,13 @@ async function openDonate() {
    margin-top: var(--spacing-xxs);
 }
 
-.InformationFooter-creditsBtn {
-   padding: 0;
-   font-size: inherit;
-   font-weight: inherit;
-   color: inherit;
-   background: none;
-   border: none;
-   cursor: pointer;
-   transition: color 0.2s;
-
-   &:hover {
-      color: var(--color-accent);
-   }
-}
-
 .InformationFooter-links {
    display: flex;
    align-items: center;
    justify-content: center;
    gap: var(--spacing-xs);
    margin-top: var(--spacing-md);
+   margin-bottom: var(--spacing-md);
 }
 
 .InformationFooter-link {

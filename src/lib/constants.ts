@@ -35,7 +35,7 @@ export const DONATE_URL = 'https://buymeacoffee.com/smastrom'
 export const APP_NAME = 'MacDiskTree' as const
 export const APP_VERSION = version
 export const APP_CREDITS = 'Simone Mastromattei (smastrom)' as const
-export const RELEASE_YEAR = '2026' as const
+export const RELEASE_YEAR = 2026 as const
 /** Author website or GitHub profile. Used in Settings app info. */
 export const AUTHOR_URL = 'https://github.com/smastrom' as const
 export const REPOSITORY_URL = 'https://github.com/smastrom/mac-disk-tree' as const
