@@ -14,6 +14,7 @@ import AppHeader from './AppHeader.vue'
 import AppFooter from './AppFooter.vue'
 import ScanView from './ScanView.vue'
 import SettingsView from './SettingsView.vue'
+import InformationView from './InformationView.vue'
 
 import { useTemplateRef, watch } from 'vue'
 
@@ -21,6 +22,7 @@ import { useAppSettings } from '@/stores/app-settings'
 import { useAppViews } from '@/lib/use-app-views'
 import { useAppUpdate } from '@/lib/use-app-update'
 import { useFullDiskAccess } from '@/lib/use-full-disk-access'
+import { useSystemInfo } from '@/lib/use-system-info'
 import { disableNativeContextMenu } from '@/lib/use-context-menu'
 import { applyTheme, applyDirection } from '@/lib/theme'
 import { setupFocusRing } from '@/lib/use-focus-ring'
@@ -48,6 +50,7 @@ watch(
 const { activeView, setActiveView } = useAppViews(mainContentRef)
 const { newAvailableVersion, isChecking, onCheckForUpdates } = useAppUpdate()
 
+const { systemInfo } = await useSystemInfo()
 const { isFdaGranted } = await useFullDiskAccess()
 
 disableNativeContextMenu()
@@ -69,6 +72,10 @@ setupFocusRing()
                   :isChecking="isChecking"
                   @check-for-updates="onCheckForUpdates"
                />
+            </div>
+
+            <div v-if="activeView === 'information'" class="App-overlay">
+               <InformationView :systemInfo="systemInfo" />
             </div>
          </div>
       </div>
