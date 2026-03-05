@@ -49,7 +49,7 @@
       "tauri:dev": "tauri dev --config src-tauri/tauri.conf.dev.json",
       "tauri:icons": "tauri icon ./src-tauri/icons/app-icon.png && cd ./src-tauri/icons && rm -rf android && rm -rf ios",
       "test:e2e": "wdio run e2e/wdio.conf.ts",
-      "test:unit": "cargo test --manifest-path src-tauri/Cargo.toml"
+      "test:unit": "cargo test --manifest-path src-tauri/Cargo.toml -- --test-threads=1"
    },
    "dependencies": {
       "@phosphor-icons/vue": "^2.2.1",

@@ -33,4 +33,4 @@ jobs:
               workspaces: src-tauri
 
          - name: Run Rust tests
-           run: cd src-tauri && cargo test
+           run: cd src-tauri && cargo test -- --test-threads=1
