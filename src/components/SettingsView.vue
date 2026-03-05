@@ -70,10 +70,6 @@ const themeOptions = computed(() => [
    { value: 'smastrom' as ThemeColor, label: t('SettingsView', 'themeSmastrom') },
 ])
 
-function togglePermanentlyDelete() {
-   store.setPermanentlyDelete(!settings.value.permanentlyDelete)
-}
-
 function toggleHiddenFiles() {
    store.setShowHiddenFiles(!settings.value.showHiddenFiles)
 }
@@ -146,30 +142,6 @@ async function openReleasesPage() {
                      aria-hidden="true"
                   />
                </div>
-            </div>
-         </section>
-
-         <!-- Delete behavior -->
-
-         <section class="SettingsGroup">
-            <div class="SettingsGroup-row">
-               <div class="SettingsGroup-labelWrapper">
-                  <span class="SettingsGroup-label">{{
-                     t('SettingsView', 'permanentlyDelete')
-                  }}</span>
-                  <p class="SettingsView-settingDesc">
-                     {{ t('SettingsView', 'permanentlyDeleteDesc') }}
-                  </p>
-               </div>
-               <button
-                  type="button"
-                  class="SettingsToggle"
-                  :class="{ 'SettingsToggle--on': settings.permanentlyDelete }"
-                  :aria-pressed="settings.permanentlyDelete"
-                  @click="togglePermanentlyDelete"
-               >
-                  <span class="SettingsToggle-knob" aria-hidden="true" />
-               </button>
             </div>
          </section>
 
