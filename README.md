@@ -65,11 +65,9 @@ pnpm install
 # Add the universal macOS target
 rustup target add aarch64-apple-darwin x86_64-apple-darwin
 
-# Build (skips updater artifacts so no signing key is required)
+# Build (skips updater artifacts so no signing key is required).
+# The app is ad-hoc signed during the build so it runs with the correct bundle ID and entitlements.
 pnpm tauri:build
-
-# Ad-hoc sign the .app so it runs with the correct bundle ID and entitlements
-./scripts/codesign.sh
 ```
 
 The built app is at `src-tauri/target/universal-apple-darwin/release/bundle/macos/MacDiskTree.app`. This build does not produce updater artifacts (no in-app update); it is for local use and development.

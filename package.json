@@ -43,7 +43,7 @@
       "fmt:check": "oxfmt --check",
       "prepare": "husky",
       "tauri": "tauri",
-      "tauri:build": "tauri build --target universal-apple-darwin -c '{\"bundle\":{\"createUpdaterArtifacts\":false}}'",
+      "tauri:build": "APPLE_SIGNING_IDENTITY='-' tauri build --target universal-apple-darwin -c '{\"bundle\":{\"createUpdaterArtifacts\":false}}'",
       "tauri:build:release": "APPLE_SIGNING_IDENTITY='-' TAURI_SIGNING_PRIVATE_KEY=$(cat ~/.tauri/mac-disk-tree.key) tauri build --target universal-apple-darwin",
       "tauri:clean": "cargo clean --manifest-path src-tauri/Cargo.toml",
       "tauri:dev": "tauri dev --config src-tauri/tauri.conf.dev.json",
