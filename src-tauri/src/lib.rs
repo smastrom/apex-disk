@@ -8,9 +8,10 @@ pub mod native_dialog;
 pub mod permissions;
 pub mod safe_folders;
 pub mod scan;
+pub mod store;
 pub mod xattr;
 
-use tauri::{Emitter, Manager};
+use tauri::Manager;
 
 pub const SETTINGS_STORE_PATH: &str = "settings.json";
 
@@ -64,7 +65,10 @@ pub fn run() {
     builder
         .enable_macos_default_menu(false)
         .setup(|app| {
-            // Initialize store and resolve language (handles first-load system detection)
+            // Initialize store with defaults
+            store::initialize_store(&app.handle())?;
+
+            // Initialize locale (handles first-load system detection)
             let resolved_lang = locale::resolve_app_language_inner(app.handle().clone())?;
 
             // Set macOS locale first so native menu items can pick it up
@@ -79,8 +83,6 @@ pub fn run() {
                     let _ = open::that(constants::RELEASE_NOTES_URL);
                 } else if id == constants::LICENSE_MENU_ID {
                     let _ = open::that(constants::LICENSE_URL);
-                } else if id == constants::CHECK_UPDATES_MENU_ID {
-                    let _ = app.emit("check-for-updates", ());
                 } else if id == "minimize" {
                     if let Some(window) = app.webview_windows().values().next() {
                         let _ = window.minimize();
@@ -104,7 +106,11 @@ pub fn run() {
             locale::set_app_locale,
             locale::get_system_language,
             locale::resolve_app_language,
-            menu::set_menu_language
+            menu::set_menu_language,
+            store::get_settings,
+            store::set_settings,
+            store::get_setting,
+            store::update_setting
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

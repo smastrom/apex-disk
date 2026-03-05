@@ -6,7 +6,7 @@
 //! automatically localized by macOS. There are two categories of menu items:
 //!
 //! **Custom items (translated here)**:
-//! - Check for Updates, Release Notes, License (app-specific functionality)
+//! - Release Notes, License (app-specific functionality)
 //! - Window and Help submenu titles (these are custom submenu headers)
 //! - These follow the APP language setting and update immediately when language changes
 //!
@@ -30,10 +30,9 @@
 /// These items require manual translation because they're app-specific or
 /// submenu headers that macOS cannot automatically localize.
 ///
-/// Native items (About, Hide, Quit, etc.) use `None` as label
+/// Native menu items (About, Hide, Quit, etc.) use `None` as label
 /// in menu.rs and are automatically localized by macOS to system language.
 pub struct MenuLabels {
-    pub check_for_updates: &'static str,
     pub release_notes: &'static str,
     pub license: &'static str,
     pub website_label: &'static str,
@@ -50,7 +49,6 @@ pub struct MenuLabels {
 pub fn labels_for(lang: &str) -> MenuLabels {
     match lang {
         "it" => MenuLabels {
-            check_for_updates: "Controlla aggiornamenti…",
             release_notes: "Note di versione",
             license: "Licenza",
             website_label: "Note di versione",
@@ -60,7 +58,6 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             help: "Aiuto",
         },
         "es" => MenuLabels {
-            check_for_updates: "Buscar actualizaciones…",
             release_notes: "Notas de versión",
             license: "Licencia",
             website_label: "Notas de versión",
@@ -70,7 +67,6 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             help: "Ayuda",
         },
         "fr" => MenuLabels {
-            check_for_updates: "Rechercher des mises à jour…",
             release_notes: "Notes de version",
             license: "Licence",
             website_label: "Notes de version",
@@ -80,7 +76,6 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             help: "Aide",
         },
         "pt" => MenuLabels {
-            check_for_updates: "Verificar atualizações…",
             release_notes: "Notas de versão",
             license: "Licença",
             website_label: "Notas de versão",
@@ -90,7 +85,6 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             help: "Ajuda",
         },
         "de" => MenuLabels {
-            check_for_updates: "Nach Updates suchen…",
             release_notes: "Versionshinweise",
             license: "Lizenz",
             website_label: "Versionshinweise",
@@ -100,7 +94,6 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             help: "Hilfe",
         },
         "ru" => MenuLabels {
-            check_for_updates: "Поиск обновлений…",
             release_notes: "Заметки о выпуске",
             license: "Лицензия",
             website_label: "Заметки о выпуске",
@@ -110,7 +103,6 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             help: "Справка",
         },
         "zh" => MenuLabels {
-            check_for_updates: "检查更新…",
             release_notes: "发行说明",
             license: "许可证",
             website_label: "发行说明",
@@ -120,7 +112,6 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             help: "帮助",
         },
         "ja" => MenuLabels {
-            check_for_updates: "更新を確認…",
             release_notes: "リリースノート",
             license: "ライセンス",
             website_label: "リリースノート",
@@ -130,7 +121,6 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             help: "ヘルプ",
         },
         "ar" => MenuLabels {
-            check_for_updates: "البحث عن تحديثات…",
             release_notes: "ملاحظات الإصدار",
             license: "الرخصة",
             website_label: "ملاحظات الإصدار",
@@ -141,7 +131,6 @@ pub fn labels_for(lang: &str) -> MenuLabels {
         },
         // English is the default
         _ => MenuLabels {
-            check_for_updates: "Check for Updates…",
             release_notes: "Release Notes",
             license: "License",
             website_label: "Release Notes",

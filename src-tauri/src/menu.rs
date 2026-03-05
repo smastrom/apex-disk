@@ -9,7 +9,7 @@
 //! - These items are NOT translated by our app - they follow the macOS system language
 //! - Examples: "About", "Hide", "Quit" will appear in Italian on an Italian system
 //!
-//! **Custom app items** (Check for Updates, Release Notes, License, Window/Help submenu titles):
+//! **Custom app items** (Release Notes, License, Window/Help submenu titles):
 //! - Require manual translation via `menu_translations::labels_for(lang)`
 //! - These items follow the APP language setting, not system language
 //! - When user changes app language, these items update immediately via `set_menu_language`
@@ -108,13 +108,6 @@ pub fn build_app_menu(
     )?;
 
     // ── Help submenu ── (custom items need translation)
-    let check_for_updates = MenuItem::with_id(
-        handle,
-        constants::CHECK_UPDATES_MENU_ID,
-        labels.check_for_updates,
-        true,
-        None::<&str>,
-    )?;
     let release_notes = MenuItem::with_id(
         handle,
         constants::RELEASE_NOTES_MENU_ID,
@@ -134,7 +127,7 @@ pub fn build_app_menu(
         tauri::menu::HELP_SUBMENU_ID,
         labels.help,
         true,
-        &[&check_for_updates, &release_notes, &read_license],
+        &[&release_notes, &read_license],
     )?;
 
     Menu::with_items(handle, &[&app_submenu, &window_submenu, &help_submenu])
