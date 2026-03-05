@@ -1,7 +1,7 @@
 <!--
 AppFooter
 
-Purpose: Bottom navigation bar with Scan, Settings, Information, Donate buttons. Mobile-app style footer.
+Purpose: Bottom navigation bar with Scan, Settings, Information buttons. Mobile-app style footer.
 
 Props: activeView (string?), emit: select-view
 
@@ -10,12 +10,9 @@ Example:
 -->
 
 <script setup lang="ts">
-import { PhMagnifyingGlass, PhGear, PhHeart, PhInfo } from '@phosphor-icons/vue'
-import { openUrl } from '@tauri-apps/plugin-opener'
+import { PhMagnifyingGlass, PhGear, PhInfo } from '@phosphor-icons/vue'
 
 import { useTranslations } from '@/lib/use-translations'
-
-import { DONATE_URL } from '@/lib/constants'
 
 defineProps<{
    activeView?: string
@@ -26,14 +23,6 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useTranslations()
-
-async function onDonateClick() {
-   try {
-      await openUrl(DONATE_URL)
-   } catch (err) {
-      console.error('Failed to open donate URL:', err)
-   }
-}
 </script>
 
 <template>
@@ -63,10 +52,6 @@ async function onDonateClick() {
       >
          <PhInfo :size="24" weight="regular" aria-hidden="true" />
          <span>{{ t('AppFooter', 'information') }}</span>
-      </button>
-      <button class="AppFooter-btn" @click="onDonateClick">
-         <PhHeart :size="24" weight="regular" aria-hidden="true" />
-         <span>{{ t('AppFooter', 'donate') }}</span>
       </button>
    </footer>
 </template>

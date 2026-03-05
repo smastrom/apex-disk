@@ -18,7 +18,7 @@ pub fn parse_volume_name(stdout: &str) -> Option<String> {
     None
 }
 
-fn get_volume_name(path: &Path) -> String {
+pub fn get_volume_name(path: &Path) -> String {
     use std::process::Command;
 
     // A simpler, more readable way to build our fallback paths

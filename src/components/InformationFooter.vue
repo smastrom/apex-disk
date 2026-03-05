@@ -22,6 +22,7 @@ import {
    LICENSE_URL,
    RELEASE_NOTES_URL,
    REPOSITORY_URL,
+   DONATE_URL,
 } from '@/lib/constants'
 
 const { t } = useTranslations()
@@ -57,6 +58,14 @@ async function openRepository() {
       console.error('Failed to open repository:', err)
    }
 }
+
+async function openDonate() {
+   try {
+      await openUrl(DONATE_URL)
+   } catch (err) {
+      console.error('Failed to open donate URL:', err)
+   }
+}
 </script>
 
 <template>
@@ -74,15 +83,17 @@ async function openRepository() {
          <button type="button" class="InformationFooter-link" @click="openReleaseNotes">
             {{ t('InformationFooter', 'releaseNotes') }}
          </button>
-
+         <span class="InformationFooter-sep" aria-hidden="true">·</span>
+         <button type="button" class="InformationFooter-link" @click="openLicense">
+            {{ t('InformationFooter', 'license') }}
+         </button>
          <span class="InformationFooter-sep" aria-hidden="true">·</span>
          <button type="button" class="InformationFooter-link" @click="openRepository">
             {{ t('InformationFooter', 'repository') }}
          </button>
-
          <span class="InformationFooter-sep" aria-hidden="true">·</span>
-         <button type="button" class="InformationFooter-link" @click="openLicense">
-            {{ t('InformationFooter', 'license') }}
+         <button type="button" class="InformationFooter-link" @click="openDonate">
+            {{ t('InformationFooter', 'donate') }}
          </button>
       </div>
    </footer>
