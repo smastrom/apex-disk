@@ -21,9 +21,6 @@ MacDiskTree scans your entire user folder and presents everything as a navigable
 - **Accessible** — Engineered for everyone with complete keyboard navigation and screen reader support
 - **Themes** — Multiple color themes to choose from, with more on the way
 
-> [!WARNING]  
-> This app can delete files and folders. Use it carefully and review your selections before confirming deletion. The author does not take responsibility for any file loss.
-
 ## Preview
 
 ![MacDiskTree](./src/assets/images/app-cover.png)
