@@ -19,7 +19,6 @@ import {
    APP_CREDITS,
    APP_NAME,
    APP_VERSION,
-   AUTHOR_URL,
    LICENSE_URL,
    RELEASE_NOTES_URL,
    REPOSITORY_URL,
@@ -42,14 +41,6 @@ async function openLicense() {
       await openUrl(LICENSE_URL)
    } catch (err) {
       console.error('Failed to open license:', err)
-   }
-}
-
-async function openAuthorUrl() {
-   try {
-      await openUrl(AUTHOR_URL)
-   } catch (err) {
-      console.error('Failed to open author URL:', err)
    }
 }
 
