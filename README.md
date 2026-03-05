@@ -1,4 +1,4 @@
-MacDiskTree
+![MacDiskTree](./src-tauri/icons/128x128.png)
 
 # MacDiskTree
 
@@ -26,7 +26,7 @@ MacDiskTree scans your entire user folder and presents everything as a navigable
 
 ## Preview
 
-MacDiskTree
+![MacDiskTree](./src/assets/images/app-cover.png)
 
 ## Installation
 
@@ -52,9 +52,7 @@ xattr -cr /Applications/MacDiskTree.app
 - [Node.js](https://nodejs.org) >= 22
 - [pnpm](https://pnpm.io) >= 10
 
-### For contributors (no signing credentials)
-
-Anyone who clones the repo can build and run the app without access to the maintainer’s signing keys:
+### Local build (no signing credentials)
 
 ```bash
 # Clone the repository
@@ -75,14 +73,6 @@ pnpm tauri:build
 ```
 
 The built app is at `src-tauri/target/universal-apple-darwin/release/bundle/macos/MacDiskTree.app`. This build does not produce updater artifacts (no in-app update); it is for local use and development.
-
-### For the maintainer (signed build + updater)
-
-To produce a signed app and updater artifacts (e.g. for a release), the maintainer uses `tauri:build:release`, which requires the updater private key at `~/.tauri/mac-disk-tree.key` and will prompt for its password:
-
-```bash
-pnpm tauri:build:release
-```
 
 ## License
 
