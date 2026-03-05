@@ -133,8 +133,8 @@ async function openDonate() {
    align-items: center;
    justify-content: center;
    gap: var(--spacing-xs);
-   margin-top: var(--spacing-md);
-   margin-bottom: var(--spacing-md);
+   margin-top: var(--spacing-xs);
+   margin-bottom: var(--spacing-lg);
 }
 
 .InformationFooter-link {
