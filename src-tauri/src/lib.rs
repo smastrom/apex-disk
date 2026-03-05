@@ -9,6 +9,7 @@ pub mod permissions;
 pub mod safe_folders;
 pub mod scan;
 pub mod store;
+pub mod system_info;
 pub mod xattr;
 
 use tauri::Manager;
@@ -110,7 +111,8 @@ pub fn run() {
             store::get_settings,
             store::set_settings,
             store::get_setting,
-            store::update_setting
+            store::update_setting,
+            system_info::get_system_info
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
