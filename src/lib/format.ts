@@ -1,3 +1,5 @@
+import { APP_LANGUAGES_TO_LOCALE_MAP } from './constants'
+
 /** Formats bytes into human-readable string (e.g. "1.2 GB"). */
 export function formatBytes(bytes: unknown): string {
    if (typeof bytes === 'string') bytes = parseFloat(bytes)
@@ -24,4 +26,19 @@ export function formatProgressNumber(n: number): string {
 /** Formats a year range for display: single year when same (e.g. 2026 → "2026"), otherwise range (e.g. 2026 - 2027 → "2026 - 2027"). */
 export function formatYearRange(start: number, end: number): string {
    return start === end ? String(start) : `${start} - ${end}`
+}
+
+/** Formats a Unix timestamp into a localized date string based on language. */
+export function formatDate(timestamp: number, languageCode: string): string {
+   if (!timestamp || timestamp <= 0) return ''
+
+   const locale =
+      APP_LANGUAGES_TO_LOCALE_MAP[languageCode as keyof typeof APP_LANGUAGES_TO_LOCALE_MAP]
+   if (!locale) {
+      console.warn(`Unknown language code: ${languageCode}`)
+      return new Date(timestamp * 1000).toLocaleDateString(undefined, { dateStyle: 'short' })
+   }
+
+   const date = new Date(timestamp * 1000)
+   return date.toLocaleDateString(locale, { dateStyle: 'short' })
 }

@@ -3,6 +3,19 @@ import { version } from '../../package.json'
 /** English, then European (it, es, fr, pt, de), then Russian, then Asiatic (zh, ja, ar). */
 export const APP_LANGUAGES = ['en', 'it', 'es', 'fr', 'pt', 'de', 'ru', 'zh', 'ja', 'ar'] as const
 
+export const APP_LANGUAGES_TO_LOCALE_MAP: Record<(typeof APP_LANGUAGES)[number], string> = {
+   en: 'en-US',
+   it: 'it-IT',
+   es: 'es-ES',
+   fr: 'fr-FR',
+   pt: 'pt-PT',
+   de: 'de-DE',
+   ru: 'ru-RU',
+   zh: 'zh-CN',
+   ja: 'ja-JP',
+   ar: 'ar-SA',
+} as const
+
 export const DEFAULT_LANGUAGE = 'en' as const
 
 /** Languages that use right-to-left script direction. */
