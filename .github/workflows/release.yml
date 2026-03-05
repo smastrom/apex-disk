@@ -72,8 +72,11 @@ jobs:
          - name: Install frontend dependencies
            run: pnpm install
 
-         - name: Run tests
-           run: pnpm test
+         - name: Run unit tests
+           run: pnpm test:unit
+
+         - name: Run E2E tests
+           run: pnpm test:e2e
 
          - name: Setup Rust
            uses: dtolnay/rust-toolchain@stable
