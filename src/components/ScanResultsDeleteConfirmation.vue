@@ -17,7 +17,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window'
 
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/use-translations'
-import { useAppSettings } from '@/stores/settings'
+import { useAppSettings } from '@/stores/app-settings'
 
 defineProps<{
    deletedSummary: { count: number; size: number } | null

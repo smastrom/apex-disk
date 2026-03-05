@@ -11,15 +11,16 @@ Example:
 
 <script setup lang="ts">
 import AppHeader from './AppHeader.vue'
+import AppFooter from './AppFooter.vue'
 import ScanView from './ScanView.vue'
 import SettingsView from './SettingsView.vue'
-import AppFooter from './AppFooter.vue'
 
 import { useTemplateRef, watch } from 'vue'
 
-import { useAppSettings } from '@/stores/settings'
+import { useAppSettings } from '@/stores/app-settings'
 import { useAppViews } from '@/lib/use-app-views'
-import { useAppUpdater } from '@/lib/use-app-updater'
+import { useAppUpdate } from '@/lib/use-app-update'
+import { useFullDiskAccess } from '@/lib/use-full-disk-access'
 import { disableNativeContextMenu } from '@/lib/use-context-menu'
 import { applyTheme, applyDirection } from '@/lib/theme'
 import { setupFocusRing } from '@/lib/use-focus-ring'
@@ -45,8 +46,9 @@ watch(
 )
 
 const { activeView, setActiveView } = useAppViews(mainContentRef)
+const { newAvailableVersion, isChecking, onCheckForUpdates } = useAppUpdate()
 
-const { availableUpdate } = useAppUpdater()
+const { isFdaGranted } = await useFullDiskAccess()
 
 disableNativeContextMenu()
 setupFocusRing()
@@ -61,7 +63,12 @@ setupFocusRing()
             <ScanView v-show="activeView === 'scan'" :activeView="activeView" />
 
             <div v-if="activeView === 'settings'" class="App-overlay">
-               <SettingsView :availableUpdate="availableUpdate" />
+               <SettingsView
+                  :newAvailableVersion="newAvailableVersion"
+                  :isFdaGranted="isFdaGranted"
+                  :isChecking="isChecking"
+                  @check-for-updates="onCheckForUpdates"
+               />
             </div>
          </div>
       </div>

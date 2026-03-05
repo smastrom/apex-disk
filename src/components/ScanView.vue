@@ -22,7 +22,7 @@ import ScanLaunch from './ScanLaunch.vue'
 
 import { ref, watch, onDeactivated, useTemplateRef } from 'vue'
 
-import { useAppSettings } from '@/stores/settings'
+import { useAppSettings } from '@/stores/app-settings'
 import { useScanner } from '@/lib/use-scanner'
 import { useDiskUsage } from '@/lib/use-disk-usage'
 
@@ -92,6 +92,7 @@ watch(
 onDeactivated(() => {
    // If switching app view from this component and we're in DeleteResults page
    if (scanViewState.value === ScanViewState.DELETE_COMPLETE) {
+      console.log('Hello!')
       scanViewState.value = ScanViewState.LAUNCH
       onCancel()
    }

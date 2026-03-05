@@ -14,9 +14,7 @@ import { openUrl } from '@tauri-apps/plugin-opener'
 
 import { useTranslations } from '@/lib/use-translations'
 
-import { RELEASE_NOTES_URL } from '@/lib/constants'
-
-import Package from '../../package.json'
+import { RELEASE_NOTES_URL, APP_VERSION } from '@/lib/constants'
 
 const { t } = useTranslations()
 
@@ -40,7 +38,7 @@ async function openReleaseNotes(e: MouseEvent) {
             :aria-label="t('AppHeader', 'versionLinkLabel')"
             @click="openReleaseNotes"
          >
-            v{{ Package.version }}
+            v{{ APP_VERSION }}
          </a>
       </div>
    </header>

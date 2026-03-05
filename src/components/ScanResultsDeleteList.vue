@@ -32,7 +32,7 @@ import { PhTrashSimple } from '@phosphor-icons/vue'
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/use-translations'
 import { useReducedMotion } from '@/lib/use-reduced-motion'
-import { useAppSettings } from '@/stores/settings'
+import { useAppSettings } from '@/stores/app-settings'
 
 import { DELETE_COUNTDOWN_MS, DELETE_POST_DELETE_SLEEP_MS } from '@/lib/constants'
 
@@ -119,7 +119,7 @@ onDeactivated(() => {
 const checkedMapRef = shallowRef(new Map<string, boolean>())
 const isDeleting = ref(false)
 
-const prefersReducedMotion = useReducedMotion()
+const { prefersReducedMotion } = useReducedMotion()
 
 const parentRef = useTemplateRef<HTMLElement>('parentRef')
 

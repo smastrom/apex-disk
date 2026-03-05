@@ -14,9 +14,14 @@ import { openUrl } from '@tauri-apps/plugin-opener'
 
 import { useTranslations } from '@/lib/use-translations'
 
-import { APP_CREDITS, APP_NAME, AUTHOR_URL, LICENSE_URL, RELEASE_NOTES_URL } from '@/lib/constants'
-
-import Package from '../../package.json'
+import {
+   APP_CREDITS,
+   APP_NAME,
+   APP_VERSION,
+   AUTHOR_URL,
+   LICENSE_URL,
+   RELEASE_NOTES_URL,
+} from '@/lib/constants'
 
 const { t } = useTranslations()
 
@@ -49,7 +54,7 @@ async function openAuthorUrl() {
    <footer class="SettingsFooter-root">
       <p class="SettingsFooter-line">
          <span class="SettingsFooter-name">{{ APP_NAME }}</span>
-         <span class="SettingsFooter-version">v{{ Package.version }}</span>
+         <span class="SettingsFooter-version">v{{ APP_VERSION }}</span>
       </p>
       <p class="SettingsFooter-line SettingsFooter-credits">
          <button type="button" class="SettingsFooter-creditsBtn" @click="openAuthorUrl">
