@@ -23,6 +23,7 @@ import {
    RELEASE_NOTES_URL,
    REPOSITORY_URL,
    DONATE_URL,
+   RELEASE_YEAR,
 } from '@/lib/constants'
 
 const { t } = useTranslations()
@@ -76,7 +77,7 @@ async function openDonate() {
       </p>
       <p class="InformationFooter-line InformationFooter-credits">
          <button type="button" class="InformationFooter-creditsBtn" @click="openAuthorUrl">
-            {{ APP_CREDITS }}
+            {{ RELEASE_YEAR }} - {{ APP_CREDITS }}
          </button>
       </p>
       <div class="InformationFooter-links">

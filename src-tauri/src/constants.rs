@@ -2,9 +2,9 @@
 
 /// App name shown in the menu bar and About dialog. Keep in sync with tauri.conf.json productName.
 pub const APP_NAME: &str = "MacDiskTree";
-
-/// Author line shown in the About dialog (macOS credits field).
+pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const APP_CREDITS: &str = "Simone Mastromattei (smastrom)";
+pub const RELEASE_YEAR: &str = "2026";
 
 /// Author website or GitHub profile URL.
 #[allow(dead_code)]
