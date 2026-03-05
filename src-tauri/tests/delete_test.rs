@@ -1,15 +1,12 @@
-//! Tests for `delete`: filter_items, trash_paths_sync_with_home, permanent_delete_sync_with_home.
+//! Tests for `delete`: filter_items, trash_paths_sync_with_home.
 //!
-//! The delete command receives `{ path, is_file }[]` from the frontend. The setting
-//! `permanentlyDelete` (SettingsView) is read in Rust from the store; when false we call
-//! trash_paths_sync (move to Trash), when true permanent_delete_sync (remove_file /
-//! remove_dir_all). Both paths use the same filter_items first. We use the shared
-//! `support::create_test_home` (realistic home layout) so tests run against a proper tree.
+//! The delete command receives `{ path, is_file }[]` from the frontend.
+//! Items are always moved to the macOS Trash. Both paths use the same filter_items first.
+//! We use the shared `support::create_test_home` (realistic home layout) so tests run against a proper tree.
 
 mod support;
 
 use mac_disk_tree_lib::delete::filter_items;
-use mac_disk_tree_lib::delete::permanent_delete_sync_with_home;
 use mac_disk_tree_lib::delete::trash_paths_sync_with_home;
 use mac_disk_tree_lib::delete::DeletePathItem;
 
@@ -171,66 +168,6 @@ fn trash_paths_sync_runs_and_filters() {
 
     trash_paths_sync_with_home(&home_canon, items);
     // If trash worked, file/dir would be gone; we don't assert that in case CI doesn't support it.
-}
-
-/// With permanentlyDelete true (SettingsView toggle on), delete_paths calls
-/// permanent_delete_sync. We call permanent_delete_sync_with_home with a temp dir:
-/// filtered items must be removed from the filesystem (files then dirs, deepest first).
-#[test]
-fn permanent_delete_sync_removes_paths() {
-    let home_dir = create_test_home();
-    let home_canon = home_dir.path().canonicalize().expect("canonicalize home");
-    let file_path = home_canon.join("MyData").join("big.txt");
-    let dir_path = home_canon.join("MyData");
-
-    let items = vec![
-        DeletePathItem {
-            path: file_path.to_string_lossy().into_owned(),
-            is_file: true,
-        },
-        DeletePathItem {
-            path: dir_path.to_string_lossy().into_owned(),
-            is_file: false,
-        },
-    ];
-
-    permanent_delete_sync_with_home(&home_canon, items);
-
-    assert!(!file_path.exists(), "file should be permanently removed");
-    assert!(!dir_path.exists(), "dir should be permanently removed");
-}
-
-/// Protected paths must not be deleted by permanent_delete_sync: only filtered
-/// (non-protected, non-skipped) items are passed to remove_file/remove_dir_all.
-#[test]
-fn permanent_delete_sync_does_not_remove_protected() {
-    let home_dir = create_test_home();
-    let home = home_dir.path();
-    let home_canon = home.canonicalize().expect("canonicalize home");
-    let docs_path = home_canon.join("Documents");
-    let mydata_path = home_canon.join("MyData");
-
-    let items = vec![
-        DeletePathItem {
-            path: docs_path.to_string_lossy().into_owned(),
-            is_file: false,
-        },
-        DeletePathItem {
-            path: mydata_path.to_string_lossy().into_owned(),
-            is_file: false,
-        },
-    ];
-
-    permanent_delete_sync_with_home(&home_canon, items);
-
-    assert!(
-        docs_path.exists(),
-        "Documents (protected) must not be removed"
-    );
-    assert!(
-        !mydata_path.exists(),
-        "MyData (not protected) must be removed"
-    );
 }
 
 /// Trash path must not pass protected paths to the trash API: Documents must still exist
