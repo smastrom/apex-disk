@@ -32,5 +32,8 @@ jobs:
            with:
               workspaces: src-tauri
 
-         - name: Run Rust tests
-           run: cd src-tauri && cargo test -- --test-threads=1
+         - name: Run unit tests
+           run: pnpm test:unit
+
+         - name: Run E2E tests
+           run: pnpm test:e2e
