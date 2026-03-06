@@ -14,11 +14,6 @@ export function debounce<T extends (...args: any[]) => any>(
 }
 
 /**
- * Returns true if the code is running in a browser-like environment.
- */
-export const isClient = typeof window !== 'undefined'
-
-/**
  * No-operation function.
  */
 export const noop = () => {}

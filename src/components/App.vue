@@ -24,7 +24,7 @@ import { useAppUpdate } from '@/lib/use-app-update'
 import { useFullDiskAccess } from '@/lib/use-full-disk-access'
 import { useSystemInfo } from '@/lib/use-system-info'
 import { disableNativeContextMenu } from '@/lib/use-context-menu'
-import { applyTheme, applyDirection } from '@/lib/theme'
+import { applyTheme, applyDirection } from '@/lib/document'
 import { setupFocusRing } from '@/lib/use-focus-ring'
 
 import '@/assets/css/theme.css'

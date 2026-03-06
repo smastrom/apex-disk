@@ -1,7 +1,6 @@
 import { computed } from 'vue'
 
 import { createT } from '@/assets/translations'
-
 import { useAppSettings } from '@/stores/app-settings'
 
 import type { TranslationModule } from '@/assets/translations'

@@ -54,6 +54,3 @@ export const AUTHOR_URL = 'https://github.com/smastrom' as const
 export const REPOSITORY_URL = 'https://github.com/smastrom/mac-disk-tree' as const
 export const RELEASE_NOTES_URL = 'https://github.com/smastrom/mac-disk-tree/releases' as const
 export const LICENSE_URL = 'https://github.com/smastrom/mac-disk-tree/blob/main/LICENSE' as const
-
-/** Safe fallback date when release date fetching fails */
-export const FALLBACK_RELEASE_DATE = '2026' as const
