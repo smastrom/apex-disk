@@ -23,7 +23,7 @@ use crate::ScanOptions;
 /// Max file entries kept per directory. We still count ALL file sizes for
 /// accuracy, but only retain the N largest as tree entries to avoid millions
 /// of allocations and a massive IPC payload.
-const MAX_FILES_PER_DIR: usize = 50;
+const MAX_FILES_PER_DIR: usize = 100;
 
 /// Global cancellation flag for ongoing scans
 static SCAN_CANCELLED: AtomicBool = AtomicBool::new(false);
