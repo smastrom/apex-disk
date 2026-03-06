@@ -10,7 +10,6 @@
 
 use std::path::Path;
 use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
-use std::sync::{Arc, Mutex};
 
 use rayon::prelude::*;
 use tauri::Emitter;
@@ -165,10 +164,11 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: b
     file_entries.sort_unstable_by(|a, b| b.1.cmp(&a.1));
     file_entries.truncate(MAX_FILES_PER_DIR);
 
-    // Calculate the most recent last_modified date from all non-system files before moving file_entries
+    // Calculate the most recent last_modified date from non-system files after truncation.
+    // Only the top N largest files are retained — small files (which include system files
+    // like .DS_Store) are intentionally excluded so they don't alter the folder's date.
     let mut most_recent_modified: Option<i64> = None;
     for (fname, _, file_last_modified) in &file_entries {
-        // Skip system files for last_modified calculation
         if is_system_file(fname) {
             continue;
         }
@@ -330,7 +330,6 @@ pub fn get_user_folders_sync_with_progress(
     let total = folder_paths.len();
     let completed = AtomicUsize::new(0);
     let scanned_size_total = AtomicU64::new(0);
-    let app_ref = Arc::new(Mutex::new(app));
 
     let options_ref = &options;
     let mut folders: Vec<FolderInfo> = folder_paths
@@ -340,19 +339,17 @@ pub fn get_user_folders_sync_with_progress(
 
             let cur = completed.fetch_add(1, Ordering::Relaxed) + 1;
             let total_size = scanned_size_total.fetch_add(info.size, Ordering::Relaxed) + info.size;
-            if let Ok(guard) = app_ref.lock() {
-                let _ = guard.emit(
-                    "folder-scan-progress",
-                    &FolderScanProgress {
-                        current: cur,
-                        total,
-                        folder: info.name.clone(),
-                        size: info.size,
-                        scanned_size_total: total_size,
-                        scanning: None,
-                    },
-                );
-            }
+            let _ = app.emit(
+                "folder-scan-progress",
+                &FolderScanProgress {
+                    current: cur,
+                    total,
+                    folder: info.name.clone(),
+                    size: info.size,
+                    scanned_size_total: total_size,
+                    scanning: None,
+                },
+            );
 
             info
         })

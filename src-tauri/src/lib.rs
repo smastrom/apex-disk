@@ -70,14 +70,10 @@ pub fn run() {
             // Initialize store with defaults
             store::initialize_store(&app.handle())?;
 
-            // Initialize locale (handles first-load system detection)
-            let resolved_lang = locale::resolve_app_language_inner(app.handle().clone())?;
-
-            // Set macOS locale first so native menu items can pick it up
-            locale::set_app_locale(app.handle().clone(), resolved_lang.clone())?;
-
-            // Build and set the menu AFTER locale is updated
-            menu::set_menu_language(app.handle().clone(), resolved_lang)?;
+            // Initialize locale (handles first-load system detection).
+            // This also sets the macOS locale and builds the menu via
+            // resolve_app_language_inner → set_app_locale → set_menu_language.
+            locale::resolve_app_language_inner(app.handle().clone())?;
 
             app.on_menu_event(|app, event| {
                 let id = event.id().as_ref();
