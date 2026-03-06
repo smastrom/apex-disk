@@ -21,8 +21,8 @@ pub struct DeletePathItem {
 pub fn filter_items(
     home: &Path,
     items: Vec<DeletePathItem>,
-) -> Option<(Vec<DeletePathItem>, Vec<DeletePathItem>)> {
-    let (files, dirs): (Vec<_>, Vec<_>) = items
+) -> (Vec<DeletePathItem>, Vec<DeletePathItem>) {
+    items
         .into_iter()
         .filter(|i| {
             let p = Path::new(&i.path);
@@ -33,18 +33,13 @@ pub fn filter_items(
             !safe_folders::is_path_protected(&canonical, home)
                 && !safe_folders::is_path_skipped(&canonical, home)
         })
-        .partition(|i| i.is_file);
-
-    Some((files, dirs))
+        .partition(|i| i.is_file)
 }
 
 /// Moves items to the macOS Trash via the system API.
 /// Takes `home` so tests can pass a temp dir; production uses `dirs::home_dir()`.
 pub fn trash_paths_sync_with_home(home: &Path, items: Vec<DeletePathItem>) {
-    let (files, dirs) = match filter_items(home, items) {
-        Some(v) => v,
-        None => return,
-    };
+    let (files, dirs) = filter_items(home, items);
 
     let paths: Vec<_> = files
         .iter()

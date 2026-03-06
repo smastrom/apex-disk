@@ -38,8 +38,7 @@ fn filter_items_protected_paths_removed() {
         },
     ];
 
-    let result = filter_items(&home_canon, items).expect("filter");
-    let (files, dirs) = result;
+    let (files, dirs) = filter_items(&home_canon, items);
     assert!(files.is_empty());
     let dir_paths: Vec<_> = dirs.iter().map(|i| i.path.as_str()).collect();
     let docs_str = docs_path.to_str().unwrap();
@@ -80,8 +79,7 @@ fn filter_items_skipped_paths_removed() {
         },
     ];
 
-    let result = filter_items(&home_canon, items).expect("filter");
-    let (files, dirs) = result;
+    let (files, dirs) = filter_items(&home_canon, items);
     assert_eq!(files.len(), 1);
     assert_eq!(files[0].path, mydata_file.to_string_lossy().into_owned());
     assert!(dirs.is_empty(), ".ssh should be filtered out (skipped)");
@@ -108,8 +106,7 @@ fn filter_items_partition_files_and_dirs() {
         },
     ];
 
-    let result = filter_items(&home_canon, items).expect("filter");
-    let (files, dirs) = result;
+    let (files, dirs) = filter_items(&home_canon, items);
     assert_eq!(files.len(), 1, "one file (MyData/big.txt)");
     assert!(files[0].is_file);
     assert_eq!(dirs.len(), 1);
@@ -137,8 +134,7 @@ fn filter_items_nonexistent_path_removed() {
         },
     ];
 
-    let result = filter_items(&home_canon, items).expect("filter");
-    let (files, _) = result;
+    let (files, _) = filter_items(&home_canon, items);
     assert_eq!(files.len(), 1);
     assert_eq!(files[0].path, real_file.to_string_lossy().into_owned());
 }
@@ -195,5 +191,53 @@ fn trash_paths_sync_does_not_remove_protected() {
     assert!(
         docs_path.exists(),
         "Documents (protected) must not be trashed"
+    );
+}
+
+/// An empty items list must return empty (files, dirs) — no panic.
+#[test]
+fn filter_items_empty_list() {
+    let home_dir = create_test_home();
+    let home_canon = home_dir.path().canonicalize().expect("canonicalize home");
+
+    let (files, dirs) = filter_items(&home_canon, vec![]);
+    assert!(files.is_empty());
+    assert!(dirs.is_empty());
+}
+
+/// trash_paths_sync_with_home with an empty list must not panic.
+#[test]
+fn trash_paths_sync_empty_list_no_panic() {
+    let home_dir = create_test_home();
+    let home_canon = home_dir.path().canonicalize().expect("canonicalize home");
+    trash_paths_sync_with_home(&home_canon, vec![]);
+}
+
+/// All items pointing to protected or skipped paths must result in empty output.
+#[test]
+fn filter_items_all_protected_returns_empty() {
+    let home_dir = create_test_home();
+    let home_canon = home_dir.path().canonicalize().expect("canonicalize home");
+
+    let items = vec![
+        DeletePathItem {
+            path: home_canon.join("Documents").to_string_lossy().into_owned(),
+            is_file: false,
+        },
+        DeletePathItem {
+            path: home_canon.join("Library").to_string_lossy().into_owned(),
+            is_file: false,
+        },
+        DeletePathItem {
+            path: home_canon.join(".ssh").to_string_lossy().into_owned(),
+            is_file: false,
+        },
+    ];
+
+    let (files, dirs) = filter_items(&home_canon, items);
+    assert!(files.is_empty());
+    assert!(
+        dirs.is_empty(),
+        "All protected/skipped items should be filtered out"
     );
 }
