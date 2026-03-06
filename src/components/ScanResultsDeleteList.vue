@@ -12,7 +12,7 @@ Example:
 <script setup lang="ts">
 import ScanResultsDeleteListItem from './ScanResultsDeleteListItem.vue'
 import ScanResultsNav from './ScanResultsNav.vue'
-import Spinner from './Spinner.vue'
+import Spinner from './ui/Spinner.vue'
 
 import {
    ref,

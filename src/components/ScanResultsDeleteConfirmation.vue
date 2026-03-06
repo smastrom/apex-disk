@@ -10,7 +10,7 @@ Example:
 -->
 
 <script setup lang="ts">
-import AnimatedCheckCircle from './AnimatedCheckCircle.vue'
+import AnimatedCheckCircle from './ui/AnimatedCheckCircle.vue'
 
 import { PhMagnifyingGlass, PhX } from '@phosphor-icons/vue'
 import { getCurrentWindow } from '@tauri-apps/api/window'

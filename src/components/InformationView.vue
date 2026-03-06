@@ -10,7 +10,7 @@ Example:
 -->
 
 <script setup lang="ts">
-import Logo from './Logo.vue'
+import Logo from './ui/Logo.vue'
 import InformationFooter from './InformationFooter.vue'
 
 import { useTranslations } from '@/lib/use-translations'
