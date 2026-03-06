@@ -17,3 +17,27 @@ export function debounce<T extends (...args: any[]) => any>(
  * No-operation function.
  */
 export const noop = () => {}
+
+/**
+ * Extracts lowercase extension from filename (e.g. "file.PDF" → "pdf").
+ */
+export function getExtension(name: string): string {
+   const lastDot = name.lastIndexOf('.')
+   if (lastDot === -1) return ''
+
+   return name.slice(lastDot + 1).toLowerCase()
+}
+
+/**
+ * Formats a full path for display: /Users/<name>/… → ~/…
+ */
+export function displayPath(path: string): string {
+   return path.replace(/^\/Users\/[^/]+/, '~')
+}
+
+/**
+ * Checks if a file/folder name starts with a dot (hidden file).
+ */
+export function isHidden(name: string): boolean {
+   return name.startsWith('.')
+}

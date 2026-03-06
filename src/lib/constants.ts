@@ -54,3 +54,95 @@ export const AUTHOR_URL = 'https://github.com/smastrom' as const
 export const REPOSITORY_URL = 'https://github.com/smastrom/mac-disk-tree' as const
 export const RELEASE_NOTES_URL = 'https://github.com/smastrom/mac-disk-tree/releases' as const
 export const LICENSE_URL = 'https://github.com/smastrom/mac-disk-tree/blob/main/LICENSE' as const
+
+/** File extension sets for icon categorization. */
+export const DOC_EXTENSIONS = new Set([
+   'pdf',
+   'doc',
+   'docx',
+   'txt',
+   'md',
+   'rtf',
+   'odt',
+   'pages',
+   'numbers',
+   'key',
+   'ppt',
+   'pptx',
+   'xls',
+   'xlsx',
+   'csv',
+   'tex',
+   'docm',
+   'dotx',
+   'dotm',
+   'xlsm',
+   'pptm',
+   'ods',
+   'odg',
+   'odp',
+   'odb',
+   'odc',
+   'odm',
+   'odf',
+])
+
+export const AUDIO_EXTENSIONS = new Set([
+   'mp3',
+   'wav',
+   'aac',
+   'flac',
+   'm4a',
+   'ogg',
+   'wma',
+   'aiff',
+   'aif',
+   'ape',
+   'alac',
+])
+
+export const VIDEO_EXTENSIONS = new Set([
+   'mp4',
+   'mov',
+   'avi',
+   'mkv',
+   'webm',
+   'wmv',
+   'm4v',
+   'flv',
+   'mpg',
+   'mpeg',
+   '3gp',
+])
+
+export const ARCHIVE_EXTENSIONS = new Set([
+   'zip',
+   'tar',
+   'gz',
+   'rar',
+   '7z',
+   'dmg',
+   'bz2',
+   'xz',
+   'z',
+   'lz',
+   'lzma',
+   'tgz',
+   'tbz',
+   'txz',
+])
+
+export const IMAGE_EXTENSIONS = new Set([
+   'jpg',
+   'jpeg',
+   'png',
+   'gif',
+   'webp',
+   'svg',
+   'bmp',
+   'ico',
+   'heic',
+   'heif',
+   'tiff',
+   'tif',
+])
