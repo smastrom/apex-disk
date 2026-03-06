@@ -350,3 +350,129 @@ fn scan_folder_last_modified_ignores_system_files() {
         }
     }
 }
+
+/// With show_hidden_files false (default), hidden files and dirs must not appear in the
+/// scan results. Only visible entries should be returned.
+#[test]
+fn scan_show_hidden_files_false_filters_hidden() {
+    let home_dir = create_test_home();
+    let home = home_dir.path();
+    let options = ScanOptions {
+        show_hidden_files: false,
+        show_under_1kb: true,
+        show_zero_byte: true,
+    };
+
+    let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
+
+    // No top-level hidden dirs should appear
+    for folder in &result {
+        assert!(
+            !folder.name.starts_with('.'),
+            "Hidden folder {} should not appear when show_hidden_files is false",
+            folder.name
+        );
+    }
+
+    // Check inside MyData — .hidden should not appear
+    if let Some(mydata) = result.iter().find(|f| f.name == "MyData") {
+        for child in &mydata.children {
+            assert!(
+                !child.name.starts_with('.'),
+                "Hidden file {} should not appear when show_hidden_files is false",
+                child.name
+            );
+        }
+    }
+}
+
+/// Scan with all options set to their most permissive values must return every
+/// file and folder in the test home (except skipped). This is the "show everything" mode.
+#[test]
+fn scan_permissive_options_includes_all() {
+    let home_dir = create_test_home();
+    let home = home_dir.path();
+    let options = ScanOptions {
+        show_hidden_files: true,
+        show_under_1kb: true,
+        show_zero_byte: true,
+    };
+
+    let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
+    let names: std::collections::HashSet<_> = result.iter().map(|f| f.name.as_str()).collect();
+
+    // MyData contains a 0-byte file, a <1KB file, a hidden file, and a >=1KB file
+    assert!(names.contains("MyData"), "MyData should be present");
+    let mydata = result.iter().find(|f| f.name == "MyData").unwrap();
+    let child_names: std::collections::HashSet<_> =
+        mydata.children.iter().map(|c| c.name.as_str()).collect();
+    assert!(
+        child_names.contains("empty.txt"),
+        "empty.txt should be present"
+    );
+    assert!(
+        child_names.contains("small.txt"),
+        "small.txt should be present"
+    );
+    assert!(child_names.contains(".hidden"), ".hidden should be present");
+    assert!(child_names.contains("big.txt"), "big.txt should be present");
+}
+
+/// The total size of a folder must equal the sum of all its children's sizes.
+/// This verifies that size accounting is correct throughout the tree.
+#[test]
+fn scan_folder_size_equals_sum_of_children() {
+    let home_dir = create_test_home();
+    let home = home_dir.path();
+    let options = ScanOptions {
+        show_hidden_files: true,
+        show_under_1kb: true,
+        show_zero_byte: true,
+    };
+
+    let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
+
+    for folder in &result {
+        if !folder.children.is_empty() {
+            let children_sum: u64 = folder.children.iter().map(|c| c.size).sum();
+            assert_eq!(
+                folder.size, children_sum,
+                "Folder {} size ({}) should equal sum of children sizes ({})",
+                folder.name, folder.size, children_sum
+            );
+        }
+    }
+}
+
+/// Files within a folder must have is_file set to true; dirs with children must not.
+#[test]
+fn scan_is_file_flag_correct() {
+    let home_dir = create_test_home();
+    let home = home_dir.path();
+    let options = ScanOptions {
+        show_hidden_files: true,
+        show_under_1kb: true,
+        show_zero_byte: true,
+    };
+
+    let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
+
+    for folder in &result {
+        for child in &folder.children {
+            if child.is_file {
+                assert!(
+                    child.children.is_empty(),
+                    "File {} should have no children",
+                    child.name
+                );
+            }
+            if !child.children.is_empty() {
+                assert!(
+                    !child.is_file,
+                    "{} has children but is_file is true",
+                    child.name
+                );
+            }
+        }
+    }
+}
