@@ -26,6 +26,7 @@ import { useSystemInfo } from '@/lib/use-system-info'
 import { disableNativeContextMenu } from '@/lib/use-context-menu'
 import { applyTheme, applyDirection } from '@/lib/document'
 import { setupFocusRing } from '@/lib/use-focus-ring'
+import { useDiskUsage } from '@/lib/use-disk-usage'
 
 import '@/assets/css/theme.css'
 import '@/assets/css/global.css'
@@ -52,6 +53,7 @@ const { newAvailableVersion, isChecking, onCheckForUpdates } = useAppUpdate()
 
 const { systemInfo } = await useSystemInfo()
 const { isFdaGranted } = await useFullDiskAccess()
+const { diskUsage } = await useDiskUsage()
 
 disableNativeContextMenu()
 setupFocusRing()
@@ -63,20 +65,26 @@ setupFocusRing()
 
       <div class="App-main">
          <div ref="mainContentRef" class="App-mainContent">
-            <ScanView v-show="activeView === 'scan'" :activeView="activeView" />
-
-            <div v-if="activeView === 'settings'" class="App-overlay">
-               <SettingsView
-                  :newAvailableVersion="newAvailableVersion"
-                  :isFdaGranted="isFdaGranted"
-                  :isChecking="isChecking"
-                  @check-for-updates="onCheckForUpdates"
+            <KeepAlive>
+               <ScanView
+                  v-if="activeView === 'scan'"
+                  :appActiveView="activeView"
+                  :diskUsage="diskUsage"
                />
-            </div>
 
-            <div v-if="activeView === 'information'" class="App-overlay">
-               <InformationView :systemInfo="systemInfo" />
-            </div>
+               <div v-else-if="activeView === 'settings'" class="App-overlay">
+                  <SettingsView
+                     :newAvailableVersion="newAvailableVersion"
+                     :isFdaGranted="isFdaGranted"
+                     :isChecking="isChecking"
+                     @check-for-updates="onCheckForUpdates"
+                  />
+               </div>
+
+               <div v-else-if="activeView === 'information'" class="App-overlay">
+                  <InformationView :systemInfo="systemInfo" />
+               </div>
+            </KeepAlive>
          </div>
       </div>
 
