@@ -170,15 +170,17 @@ fn get_current_user() -> String {
 
 #[tauri::command]
 pub async fn get_system_info() -> Result<SystemInfo, String> {
-    let system_info = SystemInfo {
-        macos_version: get_macos_version(),
-        hardware_model: get_hardware_model(),
-        cpu_info: get_cpu_info(),
-        memory_info: get_memory_info(),
-        system_disk_name: get_system_disk_name(),
-        system_disk_size: get_system_disk_size(),
-        current_user: get_current_user(),
-    };
-
-    Ok(system_info)
+    tauri::async_runtime::spawn_blocking(|| {
+        Ok(SystemInfo {
+            macos_version: get_macos_version(),
+            hardware_model: get_hardware_model(),
+            cpu_info: get_cpu_info(),
+            memory_info: get_memory_info(),
+            system_disk_name: get_system_disk_name(),
+            system_disk_size: get_system_disk_size(),
+            current_user: get_current_user(),
+        })
+    })
+    .await
+    .map_err(|e| format!("Task join error: {}", e))?
 }
