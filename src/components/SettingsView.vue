@@ -310,6 +310,10 @@ async function openReleasesPage() {
    position: relative;
    display: inline-block;
 
+   & select {
+      min-width: 160px;
+   }
+
    .SettingsSelect {
       background-image: none;
    }

@@ -199,10 +199,11 @@ function dismissCheckboxTooltip() {
                   item.children.length === 1
                      ? t('ScanResultsListItem', 'itemOne')
                      : t('ScanResultsListItem', 'itemsCount', { count: item.children.length })
-               }}<span v-if="item.last_modified">,</span>
+               }}<span v-if="item.last_modified" style="opacity: 0.5">,</span>
             </span>
             <span style="opacity: 0.5" v-if="item.last_modified">
-               {{ ' ' }} {{ formatDate(item.last_modified, currentLanguage) }}
+               {{ ' ' }} {{ t('ScanResultsListItem', 'lastModified').toLocaleLowerCase() }}
+               {{ formatDate(item.last_modified, currentLanguage) }}
             </span>
          </span>
       </div>

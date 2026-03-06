@@ -48,15 +48,19 @@ enum ScanViewState {
 
 const scanViewState = ref<ScanViewState>(ScanViewState.LAUNCH)
 
-watch([() => isScanning.value, () => folders.value.length], ([isScanning, folderCount]) => {
-   if (isScanning) {
-      scanViewState.value = ScanViewState.SCANNING
-   } else if (folderCount === 0) {
-      scanViewState.value = ScanViewState.LAUNCH
-   } else {
-      scanViewState.value = ScanViewState.RESULTS
-   }
-})
+watch(
+   [() => isScanning.value, () => folders.value.length],
+   ([isScanning, folderCount]) => {
+      if (isScanning) {
+         scanViewState.value = ScanViewState.SCANNING
+      } else if (folderCount === 0) {
+         scanViewState.value = ScanViewState.LAUNCH
+      } else {
+         scanViewState.value = ScanViewState.RESULTS
+      }
+   },
+   { immediate: true }
+)
 
 const deleteItems = ref<DeleteListItem[]>([])
 const deletedSummary = ref<{ count: number; size: number } | null>(null)
