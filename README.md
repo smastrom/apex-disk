@@ -14,9 +14,9 @@ MacDiskTree scans your entire user folder and presents everything as a navigable
 
 - **Hyper-fast scanning** — Directory scanning distributes I/O across all available CPU cores for maximum throughput
 - **Smooth UI** — Performance-minded interface with fluid animations, a clean design, and snappy navigation
-- **Smart UX** — Intelligent results to easily identify real trash with a navigable tree with full parent-child logic, and a real-time preview of how much space you'll reclaim
-- **Safe by design** — Moves to Trash and protects reserved macOS folders (Desktop, Documents, Library, etc.) from root deletion. Sensitive folders (.ssh, .aws, etc.) are completely skipped.
-- **Optional Full Disk Access** — Works without FDA by default, but you can grant access to bypass macOS permission prompts
+- **Smart UX** — Easily spot waste with a size-sorted tree and last-modified dates. See exactly how much space you'll save in the header as you select files.
+- **Safe by design** — Files are moved to the Trash, never deleted directly. Reserved system folders are protected, and sensitive directories (like .ssh or .aws) are automatically skipped.
+- **Optional Full Disk Access** — Works without FDA by default. Granting it allows you to skip repetitive macOS permission prompts
 - **10 languages** — Support for English, Italian, Spanish, French, Portuguese, German, Russian, Chinese, Japanese, and Arabic (with RTL support)
 - **Accessible** — Engineered for everyone with complete keyboard navigation and screen reader support
 - **Themes** — Multiple color themes to choose from, with more on the way
@@ -35,10 +35,20 @@ MacDiskTree scans your entire user folder and presents everything as a navigable
 xattr -cr /Applications/MacDiskTree.app
 ```
 
-> Running the command is required; without it the app won't work.
-
 > [!NOTE]
-> **Only install from [GitHub Releases](https://github.com/smastrom/mac-disk-tree/releases).** Copies from unknown sources may be tampered. There is no other official distribution channel.
+> **Only install from [GitHub Releases](https://github.com/smastrom/mac-disk-tree/releases).** Downloads from other sources are unverified and may not match the official builds provided here. GitHub is currently the only official distribution channel.
+
+### Security & Notarization
+
+> [!IMPORTANT]
+> As of right now, MacDiskTree is not officially signed or notarized by Apple. Because of it, macOS will likely block it or claim it is "damaged" when you first try to open it.
+> You can fix it by running in your terminal: `xattr -cr /Applications/MacDiskTree.app`.
+
+#### Why this step?
+
+The command simply tells macOS to "clear" the security flags it attaches to apps downloaded from the internet. It doesn't modify the app's code; it just tells your Mac that you trust the software.
+
+If the project gains enough community interest and matures past the early stages, I'll look into official notarization. In the meantime, the code is right here for you to audit.
 
 ## Building from source
 
