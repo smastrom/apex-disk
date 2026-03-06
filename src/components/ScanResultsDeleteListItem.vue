@@ -16,11 +16,12 @@ Example:
 
 <script setup lang="ts">
 import ScanResultsListItemIconSwitch from '@/components/ScanResultsListItemIconSwitch.vue'
+import CheckboxIcon from '@/components/ui/CheckboxIcon.vue'
 
-import { PhCircle, PhCheckCircle } from '@phosphor-icons/vue'
 import { useTemplateRef } from 'vue'
 
 import { useLabelPopover } from '@/lib/use-label-popover'
+import { displayPath, isHidden } from '@/lib/utils'
 
 import type { DeleteListItem } from '@/types/structs'
 
@@ -29,16 +30,6 @@ defineProps<{
    isSelected: boolean
    formatBytes: (bytes: number) => string
 }>()
-
-/** Delete list items are never protected; only hidden (name starts with dot) affects icon. */
-function isHidden(item: DeleteListItem) {
-   return item.name.startsWith('.')
-}
-
-/** Formats a full path for display: /Users/<name>/… → ~/… */
-function displayPath(path: string): string {
-   return path.replace(/^\/Users\/[^/]+/, '~')
-}
 
 const emit = defineEmits<{
    (e: 'toggle'): void
@@ -64,24 +55,18 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
          :aria-pressed="isSelected"
          @click.stop="emit('toggle')"
       >
-         <PhCircle
-            v-if="!isSelected"
+         <CheckboxIcon
+            :selected="isSelected"
             :size="16"
-            weight="regular"
-            class="ScanResultsDeleteListItem-checkEmpty"
-            aria-hidden="true"
-         />
-         <PhCheckCircle
-            v-else
-            :size="16"
-            weight="fill"
-            class="ScanResultsDeleteListItem-checkFilled"
-            aria-hidden="true"
+            :class="{
+               'ScanResultsDeleteListItem-checkEmpty': !isSelected,
+               'ScanResultsDeleteListItem-checkFilled': isSelected,
+            }"
          />
       </button>
       <div
          class="ScanResultsDeleteListItem-icon"
-         :class="{ 'ScanResultsDeleteListItem-icon--hidden': isHidden(item) }"
+         :class="{ 'ScanResultsDeleteListItem-icon--hidden': isHidden(item.name) }"
       >
          <ScanResultsListItemIconSwitch :item="item" :size="18" />
       </div>
