@@ -27,8 +27,6 @@ MacDiskTree scans your entire user folder and presents everything as a navigable
 
 ## Installation
 
-### Manual
-
 1. Download the latest `.dmg` from [Releases](https://github.com/smastrom/mac-disk-tree/releases)
 2. Drag the app to your Applications folder
 3. Before opening, run this command in Terminal to bypass macOS Gatekeeper:
