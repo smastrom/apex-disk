@@ -35,8 +35,10 @@ MacDiskTree scans your entire user folder and presents everything as a navigable
 xattr -cr /Applications/MacDiskTree.app
 ```
 
+> Running the command is required; without it the app won't work.
+
 > [!NOTE]
-> **Only install from [GitHub Releases](https://github.com/smastrom/mac-disk-tree/releases).** Copies from other sites or app stores may be tampered with (malware, backdoors). There is no other official distribution channel.
+> **Only install from [GitHub Releases](https://github.com/smastrom/mac-disk-tree/releases).** Copies from unknown sources may be tampered. There is no other official distribution channel.
 
 ## Building from source
 
