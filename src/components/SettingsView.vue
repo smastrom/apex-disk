@@ -385,6 +385,13 @@ async function openReleasesPage() {
    color: var(--color-text-muted);
 }
 
+.SettingsView-settingDesc {
+   margin: 0;
+   font-size: 0.75rem;
+   line-height: 1.5;
+   color: var(--color-text-muted);
+}
+
 .SettingsView-resultsNotice {
    margin: 0;
    padding: var(--spacing-md) var(--spacing-lg);
