@@ -2,36 +2,29 @@
 //!
 //! ## Multilanguage Behavior
 //!
-//! This file provides translations ONLY for custom menu items that cannot be
-//! automatically localized by macOS. There are two categories of menu items:
+//! This file provides translations for ALL menu items to ensure they follow the app language setting:
 //!
-//! **Custom items (translated here)**:
-//! - Release Notes, License (app-specific functionality)
-//! - Window and Help submenu titles (these are custom submenu headers)
-//! - These follow the APP language setting and update immediately when language changes
-//!
-//! **Native items (NOT translated here)**:
-//! - About, Services, Hide, Show All, Quit, Minimize, Close Window
-//! - These use `None` as label in menu.rs and are automatically localized by macOS
-//! - They follow the macOS SYSTEM language, not the app language setting
+//! **All menu items (translated here)**:
+//! - Native items: About, Services, Hide, Show All, Quit, Minimize, Close Window
+//! - Custom items: Release Notes, License (app-specific functionality)
+//! - Submenu titles: Window and Help (custom submenu headers)
+//! - All items follow the APP language setting and update immediately when language changes
 //!
 //! ## Language Coordination
 //!
 //! - The `lang` parameter comes from the current app language setting
 //! - This is typically the same as system language on first launch, or user's chosen language
 //! - When user changes app language, `set_menu_language` rebuilds menu with new translations
-//! - Native items remain in system language; custom items follow app language
+//! - All menu items now follow the app language, not the macOS system language
 //!
 //! Keep translations in sync with frontend language list in
 //! `src/lib/constants.ts` (`APP_LANGUAGES`).
 
-/// Localized labels for custom menu items only.
+/// Localized labels for all menu items.
 ///
-/// These items require manual translation because they're app-specific or
-/// submenu headers that macOS cannot automatically localize.
-///
-/// Native menu items (About, Hide, Quit, etc.) use `None` as label
-/// in menu.rs and are automatically localized by macOS to system language.
+/// Includes both custom items (app-specific functionality) and native items
+/// (About, Services, Hide, etc.) to ensure they follow the app language setting
+/// rather than the macOS system language.
 pub struct MenuLabels {
     pub release_notes: &'static str,
     pub license: &'static str,
@@ -40,12 +33,19 @@ pub struct MenuLabels {
     pub minimize: &'static str,
     pub close_window: &'static str,
     pub help: &'static str,
+    // Native menu items (now translated to follow app language)
+    pub about: &'static str,
+    pub services: &'static str,
+    pub hide: &'static str,
+    pub hide_others: &'static str,
+    pub show_all: &'static str,
+    pub quit: &'static str,
 }
 
-/// Returns menu labels for custom items only.
+/// Returns menu labels for all menu items.
 ///
-/// Native menu items (About, Hide, Quit, etc.) are automatically localized
-/// by macOS and should use `None` as label in menu.rs.
+/// All menu items (both native and custom) are now translated to follow
+/// the app language setting rather than the macOS system language.
 pub fn labels_for(lang: &str) -> MenuLabels {
     match lang {
         "it" => MenuLabels {
@@ -56,6 +56,12 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             minimize: "Minimizza",
             close_window: "Chiudi finestra",
             help: "Aiuto",
+            about: "Informazioni su MacDiskTree",
+            services: "Servizi",
+            hide: "Nascondi MacDiskTree",
+            hide_others: "Nascondi altre",
+            show_all: "Mostra tutto",
+            quit: "Esci da MacDiskTree",
         },
         "es" => MenuLabels {
             release_notes: "Notas de versión",
@@ -65,6 +71,12 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             minimize: "Minimizar",
             close_window: "Cerrar ventana",
             help: "Ayuda",
+            about: "Acerca de MacDiskTree",
+            services: "Servicios",
+            hide: "Ocultar MacDiskTree",
+            hide_others: "Ocultar otras",
+            show_all: "Mostrar todo",
+            quit: "Salir de MacDiskTree",
         },
         "fr" => MenuLabels {
             release_notes: "Notes de version",
@@ -74,6 +86,12 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             minimize: "Réduire",
             close_window: "Fermer la fenêtre",
             help: "Aide",
+            about: "À propos de MacDiskTree",
+            services: "Services",
+            hide: "Masquer MacDiskTree",
+            hide_others: "Masquer les autres",
+            show_all: "Tout afficher",
+            quit: "Quitter MacDiskTree",
         },
         "pt" => MenuLabels {
             release_notes: "Notas de versão",
@@ -83,6 +101,12 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             minimize: "Minimizar",
             close_window: "Fechar janela",
             help: "Ajuda",
+            about: "Sobre o MacDiskTree",
+            services: "Serviços",
+            hide: "Ocultar MacDiskTree",
+            hide_others: "Ocultar outras",
+            show_all: "Mostrar tudo",
+            quit: "Sair do MacDiskTree",
         },
         "de" => MenuLabels {
             release_notes: "Versionshinweise",
@@ -92,6 +116,12 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             minimize: "Minimieren",
             close_window: "Fenster schließen",
             help: "Hilfe",
+            about: "Über MacDiskTree",
+            services: "Dienste",
+            hide: "MacDiskTree ausblenden",
+            hide_others: "Andere ausblenden",
+            show_all: "Alle einblenden",
+            quit: "MacDiskTree beenden",
         },
         "ru" => MenuLabels {
             release_notes: "Заметки о выпуске",
@@ -101,6 +131,12 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             minimize: "Свернуть",
             close_window: "Закрыть окно",
             help: "Справка",
+            about: "О программе MacDiskTree",
+            services: "Службы",
+            hide: "Скрыть MacDiskTree",
+            hide_others: "Скрыть остальные",
+            show_all: "Показать все",
+            quit: "Выйти из MacDiskTree",
         },
         "zh" => MenuLabels {
             release_notes: "发行说明",
@@ -110,6 +146,12 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             minimize: "最小化",
             close_window: "关闭窗口",
             help: "帮助",
+            about: "关于 MacDiskTree",
+            services: "服务",
+            hide: "隐藏 MacDiskTree",
+            hide_others: "隐藏其他",
+            show_all: "显示全部",
+            quit: "退出 MacDiskTree",
         },
         "ja" => MenuLabels {
             release_notes: "リリースノート",
@@ -119,6 +161,12 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             minimize: "最小化",
             close_window: "ウィンドウを閉じる",
             help: "ヘルプ",
+            about: "MacDiskTree について",
+            services: "サービス",
+            hide: "MacDiskTree を隠す",
+            hide_others: "ほかを隠す",
+            show_all: "すべてを表示",
+            quit: "MacDiskTree を終了",
         },
         "ar" => MenuLabels {
             release_notes: "ملاحظات الإصدار",
@@ -128,6 +176,12 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             minimize: "تصغير",
             close_window: "إغلاق النافذة",
             help: "المساعدة",
+            about: "حول MacDiskTree",
+            services: "الخدمات",
+            hide: "إخفاء MacDiskTree",
+            hide_others: "إخفاء الآخرين",
+            show_all: "إظهار الكل",
+            quit: "إنهاء MacDiskTree",
         },
         // English is the default
         _ => MenuLabels {
@@ -138,6 +192,12 @@ pub fn labels_for(lang: &str) -> MenuLabels {
             minimize: "Minimize",
             close_window: "Close Window",
             help: "Help",
+            about: "About MacDiskTree",
+            services: "Services",
+            hide: "Hide MacDiskTree",
+            hide_others: "Hide Others",
+            show_all: "Show All",
+            quit: "Quit MacDiskTree",
         },
     }
 }
