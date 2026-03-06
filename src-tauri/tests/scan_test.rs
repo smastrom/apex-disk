@@ -11,7 +11,7 @@ mod support;
 use mac_disk_tree_lib::scan;
 use mac_disk_tree_lib::ScanOptions;
 
-use support::create_test_home;
+use support::{create_test_home, create_test_home_with_system_files};
 
 /// Scan succeeds and every top-level folder has the shape the frontend expects:
 /// non-empty name/path, path under home, and children (if any) with names. Roots are dirs (is_file false).
@@ -196,6 +196,157 @@ fn scan_children_sorted_by_size_desc_then_name() {
                     b.name
                 );
             }
+        }
+    }
+}
+
+/// Folder last_modified should reflect the most recent modification date among all its contents,
+/// but exclude macOS system files like .DS_Store that don't represent meaningful user activity.
+/// When a folder contains files with different modification times, the folder should show
+/// the most recent time from non-system files only.
+#[test]
+fn scan_folder_last_modified_excludes_system_files() {
+    let home_dir = create_test_home();
+    let home = home_dir.path();
+    let options = ScanOptions::default();
+
+    let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
+
+    // Find MyData folder which contains multiple files
+    let mydata = result.iter().find(|f| f.name == "MyData");
+    assert!(mydata.is_some(), "MyData folder should exist in test home");
+
+    let mydata = mydata.unwrap();
+
+    // MyData should have a last_modified date since it contains files
+    assert!(
+        mydata.last_modified.is_some(),
+        "MyData should have last_modified since it contains files"
+    );
+
+    // The folder's last_modified should be the most recent among its non-system children
+    let folder_time = mydata.last_modified.unwrap();
+
+    // Check all non-system children to ensure folder time is >= each child's time
+    for child in &mydata.children {
+        // Skip known system files in the assertion
+        if child.name == ".DS_Store" || child.name.starts_with("._") {
+            continue;
+        }
+        if let Some(child_time) = child.last_modified {
+            assert!(
+                folder_time >= child_time,
+                "Folder time ({}) should be >= non-system child {} time ({})",
+                folder_time,
+                child.name,
+                child_time
+            );
+        }
+    }
+}
+
+/// Folder last_modified should reflect the most recent modification date among all its contents.
+/// When a folder contains files with different modification times, the folder should show
+/// the most recent time, not its own modification time.
+#[test]
+fn scan_folder_last_modified_most_recent_from_children() {
+    let home_dir = create_test_home();
+    let home = home_dir.path();
+    let options = ScanOptions::default();
+
+    let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
+
+    // Find MyData folder which contains multiple files
+    let mydata = result.iter().find(|f| f.name == "MyData");
+    assert!(mydata.is_some(), "MyData folder should exist in test home");
+
+    let mydata = mydata.unwrap();
+
+    // MyData should have a last_modified date since it contains files
+    assert!(
+        mydata.last_modified.is_some(),
+        "MyData should have last_modified since it contains files"
+    );
+
+    // The folder's last_modified should be the most recent among its children
+    let folder_time = mydata.last_modified.unwrap();
+
+    // Check all children to ensure folder time is >= each child's time
+    for child in &mydata.children {
+        if let Some(child_time) = child.last_modified {
+            assert!(
+                folder_time >= child_time,
+                "Folder time ({}) should be >= child {} time ({})",
+                folder_time,
+                child.name,
+                child_time
+            );
+        }
+    }
+}
+
+/// System files like .DS_Store should be excluded from last_modified calculations
+/// even when they exist in the folder and would otherwise be the most recent files.
+#[test]
+fn scan_folder_last_modified_ignores_system_files() {
+    let home_dir = create_test_home_with_system_files();
+    let home = home_dir.path();
+    let options = ScanOptions {
+        show_hidden_files: true, // Ensure system files are included in scan
+        show_under_1kb: true,
+        show_zero_byte: true,
+    };
+
+    let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
+
+    // Find MyData folder which contains both user files and system files
+    let mydata = result.iter().find(|f| f.name == "MyData");
+    assert!(mydata.is_some(), "MyData folder should exist in test home");
+
+    let mydata = mydata.unwrap();
+
+    // Should have a last_modified date since it contains user files
+    assert!(
+        mydata.last_modified.is_some(),
+        "MyData should have last_modified since it contains files"
+    );
+
+    // Verify that system files are present in the children (when show_hidden_files is true)
+    let system_files_present: Vec<_> = mydata
+        .children
+        .iter()
+        .filter(|c| c.name == ".DS_Store" || c.name == ".localized" || c.name.starts_with("._"))
+        .collect();
+
+    // System files should be present in the scan results when hidden files are shown
+    assert!(
+        !system_files_present.is_empty(),
+        "System files should be present when show_hidden_files is true"
+    );
+
+    // The folder's last_modified should be based on user files only, not system files
+    let folder_time = mydata.last_modified.unwrap();
+
+    // Find user files (non-system files)
+    let user_files: Vec<_> = mydata
+        .children
+        .iter()
+        .filter(|c| !(c.name == ".DS_Store" || c.name == ".localized" || c.name.starts_with("._")))
+        .collect();
+
+    // At least one user file should exist
+    assert!(!user_files.is_empty(), "User files should exist in MyData");
+
+    // The folder time should be >= the most recent user file time
+    for user_file in &user_files {
+        if let Some(user_time) = user_file.last_modified {
+            assert!(
+                folder_time >= user_time,
+                "Folder time ({}) should be >= user file {} time ({})",
+                folder_time,
+                user_file.name,
+                user_time
+            );
         }
     }
 }

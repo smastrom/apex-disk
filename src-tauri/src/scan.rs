@@ -43,6 +43,25 @@ fn sort_children(children: &mut [FolderInfo]) {
     children.sort_unstable_by(|a, b| b.size.cmp(&a.size).then_with(|| a.name.cmp(&b.name)));
 }
 
+/// Returns true if the file/folder is a macOS system file that shouldn't affect last_modified dates
+fn is_system_file(name: &str) -> bool {
+    matches!(
+        name,
+        ".DS_Store"
+            | ".localized"
+            | ".DocumentRevisions-V100"
+            | ".fseventsd"
+            | ".Spotlight-V100"
+            | ".TemporaryItems"
+            | ".Trashes"
+            | ".VolumeIcon.icns"
+            | ".com.apple.timemachine.donotpresent"
+            | ".com.apple.timemachine.supported"
+            | ".metadata_never_index"
+            | ".file"
+    ) || name.starts_with("._") // AppleDouble resource fork files
+}
+
 /// Recursively builds the folder tree with parallelism at every directory level.
 /// Rayon's work-stealing scheduler naturally balances I/O across cores --
 /// threads that finish small directories steal subtasks from large ones like Library.
@@ -78,6 +97,7 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: b
             let path = root.to_string_lossy().into_owned();
             let is_protected = safe_folders::is_path_protected(root, home);
             let is_fda_required = xattr::has_container_manager_attribute(root) && !has_fda;
+            // For unreadable directories, we can't determine children modification dates
             let last_modified: Option<i64> = root_metadata
                 .ok()
                 .and_then(|m: std::fs::Metadata| m.modified().ok())
@@ -145,6 +165,21 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: b
     file_entries.sort_unstable_by(|a, b| b.1.cmp(&a.1));
     file_entries.truncate(MAX_FILES_PER_DIR);
 
+    // Calculate the most recent last_modified date from all non-system files before moving file_entries
+    let mut most_recent_modified: Option<i64> = None;
+    for (fname, _, file_last_modified) in &file_entries {
+        // Skip system files for last_modified calculation
+        if is_system_file(fname) {
+            continue;
+        }
+        if let Some(file_time) = file_last_modified {
+            most_recent_modified = match most_recent_modified {
+                None => Some(*file_time),
+                Some(current) => Some(current.max(*file_time)),
+            };
+        }
+    }
+
     let root_path = root.to_string_lossy();
     let is_root_protected = safe_folders::is_path_protected(root, home);
     let is_root_fda_required = xattr::has_container_manager_attribute(root) && !has_fda;
@@ -187,11 +222,19 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: b
     children.extend(dir_children);
     sort_children(&mut children);
 
-    let root_last_modified: Option<i64> = root_metadata
-        .ok()
-        .and_then(|m: std::fs::Metadata| m.modified().ok())
-        .and_then(|t: std::time::SystemTime| t.duration_since(std::time::UNIX_EPOCH).ok())
-        .map(|d: std::time::Duration| d.as_secs() as i64);
+    // Check subdirectories for most recent modification and combine with files (excluding system files)
+    for child in &children {
+        // Skip system files for last_modified calculation
+        if is_system_file(&child.name) {
+            continue;
+        }
+        if let Some(child_time) = child.last_modified {
+            most_recent_modified = match most_recent_modified {
+                None => Some(child_time),
+                Some(current) => Some(current.max(child_time)),
+            };
+        }
+    }
 
     FolderInfo {
         name,
@@ -202,7 +245,7 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: b
         is_file: false,
         is_protected: is_root_protected,
         is_fda_required: is_root_fda_required,
-        last_modified: root_last_modified,
+        last_modified: most_recent_modified,
     }
 }
 

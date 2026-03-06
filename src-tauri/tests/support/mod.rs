@@ -80,3 +80,25 @@ fn write_file(path: std::path::PathBuf, size: usize) {
     let mut f = fs::File::create(&path).expect("create file");
     f.write_all(&vec![0u8; size]).expect("write");
 }
+
+/// Creates a test home with system files that have recent modification dates to test exclusion logic
+pub fn create_test_home_with_system_files() -> tempfile::TempDir {
+    let dir = create_test_home();
+    let path = dir.path();
+
+    // Create system files with recent modification dates
+    let ds_store_path = path.join("MyData/.DS_Store");
+    write_file(ds_store_path, 100);
+
+    let localized_path = path.join("MyData/.localized");
+    write_file(localized_path, 50);
+
+    // Create an AppleDouble file
+    let apple_double_path = path.join("MyData/._big.txt");
+    write_file(apple_double_path, 200);
+
+    // For now, just create the files - the actual test will verify they're excluded by name
+    // Setting specific modification times requires platform-specific code
+
+    dir
+}
