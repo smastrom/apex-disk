@@ -23,11 +23,8 @@ import {
    onActivated,
    onDeactivated,
    onUnmounted,
-   useTemplateRef,
 } from 'vue'
-import { useVirtualizer } from '@tanstack/vue-virtual'
 import { invoke } from '@tauri-apps/api/core'
-import { PhTrashSimple } from '@phosphor-icons/vue'
 
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/use-translations'
@@ -118,22 +115,6 @@ const checkedMapRef = shallowRef(new Map<string, boolean>())
 const isDeleting = ref(false)
 
 const { prefersReducedMotion } = useReducedMotion()
-
-const parentRef = useTemplateRef<HTMLElement>('parentRef')
-
-/**
- * Virtual scroller: only renders rows visible in the viewport + overscan buffer.
- * Wrapped in a computed so the virtualizer reactively tracks count/key changes.
- */
-const rowVirtualizer = useVirtualizer(
-   computed(() => ({
-      count: props.items.length,
-      getScrollElement: () => parentRef.value,
-      estimateSize: () => 48,
-      overscan: 5,
-      getItemKey: (index: number) => props.items[index]?.path ?? index,
-   }))
-)
 
 /**
  * Initialises all items as checked when a new set of items arrives.
@@ -228,8 +209,8 @@ async function onDeleteClick() {
          :isBackDisabled="false"
          pathIcon="trash"
          :pathLabel="t('ScanResultsDeleteList', 'navTitleMoveToTrash')"
-         :isActionsShown="true"
-         :isResetDisabled="true"
+         isActionsShown
+         isResetDisabled
          :isResetShown="false"
          @back="emit('back', getCheckedItems())"
          @cancel="emit('cancel')"
@@ -238,28 +219,14 @@ async function onDeleteClick() {
          class="ScanResultsDeleteList-listWrap"
          :class="{ 'ScanResultsDeleteList-listWrap--deleting': isDeleting }"
       >
-         <div ref="parentRef" class="ScanResultsDeleteList-list ScanResultsDeleteList-listScroll">
-            <div
-               class="ScanResultsDeleteList-listInner"
-               :style="{ height: rowVirtualizer.getTotalSize() + 'px' }"
-            >
-               <div
-                  v-for="virtualRow in rowVirtualizer.getVirtualItems()"
-                  :key="String(virtualRow.key)"
-                  class="ScanResultsDeleteList-listItem"
-                  :style="{
-                     position: 'absolute',
-                     top: 0,
-                     left: 0,
-                     width: '100%',
-                     transform: `translateY(${virtualRow.start}px)`,
-                  }"
-               >
+         <div class="ScanResultsDeleteList-list ScanResultsDeleteList-listScroll">
+            <div class="ScanResultsDeleteList-listInner">
+               <div v-for="item in items" :key="item.path" class="ScanResultsDeleteList-listItem">
                   <ScanResultsDeleteListItem
-                     :item="items[virtualRow.index]"
-                     :isSelected="!!checkedMapRef.get(items[virtualRow.index].path)"
+                     :item="item"
+                     :isSelected="!!checkedMapRef.get(item.path)"
                      :formatBytes="formatBytes"
-                     @toggle="toggle(items[virtualRow.index].path)"
+                     @toggle="toggle(item.path)"
                   />
                </div>
             </div>
@@ -276,7 +243,6 @@ async function onDeleteClick() {
          >
             <Transition name="ScanResultsDeleteList-caption" mode="out-in">
                <span v-if="!isDeleting" key="ready" class="ScanResultsDeleteList-captionText">
-                  <PhTrashSimple :size="18" weight="bold" aria-hidden="true" />
                   {{
                      selectedSize > 0
                         ? t('ScanResultsDeleteList', 'moveToTrashSize', {
@@ -362,10 +328,6 @@ async function onDeleteClick() {
 .ScanResultsDeleteList-listInner {
    position: relative;
    width: 100%;
-}
-
-.ScanResultsDeleteList-listItem {
-   will-change: transform;
 }
 
 .ScanResultsDeleteList-footer {

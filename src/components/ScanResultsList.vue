@@ -23,8 +23,6 @@ import {
    nextTick,
    useTemplateRef,
 } from 'vue'
-import { PhTrashSimple } from '@phosphor-icons/vue'
-import { useVirtualizer } from '@tanstack/vue-virtual'
 
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/use-translations'
@@ -92,6 +90,7 @@ watch(
          backStack.value = []
          forwardStack.value = []
          selectedMap.clear()
+
          const rootPath = parentDir(folders[0].path)
          homePath.value = rootPath
          current.value = { items: folders, label: '', path: rootPath }
@@ -127,23 +126,13 @@ const parentRef = useTemplateRef<HTMLElement>('parentRef')
 watch(
    () => current.value.path,
    () => {
-      nextTick(() => parentRef.value?.scrollTo(0, 0))
-   }
+      nextTick(() => {
+         parentRef.value?.scrollTo(0, 0)
+      })
+   },
+   { flush: 'post' }
 )
 
-/**
- * Virtual scroller: only renders rows visible in the viewport + overscan buffer.
- * Wrapped in a computed so the virtualizer reactively tracks count/key changes.
- */
-const rowVirtualizer = useVirtualizer(
-   computed(() => ({
-      count: displayedItems.value.length,
-      getScrollElement: () => parentRef.value,
-      estimateSize: () => 72,
-      overscan: 10,
-      getItemKey: (index: number) => displayedItems.value[index]?.path ?? index,
-   }))
-)
 /**
  * Walks up the directory hierarchy via string slicing to check if any
  * ancestor of `path` is already selected. O(depth) — typically 3-6 levels.
@@ -348,12 +337,12 @@ function onCancel() {
 <template>
    <div class="ScanResultsList-root" data-testid="results-list">
       <ScanResultsNav
-         :isForwardShown="true"
+         isForwardShown
          :isBackDisabled="backStack.length === 0"
          :isForwardDisabled="forwardStack.length === 0"
          :pathLabel="displayPath"
          :pathTitle="current.path"
-         :isActionsShown="true"
+         isActionsShown
          :isResetDisabled="selectedMap.size === 0"
          @back="goBack"
          @forward="goForward"
@@ -362,33 +351,20 @@ function onCancel() {
       />
       <div ref="listWrapRef" class="ScanResultsList-listWrap">
          <div ref="parentRef" class="ScanResultsList-list ScanResultsList-listScroll">
-            <div
-               class="ScanResultsList-listInner"
-               :style="{ height: rowVirtualizer.getTotalSize() + 'px' }"
-            >
+            <div class="ScanResultsList-listInner">
                <div
-                  v-for="virtualRow in rowVirtualizer.getVirtualItems()"
-                  :key="String(virtualRow.key)"
+                  v-for="item in displayedItems"
+                  :key="item.path"
                   class="ScanResultsList-listItem"
-                  :style="{
-                     position: 'absolute',
-                     top: 0,
-                     left: 0,
-                     width: '100%',
-                     transform: `translateY(${virtualRow.start}px)`,
-                  }"
                >
                   <ScanResultsListItem
-                     :item="displayedItems[virtualRow.index]"
-                     :isSelected="isSelectedForUI(displayedItems[virtualRow.index].path)"
-                     :isSomeSelected="someSelectedPaths.has(displayedItems[virtualRow.index].path)"
-                     :isSelectable="
-                        !displayedItems[virtualRow.index].is_protected &&
-                        !displayedItems[virtualRow.index].is_fda_required
-                     "
+                     :item="item"
+                     :isSelected="isSelectedForUI(item.path)"
+                     :isSomeSelected="someSelectedPaths.has(item.path)"
+                     :isSelectable="!item.is_protected && !item.is_fda_required"
                      :formatBytes="formatBytes"
-                     @select="() => toggleSelect(displayedItems[virtualRow.index])"
-                     @navigate="() => goInto(displayedItems[virtualRow.index])"
+                     @select="() => toggleSelect(item)"
+                     @navigate="() => goInto(item)"
                   />
                </div>
             </div>
@@ -403,12 +379,11 @@ function onCancel() {
             data-testid="review-selection"
             @click="onReviewClick"
          >
-            <PhTrashSimple :size="18" weight="bold" aria-hidden="true" />
-            <span>{{
+            {{
                selectedSize > 0
                   ? t('ScanResultsList', 'reviewSize', { size: formatBytes(selectedSize) })
                   : t('ScanResultsList', 'review')
-            }}</span>
+            }}
          </button>
       </div>
    </div>
@@ -460,7 +435,6 @@ function onCancel() {
 }
 
 .ScanResultsList-listItem {
-   will-change: transform;
    position: relative;
 
    &:first-of-type {
