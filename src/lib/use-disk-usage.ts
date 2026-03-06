@@ -7,7 +7,7 @@ import { debounce } from './utils'
 import type { DiskUsage } from '@/types/disk'
 
 export interface UseDiskUsageReturn {
-   usage: Ref<DiskUsage | null>
+   diskUsage: Ref<DiskUsage | null>
 }
 
 export async function useDiskUsage(): Promise<UseDiskUsageReturn> {
@@ -24,11 +24,11 @@ export async function useDiskUsage(): Promise<UseDiskUsageReturn> {
       unlisten()
    })
 
-   const usage = ref<DiskUsage | null>(null)
+   const diskUsage = ref<DiskUsage | null>(null)
 
    async function setDiskUsage() {
       try {
-         usage.value = await getDiskUsage()
+         diskUsage.value = await getDiskUsage()
       } catch (err) {
          console.error('Failed to get disk usage:', err)
       }
@@ -40,6 +40,6 @@ export async function useDiskUsage(): Promise<UseDiskUsageReturn> {
    await setDiskUsage()
 
    return {
-      usage,
+      diskUsage,
    }
 }
