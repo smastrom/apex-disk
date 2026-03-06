@@ -19,9 +19,10 @@ Example:
 
 <script setup lang="ts">
 import ScanResultsListItemIconSwitch from '@/components/ScanResultsListItemIconSwitch.vue'
+import SelectionIcon from '@/components/ui/SelectionIcon.vue'
 
-import { PhCaretRight, PhCircle, PhCheckCircle, PhMinusCircle } from '@phosphor-icons/vue'
-import { ref, useTemplateRef } from 'vue'
+import { PhCaretRight } from '@phosphor-icons/vue'
+import { ref, useTemplateRef, computed } from 'vue'
 
 import { useTranslations } from '@/lib/use-translations'
 import { useLabelPopover } from '@/lib/use-label-popover'
@@ -30,7 +31,7 @@ import { useAppSettings } from '@/stores/app-settings'
 
 import type { FolderInfo } from '@/types/structs'
 
-defineProps<{
+const props = defineProps<{
    item: FolderInfo
    isSelected: boolean
    isSomeSelected?: boolean
@@ -42,6 +43,13 @@ const emit = defineEmits<{
    (e: 'select'): void
    (e: 'navigate'): void
 }>()
+
+/** Determines the selection state for the SelectionIcon component. */
+const selectionState = computed(() => {
+   if (props.isSelected) return 'selected'
+   if (props.isSomeSelected) return 'partial'
+   return 'empty'
+})
 
 const triggerRef = useTemplateRef<HTMLElement>('triggerRef')
 const popoverRef = useTemplateRef<HTMLElement>('popoverRef')
@@ -157,26 +165,14 @@ function dismissCheckboxTooltip() {
          @pointerenter="!isSelectable && onCheckboxPointerEnter()"
          @pointerleave="!isSelectable && onCheckboxPointerLeave()"
       >
-         <PhCircle
-            v-if="!isSelected && !isSomeSelected"
+         <SelectionIcon
+            :state="selectionState"
             :size="22"
-            weight="regular"
-            class="ScanResultsListItem-checkEmpty"
-            aria-hidden="true"
-         />
-         <PhMinusCircle
-            v-else-if="isSomeSelected"
-            :size="22"
-            weight="fill"
-            class="ScanResultsListItem-checkPartial"
-            aria-hidden="true"
-         />
-         <PhCheckCircle
-            v-else
-            :size="22"
-            weight="fill"
-            class="ScanResultsListItem-checkFilled"
-            aria-hidden="true"
+            :class="{
+               'ScanResultsListItem-checkEmpty': selectionState === 'empty',
+               'ScanResultsListItem-checkPartial': selectionState === 'partial',
+               'ScanResultsListItem-checkFilled': selectionState === 'selected',
+            }"
          />
       </button>
       <div
@@ -354,66 +350,18 @@ function dismissCheckboxTooltip() {
    color: var(--color-text-dim);
 }
 
-/* ── Name popover ── */
+/* ── Base popover styles ── */
 
-.ScanResultsListItem-popover {
-   position: fixed;
-   margin: 0;
-   padding: 6px 10px;
-   max-width: 420px;
-   border: 1px solid var(--color-border);
-   border-radius: 6px;
-   background: var(--color-bg-elevated);
-   color: var(--color-text);
-   font-size: 0.75rem;
-   font-weight: 500;
-   line-height: 1.4;
-   word-break: break-all;
-   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
-   transform: translateY(-100%);
-   pointer-events: auto;
-
-   /* Closed state (for the transition) */
-   opacity: 0;
-   filter: blur(4px);
-   transition:
-      opacity 0.2s var(--ease-standard),
-      filter 0.2s var(--ease-standard);
-}
-
-.ScanResultsListItem-popover:popover-open {
-   opacity: 1;
-   filter: blur(0);
-}
-
-@starting-style {
-   .ScanResultsListItem-popover:popover-open {
-      opacity: 0;
-      filter: blur(4px);
-   }
-}
-
-@media (prefers-reduced-motion: reduce) {
-   .ScanResultsListItem-popover {
-      transition: none;
-      filter: none;
-   }
-}
-
-/* ── Checkbox tooltip popover ── */
-
+.ScanResultsListItem-popover,
 .ScanResultsListItem-checkboxPopover {
    position: fixed;
    margin: 0;
-   padding: 8px 12px;
-   max-width: 280px;
    border: 1px solid var(--color-border);
    border-radius: 6px;
    background: var(--color-bg-elevated);
    color: var(--color-text);
-   font-size: 0.75rem;
    font-weight: 500;
-   line-height: 1.5;
+   line-height: 1.4;
    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
    transform: translateY(-100%);
    pointer-events: auto;
@@ -422,24 +370,36 @@ function dismissCheckboxTooltip() {
    transition:
       opacity 0.2s var(--ease-standard),
       filter 0.2s var(--ease-standard);
-}
 
-.ScanResultsListItem-checkboxPopover:popover-open {
-   opacity: 1;
-   filter: blur(0);
-}
-
-@starting-style {
-   .ScanResultsListItem-checkboxPopover:popover-open {
-      opacity: 0;
-      filter: blur(4px);
+   &:popover-open {
+      opacity: 1;
+      filter: blur(0);
    }
-}
 
-@media (prefers-reduced-motion: reduce) {
-   .ScanResultsListItem-checkboxPopover {
+   @starting-style {
+      &:popover-open {
+         opacity: 0;
+         filter: blur(4px);
+      }
+   }
+
+   @media (prefers-reduced-motion: reduce) {
       transition: none;
       filter: none;
    }
+}
+
+.ScanResultsListItem-popover {
+   padding: 6px 10px;
+   max-width: 420px;
+   font-size: 0.75rem;
+   word-break: break-all;
+}
+
+.ScanResultsListItem-checkboxPopover {
+   padding: 8px 12px;
+   max-width: 280px;
+   font-size: 0.75rem;
+   line-height: 1.5;
 }
 </style>
