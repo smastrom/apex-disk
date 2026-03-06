@@ -1,4 +1,4 @@
-import { ref, shallowRef } from 'vue'
+import { ref, shallowRef, watch } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 
@@ -85,6 +85,10 @@ export function useScanner() {
          console.warn('Failed to cancel scan:', error)
       }
    }
+
+   watch(isScanning, (isScanning) => {
+      console.log('isScanning', isScanning)
+   })
 
    return {
       folders,
