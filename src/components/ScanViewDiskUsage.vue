@@ -12,7 +12,6 @@ Example:
 <script setup lang="ts">
 import { computed } from 'vue'
 import { PhHardDrive } from '@phosphor-icons/vue'
-import { openPath } from '@tauri-apps/plugin-opener'
 
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/use-translations'
@@ -55,24 +54,15 @@ const newFreeSpace = computed(() => {
 
    return u.free + sel
 })
-
-async function openHomeInFinder() {
-   if (!props.usage?.home_path) return
-
-   try {
-      await openPath(props.usage.home_path)
-   } catch (err) {
-      console.error('Failed to open home in Finder:', err)
-   }
-}
 </script>
 
 <template>
    <div v-if="props.usage" class="ScanViewDiskUsage-root" data-testid="disk-usage">
       <div class="ScanViewDiskUsage-header">
-         <button type="button" class="ScanViewDiskUsage-userBadge" @click="openHomeInFinder">
-            /{{ props.usage.user_name }}
-         </button>
+         <span class="ScanViewDiskUsage-userBadge">
+            /smastrom
+            <!-- {{ props.usage.user_name }} -->
+         </span>
 
          <span class="ScanViewDiskUsage-volume">
             <PhHardDrive
@@ -155,13 +145,6 @@ async function openHomeInFinder() {
    background: var(--color-surface);
    padding: 3px 10px;
    border-radius: 6px;
-   border: none;
-   cursor: pointer;
-   transition: background 0.2s ease;
-
-   &:hover {
-      background: var(--color-surface-hover);
-   }
 }
 
 .ScanViewDiskUsage-infoRow {
