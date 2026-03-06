@@ -1,18 +1,18 @@
 <!--
-ScanScanningResults
+ScanScanning
 
 Purpose: Active scan view showing disk/user context, live scan progress, and detailed scan metadata while scanning.
 
 Props: progress ({ current: number; total: number; folder: string; size: number; scanned_size_total: number })
 
 Example:
- <ScanScanningResults :progress="progress" @abort="onAbort" />
+ <ScanScanning :progress="progress" @abort="onAbort" />
 -->
 
 <script setup lang="ts">
 import Spinner from './Spinner.vue'
 
-import { computed, onActivated, onDeactivated, onUnmounted, ref } from 'vue'
+import { computed } from 'vue'
 
 import { formatBytes, formatProgressNumber } from '@/lib/format'
 import { useTranslations } from '@/lib/use-translations'
@@ -29,9 +29,6 @@ const emit = defineEmits<{
 
 const { t } = useTranslations()
 
-const elapsedSeconds = ref(0)
-let elapsedInterval: ReturnType<typeof setInterval> | null = null
-
 const percent = computed(() => {
    if (props.progress.total <= 0) return 0
 
@@ -40,83 +37,65 @@ const percent = computed(() => {
    return raw >= 100 ? 99 : Math.round(raw)
 })
 
-function startTimer() {
-   elapsedSeconds.value = 0
-   if (elapsedInterval) clearInterval(elapsedInterval)
-
-   elapsedInterval = setInterval(() => {
-      elapsedSeconds.value += 1
-   }, 1000)
-}
-
-function stopTimer() {
-   if (elapsedInterval) {
-      clearInterval(elapsedInterval)
-      elapsedInterval = null
-   }
-}
-
-onActivated(startTimer)
-onDeactivated(stopTimer)
-onUnmounted(stopTimer)
+const percentDisplay = computed(() => {
+   if (percent.value === 99) return 'Preparing results...'
+   return `${formatProgressNumber(percent.value)}%`
+})
 </script>
 
 <template>
-   <section class="ScanScanningResults-root" data-testid="scanning-results">
-      <div class="ScanScanningResults-progressBlock">
-         <div class="ScanScanningResults-progressHeader">
-            <span class="ScanScanningResults-spinnerWrap">
+   <section class="ScanScanning-root" data-testid="scanning-results">
+      <div class="ScanScanning-progressBlock">
+         <div class="ScanScanning-progressHeader">
+            <span class="ScanScanning-spinnerWrap">
                <Spinner :size="18" />
             </span>
-            <p class="ScanScanningResults-progressTitle" data-testid="scan-progress">
+            <p class="ScanScanning-progressTitle" data-testid="scan-progress">
                {{
-                  t('ScanScanningResults', 'scanning', {
+                  t('ScanScanning', 'scanning', {
                      current: formatProgressNumber(progress.current),
                      total: formatProgressNumber(progress.total),
                   })
                }}
             </p>
-            <p v-if="elapsedSeconds >= 1" class="ScanScanningResults-elapsed">
-               {{ t('ScanScanningResults', 'elapsed', { seconds: elapsedSeconds }) }}
-            </p>
          </div>
-         <div class="ScanScanningResults-barWrap">
-            <div class="ScanScanningResults-barMain" :style="{ width: percent + '%' }" />
+         <div class="ScanScanning-barWrap">
+            <div class="ScanScanning-barMain" :style="{ width: percent + '%' }" />
          </div>
       </div>
 
-      <div class="ScanScanningResults-stats">
+      <div class="ScanScanning-stats">
          <p>
-            <span>{{ t('ScanScanningResults', 'stage') }}</span>
-            <strong>{{ formatProgressNumber(percent) }}%</strong>
+            <span>{{ t('ScanScanning', 'stage') }}</span>
+            <strong>{{ percentDisplay }}</strong>
          </p>
          <p>
-            <span>{{ t('ScanScanningResults', 'currentPath') }}</span>
-            <strong class="ScanScanningResults-currentPath" :title="progress.folder || ''">
-               {{ progress.folder || t('ScanScanningResults', 'preparing') }}
+            <span>{{ t('ScanScanning', 'currentPath') }}</span>
+            <strong class="ScanScanning-currentPath" :title="progress.folder || ''">
+               {{ progress.folder || t('ScanScanning', 'preparing') }}
             </strong>
          </p>
          <p>
-            <span>{{ t('ScanScanningResults', 'scannedSize') }}</span>
+            <span>{{ t('ScanScanning', 'scannedSize') }}</span>
             <strong>{{ formatBytes(progress.scanned_size_total) }}</strong>
          </p>
       </div>
 
-      <p class="ScanScanningResults-estimate">{{ t('ScanScanningResults', 'estimate') }}</p>
+      <p class="ScanScanning-estimate">{{ t('ScanScanning', 'estimate') }}</p>
 
       <button
          type="button"
-         class="ScanScanningResults-abortBtn"
+         class="ScanScanning-abortBtn"
          data-testid="scan-abort"
          @click="emit('abort')"
       >
-         {{ t('ScanScanningResults', 'abort') }}
+         {{ t('ScanScanning', 'abort') }}
       </button>
    </section>
 </template>
 
 <style scoped>
-.ScanScanningResults-root {
+.ScanScanning-root {
    flex: 1;
    display: flex;
    flex-direction: column;
@@ -128,20 +107,20 @@ onUnmounted(stopTimer)
    padding: var(--spacing-lg) var(--spacing-md);
 }
 
-.ScanScanningResults-progressBlock {
+.ScanScanning-progressBlock {
    display: flex;
    flex-direction: column;
    gap: var(--spacing-sm);
 }
 
-.ScanScanningResults-progressHeader {
+.ScanScanning-progressHeader {
    display: flex;
    align-items: center;
    justify-content: space-between;
    gap: 10px;
 }
 
-.ScanScanningResults-spinnerWrap {
+.ScanScanning-spinnerWrap {
    display: flex;
 
    @media (prefers-reduced-motion: reduce) {
@@ -149,11 +128,11 @@ onUnmounted(stopTimer)
    }
 }
 
-.ScanScanningResults-spinnerWrap :deep(.Spinner-root) {
+.ScanScanning-spinnerWrap :deep(.Spinner-root) {
    color: var(--color-accent);
 }
 
-.ScanScanningResults-progressTitle {
+.ScanScanning-progressTitle {
    margin: 0;
    font-size: 0.875rem;
    font-weight: 500;
@@ -161,14 +140,14 @@ onUnmounted(stopTimer)
    flex: 1;
 }
 
-.ScanScanningResults-elapsed {
+.ScanScanning-elapsed {
    margin: 0;
    font-size: 0.75rem;
    color: var(--color-text-muted);
    flex-shrink: 0;
 }
 
-.ScanScanningResults-barWrap {
+.ScanScanning-barWrap {
    position: relative;
    width: 100%;
    height: 6px;
@@ -178,14 +157,14 @@ onUnmounted(stopTimer)
    border: 1px solid var(--color-border);
 }
 
-.ScanScanningResults-barMain {
+.ScanScanning-barMain {
    height: 100%;
    background: var(--color-accent);
    border-radius: 3px;
    transition: width 0.25s ease;
 }
 
-.ScanScanningResults-stats {
+.ScanScanning-stats {
    display: flex;
    flex-direction: column;
    gap: var(--spacing-xs);
@@ -215,7 +194,7 @@ onUnmounted(stopTimer)
    }
 }
 
-.ScanScanningResults-currentPath {
+.ScanScanning-currentPath {
    max-width: min(65%, 220px);
    overflow: hidden;
    text-overflow: ellipsis;
@@ -223,13 +202,13 @@ onUnmounted(stopTimer)
    display: block;
 }
 
-.ScanScanningResults-estimate {
+.ScanScanning-estimate {
    margin: 0;
    font-size: 0.75rem;
    color: var(--color-text-muted);
 }
 
-.ScanScanningResults-abortBtn {
+.ScanScanning-abortBtn {
    align-self: flex-start;
    padding: 0;
    font-size: 0.875rem;

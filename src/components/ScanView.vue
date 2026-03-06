@@ -17,26 +17,23 @@ import ScanViewDiskUsage from './ScanViewDiskUsage.vue'
 import ScanResultsDeleteList from './ScanResultsDeleteList.vue'
 import ScanResultsDeleteConfirmation from './ScanResultsDeleteConfirmation.vue'
 import ScanResultsList from './ScanResultsList.vue'
-import ScanScanningResults from './ScanScanningResults.vue'
+import ScanScanning from './ScanScanning.vue'
 import ScanLaunch from './ScanLaunch.vue'
 
 import { ref, watch, onDeactivated, useTemplateRef } from 'vue'
 
 import { useScanner } from '@/lib/use-scanner'
-import { useDiskUsage } from '@/lib/use-disk-usage'
 
 import type { DeleteListItem } from '@/types/structs'
 import type { DiskUsage } from '@/types/disk'
 
 defineProps<{
-   activeView: string
    diskUsage?: DiskUsage | null
 }>()
 
-const { usage: diskUsage } = await useDiskUsage()
 const { folders, isScanning, progress, loadFolders, onAbort, onCancel } = useScanner()
 
-enum ScanViewState {
+enum ActiveView {
    LAUNCH = 'launch',
    SCANNING = 'scanning',
    RESULTS = 'results',
@@ -44,19 +41,17 @@ enum ScanViewState {
    DELETE_COMPLETE = 'deleteComplete',
 }
 
-// Centralized view state computation - single source of truth
-
-const scanViewState = ref<ScanViewState>(ScanViewState.LAUNCH)
+const activeView = ref<ActiveView>(ActiveView.LAUNCH)
 
 watch(
    [() => isScanning.value, () => folders.value.length],
    ([isScanning, folderCount]) => {
       if (isScanning) {
-         scanViewState.value = ScanViewState.SCANNING
+         activeView.value = ActiveView.SCANNING
       } else if (folderCount === 0) {
-         scanViewState.value = ScanViewState.LAUNCH
+         activeView.value = ActiveView.LAUNCH
       } else {
-         scanViewState.value = ScanViewState.RESULTS
+         activeView.value = ActiveView.RESULTS
       }
    },
    { immediate: true }
@@ -72,7 +67,7 @@ const pendingSelection = ref<DeleteListItem[] | null>(null)
 
 function resetInternalState() {
    selectedSize.value = 0
-   scanViewState.value = ScanViewState.LAUNCH
+   activeView.value = ActiveView.LAUNCH
    deleteItems.value = []
    deletedSummary.value = null
    pendingSelection.value = null
@@ -89,9 +84,8 @@ watch(
 
 onDeactivated(() => {
    // If switching app view from this component and we're in DeleteResults page
-   if (scanViewState.value === ScanViewState.DELETE_COMPLETE) {
-      console.log('Hello!')
-      scanViewState.value = ScanViewState.LAUNCH
+   if (activeView.value === ActiveView.DELETE_COMPLETE) {
+      activeView.value = ActiveView.LAUNCH
       onCancel()
    }
 })
@@ -102,12 +96,12 @@ function onSelectedSizeUpdate(value: number) {
 
 function onReview(items: DeleteListItem[]) {
    deleteItems.value = items
-   scanViewState.value = ScanViewState.DELETE
+   activeView.value = ActiveView.DELETE
 }
 
 function onBackFromDelete(checkedItems: DeleteListItem[]) {
    pendingSelection.value = checkedItems
-   scanViewState.value = ScanViewState.RESULTS
+   activeView.value = ActiveView.RESULTS
 }
 
 watch(resultsListRef, (ref) => {
@@ -123,11 +117,11 @@ function onDeleteComplete(items: DeleteListItem[]) {
       size: items.reduce((sum, i) => sum + i.size, 0),
    }
 
-   scanViewState.value = ScanViewState.DELETE_COMPLETE
+   activeView.value = ActiveView.DELETE_COMPLETE
 }
 
 function onRestart() {
-   scanViewState.value = ScanViewState.RESULTS
+   activeView.value = ActiveView.RESULTS
    onCancel()
 }
 </script>
@@ -139,21 +133,22 @@ function onRestart() {
       <Transition name="fade" mode="out-in">
          <KeepAlive>
             <ScanLaunch
-               v-if="scanViewState === ScanViewState.LAUNCH"
+               v-if="activeView === ActiveView.LAUNCH"
                class="ScanView-body"
                @start-scan="loadFolders"
             />
 
-            <ScanScanningResults
-               v-else-if="scanViewState === ScanViewState.SCANNING"
+            <ScanScanning
+               v-else-if="activeView === ActiveView.SCANNING"
                class="ScanView-body"
                :progress="progress"
+               :isScanning="isScanning"
                @abort="onAbort"
             />
 
             <ScanResultsList
                ref="resultsListRef"
-               v-else-if="scanViewState === ScanViewState.RESULTS"
+               v-else-if="activeView === ActiveView.RESULTS"
                class="ScanView-body"
                :folders="folders"
                @update:selectedSize="onSelectedSizeUpdate"
@@ -162,7 +157,7 @@ function onRestart() {
             />
 
             <ScanResultsDeleteList
-               v-else-if="scanViewState === ScanViewState.DELETE"
+               v-else-if="activeView === ActiveView.DELETE"
                class="ScanView-body"
                :items="deleteItems"
                @back="onBackFromDelete"
@@ -172,7 +167,7 @@ function onRestart() {
             />
 
             <ScanResultsDeleteConfirmation
-               v-else-if="scanViewState === ScanViewState.DELETE_COMPLETE"
+               v-else-if="activeView === ActiveView.DELETE_COMPLETE"
                class="ScanView-body"
                :deletedSummary="deletedSummary"
                @restart="onRestart"
