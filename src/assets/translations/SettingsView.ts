@@ -35,7 +35,7 @@ export const SettingsView = {
       updateUpToDate: 'Updated',
       updateAvailableHint:
          'Version {{version}} is available on GitHub. Download the latest .dmg from the Releases page.',
-      updateLatestVersion: 'You are using the latest version (v{{version}}).',
+      updateLatestVersion: 'You are using the latest version (v{{version}})',
       updateChecking: 'Checking…',
       updateCheckButton: 'Check for Updates',
       updateReleasesButton: 'View Releases',
@@ -119,7 +119,7 @@ export const SettingsView = {
       updateUpToDate: 'Actualizado',
       updateAvailableHint:
          'La versión {{version}} está disponible en GitHub. Descarga el último .dmg desde la página de Releases.',
-      updateLatestVersion: 'Estás usando la última versión (v{{version}}).',
+      updateLatestVersion: 'Estás usando la última versión (v{{version}})',
       updateChecking: 'Verificando…',
       updateCheckButton: 'Buscar actualizaciones',
       updateReleasesButton: 'Ver Releases',
@@ -160,7 +160,7 @@ export const SettingsView = {
       updateLabel: '软件更新',
       updateUpToDate: '更新',
       updateAvailableHint: '版本 {{version}} 可在 GitHub 下载。请从 Releases 页面下载最新的 .dmg。',
-      updateLatestVersion: '您正在使用最新版本 (v{{version}})。',
+      updateLatestVersion: '您正在使用最新版本 (v{{version}})',
       updateChecking: '检查中…',
       updateCheckButton: '检查更新',
       updateReleasesButton: '查看 Releases',
@@ -202,7 +202,7 @@ export const SettingsView = {
       updateUpToDate: '更新',
       updateAvailableHint:
          'バージョン {{version}} が GitHub で利用可能です。Releases ページから最新の .dmg をダウンロードしてください。',
-      updateLatestVersion: 'あなたは最新バージョン (v{{version}}) を使用しています。',
+      updateLatestVersion: 'あなたは最新バージョン (v{{version}}) を使用しています',
       updateChecking: '確認中…',
       updateCheckButton: '更新を確認',
       updateReleasesButton: 'Releases を表示',
@@ -244,7 +244,7 @@ export const SettingsView = {
       updateUpToDate: 'تم التحديث',
       updateAvailableHint:
          'الإصدار {{version}} متاح على GitHub. قم بتنزيل أحدث .dmg من صفحة الإصدارات.',
-      updateLatestVersion: 'أنت تستخدم أحدث إصدار (v{{version}}).',
+      updateLatestVersion: 'أنت تستخدم أحدث إصدار (v{{version}})',
       updateChecking: 'التحقق…',
       updateCheckButton: 'تحقق من التحديثات',
       updateReleasesButton: 'عرض الإصدارات',
@@ -286,7 +286,7 @@ export const SettingsView = {
       updateUpToDate: 'Обновлено',
       updateAvailableHint:
          'Версия {{version}} доступна на GitHub. Загрузите последний .dmg с страницы Releases.',
-      updateLatestVersion: 'Вы используете последнюю версию (v{{version}}).',
+      updateLatestVersion: 'Вы используете последнюю версию (v{{version}})',
       updateChecking: 'Проверка…',
       updateCheckButton: 'Проверить обновления',
       updateReleasesButton: 'Просмотреть Releases',
@@ -328,7 +328,7 @@ export const SettingsView = {
       updateUpToDate: 'Mise à jour',
       updateAvailableHint:
          'La version {{version}} est disponible sur GitHub. Téléchargez le dernier .dmg depuis la page Releases.',
-      updateLatestVersion: 'Vous utilisez la dernière version (v{{version}}).',
+      updateLatestVersion: 'Vous utilisez la dernière version (v{{version}})',
       updateChecking: 'Vérification…',
       updateCheckButton: 'Vérifier les mises à jour',
       updateReleasesButton: 'Voir les Releases',
@@ -370,7 +370,7 @@ export const SettingsView = {
       updateUpToDate: 'Atualização',
       updateAvailableHint:
          'A versão {{version}} está disponível no GitHub. Baixe o último .dmg da página Releases.',
-      updateLatestVersion: 'Você está usando a última versão (v{{version}}).',
+      updateLatestVersion: 'Você está usando a última versão (v{{version}})',
       updateChecking: 'Verificando…',
       updateCheckButton: 'Verificar atualizações',
       updateReleasesButton: 'Ver Releases',
@@ -412,7 +412,7 @@ export const SettingsView = {
       updateUpToDate: 'Update',
       updateAvailableHint:
          'Version {{version}} ist auf GitHub verfügbar. Laden Sie das neueste .dmg von der Releases-Seite herunter.',
-      updateLatestVersion: 'Sie verwenden die neueste Version (v{{version}}).',
+      updateLatestVersion: 'Sie verwenden die neueste Version (v{{version}})',
       updateChecking: 'Überprüfung…',
       updateCheckButton: 'Updates prüfen',
       updateReleasesButton: 'Releases anzeigen',

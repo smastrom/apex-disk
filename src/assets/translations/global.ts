@@ -1,51 +1,53 @@
+import { APP_NAME as appName } from '@/lib/constants'
+
 export const global = {
    en: {
-      appName: 'MacDiskTree',
+      appName,
       scan: 'Scan',
       settings: 'Settings',
    },
    it: {
-      appName: 'MacDiskTree',
+      appName,
       scan: 'Scansiona',
       settings: 'Impostazioni',
    },
    es: {
-      appName: 'MacDiskTree',
+      appName,
       scan: 'Escanear',
       settings: 'Ajustes',
    },
    zh: {
-      appName: 'MacDiskTree',
+      appName,
       scan: '扫描',
       settings: '设置',
    },
    ja: {
-      appName: 'MacDiskTree',
+      appName,
       scan: 'スキャン',
       settings: '設定',
    },
    ar: {
-      appName: 'MacDiskTree',
+      appName,
       scan: 'مسح',
       settings: 'الإعدادات',
    },
    ru: {
-      appName: 'MacDiskTree',
+      appName,
       scan: 'Сканировать',
       settings: 'Настройки',
    },
    fr: {
-      appName: 'MacDiskTree',
+      appName,
       scan: 'Analyser',
       settings: 'Réglages',
    },
    pt: {
-      appName: 'MacDiskTree',
+      appName,
       scan: 'Analisar',
       settings: 'Definições',
    },
    de: {
-      appName: 'MacDiskTree',
+      appName,
       scan: 'Scannen',
       settings: 'Einstellungen',
    },
