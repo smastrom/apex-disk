@@ -2,17 +2,13 @@
 //!
 //! ## Multilanguage Behavior
 //!
-//! The menu handles two types of items with different localization approaches:
+//! All menu items are now translated to follow the app language setting:
 //!
-//! **Native macOS items** (About, Services, Hide, Show All, Quit, Minimize, Close Window):
-//! - Use `None` as label to let macOS automatically localize them to system language
-//! - These items are NOT translated by our app - they follow the macOS system language
-//! - Examples: "About", "Hide", "Quit" will appear in Italian on an Italian system
-//!
-//! **Custom app items** (Release Notes, License, Window/Help submenu titles):
-//! - Require manual translation via `menu_translations::labels_for(lang)`
+//! **All menu items** (About, Services, Hide, Show All, Quit, Minimize, Close Window, Release Notes, License):
+//! - Use translated labels from `menu_translations::labels_for(lang)`
 //! - These items follow the APP language setting, not system language
-//! - When user changes app language, these items update immediately via `set_menu_language`
+//! - When user changes app language, all items update immediately via `set_menu_language`
+//! - Examples: "About", "Hide", "Quit" will appear in Italian when app language is set to Italian, regardless of system language
 //!
 //! ## Language Sync Flow
 //!
@@ -41,18 +37,18 @@ pub fn set_menu_language(app: tauri::AppHandle, lang: String) -> Result<(), Stri
 }
 
 /// Builds the application menu. On macOS this becomes
-/// the menu bar: app submenu, Window, Help. Native items use system language.
+/// the menu bar: app submenu, Window, Help. All items follow app language.
 pub fn build_app_menu(
     handle: &tauri::AppHandle,
     lang: &str,
 ) -> Result<tauri::menu::Menu<tauri::Wry>, tauri::Error> {
     let labels = menu_translations::labels_for(lang);
 
-    // ── App submenu ── (native items use system language)
+    // ── App submenu ── (all items now follow app language)
     let about_icon = tauri::image::Image::from_bytes(APP_ICON).ok();
     let about = PredefinedMenuItem::about(
         handle,
-        None::<&str>,
+        Some(labels.about),
         Some(AboutMetadata {
             name: Some(constants::APP_NAME.to_string()),
             version: Some(env!("CARGO_PKG_VERSION").into()),
@@ -65,14 +61,14 @@ pub fn build_app_menu(
         }),
     )?;
     let sep = PredefinedMenuItem::separator(handle)?;
-    // Use None for native items to let macOS localize them
-    let services = PredefinedMenuItem::services(handle, None)?;
+    // Use translated labels to follow app language setting
+    let services = PredefinedMenuItem::services(handle, Some(labels.services))?;
     let sep2 = PredefinedMenuItem::separator(handle)?;
-    let hide = PredefinedMenuItem::hide(handle, None)?;
-    let hide_others = PredefinedMenuItem::hide_others(handle, None)?;
-    let show_all = PredefinedMenuItem::show_all(handle, None)?;
+    let hide = PredefinedMenuItem::hide(handle, Some(labels.hide))?;
+    let hide_others = PredefinedMenuItem::hide_others(handle, Some(labels.hide_others))?;
+    let show_all = PredefinedMenuItem::show_all(handle, Some(labels.show_all))?;
     let sep3 = PredefinedMenuItem::separator(handle)?;
-    let quit = PredefinedMenuItem::quit(handle, None)?;
+    let quit = PredefinedMenuItem::quit(handle, Some(labels.quit))?;
     let app_submenu = Submenu::with_items(
         handle,
         constants::APP_NAME,
@@ -91,13 +87,13 @@ pub fn build_app_menu(
     )?;
 
     // ── Window submenu ── (custom items need translation)
-    let minimize = MenuItem::with_id(handle, "minimize", labels.minimize, true, None::<&str>)?;
+    let minimize = MenuItem::with_id(handle, "minimize", labels.minimize, true, Some("cmd+m"))?;
     let close_window = MenuItem::with_id(
         handle,
         "close_window",
         labels.close_window,
         true,
-        None::<&str>,
+        Some("cmd+w"),
     )?;
     let window_submenu = Submenu::with_id_and_items(
         handle,
