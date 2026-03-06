@@ -13,17 +13,17 @@ MacDiskTree scans your entire user folder and presents everything as a navigable
 ## Features
 
 - **Hyper-fast scanning** — Directory scanning distributes I/O across all available CPU cores for maximum throughput
-- **Smooth UI** — Performance-minded interface with fluid animations, a clean design, and snappy navigation
-- **Smart selection** — Three-state checkboxes with full parent-child logic and a real-time preview of how much space you'll reclaim
-- **Safe by design** — Uses "Move to Trash" and protects reserved macOS folders (Desktop, Documents, Library, etc.) from root deletion. Sensitive credential folders (.ssh, .aws, etc.) are completely ignored
-- **Optional Full Disk Access** — Works without extra permissions by default, but you can grant access to bypass system prompts or manage restricted folders
+- **Smooth** — Performance-minded interface with fluid animations, a clean design, and snappy navigation
+- **Smart** — Intelligent results interface to easily identify real trash with swipable navigable tree with three-state checkboxes, full parent-child logic, and a real-time preview of how much space you'll reclaim
+- **Safe design** — Uses "Move to Trash" and protects reserved macOS folders (Desktop, Documents, Library, etc.) from root deletion. Sensitive folders (.ssh, .aws, etc.) are completely ignored.
+- **Optional Full Disk Access** — Works without extra permissions by default, but you can grant access to bypass system prompts and unlock system restricted folders
 - **10 languages** — Support for English, Italian, Spanish, French, Portuguese, German, Russian, Chinese, Japanese, and Arabic (with RTL support)
 - **Accessible** — Engineered for everyone with complete keyboard navigation and screen reader support
 - **Themes** — Multiple color themes to choose from, with more on the way
 
 ## Preview
 
-![MacDiskTree](./src/assets/images/app-cover.png)
+![MacDiskTree](./src/assets/images/mac-disk-tree-screenshots.png)
 
 ## Installation
 
