@@ -1,7 +1,8 @@
+import { APP_DESCRIPTIONS } from './App'
+
 export const InformationView = {
    en: {
-      description:
-         'macOS tool to easily identify and get rid of big, unused files and folders in seconds.',
+      description: APP_DESCRIPTIONS.en,
       byAuthor: 'by {author}',
       releaseInfo: 'Release Information',
       releaseNotes: 'Release Notes',
@@ -19,8 +20,7 @@ export const InformationView = {
       currentUser: 'Current User',
    },
    it: {
-      description:
-         'Strumento macOS per identificare ed eliminare facilmente file e cartelle grandi e inutilizzati in pochi secondi.',
+      description: APP_DESCRIPTIONS.it,
       byAuthor: 'di {author}',
       releaseInfo: 'Informazioni di Rilascio',
       releaseNotes: 'Note di Rilascio',
@@ -38,8 +38,7 @@ export const InformationView = {
       currentUser: 'Utente Corrente',
    },
    es: {
-      description:
-         'Herramienta macOS para identificar y deshacerse fácilmente de archivos y carpetas grandes y no utilizados en segundos.',
+      description: APP_DESCRIPTIONS.es,
       byAuthor: 'por {author}',
       releaseInfo: 'Información de Lanzamiento',
       releaseNotes: 'Notas de Lanzamiento',
@@ -57,7 +56,7 @@ export const InformationView = {
       currentUser: 'Usuario Actual',
    },
    zh: {
-      description: 'macOS 工具，可在几秒钟内轻松识别并清除大型未使用的文件和文件夹。',
+      description: APP_DESCRIPTIONS.zh,
       byAuthor: '作者 {author}',
       releaseInfo: '发布信息',
       releaseNotes: '发布说明',
@@ -75,7 +74,7 @@ export const InformationView = {
       currentUser: '当前用户',
    },
    ja: {
-      description: '数秒で大きな未使用のファイルやフォルダを簡単に特定して削除できるmacOSツール。',
+      description: APP_DESCRIPTIONS.ja,
       byAuthor: '作成者 {author}',
       releaseInfo: 'リリース情報',
       releaseNotes: 'リリースノート',
@@ -93,8 +92,7 @@ export const InformationView = {
       currentUser: '現在のユーザー',
    },
    ar: {
-      description:
-         'أداة macOS لتحديد والتخلص بسهولة من الملفات والمجلدات الكبيرة وغير المستخدمة في ثوانٍ.',
+      description: APP_DESCRIPTIONS.ar,
       byAuthor: 'بواسطة {author}',
       releaseInfo: 'معلومات الإصدار',
       releaseNotes: 'ملاحظات الإصدار',
@@ -112,8 +110,7 @@ export const InformationView = {
       currentUser: 'المستخدم الحالي',
    },
    ru: {
-      description:
-         'Инструмент macOS для легкого определения и избавления от больших неиспользуемых файлов и папок за секунды.',
+      description: APP_DESCRIPTIONS.ru,
       byAuthor: 'автор {author}',
       releaseInfo: 'Информация о выпуске',
       releaseNotes: 'Заметки о выпуске',
@@ -131,8 +128,7 @@ export const InformationView = {
       currentUser: 'Текущий пользователь',
    },
    fr: {
-      description:
-         'Outil macOS pour identifier et se débarrasser facilement des gros fichiers et dossiers inutilisés en quelques secondes.',
+      description: APP_DESCRIPTIONS.fr,
       byAuthor: 'par {author}',
       releaseInfo: 'Informations de Version',
       releaseNotes: 'Notes de Version',
@@ -150,8 +146,7 @@ export const InformationView = {
       currentUser: 'Utilisateur Actuel',
    },
    pt: {
-      description:
-         'Ferramenta macOS para identificar e se livrar facilmente de arquivos e pastas grandes e não utilizados em segundos.',
+      description: APP_DESCRIPTIONS.pt,
       byAuthor: 'por {author}',
       releaseInfo: 'Informações de Lançamento',
       releaseNotes: 'Notas de Lançamento',
@@ -169,8 +164,7 @@ export const InformationView = {
       currentUser: 'Usuário Atual',
    },
    de: {
-      description:
-         'macOS-Tool zur einfachen Identifizierung und Beseitigung großer, ungenutzter Dateien und Ordner in Sekunden.',
+      description: APP_DESCRIPTIONS.de,
       byAuthor: 'von {author}',
       releaseInfo: 'Versionsinformationen',
       releaseNotes: 'Versionshinweise',
