@@ -23,8 +23,8 @@ defineProps<{
    <PhMinusCircle
       v-else-if="state === 'partial'"
       :size="size ?? 16"
-      weight="regular"
+      weight="fill"
       aria-hidden="true"
    />
-   <PhCheckCircle v-else :size="size ?? 16" weight="regular" aria-hidden="true" />
+   <PhCheckCircle v-else :size="size ?? 16" weight="fill" aria-hidden="true" />
 </template>
