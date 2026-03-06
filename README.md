@@ -49,8 +49,6 @@ xattr -cr /Applications/MacDiskTree.app
 - [Node.js](https://nodejs.org) >= 22
 - [pnpm](https://pnpm.io) >= 10
 
-### Local build (no signing credentials)
-
 ```bash
 # Clone the repository
 git clone https://github.com/smastrom/mac-disk-tree.git
@@ -66,8 +64,6 @@ rustup target add aarch64-apple-darwin x86_64-apple-darwin
 # The app is ad-hoc signed during the build so it runs with the correct bundle ID and entitlements.
 pnpm tauri:build
 ```
-
-The built app is at `src-tauri/target/universal-apple-darwin/release/bundle/macos/MacDiskTree.app`. This build does not produce updater artifacts (no in-app update); it is for local use and development.
 
 ## License
 
