@@ -17,7 +17,7 @@ export const ScanResults = {
       foldersLoaded: '{{count}} cartelle caricate',
       delete: 'Elimina',
       deleteSize: 'Elimina ({{size}})',
-      reviewSize: 'Rivedi ({{size}})',
+      reviewSize: 'Revisiona ({{size}})',
       resetSelection: 'Resetta',
       abort: 'Annulla',
    },

@@ -1,4 +1,4 @@
-export const ScanScanningResults = {
+export const ScanScanning = {
    en: {
       scanning: 'Scanning… {{current}} of {{total}}',
       elapsed: '{{seconds}}s elapsed',

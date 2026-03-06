@@ -3,7 +3,7 @@ import { AppHeader } from './AppHeader'
 import { App } from './App'
 import { ScanViewDiskUsage } from './ScanViewDiskUsage'
 import { ScanLaunch } from './ScanLaunch'
-import { ScanScanningResults } from './ScanScanningResults'
+import { ScanScanning } from './ScanScanning'
 import { ScanResultsList } from './ScanResultsList'
 import { ScanResultsListItem } from './ScanResultsListItem'
 import { ScanResultsDeleteList } from './ScanResultsDeleteList'
@@ -21,7 +21,7 @@ export const translations = {
    App,
    ScanViewDiskUsage,
    ScanLaunch,
-   ScanScanningResults,
+   ScanScanning,
    ScanResultsList,
    ScanResultsListItem,
    ScanResultsDeleteList,
