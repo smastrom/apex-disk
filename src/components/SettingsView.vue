@@ -147,7 +147,7 @@ async function openReleasesPage() {
 
          <section class="SettingsGroup">
             <div class="SettingsGroup-row">
-               <span class="SettingsGroup-label">{{ t('SettingsView', 'indexHiddenFiles') }}</span>
+               <span class="SettingsGroup-label">{{ t('SettingsView', 'scanHiddenFiles') }}</span>
                <button
                   type="button"
                   class="SettingsToggle"
@@ -159,7 +159,7 @@ async function openReleasesPage() {
                </button>
             </div>
             <div class="SettingsGroup-row">
-               <span class="SettingsGroup-label">{{ t('SettingsView', 'indexUnder1Kb') }}</span>
+               <span class="SettingsGroup-label">{{ t('SettingsView', 'scanUnder1Kb') }}</span>
                <button
                   type="button"
                   class="SettingsToggle"
@@ -171,7 +171,7 @@ async function openReleasesPage() {
                </button>
             </div>
             <div class="SettingsGroup-row">
-               <span class="SettingsGroup-label">{{ t('SettingsView', 'indexZeroByte') }}</span>
+               <span class="SettingsGroup-label">{{ t('SettingsView', 'scanZeroByte') }}</span>
                <button
                   type="button"
                   class="SettingsToggle"
@@ -380,13 +380,6 @@ async function openReleasesPage() {
 .SettingsView-fdaDesc {
    margin: 0;
    padding: var(--spacing-md) var(--spacing-lg);
-   font-size: 0.75rem;
-   line-height: 1.5;
-   color: var(--color-text-muted);
-}
-
-.SettingsView-settingDesc {
-   margin: 0;
    font-size: 0.75rem;
    line-height: 1.5;
    color: var(--color-text-muted);

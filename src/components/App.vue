@@ -124,17 +124,4 @@ setupFocusRing()
    background: var(--color-bg);
    z-index: 1;
 }
-
-.App-placeholder {
-   flex: 1;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   padding: var(--spacing-md);
-
-   p {
-      color: var(--color-text-muted);
-      margin: 0;
-   }
-}
 </style>
