@@ -350,18 +350,66 @@ function dismissCheckboxTooltip() {
    color: var(--color-text-dim);
 }
 
-/* ── Base popover styles ── */
+/* ── Name popover ── */
 
-.ScanResultsListItem-popover,
-.ScanResultsListItem-checkboxPopover {
+.ScanResultsListItem-popover {
    position: fixed;
    margin: 0;
+   padding: 6px 10px;
+   max-width: 420px;
    border: 1px solid var(--color-border);
    border-radius: 6px;
    background: var(--color-bg-elevated);
    color: var(--color-text);
+   font-size: 0.75rem;
    font-weight: 500;
    line-height: 1.4;
+   word-break: break-all;
+   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+   transform: translateY(-100%);
+   pointer-events: auto;
+
+   /* Closed state (for the transition) */
+   opacity: 0;
+   filter: blur(4px);
+   transition:
+      opacity 0.2s var(--ease-standard),
+      filter 0.2s var(--ease-standard);
+}
+
+.ScanResultsListItem-popover:popover-open {
+   opacity: 1;
+   filter: blur(0);
+}
+
+@starting-style {
+   .ScanResultsListItem-popover:popover-open {
+      opacity: 0;
+      filter: blur(4px);
+   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+   .ScanResultsListItem-popover {
+      transition: none;
+      filter: none;
+   }
+}
+
+/* ── Checkbox tooltip popover ── */
+
+.ScanResultsListItem-checkboxPopover {
+   position: fixed;
+   margin: 0;
+   padding: 8px 12px;
+   max-width: 280px;
+   border: 1px solid var(--color-border);
+   border-radius: 6px;
+   background: var(--color-bg-elevated);
+   color: var(--color-text);
+   font-size: 0.75rem;
+   font-weight: 500;
+   line-height: 1.5;
    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
    transform: translateY(-100%);
    pointer-events: auto;
@@ -370,36 +418,24 @@ function dismissCheckboxTooltip() {
    transition:
       opacity 0.2s var(--ease-standard),
       filter 0.2s var(--ease-standard);
+}
 
-   &:popover-open {
-      opacity: 1;
-      filter: blur(0);
+.ScanResultsListItem-checkboxPopover:popover-open {
+   opacity: 1;
+   filter: blur(0);
+}
+
+@starting-style {
+   .ScanResultsListItem-checkboxPopover:popover-open {
+      opacity: 0;
+      filter: blur(4px);
    }
+}
 
-   @starting-style {
-      &:popover-open {
-         opacity: 0;
-         filter: blur(4px);
-      }
-   }
-
-   @media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce) {
+   .ScanResultsListItem-checkboxPopover {
       transition: none;
       filter: none;
    }
-}
-
-.ScanResultsListItem-popover {
-   padding: 6px 10px;
-   max-width: 420px;
-   font-size: 0.75rem;
-   word-break: break-all;
-}
-
-.ScanResultsListItem-checkboxPopover {
-   padding: 8px 12px;
-   max-width: 280px;
-   font-size: 0.75rem;
-   line-height: 1.5;
 }
 </style>
