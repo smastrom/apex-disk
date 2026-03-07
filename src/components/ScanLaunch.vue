@@ -10,7 +10,7 @@ Example:
 -->
 
 <script setup lang="ts">
-import { PhMagnifyingGlass, PhShieldWarning } from '@phosphor-icons/vue'
+import { PhShieldWarning } from '@phosphor-icons/vue'
 
 import { useTranslations } from '@/lib/use-translations'
 
@@ -39,7 +39,6 @@ const { t } = useTranslations()
          data-testid="start-scan"
          @click="emit('start-scan')"
       >
-         <PhMagnifyingGlass :size="18" weight="regular" aria-hidden="true" />
          {{ t('ScanLaunch', 'startScan') }}
       </button>
    </section>

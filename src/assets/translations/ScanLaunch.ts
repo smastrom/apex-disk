@@ -1,62 +1,62 @@
 export const ScanLaunch = {
    en: {
-      warningTitle: 'Important notice',
+      warningTitle: 'Before you start',
       warningBody:
-         'Scans on very large disks may take over a minute. We recommend closing other apps before using this tool. It deletes files, so use it carefully. The author does not assume responsibility for lost files.',
+         'Full scans on large disks may take over a minute. For your safety, files are moved to the Trash. Please review your selections carefully; the author is not responsible for accidental data loss.',
       startScan: 'Start Scan',
    },
    it: {
-      warningTitle: 'Avviso importante',
+      warningTitle: 'Prima di iniziare',
       warningBody:
-         "La scansione di grandi dischi può richiedere oltre un minuto. Ti consigliamo di chiudere le altre app prima di usare questo strumento. Elimina file, quindi usalo con attenzione. L'autore non si assume responsabilita per file persi.",
+         "La scansione completa di grandi dischi può richiedere oltre un minuto. Per sicurezza, i file vengono spostati nel Cestino. Controlla attentamente le tue selezioni; l'autore non è responsabile per la perdita accidentale di dati.",
       startScan: 'Avvia scansione',
    },
    es: {
-      warningTitle: 'Aviso importante',
+      warningTitle: 'Antes de comenzar',
       warningBody:
-         'El análisis de discos muy grandes puede tardar más de un minuto. Recomendamos cerrar otras aplicaciones antes de usar esta herramienta. Elimina archivos, úsala con cuidado. El autor no se hace responsable de archivos perdidos.',
+         'Los análisis completos de discos grandes pueden tardar más de un minuto. Por seguridad, los archivos se mueven a la Papelera. Revisa bien tus selecciones; el autor no se hace responsable de la pérdida accidental de datos.',
       startScan: 'Iniciar análisis',
    },
    zh: {
-      warningTitle: '重要提示',
+      warningTitle: '开始之前',
       warningBody:
-         '扫描大容量磁盘可能需要超过一分钟。建议使用本工具前关闭其他应用。本工具会删除文件，请谨慎使用。作者不对丢失的文件负责。',
+         '完整扫描大容量磁盘可能需要超过一分钟。为确保安全，文件将被移至废纸篓。请仔细检查您的选择；作者不对意外的数据丢失负责。',
       startScan: '开始扫描',
    },
    ja: {
-      warningTitle: '重要なお知らせ',
+      warningTitle: '開始する前に',
       warningBody:
-         '大容量ディスクのスキャンには1分以上かかる場合があります。このツールを使用する前に他のアプリを終了することをお勧めします。ファイルを削除するため、慎重にご利用ください。作者は紛失したファイルについて責任を負いません。',
+         '大型ディスクのフルスキャンには1分以上かかる場合があります。安全のため、ファイルはゴミ箱に移動されます。選択内容を慎重に確認してください。データの誤消去について作者は責任を負いません。',
       startScan: 'スキャン開始',
    },
    ar: {
-      warningTitle: 'إشعار مهم',
+      warningTitle: 'قبل البدء',
       warningBody:
-         'قد يستغرق مسح الأقراص الكبيرة جداً أكثر من دقيقة. ننصح بإغلاق التطبيقات الأخرى قبل استخدام هذه الأداة. إنها تحذف الملفات، استخدمها بحذر. لا يتحمل المؤلف مسؤولية الملفات المفقودة.',
+         'قد يستغرق المسح الكامل للأقراص الكبيرة أكثر من دقيقة. لسلامتك، يتم نقل الملفات إلى سلة المهملات. يرجى مراجعة اختياراتك بعناية؛ المؤلف غير مسؤول عن فقدان البيانات غير المقصود.',
       startScan: 'بدء المسح',
    },
    ru: {
-      warningTitle: 'Важное уведомление',
+      warningTitle: 'Перед началом',
       warningBody:
-         'Сканирование очень больших дисков может занять более минуты. Рекомендуем закрыть другие приложения перед использованием. Программа удаляет файлы — используйте осторожно. Автор не несёт ответственности за утраченные файлы.',
+         'Полное сканирование больших дисков может занять более минуты. Для безопасности файлы перемещаются в Корзину. Пожалуйста, внимательно проверяйте свой выбор; автор не несет ответственности за случайную потерю данных.',
       startScan: 'Начать сканирование',
    },
    fr: {
-      warningTitle: 'Avis important',
+      warningTitle: 'Avant de commencer',
       warningBody:
-         "L’analyse de disques très volumineux peut prendre plus d'une minute. Nous recommandons de fermer les autres applications avant d’utiliser cet outil. Il supprime des fichiers — utilisez-le avec précaution. L’auteur n’assume aucune responsabilité pour les fichiers perdus.",
+         "L’analyse complète de disques volumineux peut prendre plus d'une minute. Par sécurité, les fichiers sont déplacés vers la Corbeille. Veuillez vérifier vos sélections avec soin ; l’auteur n’est pas responsable de la perte accidentelle de données.",
       startScan: 'Démarrer l’analyse',
    },
    pt: {
-      warningTitle: 'Aviso importante',
+      warningTitle: 'Antes de começar',
       warningBody:
-         'A análise de discos muito grandes pode demorar mais de um minuto. Recomendamos fechar outras aplicações antes de usar esta ferramenta. Ela elimina ficheiros — use com cuidado. O autor não se responsabiliza por ficheiros perdidos.',
+         'As análises completas de discos grandes podem demorar mais de um minuto. Para sua segurança, os ficheiros são movidos para o Lixo. Reveja as suas seleções com cuidado; o autor não se responsabiliza pela perda acidental de dados.',
       startScan: 'Iniciar análise',
    },
    de: {
-      warningTitle: 'Wichtiger Hinweis',
+      warningTitle: 'Bevor Sie starten',
       warningBody:
-         'Scans sehr großer Datenträger können über eine Minute dauern. Wir empfehlen, andere Apps zu schließen, bevor Sie dieses Tool verwenden. Es löscht Dateien – verwenden Sie es mit Vorsicht. Der Autor übernimmt keine Haftung für verlorene Dateien.',
+         'Vollständige Scans großer Festplatten können über eine Minute dauern. Zur Sicherheit werden Dateien in den Papierkorb verschoben. Bitte prüfen Sie Ihre Auswahl sorgfältig; der Autor haftet nicht für versehentlichen Datenverlust.',
       startScan: 'Scan starten',
    },
 } as const
