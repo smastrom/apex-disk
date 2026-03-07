@@ -42,6 +42,20 @@
    --btn-gradient-50: #239da3;
    --btn-gradient-100: #2aa8ae;
 
+   /* Step button variants (lighter versions for secondary actions) */
+   --btn-step-0: #44b5ba;
+   --btn-step-50: #3da8ad;
+   --btn-step-100: #44b5ba;
+
+   /* Abort/cancel text color */
+   --color-abort: #e04a3a;
+
+   /* Action button (move-to-trash CTA) — warm amber alternate */
+   --btn-action-0: var(--btn-gradient-0);
+   --btn-action-50: var(--btn-gradient-50);
+   --btn-action-100: var(--btn-gradient-100);
+   --color-action-glow: var(--color-accent-glow);
+
    /* Focus ring (keyboard focus indicator) */
    --focus-ring-color: var(--color-accent);
    --focus-ring-width: 2px;
@@ -78,6 +92,16 @@
    --btn-gradient-0: #ffcc66;
    --btn-gradient-50: #e8b755;
    --btn-gradient-100: #ffcc66;
+
+   --btn-step-0: #ffd580;
+   --btn-step-50: #ffcc66;
+   --btn-step-100: #ffd580;
+
+   --color-abort: #e24838;
+   --btn-action-0: #d47840;
+   --btn-action-50: #c06830;
+   --btn-action-100: #d47840;
+   --color-action-glow: rgba(212, 120, 64, 0.4);
 }
 
 /* Theme: macOS Dark — Apple's system dark appearance */
@@ -100,6 +124,12 @@
    --btn-gradient-0: #0a84ff;
    --btn-gradient-50: #0077ed;
    --btn-gradient-100: #0a84ff;
+
+   --btn-step-0: #409cff;
+   --btn-step-50: #0a84ff;
+   --btn-step-100: #409cff;
+
+   --color-abort: #dc4c3a;
 }
 
 /* Theme: macOS Light — Apple's system light appearance */
@@ -122,6 +152,12 @@
    --btn-gradient-0: #007aff;
    --btn-gradient-50: #0071e3;
    --btn-gradient-100: #007aff;
+
+   --btn-step-0: #409cff;
+   --btn-step-50: #007aff;
+   --btn-step-100: #409cff;
+
+   --color-abort: #c44030;
 }
 
 /* Theme: macOS Graphite — cool blue-grey, native macOS feel */
@@ -144,6 +180,12 @@
    --btn-gradient-0: #76839b;
    --btn-gradient-50: #68758b;
    --btn-gradient-100: #76839b;
+
+   --btn-step-0: #8d99ae;
+   --btn-step-50: #76839b;
+   --btn-step-100: #8d99ae;
+
+   --color-abort: #b0503c;
 
    /* Footer navigation active color */
    --footer-nav-active-color: #fff;
@@ -168,6 +210,12 @@
    --btn-gradient-0: hsl(145, 72%, 51%);
    --btn-gradient-50: hsl(145, 72%, 44%);
    --btn-gradient-100: hsl(145, 72%, 51%);
+
+   --btn-step-0: hsl(145, 72%, 57%);
+   --btn-step-50: hsl(145, 72%, 51%);
+   --btn-step-100: hsl(145, 72%, 57%);
+
+   --color-abort: hsl(6, 62%, 52%);
 }
 
 /* Theme: Coral Orange — bright dark theme, macOS-focused, 2026-style; coral-orange accent */
@@ -190,4 +238,10 @@
    --btn-gradient-0: #ff6b4a;
    --btn-gradient-50: #f55a38;
    --btn-gradient-100: #ff6b4a;
+
+   --btn-step-0: #ff8566;
+   --btn-step-50: #ff6b4a;
+   --btn-step-100: #ff8566;
+
+   --color-abort: #e24838;
 }
