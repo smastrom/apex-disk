@@ -148,24 +148,12 @@ const props = defineProps<{
    margin: 0 0 var(--spacing-sm) 0;
 }
 
-.InformationView-version {
-   font-size: 0.875rem;
-   color: var(--color-text-muted);
-   margin: 0 0 var(--spacing-sm) 0;
-}
-
 .InformationView-description {
    font-size: 0.8125rem;
    color: var(--color-text);
    margin: 0 0 var(--spacing-sm) 0;
    max-width: 350px;
    line-height: 1.4;
-}
-
-.InformationView-author {
-   font-size: 0.75rem;
-   color: var(--color-text-muted);
-   margin: 0;
 }
 
 .InformationView-detailLabel {
@@ -178,29 +166,5 @@ const props = defineProps<{
    font-size: 0.9375rem;
    color: var(--color-text-muted);
    white-space: nowrap;
-}
-
-.InformationView-linksContainer {
-   display: flex;
-   align-items: center;
-   gap: var(--spacing-sm);
-   flex-wrap: wrap;
-}
-
-.InformationView-link {
-   padding: 4px 10px;
-   background: var(--color-surface);
-   border: 1px solid var(--color-border);
-   border-radius: 5px;
-   color: var(--color-text);
-   font-size: 0.75rem;
-   font-weight: 500;
-   cursor: pointer;
-   transition: opacity 0.15s ease;
-   white-space: nowrap;
-
-   &:hover {
-      opacity: 0.75;
-   }
 }
 </style>

@@ -51,16 +51,4 @@ const { t } = useTranslations()
    text-shadow: var(--glow-text);
    pointer-events: none;
 }
-
-.AppHeader-version {
-   font-size: 0.75rem;
-   color: var(--color-text-muted);
-   font-weight: 400;
-   pointer-events: auto;
-   transition: color 0.15s;
-}
-
-.AppHeader-version:hover {
-   color: var(--color-text);
-}
 </style>
