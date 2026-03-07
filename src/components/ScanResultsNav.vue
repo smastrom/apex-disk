@@ -191,7 +191,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
    gap: var(--spacing-xs);
    padding: var(--spacing-xs) 0;
    min-height: 24px;
-   font-size: 0.8125rem;
+   font-size: var(--font-size-base);
    color: var(--color-text-muted);
    text-align: left;
 }
@@ -219,7 +219,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
 
 .ScanResultsNav-resetBtn {
    padding: 0;
-   font-size: 0.875rem;
+   font-size: var(--font-size-md);
    font-weight: 500;
    color: var(--color-text-muted);
    background: none;
@@ -239,7 +239,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
 
 .ScanResultsNav-cancelBtn {
    padding: 0;
-   font-size: 0.875rem;
+   font-size: var(--font-size-md);
    font-weight: 500;
    color: var(--color-abort);
    background: none;

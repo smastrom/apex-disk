@@ -333,7 +333,7 @@ async function openReleasesPage() {
    display: flex;
    align-items: center;
    gap: 5px;
-   font-size: 0.8125rem;
+   font-size: var(--font-size-base);
    font-weight: 500;
 }
 
@@ -362,7 +362,7 @@ async function openReleasesPage() {
    border-radius: 5px;
    background: var(--color-bg);
    color: var(--color-text);
-   font-size: 0.75rem;
+   font-size: var(--font-size-sm);
    font-weight: 500;
    cursor: pointer;
    transition: opacity 0.15s ease;
@@ -380,7 +380,7 @@ async function openReleasesPage() {
 .SettingsView-fdaDesc {
    margin: 0;
    padding: var(--spacing-md) var(--spacing-lg);
-   font-size: 0.75rem;
+   font-size: var(--font-size-sm);
    line-height: 1.5;
    color: var(--color-text-muted);
 }
@@ -388,7 +388,7 @@ async function openReleasesPage() {
 .SettingsView-resultsNotice {
    margin: 0;
    padding: var(--spacing-md) var(--spacing-lg);
-   font-size: 0.75rem;
+   font-size: var(--font-size-sm);
    line-height: 1.5;
    color: var(--color-text-muted);
 }
@@ -398,7 +398,7 @@ async function openReleasesPage() {
    display: flex;
    align-items: center;
    gap: 5px;
-   font-size: 0.8125rem;
+   font-size: var(--font-size-base);
    font-weight: 500;
 }
 
@@ -413,7 +413,7 @@ async function openReleasesPage() {
 .SettingsView-updateDesc {
    margin: 0;
    padding: var(--spacing-md) var(--spacing-lg);
-   font-size: 0.75rem;
+   font-size: var(--font-size-sm);
    line-height: 1.5;
    color: var(--color-text-muted);
 }

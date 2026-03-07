@@ -93,7 +93,7 @@ function closeApp() {
 
 .ScanResultsDeleteConfirmation-title {
    margin: 0;
-   font-size: 1.25rem;
+   font-size: var(--font-size-2xl);
    font-weight: 600;
    color: var(--color-text);
    text-align: center;
@@ -101,7 +101,7 @@ function closeApp() {
 
 .ScanResultsDeleteConfirmation-resume {
    margin: 0;
-   font-size: 0.9375rem;
+   font-size: var(--font-size-lg);
    color: var(--color-text-muted);
    text-align: center;
 }
@@ -115,7 +115,7 @@ function closeApp() {
    gap: 0.5rem;
    margin-top: var(--spacing-xl);
    padding: var(--spacing-md) var(--spacing-lg);
-   font-size: 0.9375rem;
+   font-size: var(--font-size-lg);
 }
 
 .ScanResultsDeleteConfirmation-closeBtn {
@@ -124,7 +124,7 @@ function closeApp() {
    justify-content: center;
    gap: 0.375rem;
    padding: var(--spacing-sm) var(--spacing-md);
-   font-size: 0.8125rem;
+   font-size: var(--font-size-base);
    font-weight: 500;
    color: var(--color-text-muted);
    background: none;

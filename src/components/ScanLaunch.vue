@@ -69,14 +69,14 @@ const { t } = useTranslations()
    align-items: center;
    gap: 8px;
    margin: 0 0 var(--spacing-md) 0;
-   font-size: 0.8125rem;
+   font-size: var(--font-size-base);
    font-weight: 600;
    color: var(--color-text-muted);
 }
 
 .ScanLaunch-noticeBody {
    margin: 0;
-   font-size: 0.8125rem;
+   font-size: var(--font-size-base);
    line-height: 1.5;
    color: var(--color-text-muted);
 }

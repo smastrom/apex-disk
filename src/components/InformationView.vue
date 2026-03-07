@@ -142,14 +142,14 @@ const props = defineProps<{
 }
 
 .InformationView-title {
-   font-size: 1.125rem;
+   font-size: var(--font-size-xl);
    font-weight: 700;
    color: var(--color-text);
    margin: 0 0 var(--spacing-sm) 0;
 }
 
 .InformationView-description {
-   font-size: 0.8125rem;
+   font-size: var(--font-size-base);
    color: var(--color-text);
    margin: 0 0 var(--spacing-sm) 0;
    max-width: 350px;
@@ -157,13 +157,13 @@ const props = defineProps<{
 }
 
 .InformationView-detailLabel {
-   font-size: 0.9375rem;
+   font-size: var(--font-size-lg);
    color: var(--color-text);
    font-weight: 500;
 }
 
 .InformationView-detailValue {
-   font-size: 0.9375rem;
+   font-size: var(--font-size-lg);
    color: var(--color-text-muted);
    white-space: nowrap;
 }

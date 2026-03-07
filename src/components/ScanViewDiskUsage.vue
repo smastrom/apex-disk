@@ -126,7 +126,7 @@ const newFreeSpace = computed(() => {
    display: flex;
    align-items: center;
    gap: 6px;
-   font-size: 0.875rem;
+   font-size: var(--font-size-md);
    font-weight: 600;
    color: var(--color-text);
 }
@@ -138,7 +138,7 @@ const newFreeSpace = computed(() => {
 }
 
 .ScanViewDiskUsage-userBadge {
-   font-size: 0.75rem;
+   font-size: var(--font-size-sm);
    font-weight: 600;
    color: var(--color-text);
    background: var(--color-surface);
@@ -150,7 +150,7 @@ const newFreeSpace = computed(() => {
    display: flex;
    justify-content: space-between;
    align-items: center;
-   font-size: 0.8125rem;
+   font-size: var(--font-size-base);
 }
 
 .ScanViewDiskUsage-info {

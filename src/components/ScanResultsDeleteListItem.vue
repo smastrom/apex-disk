@@ -152,7 +152,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
 }
 
 .ScanResultsDeleteListItem-name {
-   font-size: 0.8125rem;
+   font-size: var(--font-size-base);
    font-weight: 500;
    color: var(--color-text);
    white-space: nowrap;
@@ -161,7 +161,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
 }
 
 .ScanResultsDeleteListItem-path {
-   font-size: 0.6875rem;
+   font-size: var(--font-size-xs);
    color: var(--color-text-dim);
    white-space: nowrap;
    overflow: hidden;
@@ -169,7 +169,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
 }
 
 .ScanResultsDeleteListItem-size {
-   font-size: 0.875rem;
+   font-size: var(--font-size-md);
    color: var(--color-text-muted);
 }
 </style>

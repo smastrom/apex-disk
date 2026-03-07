@@ -346,7 +346,7 @@ async function onDeleteClick() {
    justify-content: center;
    gap: 0.5rem;
    padding: var(--spacing-md) var(--spacing-lg);
-   font-size: 0.9375rem;
+   font-size: var(--font-size-lg);
    border-radius: 8px;
    transition:
       box-shadow 0.2s,

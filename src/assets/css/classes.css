@@ -12,7 +12,7 @@
    border-radius: 6px;
    background: var(--color-bg-elevated);
    color: var(--color-text);
-   font-size: 0.75rem;
+   font-size: var(--font-size-sm);
    font-weight: 500;
    line-height: 1.4;
    word-break: break-all;
@@ -80,7 +80,7 @@
 }
 
 .SettingsGroup-label {
-   font-size: 0.9375rem;
+   font-size: var(--font-size-lg);
    color: var(--color-text);
 }
 
@@ -131,7 +131,7 @@
 /* macOS-style select/picker */
 .SettingsSelect {
    padding: 6px 28px 6px 12px;
-   font-size: 0.9375rem;
+   font-size: var(--font-size-lg);
    color: var(--color-text);
    background: var(--color-surface);
    border-radius: 6px;

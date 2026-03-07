@@ -451,7 +451,7 @@ function onCancel() {
 .ScanResultsList-truncated {
    text-align: center;
    padding: var(--spacing-md) var(--spacing-lg);
-   font-size: 0.8125rem;
+   font-size: var(--font-size-base);
    color: var(--color-text-muted);
 }
 
@@ -474,7 +474,7 @@ function onCancel() {
    justify-content: center;
    gap: 0.5rem;
    padding: var(--spacing-md) var(--spacing-lg);
-   font-size: 0.9375rem;
+   font-size: var(--font-size-lg);
    font-weight: 600;
    color: var(--color-on-accent);
    background: linear-gradient(

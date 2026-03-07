@@ -132,7 +132,7 @@ const percentDisplay = computed(() => {
 
 .ScanScanning-progressTitle {
    margin: 0;
-   font-size: 0.875rem;
+   font-size: var(--font-size-md);
    font-weight: 500;
    color: var(--color-text);
    flex: 1;
@@ -170,7 +170,7 @@ const percentDisplay = computed(() => {
       align-items: flex-start;
       gap: var(--spacing-sm);
       margin: 0;
-      font-size: 0.8125rem;
+      font-size: var(--font-size-base);
    }
 
    span {
@@ -195,14 +195,14 @@ const percentDisplay = computed(() => {
 
 .ScanScanning-estimate {
    margin: 0;
-   font-size: 0.75rem;
+   font-size: var(--font-size-sm);
    color: var(--color-text-muted);
 }
 
 .ScanScanning-abortBtn {
    align-self: flex-start;
    padding: 0;
-   font-size: 0.875rem;
+   font-size: var(--font-size-md);
    font-weight: 500;
    color: var(--color-abort);
    background: none;

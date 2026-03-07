@@ -88,7 +88,7 @@ const { t } = useTranslations()
    }
 
    > span:not(.AppFooter-iconWrap) {
-      font-size: 0.75rem;
+      font-size: var(--font-size-sm);
       font-weight: 500;
       width: 100%;
       min-width: 0;

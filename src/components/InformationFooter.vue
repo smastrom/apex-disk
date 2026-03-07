@@ -100,7 +100,7 @@ async function openDonate() {
 
 .InformationFooter-line {
    margin: 0;
-   font-size: 0.8125rem;
+   font-size: var(--font-size-base);
    color: var(--color-text-muted);
 }
 
@@ -130,7 +130,7 @@ async function openDonate() {
 
 .InformationFooter-link {
    padding: 0;
-   font-size: 0.8125rem;
+   font-size: var(--font-size-base);
    font-weight: 500;
    color: var(--color-accent);
    background: none;

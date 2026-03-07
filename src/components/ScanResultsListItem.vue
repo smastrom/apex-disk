@@ -321,7 +321,7 @@ function dismissCheckboxTooltip() {
 }
 
 .ScanResultsListItem-name {
-   font-size: 0.9375rem;
+   font-size: var(--font-size-lg);
    font-weight: 500;
    color: var(--color-text);
    white-space: nowrap;
@@ -330,7 +330,7 @@ function dismissCheckboxTooltip() {
 }
 
 .ScanResultsListItem-details {
-   font-size: 0.75rem;
+   font-size: var(--font-size-sm);
    color: var(--color-text-muted);
 }
 
@@ -342,7 +342,7 @@ function dismissCheckboxTooltip() {
 }
 
 .ScanResultsListItem-size {
-   font-size: 0.875rem;
+   font-size: var(--font-size-md);
    color: var(--color-text-muted);
 }
 
@@ -361,7 +361,7 @@ function dismissCheckboxTooltip() {
    border-radius: 6px;
    background: var(--color-bg-elevated);
    color: var(--color-text);
-   font-size: 0.75rem;
+   font-size: var(--font-size-sm);
    font-weight: 500;
    line-height: 1.5;
    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);

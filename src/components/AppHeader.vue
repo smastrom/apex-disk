@@ -44,7 +44,7 @@ const { t } = useTranslations()
 }
 
 .AppHeader-title {
-   font-size: 1.125rem;
+   font-size: var(--font-size-xl);
    font-weight: 600;
    color: var(--color-text);
    margin: 0;
