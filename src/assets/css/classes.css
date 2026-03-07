@@ -150,7 +150,6 @@
 }
 
 .GradientButton {
-   --font-size: 18px;
    --font-weight: 600;
    --line-height: 21px;
    --radius: 6px;
@@ -167,7 +166,7 @@
    cursor: pointer;
 
    font-weight: var(--font-weight);
-   font-size: var(--font-size);
+
    line-height: var(--line-height);
    text-shadow: var(--text-shadow);
    border-radius: var(--radius);
