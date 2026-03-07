@@ -81,8 +81,6 @@ const percentDisplay = computed(() => {
          </p>
       </div>
 
-      <p class="ScanScanning-estimate">{{ t('ScanScanning', 'estimate') }}</p>
-
       <button
          type="button"
          class="ScanScanning-abortBtn"
@@ -138,13 +136,6 @@ const percentDisplay = computed(() => {
    font-weight: 500;
    color: var(--color-text);
    flex: 1;
-}
-
-.ScanScanning-elapsed {
-   margin: 0;
-   font-size: 0.75rem;
-   color: var(--color-text-muted);
-   flex-shrink: 0;
 }
 
 .ScanScanning-barWrap {
