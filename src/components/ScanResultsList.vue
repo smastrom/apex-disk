@@ -452,7 +452,7 @@ function onCancel() {
    text-align: center;
    padding: var(--spacing-md) var(--spacing-lg);
    font-size: 0.8125rem;
-   color: var(--color-text-secondary);
+   color: var(--color-text-muted);
 }
 
 .ScanResultsList-footer {

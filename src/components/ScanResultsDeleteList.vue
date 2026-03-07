@@ -311,7 +311,7 @@ async function onDeleteClick() {
    }
 }
 
-.ScanResultsDeleteList-listWrap--isDeleting {
+.ScanResultsDeleteList-listWrap--deleting {
    opacity: 0.5;
    pointer-events: none;
 }
