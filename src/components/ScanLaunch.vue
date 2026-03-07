@@ -67,7 +67,7 @@ const { t } = useTranslations()
 .ScanLaunch-noticeTitle {
    display: flex;
    align-items: center;
-   gap: 8px;
+   gap: var(--spacing-sm);
    margin: 0 0 var(--spacing-md) 0;
    font-size: var(--font-size-base);
    font-weight: 600;

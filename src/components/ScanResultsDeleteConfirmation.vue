@@ -131,7 +131,7 @@ function closeApp() {
    border: none;
    border-radius: 6px;
    cursor: pointer;
-   transition: color 0.2s;
+   transition: color 0.2s var(--ease-standard);
 
    &:hover {
       color: var(--color-text);

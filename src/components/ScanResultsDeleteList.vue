@@ -296,7 +296,7 @@ async function onDeleteClick() {
    min-height: 0;
    display: flex;
    flex-direction: column;
-   transition: opacity 0.25s;
+   transition: opacity 0.25s var(--ease-standard);
 
    &::before {
       content: '';
@@ -349,8 +349,8 @@ async function onDeleteClick() {
    font-size: var(--font-size-lg);
    border-radius: 8px;
    transition:
-      box-shadow 0.2s,
-      opacity 0.2s,
+      box-shadow 0.2s var(--ease-standard),
+      opacity 0.2s var(--ease-standard),
       padding 0.3s var(--ease-standard);
 
    &:hover:not(:disabled) {
@@ -392,7 +392,7 @@ async function onDeleteClick() {
    }
 
    .ScanResultsDeleteList-moveToTrashBtn {
-      transition: opacity 0.2s;
+      transition: opacity 0.2s var(--ease-standard);
    }
 }
 </style>

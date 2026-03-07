@@ -101,7 +101,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
    padding: var(--spacing-xs) var(--spacing-sm);
    min-height: 48px;
    cursor: pointer;
-   transition: background 0.2s;
+   transition: background 0.2s var(--ease-standard);
    border-bottom: 1px solid var(--color-accent-bg);
 
    &:hover {

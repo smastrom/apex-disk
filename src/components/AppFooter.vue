@@ -80,8 +80,8 @@ const { t } = useTranslations()
    color: var(--color-text-muted);
    border-radius: 8px;
    transition:
-      color 0.2s,
-      text-shadow 0.3s;
+      color 0.2s var(--ease-standard),
+      text-shadow 0.3s var(--ease-standard);
 
    &:hover {
       color: var(--color-text);

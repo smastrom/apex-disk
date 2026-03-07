@@ -484,7 +484,7 @@ function onCancel() {
       var(--btn-step-100) 100%
    );
    border: 1px solid rgba(255, 255, 255, 0.25);
-   transition: box-shadow 0.2s;
+   transition: box-shadow 0.2s var(--ease-standard);
 
    &:hover:not(:disabled) {
       box-shadow: 0 0 14px var(--color-accent-glow);

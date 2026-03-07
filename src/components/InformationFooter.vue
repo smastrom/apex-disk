@@ -136,7 +136,7 @@ async function openDonate() {
    background: none;
    border: none;
    cursor: pointer;
-   transition: color 0.2s;
+   transition: color 0.2s var(--ease-standard);
 
    &:hover {
       color: var(--color-accent-hover);

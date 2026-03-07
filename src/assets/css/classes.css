@@ -94,8 +94,8 @@
    border-radius: 16px;
    cursor: pointer;
    transition:
-      background 0.25s,
-      box-shadow 0.3s;
+      background 0.25s var(--ease-standard),
+      box-shadow 0.3s var(--ease-standard);
 }
 
 .SettingsToggle--on {
@@ -111,7 +111,7 @@
    height: 27px;
    background: #fff;
    border-radius: 50%;
-   transition: transform 0.2s;
+   transition: transform 0.2s var(--ease-standard);
    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
@@ -140,7 +140,7 @@
    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2386868b' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
    background-repeat: no-repeat;
    background-position: right 10px center;
-   transition: background 0.25s;
+   transition: background 0.25s var(--ease-standard);
    outline: none;
    border: none;
 }
@@ -178,7 +178,7 @@
       var(--btn-gradient-100) 100%
    );
    border: 1px solid rgba(255, 255, 255, 0.25);
-   transition: box-shadow 0.2s;
+   transition: box-shadow 0.2s var(--ease-standard);
 
    &:hover {
       box-shadow: var(--glow-md);

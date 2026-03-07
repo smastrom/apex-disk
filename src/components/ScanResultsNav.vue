@@ -169,8 +169,8 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
    cursor: pointer;
    opacity: 0.9;
    transition:
-      background 0.2s,
-      opacity 0.2s;
+      background 0.2s var(--ease-standard),
+      opacity 0.2s var(--ease-standard);
 
    &:hover:not(:disabled) {
       background: var(--color-surface-hover);

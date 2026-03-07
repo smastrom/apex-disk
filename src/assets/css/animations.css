@@ -13,7 +13,7 @@
 /* ── Vue <Transition> — app loading screen ─────────────────────────── */
 
 .app-ready-enter-active {
-   transition: opacity 0.15s ease-out;
+   transition: opacity 0.15s var(--ease-out);
 }
 
 .app-ready-enter-from {
@@ -21,7 +21,7 @@
 }
 
 .app-ready-leave-active {
-   transition: opacity 0.2s ease-out;
+   transition: opacity 0.2s var(--ease-out);
 }
 
 .app-ready-leave-to {

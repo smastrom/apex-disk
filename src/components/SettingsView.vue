@@ -365,7 +365,7 @@ async function openReleasesPage() {
    font-size: var(--font-size-sm);
    font-weight: 500;
    cursor: pointer;
-   transition: opacity 0.15s ease;
+   transition: opacity 0.15s var(--ease-standard);
 }
 
 .SettingsView-fdaBtn:hover:not(:disabled) {

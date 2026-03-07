@@ -152,7 +152,7 @@ const percentDisplay = computed(() => {
    height: 100%;
    background: var(--color-accent);
    border-radius: 3px;
-   transition: width 0.25s ease;
+   transition: width 0.25s var(--ease-standard);
 }
 
 .ScanScanning-stats {

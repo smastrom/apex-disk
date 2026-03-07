@@ -196,7 +196,7 @@ const newFreeSpace = computed(() => {
    height: 100%;
    background: color-mix(in srgb, var(--color-accent) 45%, var(--color-surface));
    border-radius: 5px;
-   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+   transition: width 0.4s var(--ease-standard);
    z-index: 0;
 }
 
@@ -207,7 +207,7 @@ const newFreeSpace = computed(() => {
    height: 100%;
    background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
    border-radius: 5px;
-   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+   transition: width 0.4s var(--ease-standard);
    box-shadow: var(--glow-sm);
    z-index: 1;
 }

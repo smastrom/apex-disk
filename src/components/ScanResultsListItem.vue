@@ -248,7 +248,7 @@ function dismissCheckboxTooltip() {
    margin: calc(var(--spacing-sm) / 2) var(--spacing-sm);
    border-radius: 8px;
    box-sizing: border-box;
-   transition: background 0.2s;
+   transition: background 0.2s var(--ease-standard);
 
    &:hover {
       background: var(--color-accent-bg-hover);
@@ -277,7 +277,7 @@ function dismissCheckboxTooltip() {
    border: none;
    cursor: pointer;
    color: var(--color-text-dim);
-   transition: filter 0.2s;
+   transition: filter 0.2s var(--ease-standard);
 }
 
 .ScanResultsListItem-check--selected .ScanResultsListItem-checkFilled {
@@ -355,7 +355,7 @@ function dismissCheckboxTooltip() {
 .ScanResultsListItem-checkboxPopover {
    position: fixed;
    margin: 0;
-   padding: 8px 12px;
+   padding: var(--spacing-sm) var(--spacing-md);
    max-width: 280px;
    border: 1px solid var(--color-border);
    border-radius: 6px;
