@@ -2,6 +2,7 @@ pub mod constants;
 pub mod delete;
 pub mod disk;
 pub mod locale;
+pub mod log;
 pub mod menu;
 pub mod menu_translations;
 pub mod native_dialog;
@@ -109,7 +110,9 @@ pub fn run() {
             store::set_settings,
             store::get_setting,
             store::update_setting,
-            system_info::get_system_info
+            system_info::get_system_info,
+            log::is_debug_mode,
+            log::log_message
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

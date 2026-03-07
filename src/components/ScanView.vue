@@ -22,6 +22,7 @@ import ScanLaunch from './ScanLaunch.vue'
 
 import { ref, watch, onDeactivated, useTemplateRef } from 'vue'
 
+import { log } from '@/lib/log'
 import { useScanner } from '@/lib/use-scanner'
 
 import type { DeleteListItem } from '@/types/structs'
@@ -47,10 +48,13 @@ watch(
    [() => isScanning.value, () => folders.value.length],
    ([isScanning, folderCount]) => {
       if (isScanning) {
+         log('view', 'Scan view: scanning')
          activeView.value = ActiveView.SCANNING
       } else if (folderCount === 0) {
+         log('view', 'Scan view: launch')
          activeView.value = ActiveView.LAUNCH
       } else {
+         log('view', 'Scan view: results')
          activeView.value = ActiveView.RESULTS
       }
    },
@@ -95,6 +99,7 @@ function onSelectedSizeUpdate(value: number) {
 }
 
 function onReview(items: DeleteListItem[]) {
+   log('view', `Scan view: delete review (${items.length} items)`)
    deleteItems.value = items
    activeView.value = ActiveView.DELETE
 }
@@ -112,6 +117,7 @@ watch(resultsListRef, (ref) => {
 })
 
 function onDeleteComplete(items: DeleteListItem[]) {
+   log('delete', `Delete complete: ${items.length} items`)
    deletedSummary.value = {
       count: items.length,
       size: items.reduce((sum, i) => sum + i.size, 0),

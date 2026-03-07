@@ -1,3 +1,4 @@
+import { log } from '@/lib/log'
 import { useAppSettings } from '@/stores/app-settings'
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
@@ -33,6 +34,8 @@ export function useScanner() {
    let unlistenProgress: (() => void) | null = null
 
    async function loadFolders() {
+      log('scan', 'Scan started')
+
       // Clean up any previous scan's listener before starting a new one
       unlistenProgress?.()
       unlistenProgress = null
@@ -56,8 +59,12 @@ export function useScanner() {
 
          const result = await invoke<FolderInfo[]>('get_user_folders', { options })
 
-         if (gen === scanGeneration.value) folders.value = result
+         if (gen === scanGeneration.value) {
+            log('scan', `Scan complete: ${result.length} folders`)
+            folders.value = result
+         }
       } catch (error) {
+         log('scan', 'Scan error', error)
          if (gen === scanGeneration.value) console.error('Error isLoading folders:', error)
       } finally {
          if (gen === scanGeneration.value) {
@@ -69,6 +76,7 @@ export function useScanner() {
    }
 
    async function onAbort() {
+      log('scan', 'Scan aborted')
       scanGeneration.value += 1
       unlistenProgress?.()
       unlistenProgress = null

@@ -27,6 +27,7 @@ import {
 import { invoke } from '@tauri-apps/api/core'
 
 import { formatBytes } from '@/lib/format'
+import { log } from '@/lib/log'
 import { useTranslations } from '@/lib/use-translations'
 import { useReducedMotion } from '@/lib/use-reduced-motion'
 
@@ -188,6 +189,7 @@ async function onDeleteClick() {
 
    isDeleting.value = true
    const toDelete = props.items.filter((item) => checkedMapRef.value.get(item.path))
+   log('delete', `Deleting ${toDelete.length} items (${formatBytes(selectedSize.value)})`)
 
    const items = toDelete.map((item) => ({
       path: item.path,

@@ -25,6 +25,7 @@ import {
 } from 'vue'
 
 import { formatBytes } from '@/lib/format'
+import { log } from '@/lib/log'
 import { useTranslations } from '@/lib/use-translations'
 import { useViewTransition } from '@/lib/use-view-transition'
 
@@ -242,10 +243,13 @@ function toggleSelect(item: FolderInfo) {
    if (item.is_protected) return
 
    if (selectedMap.has(item.path)) {
+      log('file', `Deselect: ${item.name}`)
       selectedMap.delete(item.path)
    } else if (someSelectedPaths.value.has(item.path)) {
+      log('file', `Deselect descendants: ${item.name}`)
       deselectDescendants(item.path)
    } else {
+      log('file', `Select: ${item.name} (${formatBytes(item.size)})`)
       selectedMap.set(item.path, item)
    }
 }
@@ -290,6 +294,7 @@ function clearListTransitionNames() {
 /** Navigates into a folder's children with a forward view transition. */
 async function goInto(item: FolderInfo) {
    if (item.is_file) return
+   log('nav', `Navigate into: ${item.name} (${item.children.length} children)`)
 
    document.documentElement.style.setProperty('--nav-direction', '1')
    enableListTransitionNames()
@@ -304,6 +309,7 @@ async function goInto(item: FolderInfo) {
 /** Navigates to the previous directory with a backward view transition. */
 async function goBack() {
    if (backStack.value.length === 0) return
+   log('nav', `Navigate back to: ${backStack.value[backStack.value.length - 1].label || '~'}`)
 
    document.documentElement.style.setProperty('--nav-direction', '-1')
    enableListTransitionNames()
@@ -317,6 +323,10 @@ async function goBack() {
 /** Re-enters a previously visited directory with a forward view transition. */
 async function goForward() {
    if (forwardStack.value.length === 0) return
+   log(
+      'nav',
+      `Navigate forward to: ${forwardStack.value[forwardStack.value.length - 1].label || '~'}`
+   )
 
    document.documentElement.style.setProperty('--nav-direction', '1')
    enableListTransitionNames()
