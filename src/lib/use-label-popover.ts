@@ -22,8 +22,6 @@ export function useLabelPopover(
 
    const ENTER_DELAY = 400
    const LEAVE_DELAY = 200
-   /** Matches content padding (--spacing-md) so the popover aligns with the UI. */
-   const EDGE_MARGIN = 16
 
    function isTruncated(): boolean {
       const el = triggerRef.value
@@ -37,10 +35,15 @@ export function useLabelPopover(
       const popover = popoverRef.value
       if (!trigger || !popover) return
 
-      const rect = trigger.getBoundingClientRect()
+      const triggerRect = trigger.getBoundingClientRect()
+      const windowWidth = window.innerWidth
 
-      popover.style.left = `${rect.left}px`
-      popover.style.top = `${rect.top - 4}px`
+      // Center horizontally in window
+      const popoverWidth = 420
+      const centeredLeft = (windowWidth - popoverWidth) / 2
+
+      popover.style.left = `${centeredLeft}px`
+      popover.style.top = `${triggerRect.top}px`
    }
 
    /** Keeps popover within viewport horizontal bounds with consistent margins. */
@@ -48,14 +51,26 @@ export function useLabelPopover(
       const popover = popoverRef.value
       if (!popover) return
 
-      const maxWidth = window.innerWidth - EDGE_MARGIN * 2
+      const windowWidth = window.innerWidth
+      const EDGE_MARGIN = 16
+
+      // Calculate max width with margins
+      const maxWidth = windowWidth - EDGE_MARGIN * 2
       popover.style.maxWidth = `${maxWidth}px`
 
-      const rect = popover.getBoundingClientRect()
-      const maxLeft = window.innerWidth - EDGE_MARGIN - rect.width
-      const left = Math.max(EDGE_MARGIN, Math.min(rect.left, maxLeft))
+      // Get the updated rect after max-width change
+      const updatedRect = popover.getBoundingClientRect()
 
-      popover.style.left = `${left}px`
+      // Center horizontally
+      const centeredLeft = (windowWidth - updatedRect.width) / 2
+
+      // Clamp to viewport edges
+      const finalLeft = Math.max(
+         EDGE_MARGIN,
+         Math.min(centeredLeft, windowWidth - EDGE_MARGIN - updatedRect.width)
+      )
+
+      popover.style.left = `${finalLeft}px`
    }
 
    function show() {

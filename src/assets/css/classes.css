@@ -1,6 +1,52 @@
 /* MacDiskTree — Reusable utility classes */
 /* Focus ring for focusable elements is applied globally in global.css when focus came from keyboard (html.focus-ring-keyboard + :focus) and theme variables (--focus-ring-*). */
 
+/* ── Popover styles ── */
+
+.Popover {
+   position: fixed;
+   margin: 0;
+   padding: 6px 10px;
+   max-width: 420px;
+   border: 1px solid var(--color-border);
+   border-radius: 6px;
+   background: var(--color-bg-elevated);
+   color: var(--color-text);
+   font-size: 0.75rem;
+   font-weight: 500;
+   line-height: 1.4;
+   word-break: break-all;
+   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+   transform: translateY(-100%);
+   pointer-events: auto;
+
+   /* Closed state (for the transition) */
+   opacity: 0;
+   filter: blur(4px);
+   transition:
+      opacity 0.2s var(--ease-standard),
+      filter 0.2s var(--ease-standard);
+}
+
+.Popover:popover-open {
+   opacity: 1;
+   filter: blur(0);
+}
+
+@starting-style {
+   .Popover:popover-open {
+      opacity: 0;
+      filter: blur(4px);
+   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+   .Popover {
+      transition: none;
+      filter: none;
+   }
+}
+
 /* macOS-style grouped list container */
 .SettingsGroup {
    background: var(--color-bg-elevated);

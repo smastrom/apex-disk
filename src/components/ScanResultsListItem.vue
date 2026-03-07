@@ -216,7 +216,7 @@ function dismissCheckboxTooltip() {
       <div
          ref="popoverRef"
          popover="manual"
-         class="ScanResultsListItem-popover"
+         class="Popover"
          @pointerenter="onPointerEnter"
          @pointerleave="onPointerLeave"
       >
@@ -348,52 +348,6 @@ function dismissCheckboxTooltip() {
 
 .ScanResultsListItem-chevron {
    color: var(--color-text-dim);
-}
-
-/* ── Name popover ── */
-
-.ScanResultsListItem-popover {
-   position: fixed;
-   margin: 0;
-   padding: 6px 10px;
-   max-width: 420px;
-   border: 1px solid var(--color-border);
-   border-radius: 6px;
-   background: var(--color-bg-elevated);
-   color: var(--color-text);
-   font-size: 0.75rem;
-   font-weight: 500;
-   line-height: 1.4;
-   word-break: break-all;
-   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
-   transform: translateY(-100%);
-   pointer-events: auto;
-
-   /* Closed state (for the transition) */
-   opacity: 0;
-   filter: blur(4px);
-   transition:
-      opacity 0.2s var(--ease-standard),
-      filter 0.2s var(--ease-standard);
-}
-
-.ScanResultsListItem-popover:popover-open {
-   opacity: 1;
-   filter: blur(0);
-}
-
-@starting-style {
-   .ScanResultsListItem-popover:popover-open {
-      opacity: 0;
-      filter: blur(4px);
-   }
-}
-
-@media (prefers-reduced-motion: reduce) {
-   .ScanResultsListItem-popover {
-      transition: none;
-      filter: none;
-   }
 }
 
 /* ── Checkbox tooltip popover ── */
