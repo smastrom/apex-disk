@@ -34,11 +34,11 @@ const percent = computed(() => {
 
    const raw = Math.max(0, Math.min(100, (props.progress.current / props.progress.total) * 100))
 
-   return raw >= 100 ? 99 : Math.round(raw)
+   return Math.round(raw)
 })
 
 const percentDisplay = computed(() => {
-   if (percent.value === 99) return 'Preparing results...'
+   if (percent.value >= 99) return t('ScanScanning', 'finalizing')
    return `${formatProgressNumber(percent.value)}%`
 })
 </script>
@@ -213,7 +213,7 @@ const percentDisplay = computed(() => {
    padding: 0;
    font-size: 0.875rem;
    font-weight: 500;
-   color: #ff3b30;
+   color: var(--color-abort);
    background: none;
    border: none;
    cursor: pointer;
