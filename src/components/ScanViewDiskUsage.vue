@@ -60,8 +60,7 @@ const newFreeSpace = computed(() => {
    <div v-if="props.usage" class="ScanViewDiskUsage-root" data-testid="disk-usage">
       <div class="ScanViewDiskUsage-header">
          <span class="ScanViewDiskUsage-userBadge">
-            /smastrom
-            <!-- {{ props.usage.user_name }} -->
+            {{ props.usage.user_name }}
          </span>
 
          <span class="ScanViewDiskUsage-volume">
