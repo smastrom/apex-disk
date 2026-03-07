@@ -120,6 +120,11 @@ const displayPath = computed(() => {
 /** Visible items for the current directory (filtering is done at scan time in Rust). */
 const displayedItems = computed(() => current.value.items)
 
+/** True when Rust's MAX_FILES_PER_DIR cap (100) was likely hit for this directory. */
+const isFileListTruncated = computed(
+   () => current.value.items.filter((i) => i.is_file).length >= 100
+)
+
 const parentRef = useTemplateRef<HTMLElement>('parentRef')
 
 /** Resets scroll position to top when navigating into a different directory. */
@@ -269,7 +274,6 @@ function setSelectedItems(items: DeleteListItem[]) {
 defineExpose({ setSelectedItems })
 
 const listWrapRef = useTemplateRef<HTMLElement>('listWrapRef')
-const footerRef = useTemplateRef<HTMLElement>('footerRef')
 
 /**
  * View transition name helpers. Names are applied just before a transition
@@ -277,12 +281,10 @@ const footerRef = useTemplateRef<HTMLElement>('footerRef')
  */
 function enableListTransitionNames() {
    listWrapRef.value?.style.setProperty('view-transition-name', 'list-view')
-   footerRef.value?.style.setProperty('view-transition-name', 'list-footer')
 }
 
 function clearListTransitionNames() {
    listWrapRef.value?.style.removeProperty('view-transition-name')
-   footerRef.value?.style.removeProperty('view-transition-name')
 }
 
 /** Navigates into a folder's children with a forward view transition. */
@@ -368,10 +370,13 @@ function onCancel() {
                   />
                </div>
             </div>
+            <p v-if="isFileListTruncated" class="ScanResultsList-truncated">
+               {{ t('ScanResultsList', 'truncated') }}
+            </p>
          </div>
       </div>
 
-      <div ref="footerRef" class="ScanResultsList-footer">
+      <div class="ScanResultsList-footer">
          <button
             type="button"
             class="ScanResultsList-deleteBtn GradientButton"
@@ -443,6 +448,13 @@ function onCancel() {
    }
 }
 
+.ScanResultsList-truncated {
+   text-align: center;
+   padding: var(--spacing-md) var(--spacing-lg);
+   font-size: 0.8125rem;
+   color: var(--color-text-secondary);
+}
+
 .ScanResultsList-footer {
    position: absolute;
    bottom: 0;
@@ -464,11 +476,28 @@ function onCancel() {
    padding: var(--spacing-md) var(--spacing-lg);
    font-size: 0.9375rem;
    font-weight: 600;
+   color: var(--color-on-accent);
+   background: linear-gradient(
+      90deg,
+      var(--btn-step-0) 0%,
+      var(--btn-step-50) 50%,
+      var(--btn-step-100) 100%
+   );
+   border: 1px solid rgba(255, 255, 255, 0.25);
+   transition: box-shadow 0.2s;
+
+   &:hover:not(:disabled) {
+      box-shadow: 0 0 14px var(--color-accent-glow);
+   }
 
    &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
       box-shadow: none;
+   }
+
+   & svg {
+      filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.2));
    }
 }
 </style>

@@ -235,7 +235,7 @@ async function onDeleteClick() {
       <div class="ScanResultsDeleteList-footer">
          <button
             type="button"
-            class="ScanResultsDeleteList-deleteBtn"
+            class="GradientButton ScanResultsDeleteList-moveToTrashBtn"
             :data-deleting="isDeleting || undefined"
             :disabled="countdownRemaining > 0 || checkedCount === 0 || isDeleting"
             data-testid="confirm-delete"
@@ -338,7 +338,7 @@ async function onDeleteClick() {
    box-shadow: 0 -2px 16px var(--color-bg);
 }
 
-.ScanResultsDeleteList-deleteBtn {
+.ScanResultsDeleteList-moveToTrashBtn {
    height: var(--cta-btn-height);
    width: 100%;
    display: flex;
@@ -347,18 +347,14 @@ async function onDeleteClick() {
    gap: 0.5rem;
    padding: var(--spacing-md) var(--spacing-lg);
    font-size: 0.9375rem;
-   font-weight: 600;
-   color: #fff;
-   background: #ff3b30;
-   border: none;
    border-radius: 8px;
-   cursor: pointer;
    transition:
+      box-shadow 0.2s,
       opacity 0.2s,
       padding 0.3s var(--ease-standard);
 
    &:hover:not(:disabled) {
-      opacity: 0.9;
+      box-shadow: 0 0 14px var(--color-action-glow);
    }
 
    &:disabled:not([data-deleting]) {
@@ -385,7 +381,7 @@ async function onDeleteClick() {
 }
 
 .ScanResultsDeleteList-spinner {
-   color: #fff;
+   color: var(--color-on-accent);
 }
 
 /* Keep opacity transitions; only remove movement (sliding, gap, padding). */
@@ -395,7 +391,7 @@ async function onDeleteClick() {
       transition: opacity 0.25s var(--ease-standard);
    }
 
-   .ScanResultsDeleteList-deleteBtn {
+   .ScanResultsDeleteList-moveToTrashBtn {
       transition: opacity 0.2s;
    }
 }

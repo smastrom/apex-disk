@@ -84,7 +84,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
       <div
          ref="popoverRef"
          popover="manual"
-         class="ScanResultsDeleteListItem-popover"
+         class="Popover"
          @pointerenter="onPointerEnter"
          @pointerleave="onPointerLeave"
       >
@@ -169,53 +169,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
 }
 
 .ScanResultsDeleteListItem-size {
-   flex-shrink: 0;
-   font-size: 0.75rem;
+   font-size: 0.875rem;
    color: var(--color-text-muted);
-}
-
-/* ── Name popover ── */
-
-.ScanResultsDeleteListItem-popover {
-   position: fixed;
-   margin: 0;
-   padding: 6px 10px;
-   max-width: 420px;
-   border: 1px solid var(--color-border);
-   border-radius: 6px;
-   background: var(--color-bg-elevated);
-   color: var(--color-text);
-   font-size: 0.75rem;
-   font-weight: 500;
-   line-height: 1.4;
-   word-break: break-all;
-   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
-   transform: translateY(-100%);
-   pointer-events: auto;
-
-   opacity: 0;
-   filter: blur(4px);
-   transition:
-      opacity 0.2s var(--ease-standard),
-      filter 0.2s var(--ease-standard);
-}
-
-.ScanResultsDeleteListItem-popover:popover-open {
-   opacity: 1;
-   filter: blur(0);
-}
-
-@starting-style {
-   .ScanResultsDeleteListItem-popover:popover-open {
-      opacity: 0;
-      filter: blur(4px);
-   }
-}
-
-@media (prefers-reduced-motion: reduce) {
-   .ScanResultsDeleteListItem-popover {
-      transition: none;
-      filter: none;
-   }
 }
 </style>
