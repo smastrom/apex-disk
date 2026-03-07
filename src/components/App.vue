@@ -49,7 +49,10 @@ watch(
 )
 
 const { activeView, setActiveView } = useAppViews(mainContentRef)
-const { newAvailableVersion, isChecking, onCheckForUpdates } = useAppUpdate()
+const { newAvailableVersion, isChecking, onCheckForUpdates } = useAppUpdate({
+   checkOnMount: false,
+   listenToUpdates: false,
+})
 
 const { systemInfo } = await useSystemInfo()
 const { isFdaGranted } = await useFullDiskAccess()

@@ -7,7 +7,6 @@ export async function useFullDiskAccess() {
 
    try {
       isFdaGranted.value = await invoke<boolean>('check_full_disk_access')
-      console.log('[FDA] Result:', isFdaGranted.value)
    } catch (err) {
       console.error('[FDA] invoke failed:', err)
    }

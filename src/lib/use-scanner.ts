@@ -82,13 +82,9 @@ export function useScanner() {
       try {
          await invoke('cancel_scan')
       } catch (error) {
-         console.warn('Failed to cancel scan:', error)
+         console.error('Failed to cancel scan:', error)
       }
    }
-
-   watch(isScanning, (isScanning) => {
-      console.log('isScanning', isScanning)
-   })
 
    return {
       folders,
