@@ -10,13 +10,13 @@ Example:
 -->
 
 <script setup lang="ts">
+import type { SystemInfo } from '@/types/system-info'
+
 import Logo from './ui/Logo.vue'
 import InformationFooter from './InformationFooter.vue'
 
 import { useTranslations } from '@/lib/use-translations'
 import { formatBytes } from '@/lib/format'
-
-import type { SystemInfo } from '@/types/system-info'
 
 import { APP_NAME } from '@/lib/constants'
 

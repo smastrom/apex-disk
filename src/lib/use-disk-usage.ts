@@ -1,10 +1,10 @@
-import { ref, onMounted, onUnmounted, type Ref } from 'vue'
 import { getCurrentWindow } from '@tauri-apps/api/window'
+import { ref, onMounted, onUnmounted, type Ref } from 'vue'
+
+import type { DiskUsage } from '@/types/disk'
 
 import { getDiskUsage } from './disk'
 import { debounce } from './utils'
-
-import type { DiskUsage } from '@/types/disk'
 
 export interface UseDiskUsageReturn {
    diskUsage: Ref<DiskUsage | null>

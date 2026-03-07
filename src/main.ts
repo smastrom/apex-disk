@@ -1,9 +1,8 @@
+import { applyTheme, applyDirection } from '@/lib/document'
+import { initTauriAppSettings } from '@/stores/app-settings'
 import { createApp } from 'vue'
 
 import AppShell from './components/AppShell.vue'
-
-import { initTauriAppSettings } from '@/stores/app-settings'
-import { applyTheme, applyDirection } from '@/lib/document'
 
 const store = await initTauriAppSettings()
 

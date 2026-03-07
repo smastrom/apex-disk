@@ -1,7 +1,7 @@
 import path from 'path'
 
-import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite'
 
 const host = process.env.TAURI_DEV_HOST
 

@@ -1,5 +1,5 @@
-import { ref } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
+import { ref } from 'vue'
 
 import type { SystemInfo } from '@/types/system-info'
 

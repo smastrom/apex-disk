@@ -1,6 +1,5 @@
-import { ref, type ShallowRef } from 'vue'
-
 import { useViewTransition } from '@/lib/use-view-transition'
+import { ref, type ShallowRef } from 'vue'
 
 const VIEW_ORDER = ['scan', 'settings', 'information'] as const
 

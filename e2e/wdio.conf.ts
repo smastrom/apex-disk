@@ -1,7 +1,6 @@
-import path from 'node:path'
-
-import { fileURLToPath } from 'url'
 import { spawn, spawnSync, type ChildProcess } from 'child_process'
+import path from 'node:path'
+import { fileURLToPath } from 'url'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const rootDir = path.resolve(__dirname, '..')

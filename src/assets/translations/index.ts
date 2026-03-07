@@ -1,19 +1,19 @@
-import { global } from './global'
-import { AppHeader } from './AppHeader'
+import type { Language } from '@/types/settings'
+
 import { App } from './App'
-import { ScanViewDiskUsage } from './ScanViewDiskUsage'
+import { AppFooter } from './AppFooter'
+import { AppHeader } from './AppHeader'
+import { global } from './global'
+import { InformationFooter } from './InformationFooter'
+import { InformationView } from './InformationView'
 import { ScanLaunch } from './ScanLaunch'
-import { ScanScanning } from './ScanScanning'
+import { ScanResultsDeleteConfirmation } from './ScanResultsDeleteConfirmation'
+import { ScanResultsDeleteList } from './ScanResultsDeleteList'
 import { ScanResultsList } from './ScanResultsList'
 import { ScanResultsListItem } from './ScanResultsListItem'
-import { ScanResultsDeleteList } from './ScanResultsDeleteList'
-import { ScanResultsDeleteConfirmation } from './ScanResultsDeleteConfirmation'
+import { ScanScanning } from './ScanScanning'
+import { ScanViewDiskUsage } from './ScanViewDiskUsage'
 import { SettingsView } from './SettingsView'
-import { InformationFooter } from './InformationFooter'
-import { AppFooter } from './AppFooter'
-import { InformationView } from './InformationView'
-
-import type { Language } from '@/types/settings'
 
 export const translations = {
    global,

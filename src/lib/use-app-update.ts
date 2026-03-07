@@ -1,6 +1,6 @@
-import { ref, onMounted, onUnmounted } from 'vue'
 import { listen } from '@tauri-apps/api/event'
 import { check } from '@tauri-apps/plugin-updater'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 export function useAppUpdate({
    checkOnMount = true,

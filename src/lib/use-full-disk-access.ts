@@ -1,5 +1,5 @@
-import { ref } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
+import { ref } from 'vue'
 
 /** Checks macOS Full Disk Access permission on mount and exposes the result as a reactive ref. */
 export async function useFullDiskAccess() {
