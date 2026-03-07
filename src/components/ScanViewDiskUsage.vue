@@ -59,10 +59,6 @@ const newFreeSpace = computed(() => {
 <template>
    <div v-if="props.usage" class="ScanViewDiskUsage-root" data-testid="disk-usage">
       <div class="ScanViewDiskUsage-header">
-         <span class="ScanViewDiskUsage-userBadge">
-            {{ props.usage.user_name }}
-         </span>
-
          <span class="ScanViewDiskUsage-volume">
             <PhHardDrive
                :size="14"
@@ -72,6 +68,7 @@ const newFreeSpace = computed(() => {
             />
             {{ props.usage.volume_name }}
          </span>
+         <span class="ScanViewDiskUsage-userBadge"> /{{ props.usage.user_name }} </span>
       </div>
       <div class="ScanViewDiskUsage-infoRow">
          <span class="ScanViewDiskUsage-info">
