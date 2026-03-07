@@ -50,6 +50,12 @@ The command simply tells macOS to "clear" the security flags it attaches to apps
 
 If the project gains enough community interest and matures past the early stages, I'll look into official notarization. In the meantime, the code is right here for you to audit.
 
+### Internet & Privacy
+
+MacDiskTree is designed to work entirely offline. It does not use telemetry, tracking, or background data collection.
+
+**Manual Update Checks:** The app only attempts to access the network when you manually click "Check for Updates."
+
 ## Building from source
 
 **Prerequisites:**
