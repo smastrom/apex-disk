@@ -28,14 +28,14 @@ const props = defineProps<{
 </script>
 
 <template>
-   <main class="InformationView-root">
+   <main class="InformationView-root" data-testid="information-view">
       <div class="InformationView-content">
          <!-- App branding section -->
          <section class="InformationView-branding">
             <div class="InformationView-logoContainer">
                <Logo class="InformationView-logo" />
             </div>
-            <h1 class="InformationView-title">{{ APP_NAME }}</h1>
+            <h1 class="InformationView-title" data-testid="information-title">{{ APP_NAME }}</h1>
 
             <p class="InformationView-description">
                {{ t('InformationView', 'description') }}

@@ -48,6 +48,7 @@ const { t } = useTranslations()
       <button
          class="AppFooter-btn"
          :class="{ 'AppFooter-btn--active': activeView === 'information' }"
+         data-testid="footer-information"
          @click="emit('select-view', 'information')"
       >
          <PhInfo :size="24" weight="regular" aria-hidden="true" />

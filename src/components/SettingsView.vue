@@ -91,7 +91,7 @@ async function openReleasesPage() {
 
 <template>
    <main class="SettingsView-root" data-testid="settings-view">
-      <div class="SettingsView-content">
+      <div class="SettingsView-content" data-testid="settings-content">
          <!-- App Settings -->
 
          <section class="SettingsGroup">
