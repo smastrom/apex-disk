@@ -24,6 +24,8 @@ Example:
 <script setup lang="ts">
 import { PhCaretLeft, PhCaretRight, PhFolderSimple, PhTrashSimple } from '@phosphor-icons/vue'
 
+import { useTemplateRef } from 'vue'
+import { useLabelPopover } from '@/lib/use-label-popover'
 import { useTranslations } from '@/lib/use-translations'
 
 withDefaults(
@@ -50,6 +52,11 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useTranslations()
+
+const pathTextRef = useTemplateRef<HTMLElement>('pathTextRef')
+const pathPopoverRef = useTemplateRef<HTMLElement>('pathPopoverRef')
+
+const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopoverRef)
 </script>
 
 <template>
@@ -77,7 +84,7 @@ const { t } = useTranslations()
             <PhCaretRight :size="18" weight="regular" aria-hidden="true" />
          </button>
       </div>
-      <div class="ScanResultsNav-path" :title="pathTitle" data-testid="nav-path-label">
+      <div class="ScanResultsNav-path" data-testid="nav-path-label">
          <PhTrashSimple
             v-if="pathIcon === 'trash'"
             :size="16"
@@ -92,7 +99,13 @@ const { t } = useTranslations()
             class="ScanResultsNav-pathIcon"
             aria-hidden="true"
          />
-         <span class="ScanResultsNav-pathText">{{ pathLabel }}</span>
+         <span
+            ref="pathTextRef"
+            class="ScanResultsNav-pathText"
+            @pointerenter="onPointerEnter"
+            @pointerleave="onPointerLeave"
+            >{{ pathLabel }}</span
+         >
       </div>
       <div v-if="isActionsShown" class="ScanResultsNav-actions">
          <button
@@ -115,6 +128,15 @@ const { t } = useTranslations()
          </button>
       </div>
    </nav>
+   <div
+      ref="pathPopoverRef"
+      popover="manual"
+      class="Popover"
+      @pointerenter="onPointerEnter"
+      @pointerleave="onPointerLeave"
+   >
+      {{ pathTitle || pathLabel }}
+   </div>
 </template>
 
 <style scoped>
@@ -219,7 +241,7 @@ const { t } = useTranslations()
    padding: 0;
    font-size: 0.875rem;
    font-weight: 500;
-   color: #ff3b30;
+   color: var(--color-abort);
    background: none;
    border: none;
    cursor: pointer;
