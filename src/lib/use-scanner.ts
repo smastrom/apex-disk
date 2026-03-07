@@ -1,4 +1,4 @@
-import { ref, shallowRef, watch } from 'vue'
+import { ref, shallowRef } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 
