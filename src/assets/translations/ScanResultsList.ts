@@ -1,6 +1,7 @@
 export const ScanResultsList = {
    en: {
       goToReview: 'Review items',
+      goToReviewSizeOne: 'Review {{count}} item ({{size}})',
       goToReviewSize: 'Review {{count}} items ({{size}})',
       resetSelection: 'Reset',
       cancel: 'Cancel',
@@ -8,6 +9,7 @@ export const ScanResultsList = {
    },
    it: {
       goToReview: 'Revisiona',
+      goToReviewSizeOne: 'Revisiona {{count}} elemento ({{size}})',
       goToReviewSize: 'Revisiona {{count}} elementi ({{size}})',
       resetSelection: 'Resetta',
       cancel: 'Annulla',
@@ -15,6 +17,7 @@ export const ScanResultsList = {
    },
    es: {
       goToReview: 'Revisar',
+      goToReviewSizeOne: 'Revisar {{count}} elemento ({{size}})',
       goToReviewSize: 'Revisar {{count}} elementos ({{size}})',
       resetSelection: 'Restablecer',
       cancel: 'Cancelar',
@@ -22,6 +25,7 @@ export const ScanResultsList = {
    },
    zh: {
       goToReview: '\u67e5\u770b',
+      goToReviewSizeOne: '\u67e5\u770b {{count}} \u4e2a\u5143\u7d20 ({{size}})',
       goToReviewSize: '\u67e5\u770b {{count}} \u4e2a\u5143\u7d20 ({{size}})',
       resetSelection: '\u91cd\u7f6e',
       cancel: '\u53d6\u6d88',
@@ -30,6 +34,7 @@ export const ScanResultsList = {
    },
    ja: {
       goToReview: '\u78ba\u8a8d',
+      goToReviewSizeOne: '\u78ba\u8a8d {{count}} \u306e\u8981\u7d20 ({{size}})',
       goToReviewSize: '\u78ba\u8a8d {{count}} \u306e\u8981\u7d20 ({{size}})',
       resetSelection: '\u30ea\u30bb\u30c3\u30c8',
       cancel: '\u30ad\u30e3\u30f3\u30bb\u30eb',
@@ -38,6 +43,8 @@ export const ScanResultsList = {
    },
    ar: {
       goToReview: '\u0627\u0644\u062a\u0639\u0644\u064a\u0642 \u0625\u0644\u0649',
+      goToReviewSizeOne:
+         '\u0627\u0644\u062a\u0639\u0644\u064a\u0642 \u0625\u0644\u0649 {{count}} \u0627\u0644\u0645\u062c\u0644\u062f ({{size}})',
       goToReviewSize:
          '\u0627\u0644\u062a\u0639\u0644\u064a\u0642 \u0625\u0644\u0649 {{count}} \u0627\u0644\u0645\u062c\u0644\u062f ({{size}})',
       resetSelection: '\u0625\u0639\u0627\u062f\u0629 \u062a\u0639\u064a\u064a\u0646',
@@ -48,6 +55,8 @@ export const ScanResultsList = {
    ru: {
       goToReview:
          '\u041f\u0440\u043e\u0441\u043c\u043e\u0442\u0440 \u0438\u043c\u0435\u043d\u043d\u043e\u0441\u0442\u0438',
+      goToReviewSizeOne:
+         '\u041f\u0440\u043e\u0441\u043c\u043e\u0442\u0440 \u0438\u043c\u0435\u043d\u043d\u043e\u0441\u0442\u0438 \u0432 {{count}} \u043f\u0430\u043f\u043a\u0443 ({{size}})',
       goToReviewSize:
          '\u041f\u0440\u043e\u0441\u043c\u043e\u0442\u0440 \u0438\u043c\u0435\u043d\u043d\u043e\u0441\u0442\u0438 \u0432 {{count}} \u043f\u0430\u043f\u043a ({{size}})',
       resetSelection: '\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c',
@@ -57,13 +66,15 @@ export const ScanResultsList = {
    },
    fr: {
       goToReview: 'V\u00e9rifier',
-      goToReviewSize: 'V\u00e9rifier {{count}} éléments ({{size}})',
+      goToReviewSizeOne: 'V\u00e9rifier {{count}} \u00e9l\u00e9ment ({{size}})',
+      goToReviewSize: 'V\u00e9rifier {{count}} \u00e9l\u00e9ments ({{size}})',
       resetSelection: 'R\u00e9initialiser',
       cancel: 'Annuler',
       truncated: 'Seuls les 100 fichiers les plus volumineux sont affich\u00e9s par dossier.',
    },
    pt: {
       goToReview: 'Rever',
+      goToReviewSizeOne: 'Rever {{count}} item ({{size}})',
       goToReviewSize: 'Rever {{count}} itens ({{size}})',
       resetSelection: 'Repor',
       cancel: 'Cancelar',
@@ -71,6 +82,7 @@ export const ScanResultsList = {
    },
    de: {
       goToReview: 'Pr\u00fcfen',
+      goToReviewSizeOne: 'Pr\u00fcfen {{count}} Element ({{size}})',
       goToReviewSize: 'Pr\u00fcfen {{count}} Elemente ({{size}})',
       resetSelection: 'Zur\u00fccksetzen',
       cancel: 'Abbrechen',

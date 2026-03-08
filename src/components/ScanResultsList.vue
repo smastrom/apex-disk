@@ -405,10 +405,14 @@ function onCancel() {
          >
             {{
                selectedSize > 0
-                  ? t('ScanResultsList', 'goToReviewSize', {
-                       size: formatBytes(selectedSize),
-                       count: selectedMap.size,
-                    })
+                  ? t(
+                       'ScanResultsList',
+                       selectedMap.size === 1 ? 'goToReviewSizeOne' : 'goToReviewSize',
+                       {
+                          size: formatBytes(selectedSize),
+                          count: selectedMap.size,
+                       }
+                    )
                   : t('ScanResultsList', 'goToReview')
             }}
          </button>

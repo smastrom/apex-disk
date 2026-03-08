@@ -1,6 +1,7 @@
 export const ScanTrashConfirmation = {
    en: {
       title: 'Move to Trash complete',
+      resumeOne: '{{count}} item moved to Trash, {{size}} freed',
       resume: '{{count}} items moved to Trash, {{size}} freed',
       titleErrors: 'Something went wrong',
       resumeErrors: 'No items were moved to Trash.',
@@ -9,6 +10,7 @@ export const ScanTrashConfirmation = {
    },
    it: {
       title: 'Spostamento nel Cestino completato',
+      resumeOne: '{{count}} elemento spostato nel Cestino, {{size}} liberati',
       resume: '{{count}} elementi spostati nel Cestino, {{size}} liberati',
       titleErrors: 'Qualcosa è andato storto',
       resumeErrors: 'Nessun elemento è stato spostato nel Cestino.',
@@ -17,6 +19,7 @@ export const ScanTrashConfirmation = {
    },
    es: {
       title: 'Movimiento a la Papelera completado',
+      resumeOne: '{{count}} elemento movido a la Papelera, {{size}} liberados',
       resume: '{{count}} elementos movidos a la Papelera, {{size}} liberados',
       titleErrors: 'Algo salió mal',
       resumeErrors: 'No se movieron elementos a la Papelera.',
@@ -25,6 +28,7 @@ export const ScanTrashConfirmation = {
    },
    zh: {
       title: '移至废纸篓完成',
+      resumeOne: '已将 {{count}} 项移至废纸篓，已释放 {{size}}',
       resume: '已将 {{count}} 项移至废纸篓，已释放 {{size}}',
       titleErrors: '出了点问题',
       resumeErrors: '没有项目被移至废纸篓。',
@@ -33,6 +37,7 @@ export const ScanTrashConfirmation = {
    },
    ja: {
       title: 'ゴミ箱への移動が完了しました',
+      resumeOne: '{{count}} 項目をゴミ箱に移動し、{{size}} を解放しました',
       resume: '{{count}} 項目をゴミ箱に移動し、{{size}} を解放しました',
       titleErrors: '何かがおかしいです',
       resumeErrors: 'ゴミ箱に移動した項目はありません。',
@@ -41,6 +46,7 @@ export const ScanTrashConfirmation = {
    },
    ar: {
       title: 'اكتمل النقل إلى سلة المهملات',
+      resumeOne: 'تم نقل {{count}} عنصر إلى سلة المهملات، وتحرير {{size}}',
       resume: 'تم نقل {{count}} عنصر إلى سلة المهملات، وتحرير {{size}}',
       titleErrors: 'هناك خطأ ما',
       resumeErrors: 'لم يتم نقل أي عناصر إلى سلة المهملات.',
@@ -49,6 +55,7 @@ export const ScanTrashConfirmation = {
    },
    ru: {
       title: 'Перемещение в корзину завершено',
+      resumeOne: 'Перемещён в корзину: {{count}} элемент, освобождено: {{size}}',
       resume: 'Перемещено в корзину: {{count}} элементов, освобождено: {{size}}',
       titleErrors: 'Что-то пошло не так',
       resumeErrors: 'В корзину не перемещено ни одного элемента.',
@@ -57,6 +64,7 @@ export const ScanTrashConfirmation = {
    },
    fr: {
       title: 'Déplacement dans la corbeille terminé',
+      resumeOne: '{{count}} élément déplacé dans la corbeille, {{size}} libérés',
       resume: '{{count}} éléments déplacés dans la corbeille, {{size}} libérés',
       titleErrors: "Quelque chose s'est mal passé",
       resumeErrors: 'Aucun élément na été déplacé dans la corbeille.',
@@ -65,6 +73,7 @@ export const ScanTrashConfirmation = {
    },
    pt: {
       title: 'Movimento para o Lixo concluído',
+      resumeOne: '{{count}} item movido para o Lixo, {{size}} libertados',
       resume: '{{count}} itens movidos para o Lixo, {{size}} libertados',
       titleErrors: 'Algo deu errado',
       resumeErrors: 'Nenhum item foi movido para o Lixo.',
@@ -73,6 +82,7 @@ export const ScanTrashConfirmation = {
    },
    de: {
       title: 'Verschieben in den Papierkorb abgeschlossen',
+      resumeOne: '{{count}} Element in den Papierkorb verschoben, {{size}} freigegeben',
       resume: '{{count}} Elemente in den Papierkorb verschoben, {{size}} freigegeben',
       titleErrors: 'Etwas ist schief gelaufen',
       resumeErrors: 'Keine Elemente in den Papierkorb verschoben.',

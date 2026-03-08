@@ -53,10 +53,14 @@ function closeApp() {
             {{
                hasErrors
                   ? t('ScanTrashConfirmation', 'resumeErrors')
-                  : t('ScanTrashConfirmation', 'resume', {
-                       count: deletedSummary!.count,
-                       size: formatBytes(deletedSummary!.size),
-                    })
+                  : t(
+                       'ScanTrashConfirmation',
+                       deletedSummary!.count === 1 ? 'resumeOne' : 'resume',
+                       {
+                          count: deletedSummary!.count,
+                          size: formatBytes(deletedSummary!.size),
+                       }
+                    )
             }}
          </p>
          <button
