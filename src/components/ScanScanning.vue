@@ -32,9 +32,7 @@ const { t } = useTranslations()
 const percent = computed(() => {
    if (props.progress.total <= 0) return 0
 
-   const raw = Math.max(0, Math.min(100, (props.progress.current / props.progress.total) * 100))
-
-   return Math.round(raw)
+   return Math.min(99, Math.round((props.progress.current / props.progress.total) * 100))
 })
 
 const percentDisplay = computed(() => {

@@ -70,6 +70,7 @@ const pendingSelection = ref<DeleteListItem[] | null>(null)
 /** When Abort/cancel clears folders and we return to ScanLaunch, reset all scan state. */
 
 function resetInternalState() {
+   console.log('resetInternalState')
    selectedSize.value = 0
    activeView.value = ActiveView.LAUNCH
    deleteItems.value = []

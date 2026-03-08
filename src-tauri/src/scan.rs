@@ -10,6 +10,7 @@
 
 use std::path::Path;
 use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use rayon::prelude::*;
 use tauri::Emitter;
@@ -24,8 +25,60 @@ use crate::ScanOptions;
 /// of allocations and a massive IPC payload.
 const MAX_FILES_PER_DIR: usize = 100;
 
+/// Minimum interval between progress events emitted during recursive scanning.
+const PROGRESS_THROTTLE_MS: u64 = 150;
+
 /// Global cancellation flag for ongoing scans
 static SCAN_CANCELLED: AtomicBool = AtomicBool::new(false);
+
+/// Shared state for emitting live progress events during recursive scanning.
+/// File sizes are accumulated at every directory level (not just top-level),
+/// and progress events are throttled to avoid overwhelming the frontend.
+struct LiveScanState {
+    completed: AtomicUsize,
+    total: usize,
+    scanned_size_total: AtomicU64,
+    /// Cumulative size of fully completed top-level folders. Unlike
+    /// `scanned_size_total` (which includes partial in-progress work),
+    /// this only increases when a folder finishes. The frontend uses
+    /// `completed_size * total / current` to estimate the user home size.
+    completed_size: AtomicU64,
+    last_emit_ms: AtomicU64,
+    app: tauri::AppHandle,
+}
+
+impl LiveScanState {
+    fn add_size_and_maybe_emit(&self, file_size: u64, folder_name: &str) {
+        self.scanned_size_total
+            .fetch_add(file_size, Ordering::Relaxed);
+
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .map(|d| d.as_millis() as u64)
+            .unwrap_or(0);
+        let last = self.last_emit_ms.load(Ordering::Relaxed);
+
+        if now.saturating_sub(last) >= PROGRESS_THROTTLE_MS
+            && self
+                .last_emit_ms
+                .compare_exchange(last, now, Ordering::Relaxed, Ordering::Relaxed)
+                .is_ok()
+        {
+            let _ = self.app.emit(
+                "folder-scan-progress",
+                &FolderScanProgress {
+                    current: self.completed.load(Ordering::Relaxed),
+                    total: self.total,
+                    folder: folder_name.to_string(),
+                    size: 0,
+                    scanned_size_total: self.scanned_size_total.load(Ordering::Relaxed),
+                    completed_size: self.completed_size.load(Ordering::Relaxed),
+                    scanning: None,
+                },
+            );
+        }
+    }
+}
 
 #[derive(serde::Serialize, serde::Deserialize, Clone)]
 struct FolderScanProgress {
@@ -34,6 +87,7 @@ struct FolderScanProgress {
     folder: String,
     size: u64,
     scanned_size_total: u64,
+    completed_size: u64,
     #[serde(skip_serializing_if = "Option::is_none")]
     scanning: Option<String>,
 }
@@ -65,7 +119,13 @@ fn is_system_file(name: &str) -> bool {
 /// Rayon's work-stealing scheduler naturally balances I/O across cores --
 /// threads that finish small directories steal subtasks from large ones like Library.
 /// Respects options: hidden files, items under 1 KB, and 0 B files/folders are excluded when disabled.
-fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: bool) -> FolderInfo {
+fn build_folder_tree(
+    root: &Path,
+    home: &Path,
+    options: &ScanOptions,
+    has_fda: bool,
+    live: Option<&LiveScanState>,
+) -> FolderInfo {
     // Check if scan has been cancelled
     if SCAN_CANCELLED.load(Ordering::Relaxed) {
         return FolderInfo {
@@ -161,6 +221,13 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: b
         }
     }
 
+    // Accumulate file sizes live so the UI gets a smooth size stream.
+    if let Some(state) = live {
+        if file_size > 0 {
+            state.add_size_and_maybe_emit(file_size, &name);
+        }
+    }
+
     file_entries.sort_unstable_by(|a, b| b.1.cmp(&a.1));
     file_entries.truncate(MAX_FILES_PER_DIR);
 
@@ -206,7 +273,7 @@ fn build_folder_tree(root: &Path, home: &Path, options: &ScanOptions, has_fda: b
 
     let dir_children: Vec<FolderInfo> = dir_paths
         .par_iter()
-        .map(|p| build_folder_tree(p, home, options, has_fda))
+        .map(|p| build_folder_tree(p, home, options, has_fda, live))
         .collect();
 
     let dir_children: Vec<FolderInfo> = dir_children
@@ -282,7 +349,7 @@ pub fn scan_user_folders_from_home(
     let options_ref = options;
     let mut folders: Vec<FolderInfo> = folder_paths
         .par_iter()
-        .map(|path| build_folder_tree(path, home, options_ref, has_fda))
+        .map(|path| build_folder_tree(path, home, options_ref, has_fda, None))
         .collect();
 
     sort_children(&mut folders);
@@ -293,6 +360,7 @@ pub fn scan_user_folders_from_home(
 }
 
 /// Scans top-level folders in parallel for I/O concurrency, then builds each subtree.
+/// File sizes are accumulated live during recursion for smooth progress updates.
 pub fn get_user_folders_sync_with_progress(
     app: tauri::AppHandle,
     options: ScanOptions,
@@ -327,26 +395,33 @@ pub fn get_user_folders_sync_with_progress(
         paths
     };
 
-    let total = folder_paths.len();
-    let completed = AtomicUsize::new(0);
-    let scanned_size_total = AtomicU64::new(0);
+    let state = LiveScanState {
+        completed: AtomicUsize::new(0),
+        total: folder_paths.len(),
+        scanned_size_total: AtomicU64::new(0),
+        completed_size: AtomicU64::new(0),
+        last_emit_ms: AtomicU64::new(0),
+        app,
+    };
 
     let options_ref = &options;
     let mut folders: Vec<FolderInfo> = folder_paths
         .into_par_iter()
         .map(|path| {
-            let info = build_folder_tree(&path, &user_dir, options_ref, has_fda);
+            let info = build_folder_tree(&path, &user_dir, options_ref, has_fda, Some(&state));
 
-            let cur = completed.fetch_add(1, Ordering::Relaxed) + 1;
-            let total_size = scanned_size_total.fetch_add(info.size, Ordering::Relaxed) + info.size;
-            let _ = app.emit(
+            // Bump completed counter / size and emit a final event for this top-level folder.
+            let cur = state.completed.fetch_add(1, Ordering::Relaxed) + 1;
+            let done = state.completed_size.fetch_add(info.size, Ordering::Relaxed) + info.size;
+            let _ = state.app.emit(
                 "folder-scan-progress",
                 &FolderScanProgress {
                     current: cur,
-                    total,
+                    total: state.total,
                     folder: info.name.clone(),
                     size: info.size,
-                    scanned_size_total: total_size,
+                    scanned_size_total: state.scanned_size_total.load(Ordering::Relaxed),
+                    completed_size: done,
                     scanning: None,
                 },
             );

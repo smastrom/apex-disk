@@ -12,6 +12,7 @@ const INITIAL_PROGRESS: ScanProgress = {
    folder: '',
    size: 0,
    scanned_size_total: 0,
+   completed_size: 0,
 }
 
 export function useScanner() {

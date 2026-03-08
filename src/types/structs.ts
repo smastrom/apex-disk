@@ -32,5 +32,6 @@ export interface ScanProgress {
    folder: string
    size: number
    scanned_size_total: number
+   completed_size: number
    scanning?: string
 }
