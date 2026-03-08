@@ -157,7 +157,7 @@ const elapsedDisplay = computed(() => {
    transform-origin: left;
    background: var(--color-accent);
    border-radius: 3px;
-   transition: transform 0.25s var(--ease-out);
+   transition: transform 0.3s var(--ease-out);
 }
 
 .ScanProgress-stats {

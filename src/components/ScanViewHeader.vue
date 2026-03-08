@@ -233,7 +233,7 @@ const newFreeSpace = computed(() => {
    transform-origin: left;
    background: color-mix(in srgb, var(--color-accent) 45%, var(--color-surface));
    border-radius: 5px;
-   transition: transform 0.2s var(--ease-out);
+   transition: transform 0.3s var(--ease-out);
    z-index: 0;
 }
 
@@ -246,7 +246,7 @@ const newFreeSpace = computed(() => {
    transform-origin: left;
    background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
    border-radius: 5px;
-   transition: transform 0.2s var(--ease-out);
+   transition: transform 0.3s var(--ease-out);
    box-shadow: var(--glow-sm);
    z-index: 1;
 }
