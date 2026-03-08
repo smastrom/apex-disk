@@ -353,6 +353,15 @@ async function onTrashClick() {
    width: 100%;
 }
 
+.ScanTrashList-listItem {
+   position: relative;
+
+   &:first-of-type {
+      /* Greater than listWrap:before z-index, to prevent first item from partially being hidden by the gradient */
+      z-index: 2;
+   }
+}
+
 .ScanTrashList-footer {
    flex-shrink: 0;
    padding: var(--spacing-md);

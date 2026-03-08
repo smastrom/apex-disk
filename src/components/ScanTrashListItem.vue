@@ -99,6 +99,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
    cursor: pointer;
    transition: background 0.2s var(--ease-standard);
    border-bottom: 1px solid var(--color-accent-bg);
+   z-index: 2;
 
    &:hover {
       background: var(--color-accent-bg-hover);
