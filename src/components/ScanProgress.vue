@@ -62,7 +62,7 @@ const elapsedDisplay = computed(() => {
             </p>
          </div>
          <div class="ScanProgress-barWrap">
-            <div class="ScanProgress-barMain" :style="{ width: percent + '%' }" />
+            <div class="ScanProgress-barMain" :style="{ transform: `scaleX(${percent / 100})` }" />
          </div>
       </div>
 
@@ -152,10 +152,12 @@ const elapsedDisplay = computed(() => {
 }
 
 .ScanProgress-barMain {
+   width: 100%;
    height: 100%;
+   transform-origin: left;
    background: var(--color-accent);
    border-radius: 3px;
-   transition: width 0.25s var(--ease-standard);
+   transition: transform 0.25s var(--ease-out);
 }
 
 .ScanProgress-stats {
