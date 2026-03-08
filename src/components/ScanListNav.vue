@@ -22,7 +22,14 @@ Example:
 -->
 
 <script setup lang="ts">
-import { PhCaretLeft, PhCaretRight, PhFolderSimple, PhTrashSimple } from '@phosphor-icons/vue'
+import {
+   PhArrowCounterClockwise,
+   PhCaretLeft,
+   PhCaretRight,
+   PhFolderSimple,
+   PhTrashSimple,
+   PhX,
+} from '@phosphor-icons/vue'
 
 import { useTemplateRef } from 'vue'
 import { useLabelPopover } from '@/lib/use-label-popover'
@@ -111,20 +118,22 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
          <button
             v-if="isResetShown"
             type="button"
-            class="ScanListNav-resetBtn"
+            class="ScanListNav-btn ScanListNav-resetBtn"
             :disabled="isResetDisabled"
+            :aria-label="t('ScanResultsList', 'resetSelection')"
             @click="emit('reset')"
          >
-            {{ t('ScanResultsList', 'resetSelection') }}
+            <PhArrowCounterClockwise :size="18" weight="bold" aria-hidden="true" />
          </button>
          <button
             v-if="isCancelShown"
             type="button"
-            class="ScanListNav-cancelBtn"
+            class="ScanListNav-btn ScanListNav-cancelBtn"
+            :aria-label="t('ScanResultsList', 'cancel')"
             data-testid="results-cancel"
             @click="emit('cancel')"
          >
-            {{ t('ScanResultsList', 'cancel') }}
+            <PhX :size="18" weight="bold" aria-hidden="true" />
          </button>
       </div>
    </nav>
@@ -214,40 +223,18 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
 .ScanListNav-actions {
    display: flex;
    align-items: center;
-   gap: var(--spacing-md);
+   gap: var(--spacing-sm);
 }
 
 .ScanListNav-resetBtn {
-   padding: 0;
-   font-size: var(--font-size-md);
-   font-weight: 500;
    color: var(--color-text-muted);
-   background: none;
-   border: none;
-   cursor: pointer;
 
    &:hover:not(:disabled) {
       color: var(--color-text);
-      opacity: 0.85;
-   }
-
-   &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
    }
 }
 
 .ScanListNav-cancelBtn {
-   padding: 0;
-   font-size: var(--font-size-md);
-   font-weight: 500;
    color: var(--color-abort);
-   background: none;
-   border: none;
-   cursor: pointer;
-
-   &:hover {
-      opacity: 0.75;
-   }
 }
 </style>
