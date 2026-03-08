@@ -1,5 +1,4 @@
 pub mod constants;
-pub mod delete;
 pub mod disk;
 pub mod locale;
 pub mod log;
@@ -11,6 +10,7 @@ pub mod safe_folders;
 pub mod scan;
 pub mod store;
 pub mod system_info;
+pub mod trash;
 pub mod xattr;
 
 use tauri::Manager;
@@ -98,7 +98,7 @@ pub fn run() {
             disk::get_disk_usage,
             scan::get_user_folders,
             scan::cancel_scan,
-            delete::delete_paths,
+            trash::trash_paths,
             permissions::check_full_disk_access,
             native_dialog::show_message_dialog,
             native_dialog::show_ask_dialog,

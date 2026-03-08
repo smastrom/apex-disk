@@ -1,14 +1,14 @@
-//! Tests for `delete`: filter_items, trash_paths_sync_with_home.
+//! Tests for `trash`: filter_items, trash_paths_sync_with_home.
 //!
-//! The delete command receives `{ path, is_file }[]` from the frontend.
+//! The trash command receives `{ path, is_file }[]` from the frontend.
 //! Items are always moved to the macOS Trash. Both paths use the same filter_items first.
 //! We use the shared `support::create_test_home` (realistic home layout) so tests run against a proper tree.
 
 mod support;
 
-use mac_disk_tree_lib::delete::filter_items;
-use mac_disk_tree_lib::delete::trash_paths_sync_with_home;
-use mac_disk_tree_lib::delete::DeletePathItem;
+use mac_disk_tree_lib::trash::filter_items;
+use mac_disk_tree_lib::trash::trash_paths_sync_with_home;
+use mac_disk_tree_lib::trash::TrashPathItem;
 
 use support::create_test_home;
 
@@ -24,17 +24,17 @@ fn filter_items_protected_paths_removed() {
     let mydata_path = home_canon.join("MyData");
 
     let items = vec![
-        DeletePathItem {
+        TrashPathItem {
             path: docs_path.to_string_lossy().into_owned(),
             is_file: false,
             size: 0,
         },
-        DeletePathItem {
+        TrashPathItem {
             path: lib_path.to_string_lossy().into_owned(),
             is_file: false,
             size: 0,
         },
-        DeletePathItem {
+        TrashPathItem {
             path: mydata_path.to_string_lossy().into_owned(),
             is_file: false,
             size: 0,
@@ -72,12 +72,12 @@ fn filter_items_skipped_paths_removed() {
     let mydata_file = home_canon.join("MyData").join("big.txt");
 
     let items = vec![
-        DeletePathItem {
+        TrashPathItem {
             path: ssh_path.to_string_lossy().into_owned(),
             is_file: false,
             size: 0,
         },
-        DeletePathItem {
+        TrashPathItem {
             path: mydata_file.to_string_lossy().into_owned(),
             is_file: true,
             size: 0,
@@ -101,12 +101,12 @@ fn filter_items_partition_files_and_dirs() {
     let dir_path = home_canon.join("MyData");
 
     let items = vec![
-        DeletePathItem {
+        TrashPathItem {
             path: file_path.to_string_lossy().into_owned(),
             is_file: true,
             size: 0,
         },
-        DeletePathItem {
+        TrashPathItem {
             path: dir_path.to_string_lossy().into_owned(),
             is_file: false,
             size: 0,
@@ -131,12 +131,12 @@ fn filter_items_nonexistent_path_removed() {
     let fake_path = home_canon.join("nonexistent");
 
     let items = vec![
-        DeletePathItem {
+        TrashPathItem {
             path: real_file.to_string_lossy().into_owned(),
             is_file: true,
             size: 0,
         },
-        DeletePathItem {
+        TrashPathItem {
             path: fake_path.to_string_lossy().into_owned(),
             is_file: true,
             size: 0,
@@ -148,11 +148,10 @@ fn filter_items_nonexistent_path_removed() {
     assert_eq!(files[0].path, real_file.to_string_lossy().into_owned());
 }
 
-/// With permanentlyDelete false (SettingsView toggle off), delete_paths calls trash_paths_sync.
-/// We call trash_paths_sync_with_home: it must run without panicking and must use the same
-/// filter_items as permanent delete. (Whether items are actually moved to Trash depends on
-/// the environment; in CI/sandbox trash may not move temp paths, so we only assert the
-/// function runs and protected paths are not passed to the trash API.)
+/// trash_paths_sync_with_home must run without panicking and must use the same
+/// filter_items. (Whether items are actually moved to Trash depends on the environment;
+/// in CI/sandbox trash may not move temp paths, so we only assert the function runs
+/// and protected paths are not passed to the trash API.)
 #[test]
 fn trash_paths_sync_runs_and_filters() {
     let home_dir = create_test_home();
@@ -161,12 +160,12 @@ fn trash_paths_sync_runs_and_filters() {
     let dir_path = home_canon.join("MyData");
 
     let items = vec![
-        DeletePathItem {
+        TrashPathItem {
             path: file_path.to_string_lossy().into_owned(),
             is_file: true,
             size: 0,
         },
-        DeletePathItem {
+        TrashPathItem {
             path: dir_path.to_string_lossy().into_owned(),
             is_file: false,
             size: 0,
@@ -187,12 +186,12 @@ fn trash_paths_sync_does_not_remove_protected() {
     let mydata_path = home_canon.join("MyData");
 
     let items = vec![
-        DeletePathItem {
+        TrashPathItem {
             path: docs_path.to_string_lossy().into_owned(),
             is_file: false,
             size: 0,
         },
-        DeletePathItem {
+        TrashPathItem {
             path: mydata_path.to_string_lossy().into_owned(),
             is_file: false,
             size: 0,
@@ -233,17 +232,17 @@ fn filter_items_all_protected_returns_empty() {
     let home_canon = home_dir.path().canonicalize().expect("canonicalize home");
 
     let items = vec![
-        DeletePathItem {
+        TrashPathItem {
             path: home_canon.join("Documents").to_string_lossy().into_owned(),
             is_file: false,
             size: 0,
         },
-        DeletePathItem {
+        TrashPathItem {
             path: home_canon.join("Library").to_string_lossy().into_owned(),
             is_file: false,
             size: 0,
         },
-        DeletePathItem {
+        TrashPathItem {
             path: home_canon.join(".ssh").to_string_lossy().into_owned(),
             is_file: false,
             size: 0,
