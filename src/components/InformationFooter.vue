@@ -126,6 +126,8 @@ async function openDonate() {
    gap: var(--spacing-xs);
    margin-top: var(--spacing-xs);
    margin-bottom: var(--spacing-lg);
+   flex-wrap: wrap;
+   padding: 0 var(--spacing-xl);
 }
 
 .InformationFooter-link {
@@ -137,6 +139,7 @@ async function openDonate() {
    border: none;
    cursor: pointer;
    transition: color 0.2s var(--ease-standard);
+   white-space: nowrap;
 
    &:hover {
       color: var(--color-accent-hover);

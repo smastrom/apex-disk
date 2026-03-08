@@ -166,5 +166,7 @@ const props = defineProps<{
    font-size: var(--font-size-lg);
    color: var(--color-text-muted);
    white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
 }
 </style>
