@@ -106,13 +106,22 @@ watch(
    { immediate: true }
 )
 
-/** Path for display: replaces the home directory prefix with ~ for brevity. */
+/** Path for display: replaces the home directory prefix with ~ for brevity, or shows /${username} on first screen. */
 const displayPath = computed(() => {
    const path = current.value.path
    const home = homePath.value
+   const isAtRoot = backStack.value.length === 0
 
    if (!path) return '/'
-   if (path === home) return '~'
+   if (path === home) {
+      // First screen: show /${username} instead of ~
+      if (isAtRoot && home) {
+         // Extract username from home path (e.g. "/Users/username" -> "username")
+         const username = home.split('/').pop()
+         if (username) return `/${username}`
+      }
+      return '~'
+   }
    if (home && path.startsWith(home + '/')) return '~' + path.slice(home.length)
 
    return path
@@ -396,8 +405,11 @@ function onCancel() {
          >
             {{
                selectedSize > 0
-                  ? t('ScanResultsList', 'moveToTrashSize', { size: formatBytes(selectedSize) })
-                  : t('ScanResultsList', 'moveToTrash')
+                  ? t('ScanResultsList', 'goToReviewSize', {
+                       size: formatBytes(selectedSize),
+                       count: selectedMap.size,
+                    })
+                  : t('ScanResultsList', 'goToReview')
             }}
          </button>
       </div>
@@ -420,7 +432,7 @@ function onCancel() {
    min-height: 0;
    display: flex;
    flex-direction: column;
-   padding-bottom: var(--trash-footer-height);
+   padding-bottom: var(--results-footer-height);
 
    &::before {
       content: '';
@@ -470,6 +482,8 @@ function onCancel() {
    bottom: 0;
    left: 0;
    right: 0;
+   z-index: 3;
+   view-transition-name: results-footer;
    padding: var(--spacing-md);
    border-top: 1px solid var(--color-bg);
    background: var(--color-bg-elevated);

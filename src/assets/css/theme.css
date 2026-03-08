@@ -68,7 +68,7 @@
    /* AppLayout */
    --header-height: 56px;
    --footer-height: 64px;
-   --delete-footer-height: 88px;
+   --results-footer-height: 88px;
    --content-max-width: 600px;
 
    --cta-btn-height: 54px;
