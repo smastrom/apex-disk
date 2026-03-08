@@ -86,20 +86,30 @@ function stopCountdown() {
 onMounted(startCountdown)
 
 /**
- * KeepAlive re-activation: restart the countdown when component is re-activated.
+ * KeepAlive re-activation: restart the countdown and re-sync checkedMapRef
+ * if props.items changed while deactivated (e.g. user went back to results
+ * and reviewed a different selection). AppView switches don't change
+ * props.items, so selections are preserved in that case.
  */
-onActivated(startCountdown)
+onActivated(() => {
+   startCountdown()
+
+   if (props.items !== lastInitializedItems) {
+      initCheckedMap(props.items)
+   }
+})
 
 onUnmounted(stopCountdown)
 
 /**
  * Cleanup when component becomes inactive (KeepAlive scenario).
- * Reset crucial states to prevent stale state when returning to this view.
+ * Only reset transient UI states — checkedMapRef is intentionally preserved
+ * so selections survive AppView switches. It is cleared on abort or after
+ * a successful delete (via parent handling of 'cancel' / 'complete' events).
  */
 onDeactivated(() => {
    stopCountdown()
    isDeleting.value = false
-   checkedMapRef.value.clear()
 })
 
 /**
@@ -117,19 +127,22 @@ const isDeleting = ref(false)
 
 const { prefersReducedMotion } = useReducedMotion()
 
+/** Tracks which items array was last used to build checkedMapRef. */
+let lastInitializedItems: DeleteListItem[] | null = null
+
+/** Builds a fresh all-checked Map from items and assigns it atomically. */
+function initCheckedMap(items: DeleteListItem[]) {
+   const next = new Map<string, boolean>()
+   for (const item of items) next.set(item.path, true)
+   checkedMapRef.value = next
+   lastInitializedItems = items
+}
+
 /**
  * Initialises all items as checked when a new set of items arrives.
  * Builds the Map in one shot and assigns it atomically (single reactive write).
  */
-watch(
-   () => props.items,
-   (items) => {
-      const next = new Map<string, boolean>()
-      for (const item of items) next.set(item.path, true)
-      checkedMapRef.value = next
-   },
-   { immediate: true }
-)
+watch(() => props.items, initCheckedMap, { immediate: true })
 
 /** Total size of currently checked items. Drives the button label and parent disk-usage bar. */
 const selectedSize = computed(() => {
