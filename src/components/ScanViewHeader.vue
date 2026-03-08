@@ -66,29 +66,53 @@ const newFreeSpace = computed(() => {
                class="ScanViewHeader-volumeIcon"
                aria-hidden="true"
             />
-            {{ props.usage.volume_name }}
+            <span class="ScanViewHeader-volumeName">{{ props.usage.volume_name }}</span>
          </span>
          <span class="ScanViewHeader-userBadge"> /{{ props.usage.user_name }} </span>
       </div>
       <div class="ScanViewHeader-infoRow">
          <span class="ScanViewHeader-info">
             <span class="ScanViewHeader-label">{{ t('ScanViewHeader', 'total') }}</span>
-            <span class="ScanViewHeader-value"
-               >{{ formatBytes(props.usage.total) }}/{{ formatBytes(props.usage.total) }}</span
-            >
+            <span class="ScanViewHeader-value">
+               <span>{{ formatBytes(props.usage.total) }} </span>
+            </span>
          </span>
+
          <span class="ScanViewHeader-info">
             <span class="ScanViewHeader-label">{{ t('ScanViewHeader', 'free') }}</span>
-            <span class="ScanViewHeader-value">{{ formatBytes(props.usage.free) }}</span>
-         </span>
-         <span
-            v-if="newFreeSpace !== null"
-            class="ScanViewHeader-info ScanViewHeader-newFree"
-            data-testid="disk-new-free"
-         >
-            <span class="ScanViewHeader-label">{{ t('ScanViewHeader', 'newFree') }}</span>
-            <span class="ScanViewHeader-value ScanViewHeader-newFreeValue">
-               {{ formatBytes(newFreeSpace) }}
+            <span
+               :class="[
+                  'ScanViewHeader-value',
+                  { 'ScanViewHeader-value-oldFree': newFreeSpace !== null },
+               ]"
+               >{{ formatBytes(props.usage.free) }}</span
+            >
+            <svg
+               v-if="newFreeSpace !== null"
+               xmlns="http://www.w3.org/2000/svg"
+               width="14"
+               height="14"
+               viewBox="0 0 24 24"
+               fill="none"
+               stroke="currentColor"
+               stroke-width="2"
+               stroke-linecap="round"
+               stroke-linejoin="round"
+               class="ScanViewHeader-arrowRight"
+               aria-label="Arrow right"
+            >
+               <path d="M5 12h14" />
+               <path d="m12 5 7 7-7 7" />
+            </svg>
+
+            <span
+               v-if="newFreeSpace !== null"
+               class="ScanViewHeader-info"
+               data-testid="disk-new-free"
+            >
+               <span class="ScanViewHeader-value ScanViewHeader-value-newFree">
+                  {{ formatBytes(newFreeSpace) }}
+               </span>
             </span>
          </span>
       </div>
@@ -96,9 +120,12 @@ const newFreeSpace = computed(() => {
          <div
             v-if="props.selectedSize && props.selectedSize > 0"
             class="ScanViewHeader-barLighter"
-            :style="{ width: lighterBarPercent + '%' }"
+            :style="{ transform: `scaleX(${lighterBarPercent / 100})` }"
          />
-         <div class="ScanViewHeader-barMain" :style="{ width: mainBarPercent + '%' }" />
+         <div
+            class="ScanViewHeader-barMain"
+            :style="{ transform: `scaleX(${mainBarPercent / 100})` }"
+         />
       </div>
    </div>
 </template>
@@ -136,6 +163,13 @@ const newFreeSpace = computed(() => {
    opacity: 0.85;
 }
 
+.ScanViewHeader-volumeName {
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+   max-width: 40vw;
+}
+
 .ScanViewHeader-userBadge {
    font-size: var(--font-size-sm);
    font-weight: 600;
@@ -143,6 +177,9 @@ const newFreeSpace = computed(() => {
    background: var(--color-surface);
    padding: 3px 10px;
    border-radius: 6px;
+   max-width: 40vw;
+   overflow: hidden;
+   text-overflow: ellipsis;
 }
 
 .ScanViewHeader-infoRow {
@@ -160,6 +197,7 @@ const newFreeSpace = computed(() => {
 
 .ScanViewHeader-label {
    color: var(--color-text-muted);
+   flex-shrink: 0;
 }
 
 .ScanViewHeader-value {
@@ -167,15 +205,13 @@ const newFreeSpace = computed(() => {
    font-weight: 500;
 }
 
-.ScanViewHeader-newFree {
-   .ScanViewHeader-label {
-      color: var(--color-accent);
-   }
+.ScanViewHeader-value-newFree {
+   font-weight: 700;
 }
 
-.ScanViewHeader-newFreeValue {
-   color: var(--color-accent);
-   font-weight: 600;
+.ScanViewHeader-arrowRight {
+   flex-shrink: 0;
+   opacity: 0.8;
 }
 
 .ScanViewHeader-barWrap {
@@ -192,10 +228,12 @@ const newFreeSpace = computed(() => {
    position: absolute;
    left: 0;
    top: 0;
+   width: 100%;
    height: 100%;
+   transform-origin: left;
    background: color-mix(in srgb, var(--color-accent) 45%, var(--color-surface));
    border-radius: 5px;
-   transition: width 0.4s var(--ease-standard);
+   transition: transform 0.2s var(--ease-out);
    z-index: 0;
 }
 
@@ -203,10 +241,12 @@ const newFreeSpace = computed(() => {
    position: absolute;
    left: 0;
    top: 0;
+   width: 100%;
    height: 100%;
+   transform-origin: left;
    background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
    border-radius: 5px;
-   transition: width 0.4s var(--ease-standard);
+   transition: transform 0.2s var(--ease-out);
    box-shadow: var(--glow-sm);
    z-index: 1;
 }
