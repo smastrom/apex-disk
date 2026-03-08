@@ -63,11 +63,14 @@ export const APP_NAME = 'MacDiskTree' as const
 export const APP_VERSION = version
 export const APP_CREDITS = 'Simone Mastromattei (smastrom)' as const
 export const RELEASE_YEAR = 2026 as const
-/** Author website or GitHub profile. Used in Settings app info. */
-export const AUTHOR_URL = 'https://github.com/smastrom' as const
-export const REPOSITORY_URL = 'https://github.com/smastrom/mac-disk-tree' as const
 export const RELEASE_NOTES_URL = 'https://github.com/smastrom/mac-disk-tree/releases' as const
 export const LICENSE_URL = 'https://github.com/smastrom/mac-disk-tree/blob/main/LICENSE' as const
+
+/** Frontend-only URLs. */
+export const AUTHOR_URL = 'https://github.com/smastrom' as const
+export const REPOSITORY_URL = 'https://github.com/smastrom/mac-disk-tree' as const
+export const LATEST_RELEASE_URL =
+   'https://api.github.com/repos/smastrom/mac-disk-tree/releases/latest' as const
 
 /** File extension sets for icon categorization. */
 export const DOC_EXTENSIONS = new Set([

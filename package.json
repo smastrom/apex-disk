@@ -43,10 +43,9 @@
       "fmt:check": "oxfmt --check",
       "prepare": "husky",
       "tauri": "tauri",
-      "tauri:build": "APPLE_SIGNING_IDENTITY='-' tauri build --target universal-apple-darwin -c '{\"bundle\":{\"createUpdaterArtifacts\":false}}'",
-      "tauri:build:release": "APPLE_SIGNING_IDENTITY='-' TAURI_SIGNING_PRIVATE_KEY=$(cat ~/.tauri/mac-disk-tree.key) tauri build --target universal-apple-darwin",
+      "tauri:build": "APPLE_SIGNING_IDENTITY='-' tauri build --target universal-apple-darwin",
       "tauri:clean": "cargo clean --manifest-path src-tauri/Cargo.toml",
-      "tauri:dev": "tauri dev --config src-tauri/tauri.conf.dev.json",
+      "tauri:dev": "tauri dev --config src-tauri/tauri.dev.conf.json",
       "tauri:icons": "tauri icon ./src-tauri/icons/app-icon.png && cd ./src-tauri/icons && rm -rf android && rm -rf ios",
       "test:e2e": "wdio run e2e/wdio.conf.ts",
       "test:unit": "cargo test --manifest-path src-tauri/Cargo.toml -- --test-threads=1"
@@ -56,9 +55,7 @@
       "@tauri-apps/api": "^2.10.1",
       "@tauri-apps/plugin-opener": "^2.5.3",
       "@tauri-apps/plugin-os": "~2.3.2",
-      "@tauri-apps/plugin-process": "^2.3.1",
       "@tauri-apps/plugin-store": "^2.4.2",
-      "@tauri-apps/plugin-updater": "^2.10.0",
       "vue": "^3.5.29"
    },
    "devDependencies": {

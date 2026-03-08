@@ -14,8 +14,6 @@
       },
       { "identifier": "opener:allow-open-path", "allow": [{ "path": "/Users/*" }] },
       "os:default",
-      "store:default",
-      "updater:default",
-      "process:allow-restart"
+      "store:default"
    ]
 }

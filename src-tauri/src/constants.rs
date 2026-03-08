@@ -6,10 +6,6 @@ pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const APP_CREDITS: &str = "Simone Mastromattei (smastrom)";
 pub const RELEASE_YEAR: &str = "2026";
 
-/// Author website or GitHub profile URL.
-#[allow(dead_code)]
-pub const AUTHOR_URL: &str = "https://github.com/smastrom";
-
 /// URL opened when the user chooses "Read release notes" from the Help menu.
 pub const RELEASE_NOTES_URL: &str = "https://github.com/smastrom/mac-disk-tree/releases";
 

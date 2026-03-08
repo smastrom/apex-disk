@@ -53,13 +53,6 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::default().build());
 
-    #[cfg(any(target_os = "macos", windows, target_os = "linux"))]
-    {
-        builder = builder
-            .plugin(tauri_plugin_updater::Builder::new().build())
-            .plugin(tauri_plugin_process::init());
-    }
-
     #[cfg(feature = "e2e")]
     {
         builder = builder.plugin(tauri_plugin_webdriver::init());

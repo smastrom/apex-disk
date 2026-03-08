@@ -4,31 +4,17 @@ This folder contains the release infrastructure for MacDiskTree.
 
 ## How It Works
 
-A single GitHub Action (`.github/workflows/release.yml`) handles the entire release process. It is triggered manually from the Actions tab. The workflow builds a signed universal macOS binary, produces updater artifacts (`.app.tar.gz` and `.sig`), generates a `latest.json` for the in-app updater, and publishes everything to a GitHub Release.
+A single GitHub Action (`.github/workflows/release.yml`) handles the entire release process. It is triggered manually from the Actions tab. The workflow builds a universal macOS binary (ad-hoc codesigned), packages it as a `.dmg`, and publishes it to a GitHub Release.
 
-## Updater Signing (one-time setup)
-
-The in-app updater requires **signed** artifacts. Do this once before your first updater-enabled release.
-
-1. Generate signing keys:
-
-   ```sh
-   pnpm tauri signer generate -w ~/.tauri/mac-disk-tree.key
-   ```
-
-2. Copy the **public key** contents into `src-tauri/tauri.conf.json` → `plugins.updater.pubkey` (single-line, `\n`-escaped). The public key is safe to commit.
-
-3. Add the **private key** as a GitHub repo secret: **Settings → Secrets and variables → Actions** → `TAURI_SIGNING_PRIVATE_KEY`.
-
-4. If you set a **password** when generating the key, add a second secret: `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` with that password. CI needs it to decrypt the key.
+The app checks for updates by fetching the latest release tag from the GitHub API and comparing it against the current version. If a newer version is available, the user is invited to visit the releases page — no automatic downloads or installs.
 
 ## macOS Codesigning
 
 Tauri v2 skips `codesign` when no `APPLE_SIGNING_IDENTITY` is set, leaving the binary with only the linker's default adhoc signature. This causes macOS TCC to use a wrong, unstable identifier — breaking Full Disk Access and per-folder permission grants.
 
-Both `pnpm tauri:build:release` and CI set `APPLE_SIGNING_IDENTITY="-"` so Tauri ad-hoc signs the `.app` with the correct bundle identifier, embedded entitlements (`src-tauri/Entitlements.plist`), and hardened runtime **before** packaging into DMG and `.tar.gz`. This ensures all release artifacts contain the properly signed app.
+Both `pnpm tauri:build` and CI set `APPLE_SIGNING_IDENTITY="-"` so Tauri ad-hoc signs the `.app` with the correct bundle identifier, embedded entitlements (`src-tauri/Entitlements.plist`), and hardened runtime **before** packaging into DMG. This ensures the release `.dmg` contains the properly signed app.
 
-`scripts/codesign.sh` is a fallback for when someone runs `pnpm tauri:build` directly without the env var. It only signs the loose `.app` (not the DMG or `.tar.gz`).
+`scripts/codesign.sh` is a fallback for when someone runs `tauri build` directly without the env var. It only signs the loose `.app` (not the DMG).
 
 If you later add an Apple Developer ID certificate, set `APPLE_SIGNING_IDENTITY` to your identity string (e.g., `Developer ID Application: Name (TEAMID)`) instead of `"-"`.
 
@@ -86,10 +72,9 @@ The workflow will:
 1. Validate that RELEASES.md, package.json, Cargo.toml, and tauri.conf.json all have the same version
 2. Check that the tag doesn't already exist
 3. Run tests (`pnpm test`)
-4. Build and codesign a universal macOS binary (Intel + Apple Silicon), updater artifacts (`.app.tar.gz`, `.sig`) using `TAURI_SIGNING_PRIVATE_KEY` and `APPLE_SIGNING_IDENTITY="-"`
-5. Generate `latest.json` for the in-app updater
-6. Create a git tag (e.g., `v0.2.0`)
-7. Create a GitHub Release with the `.dmg`, `.app.tar.gz`, `.sig`, and `latest.json` attached, and release notes from RELEASES.md
+4. Build and codesign a universal macOS binary (Intel + Apple Silicon) with `APPLE_SIGNING_IDENTITY="-"`
+5. Create a git tag (e.g., `v0.2.0`)
+6. Create a GitHub Release with the `.dmg` attached and release notes from RELEASES.md
 
 ## Handling Failures
 
@@ -104,8 +89,6 @@ If the workflow fails after the tag was created:
 4. Trigger the workflow again
 
 If it fails before tagging (validation, tests, or build), just fix the issue, push, and re-trigger.
-
-If the build step fails with an error about the updater signature, missing key, or "Wrong password for that key", ensure the repo secrets `TAURI_SIGNING_PRIVATE_KEY` and (if your key is password-protected) `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` are set (see **Updater Signing** above).
 
 ## Files
 

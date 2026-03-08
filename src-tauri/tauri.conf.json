@@ -27,7 +27,7 @@
    "bundle": {
       "active": true,
       "targets": ["app", "dmg"],
-      "createUpdaterArtifacts": true,
+      "createUpdaterArtifacts": false,
       "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns"],
       "category": "Utility",
       "shortDescription": "Disk usage analyzer for macOS",
@@ -36,14 +36,6 @@
          "minimumSystemVersion": "10.15",
          "hardenedRuntime": true,
          "entitlements": "Entitlements.plist"
-      }
-   },
-   "plugins": {
-      "updater": {
-         "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDUyNzIxOTQ0MkZDM0I5MjYKUldRbXVjTXZSQmx5VXJIcXJrTUljamFPOERVbVpmaWkyRENpMGNPdkZ3M3VYOW8zaHNxTmlEWmsK",
-         "endpoints": [
-            "https://github.com/smastrom/mac-disk-tree/releases/latest/download/latest.json"
-         ]
       }
    }
 }

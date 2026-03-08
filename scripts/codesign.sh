@@ -2,11 +2,11 @@
 # Ad-hoc codesign the macOS .app bundle with entitlements and hardened runtime.
 #
 # The preferred approach is to set APPLE_SIGNING_IDENTITY="-" before running
-# `tauri build` so Tauri signs the .app BEFORE packaging into DMG and .tar.gz.
-# Both `pnpm tauri:build:release` and CI already do this.
+# `tauri build` so Tauri signs the .app BEFORE packaging into DMG.
+# Both `pnpm tauri:build` and CI already do this.
 #
-# This script is a fallback for when someone runs `pnpm tauri:build` directly
-# without the env var. It only signs the loose .app (not the DMG or .tar.gz).
+# This script is a fallback for when someone runs `tauri build` directly
+# without the env var. It only signs the loose .app (not the DMG).
 
 set -euo pipefail
 

@@ -1,44 +1,31 @@
-import { listen } from '@tauri-apps/api/event'
-import { check } from '@tauri-apps/plugin-updater'
-import { ref, onMounted, onUnmounted } from 'vue'
+import { APP_VERSION, LATEST_RELEASE_URL } from '@/lib/constants'
+import { ref } from 'vue'
 
-export function useAppUpdate({
-   checkOnMount = true,
-   listenToUpdates = true,
-}: { checkOnMount?: boolean; listenToUpdates?: boolean } = {}) {
+export function useAppUpdate() {
    const newAvailableVersion = ref<string | null>(null)
    const isChecking = ref(false)
 
-   let unlistenCheckUpdates: (() => void) | null = null
-
-   onMounted(async () => {
-      if (listenToUpdates) {
-         unlistenCheckUpdates = await listen('check-for-updates', onCheckForUpdates)
-      }
-
-      if (checkOnMount) {
-         onCheckForUpdates()
-      }
-   })
-
-   onUnmounted(() => {
-      unlistenCheckUpdates?.()
-   })
-
    async function onCheckForUpdates() {
-      let update: Awaited<ReturnType<typeof check>>
-
       try {
          isChecking.value = true
-         update = await check()
+
+         const res = await fetch(LATEST_RELEASE_URL)
+         if (!res.ok) return
+
+         const data = await res.json()
+         const latestTag: string = data.tag_name ?? ''
+         const latestVersion = latestTag.replace(/^v/, '')
+
+         if (latestVersion && latestVersion !== APP_VERSION) {
+            newAvailableVersion.value = latestVersion
+         } else {
+            newAvailableVersion.value = null
+         }
       } catch (error) {
          console.error('Error checking for updates:', error)
-         update = null
       } finally {
          isChecking.value = false
       }
-
-      newAvailableVersion.value = update?.version ?? null
    }
 
    return { newAvailableVersion, isChecking, onCheckForUpdates }

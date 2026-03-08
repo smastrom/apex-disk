@@ -90,27 +90,8 @@ jobs:
 
          - name: Build universal macOS binary
            env:
-              TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-              TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
               APPLE_SIGNING_IDENTITY: '-'
            run: pnpm exec tauri build --target universal-apple-darwin
-
-         - name: Generate updater latest.json
-           run: |
-              BUNDLE_DIR="src-tauri/target/universal-apple-darwin/release/bundle/macos"
-              SIG_FILE="$BUNDLE_DIR/MacDiskTree.app.tar.gz.sig"
-              if [ ! -f "$SIG_FILE" ]; then
-                echo "::error::Updater signature not found. Ensure TAURI_SIGNING_PRIVATE_KEY is set in repo secrets."
-                exit 1
-              fi
-              SIGNATURE=$(cat "$SIG_FILE")
-              URL="https://github.com/smastrom/mac-disk-tree/releases/download/${TAG}/MacDiskTree.app.tar.gz"
-              jq -n \
-                --arg version "$VERSION" \
-                --arg url "$URL" \
-                --arg signature "$SIGNATURE" \
-                '{version: $version, platforms: {"darwin-aarch64": {url: $url, signature: $signature}, "darwin-x86_64": {url: $url, signature: $signature}}}' \
-                > latest.json
 
          - name: Extract release notes
            run: |
@@ -139,6 +120,3 @@ jobs:
               generate_release_notes: false
               files: |
                  src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
-                 src-tauri/target/universal-apple-darwin/release/bundle/macos/MacDiskTree.app.tar.gz
-                 src-tauri/target/universal-apple-darwin/release/bundle/macos/MacDiskTree.app.tar.gz.sig
-                 latest.json
