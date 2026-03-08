@@ -10,15 +10,17 @@ Example:
 -->
 
 <script setup lang="ts">
+import AnimatedAlertCircle from './ui/AnimatedAlertCircle.vue'
 import AnimatedCheckCircle from './ui/AnimatedCheckCircle.vue'
 
 import { PhMagnifyingGlass, PhX } from '@phosphor-icons/vue'
+import { computed } from 'vue'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/use-translations'
 
-defineProps<{
+const props = defineProps<{
    deletedSummary: { count: number; size: number } | null
 }>()
 
@@ -28,6 +30,8 @@ defineEmits<{
 
 const { t } = useTranslations()
 
+const hasErrors = computed(() => !props.deletedSummary || props.deletedSummary.count === 0)
+
 function closeApp() {
    getCurrentWindow().close()
 }
@@ -36,16 +40,23 @@ function closeApp() {
 <template>
    <div class="ScanResultsTrashConfirmation-root">
       <div class="ScanResultsTrashConfirmation-content">
-         <AnimatedCheckCircle :size="48" class="ScanResultsTrashConfirmation-icon" />
+         <AnimatedAlertCircle
+            v-if="hasErrors"
+            :size="48"
+            class="ScanResultsTrashConfirmation-icon ScanResultsTrashConfirmation-iconError"
+         />
+         <AnimatedCheckCircle v-else :size="48" class="ScanResultsTrashConfirmation-icon" />
          <h2 class="ScanResultsTrashConfirmation-title">
-            {{ t('ScanResultsTrashConfirmation', 'title') }}
+            {{ t('ScanResultsTrashConfirmation', hasErrors ? 'titleErrors' : 'title') }}
          </h2>
-         <p v-if="deletedSummary" class="ScanResultsTrashConfirmation-resume">
+         <p class="ScanResultsTrashConfirmation-resume">
             {{
-               t('ScanResultsTrashConfirmation', 'resume', {
-                  count: deletedSummary.count,
-                  size: formatBytes(deletedSummary.size),
-               })
+               hasErrors
+                  ? t('ScanResultsTrashConfirmation', 'resumeErrors')
+                  : t('ScanResultsTrashConfirmation', 'resume', {
+                       count: deletedSummary!.count,
+                       size: formatBytes(deletedSummary!.size),
+                    })
             }}
          </p>
          <button
@@ -89,6 +100,10 @@ function closeApp() {
 .ScanResultsTrashConfirmation-icon {
    color: var(--color-accent);
    flex-shrink: 0;
+}
+
+.ScanResultsTrashConfirmation-iconError {
+   color: var(--color-abort);
 }
 
 .ScanResultsTrashConfirmation-title {
