@@ -16,7 +16,7 @@ export const InformationView = {
       cpu: 'Processor',
       memory: 'Memory',
       systemDisk: 'System Disk',
-      diskSize: 'Disk Space (Analyzable)',
+      diskSize: 'Disk Space (Scannable)',
       currentUser: 'Current User',
    },
    it: {
@@ -34,7 +34,7 @@ export const InformationView = {
       cpu: 'Processore',
       memory: 'Memoria',
       systemDisk: 'Disco di Sistema',
-      diskSize: 'Spazio Analizzabile (Disco)',
+      diskSize: 'Spazio Disco (Scansionabile)',
       currentUser: 'Utente Corrente',
    },
    es: {
@@ -52,7 +52,7 @@ export const InformationView = {
       cpu: 'Procesador',
       memory: 'Memoria',
       systemDisk: 'Disco del Sistema',
-      diskSize: 'Espacio Analizable (Disco)',
+      diskSize: 'Espacio en Disco (Escaneable)',
       currentUser: 'Usuario Actual',
    },
    zh: {
@@ -70,7 +70,7 @@ export const InformationView = {
       cpu: '处理器',
       memory: '内存',
       systemDisk: '系统磁盘',
-      diskSize: '磁盘空间 (可分析)',
+      diskSize: '磁盘空间 (可扫描)',
       currentUser: '当前用户',
    },
    ja: {
@@ -88,7 +88,7 @@ export const InformationView = {
       cpu: 'プロセッサ',
       memory: 'メモリ',
       systemDisk: 'システムディスク',
-      diskSize: '分析可能なディスク容量',
+      diskSize: 'スキャン可能なディスク容量',
       currentUser: '現在のユーザー',
    },
    ar: {
@@ -106,7 +106,7 @@ export const InformationView = {
       cpu: 'المعالج',
       memory: 'الذاكرة',
       systemDisk: 'قرص النظام',
-      diskSize: 'مساحة القرص (قابلة للتحليل)',
+      diskSize: 'مساحة القرص (للمسح)',
       currentUser: 'المستخدم الحالي',
    },
    ru: {
@@ -124,7 +124,7 @@ export const InformationView = {
       cpu: 'Процессор',
       memory: 'Память',
       systemDisk: 'Системный диск',
-      diskSize: 'Дисковое пространство (анализируемое)',
+      diskSize: 'Место на Диске (Скан.)',
       currentUser: 'Текущий пользователь',
    },
    fr: {
@@ -142,7 +142,7 @@ export const InformationView = {
       cpu: 'Processeur',
       memory: 'Mémoire',
       systemDisk: 'Disque Système',
-      diskSize: 'Espace Disque (Analyzable)',
+      diskSize: 'Espace Disque (Analysable)',
       currentUser: 'Utilisateur Actuel',
    },
    pt: {
@@ -178,7 +178,7 @@ export const InformationView = {
       cpu: 'Prozessor',
       memory: 'Speicher',
       systemDisk: 'Systemfestplatte',
-      diskSize: 'Festplattenspeicher (Analysierbar)',
+      diskSize: 'Speicherplatz (Scannbar)',
       currentUser: 'Aktueller Benutzer',
    },
 } as const
