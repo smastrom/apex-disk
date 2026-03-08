@@ -1,12 +1,12 @@
 <!--
-ScanResultsTrashListItem
+ScanTrashListItem
 
 Purpose: Compact list row for trash review. Checkbox (default on), icon, name, size.
 
 Props: item (TrashListItem), isSelected (boolean), formatBytes (fn)
 
 Example:
- <ScanResultsTrashListItem
+ <ScanTrashListItem
    :item="entry"
    :isSelected="checkedSet.has(entry.path)"
    :formatBytes="formatBytes"
@@ -42,12 +42,12 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
 </script>
 
 <template>
-   <div class="ScanResultsTrashListItem-root" data-testid="trash-list-row" @click="emit('toggle')">
+   <div class="ScanTrashListItem-root" data-testid="trash-list-row" @click="emit('toggle')">
       <button
          type="button"
-         class="ScanResultsTrashListItem-check"
+         class="ScanTrashListItem-check"
          data-testid="trash-list-row-checkbox"
-         :class="{ 'ScanResultsTrashListItem-check--selected': isSelected }"
+         :class="{ 'ScanTrashListItem-check--selected': isSelected }"
          :aria-pressed="isSelected"
          @click.stop="emit('toggle')"
       >
@@ -55,28 +55,28 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
             :selected="isSelected"
             :size="16"
             :class="{
-               'ScanResultsTrashListItem-checkEmpty': !isSelected,
-               'ScanResultsTrashListItem-checkFilled': isSelected,
+               'ScanTrashListItem-checkEmpty': !isSelected,
+               'ScanTrashListItem-checkFilled': isSelected,
             }"
          />
       </button>
       <div
-         class="ScanResultsTrashListItem-icon"
-         :class="{ 'ScanResultsTrashListItem-icon--hidden': isHidden(item.name) }"
+         class="ScanTrashListItem-icon"
+         :class="{ 'ScanTrashListItem-icon--hidden': isHidden(item.name) }"
       >
          <ScanResultsListItemIconSwitch :item="item" :size="18" />
       </div>
-      <div class="ScanResultsTrashListItem-info">
+      <div class="ScanTrashListItem-info">
          <span
             ref="triggerRef"
-            class="ScanResultsTrashListItem-name"
+            class="ScanTrashListItem-name"
             @pointerenter="onPointerEnter"
             @pointerleave="onPointerLeave"
             >{{ item.name }}</span
          >
-         <span class="ScanResultsTrashListItem-path">{{ displayPath(item.path) }}</span>
+         <span class="ScanTrashListItem-path">{{ displayPath(item.path) }}</span>
       </div>
-      <span class="ScanResultsTrashListItem-size">{{ formatBytes(item.size) }}</span>
+      <span class="ScanTrashListItem-size">{{ formatBytes(item.size) }}</span>
       <div
          ref="popoverRef"
          popover="manual"
@@ -90,7 +90,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
 </template>
 
 <style scoped>
-.ScanResultsTrashListItem-root {
+.ScanTrashListItem-root {
    display: flex;
    align-items: center;
    gap: var(--spacing-xs);
@@ -105,7 +105,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
    }
 }
 
-.ScanResultsTrashListItem-check {
+.ScanTrashListItem-check {
    flex-shrink: 0;
    display: flex;
    align-items: center;
@@ -117,15 +117,15 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
    color: var(--color-text-dim);
 }
 
-.ScanResultsTrashListItem-check--selected .ScanResultsTrashListItem-checkFilled {
+.ScanTrashListItem-check--selected .ScanTrashListItem-checkFilled {
    color: var(--color-accent);
 }
 
-.ScanResultsTrashListItem-checkEmpty {
+.ScanTrashListItem-checkEmpty {
    color: var(--color-text-dim);
 }
 
-.ScanResultsTrashListItem-icon {
+.ScanTrashListItem-icon {
    flex-shrink: 0;
    display: flex;
    align-items: center;
@@ -135,11 +135,11 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
    color: var(--color-accent);
 }
 
-.ScanResultsTrashListItem-icon--hidden {
+.ScanTrashListItem-icon--hidden {
    opacity: 0.5;
 }
 
-.ScanResultsTrashListItem-info {
+.ScanTrashListItem-info {
    flex: 1;
    min-width: 0;
    display: flex;
@@ -147,7 +147,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
    gap: 1px;
 }
 
-.ScanResultsTrashListItem-name {
+.ScanTrashListItem-name {
    font-size: var(--font-size-base);
    font-weight: 500;
    color: var(--color-text);
@@ -156,7 +156,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
    text-overflow: ellipsis;
 }
 
-.ScanResultsTrashListItem-path {
+.ScanTrashListItem-path {
    font-size: var(--font-size-xs);
    color: var(--color-text-dim);
    white-space: nowrap;
@@ -164,7 +164,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
    text-overflow: ellipsis;
 }
 
-.ScanResultsTrashListItem-size {
+.ScanTrashListItem-size {
    font-size: var(--font-size-md);
    color: var(--color-text-muted);
 }

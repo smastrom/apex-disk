@@ -1,12 +1,12 @@
 <!--
-ScanScanning
+ScanProgress
 
 Purpose: Active scan view showing disk/user context, live scan progress, and detailed scan metadata while scanning.
 
 Props: progress (ScanProgress), elapsedSeconds (number)
 
 Example:
- <ScanScanning :progress="progress" :elapsedSeconds="elapsedSeconds" @abort="onAbort" />
+ <ScanProgress :progress="progress" :elapsedSeconds="elapsedSeconds" @abort="onAbort" />
 -->
 
 <script setup lang="ts">
@@ -46,57 +46,57 @@ const elapsedDisplay = computed(() => {
 </script>
 
 <template>
-   <section class="ScanScanning-root" data-testid="scanning-results">
-      <div class="ScanScanning-progressBlock">
-         <div class="ScanScanning-progressHeader">
-            <span class="ScanScanning-spinnerWrap">
+   <section class="ScanProgress-root" data-testid="scanning-results">
+      <div class="ScanProgress-progressBlock">
+         <div class="ScanProgress-progressHeader">
+            <span class="ScanProgress-spinnerWrap">
                <Spinner :size="18" />
             </span>
-            <p class="ScanScanning-progressTitle" data-testid="scan-progress">
+            <p class="ScanProgress-progressTitle" data-testid="scan-progress">
                {{
-                  t('ScanScanning', 'scanning', {
+                  t('ScanProgress', 'scanning', {
                      current: formatProgressNumber(progress.current),
                      total: formatProgressNumber(progress.total),
                   })
                }}
             </p>
          </div>
-         <div class="ScanScanning-barWrap">
-            <div class="ScanScanning-barMain" :style="{ width: percent + '%' }" />
+         <div class="ScanProgress-barWrap">
+            <div class="ScanProgress-barMain" :style="{ width: percent + '%' }" />
          </div>
       </div>
 
-      <div class="ScanScanning-stats">
+      <div class="ScanProgress-stats">
          <p>
-            <span>{{ t('ScanScanning', 'scannedSize') }}</span>
+            <span>{{ t('ScanProgress', 'scannedSize') }}</span>
             <strong>{{ formatBytes(progress.scanned_size_total) }}</strong>
          </p>
          <p>
-            <span>{{ t('ScanScanning', 'currentPath') }}</span>
-            <strong class="ScanScanning-currentPath" :title="progress.folder || ''">
-               {{ progress.folder || t('ScanScanning', 'preparing') }}
+            <span>{{ t('ScanProgress', 'currentPath') }}</span>
+            <strong class="ScanProgress-currentPath" :title="progress.folder || ''">
+               {{ progress.folder || t('ScanProgress', 'preparing') }}
             </strong>
          </p>
 
          <p>
-            <span>{{ t('ScanScanning', 'elapsed') }}</span>
+            <span>{{ t('ScanProgress', 'elapsed') }}</span>
             <strong>{{ elapsedDisplay }}</strong>
          </p>
       </div>
 
       <button
          type="button"
-         class="ScanScanning-abortBtn"
+         class="ScanProgress-abortBtn"
          data-testid="scan-abort"
          @click="emit('abort')"
       >
-         {{ t('ScanScanning', 'abort') }}
+         {{ t('ScanProgress', 'abort') }}
       </button>
    </section>
 </template>
 
 <style scoped>
-.ScanScanning-root {
+.ScanProgress-root {
    flex: 1;
    display: flex;
    flex-direction: column;
@@ -108,20 +108,20 @@ const elapsedDisplay = computed(() => {
    padding: var(--spacing-lg) var(--spacing-md);
 }
 
-.ScanScanning-progressBlock {
+.ScanProgress-progressBlock {
    display: flex;
    flex-direction: column;
    gap: var(--spacing-sm);
 }
 
-.ScanScanning-progressHeader {
+.ScanProgress-progressHeader {
    display: flex;
    align-items: center;
    justify-content: space-between;
    gap: 10px;
 }
 
-.ScanScanning-spinnerWrap {
+.ScanProgress-spinnerWrap {
    display: flex;
 
    @media (prefers-reduced-motion: reduce) {
@@ -129,11 +129,11 @@ const elapsedDisplay = computed(() => {
    }
 }
 
-.ScanScanning-spinnerWrap :deep(.Spinner-root) {
+.ScanProgress-spinnerWrap :deep(.Spinner-root) {
    color: var(--color-accent);
 }
 
-.ScanScanning-progressTitle {
+.ScanProgress-progressTitle {
    margin: 0;
    font-size: var(--font-size-md);
    font-weight: 500;
@@ -141,7 +141,7 @@ const elapsedDisplay = computed(() => {
    flex: 1;
 }
 
-.ScanScanning-barWrap {
+.ScanProgress-barWrap {
    position: relative;
    width: 100%;
    height: 6px;
@@ -151,14 +151,14 @@ const elapsedDisplay = computed(() => {
    border: 1px solid var(--color-border);
 }
 
-.ScanScanning-barMain {
+.ScanProgress-barMain {
    height: 100%;
    background: var(--color-accent);
    border-radius: 3px;
    transition: width 0.25s var(--ease-standard);
 }
 
-.ScanScanning-stats {
+.ScanProgress-stats {
    display: flex;
    flex-direction: column;
    gap: var(--spacing-xs);
@@ -188,7 +188,7 @@ const elapsedDisplay = computed(() => {
    }
 }
 
-.ScanScanning-currentPath {
+.ScanProgress-currentPath {
    max-width: min(65%, 220px);
    overflow: hidden;
    text-overflow: ellipsis;
@@ -196,13 +196,13 @@ const elapsedDisplay = computed(() => {
    display: block;
 }
 
-.ScanScanning-estimate {
+.ScanProgress-estimate {
    margin: 0;
    font-size: var(--font-size-sm);
    color: var(--color-text-muted);
 }
 
-.ScanScanning-abortBtn {
+.ScanProgress-abortBtn {
    align-self: flex-start;
    padding: 0;
    font-size: var(--font-size-md);

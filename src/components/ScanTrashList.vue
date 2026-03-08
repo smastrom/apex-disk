@@ -1,17 +1,17 @@
 <!--
-ScanResultsTrashList
+ScanTrashList
 
 Purpose: Fullscreen list of items scheduled for trash. Checkboxes (default on) update progress and button size. Red Move to Trash button with countdown then spinner when processing.
 
 Props: items (TrashListItem[]) — countdown starts automatically when component is rendered
 
 Example:
- <ScanResultsTrashList :items="trashItems" @update:selectedSize="onSize" @complete="onComplete" />
+ <ScanTrashList :items="trashItems" @update:selectedSize="onSize" @complete="onComplete" />
 -->
 
 <script setup lang="ts">
-import ScanResultsTrashListItem from './ScanResultsTrashListItem.vue'
-import ScanResultsNav from './ScanResultsNav.vue'
+import ScanTrashListItem from './ScanTrashListItem.vue'
+import ScanListNav from './ScanListNav.vue'
 import Spinner from './ui/Spinner.vue'
 
 import {
@@ -231,12 +231,12 @@ async function onTrashClick() {
 </script>
 
 <template>
-   <div class="ScanResultsTrashList-root" data-testid="trash-list">
-      <ScanResultsNav
+   <div class="ScanTrashList-root" data-testid="trash-list">
+      <ScanListNav
          :isForwardShown="false"
          :isBackDisabled="false"
          pathIcon="trash"
-         :pathLabel="t('ScanResultsTrashList', 'navTitle')"
+         :pathLabel="t('ScanTrashList', 'navTitle')"
          isActionsShown
          isResetDisabled
          :isResetShown="false"
@@ -244,13 +244,13 @@ async function onTrashClick() {
          @cancel="emit('cancel')"
       />
       <div
-         class="ScanResultsTrashList-listWrap"
-         :class="{ 'ScanResultsTrashList-listWrap--deleting': isDeleting }"
+         class="ScanTrashList-listWrap"
+         :class="{ 'ScanTrashList-listWrap--deleting': isDeleting }"
       >
-         <div class="ScanResultsTrashList-list ScanResultsTrashList-listScroll">
-            <div class="ScanResultsTrashList-listInner">
-               <div v-for="item in items" :key="item.path" class="ScanResultsTrashList-listItem">
-                  <ScanResultsTrashListItem
+         <div class="ScanTrashList-list ScanTrashList-listScroll">
+            <div class="ScanTrashList-listInner">
+               <div v-for="item in items" :key="item.path" class="ScanTrashList-listItem">
+                  <ScanTrashListItem
                      :item="item"
                      :isSelected="!!checkedMapRef.get(item.path)"
                      :formatBytes="formatBytes"
@@ -260,44 +260,39 @@ async function onTrashClick() {
             </div>
          </div>
       </div>
-      <div class="ScanResultsTrashList-footer">
+      <div class="ScanTrashList-footer">
          <button
             type="button"
-            class="GradientButton ScanResultsTrashList-moveToTrashBtn"
+            class="GradientButton ScanTrashList-moveToTrashBtn"
             :data-deleting="isDeleting || undefined"
             :disabled="countdownRemaining > 0 || checkedCount === 0 || isDeleting"
             data-testid="confirm-trash"
             @click="onTrashClick"
          >
-            <Transition name="ScanResultsTrashList-caption" mode="out-in">
-               <span v-if="!isDeleting" key="ready" class="ScanResultsTrashList-captionText">
+            <Transition name="ScanTrashList-caption" mode="out-in">
+               <span v-if="!isDeleting" key="ready" class="ScanTrashList-captionText">
                   {{
                      selectedSize > 0
-                        ? t('ScanResultsTrashList', 'moveToTrashSize', {
+                        ? t('ScanTrashList', 'moveToTrashSize', {
                              size: formatBytes(selectedSize),
                           })
-                        : t('ScanResultsTrashList', 'moveToTrash')
+                        : t('ScanTrashList', 'moveToTrash')
                   }}
                </span>
                <span
                   v-else-if="prefersReducedMotion"
                   key="deleting-text"
-                  class="ScanResultsTrashList-captionText"
+                  class="ScanTrashList-captionText"
                >
                   {{
                      selectedSize > 0
-                        ? t('ScanResultsTrashList', 'movingToTrashSize', {
+                        ? t('ScanTrashList', 'movingToTrashSize', {
                              size: formatBytes(selectedSize),
                           })
-                        : t('ScanResultsTrashList', 'movingToTrash')
+                        : t('ScanTrashList', 'movingToTrash')
                   }}
                </span>
-               <Spinner
-                  v-else
-                  key="deleting-spinner"
-                  :size="18"
-                  class="ScanResultsTrashList-spinner"
-               />
+               <Spinner v-else key="deleting-spinner" :size="18" class="ScanTrashList-spinner" />
             </Transition>
          </button>
       </div>
@@ -305,7 +300,7 @@ async function onTrashClick() {
 </template>
 
 <style scoped>
-.ScanResultsTrashList-root {
+.ScanTrashList-root {
    position: relative;
    flex: 1;
    display: flex;
@@ -318,7 +313,7 @@ async function onTrashClick() {
    width: 100%;
 }
 
-.ScanResultsTrashList-listWrap {
+.ScanTrashList-listWrap {
    position: relative;
    flex: 1;
    min-height: 0;
@@ -339,26 +334,26 @@ async function onTrashClick() {
    }
 }
 
-.ScanResultsTrashList-listWrap--deleting {
+.ScanTrashList-listWrap--deleting {
    opacity: 0.5;
    pointer-events: none;
 }
 
-.ScanResultsTrashList-list {
+.ScanTrashList-list {
    flex: 1;
    min-height: 0;
 }
 
-.ScanResultsTrashList-listScroll {
+.ScanTrashList-listScroll {
    overflow: auto;
 }
 
-.ScanResultsTrashList-listInner {
+.ScanTrashList-listInner {
    position: relative;
    width: 100%;
 }
 
-.ScanResultsTrashList-footer {
+.ScanTrashList-footer {
    flex-shrink: 0;
    padding: var(--spacing-md);
    border-top: 1px solid var(--color-bg);
@@ -366,7 +361,7 @@ async function onTrashClick() {
    box-shadow: 0 -2px 16px var(--color-bg);
 }
 
-.ScanResultsTrashList-moveToTrashBtn {
+.ScanTrashList-moveToTrashBtn {
    height: var(--cta-btn-height);
    width: 100%;
    display: flex;
@@ -391,35 +386,35 @@ async function onTrashClick() {
    }
 }
 
-.ScanResultsTrashList-captionText {
+.ScanTrashList-captionText {
    display: inline-flex;
    align-items: center;
    gap: 0.5rem;
    white-space: nowrap;
 }
 
-.ScanResultsTrashList-caption-enter-active,
-.ScanResultsTrashList-caption-leave-active {
+.ScanTrashList-caption-enter-active,
+.ScanTrashList-caption-leave-active {
    transition: opacity 0.3s var(--ease-standard);
 }
 
-.ScanResultsTrashList-caption-enter-from,
-.ScanResultsTrashList-caption-leave-to {
+.ScanTrashList-caption-enter-from,
+.ScanTrashList-caption-leave-to {
    opacity: 0;
 }
 
-.ScanResultsTrashList-spinner {
+.ScanTrashList-spinner {
    color: var(--color-on-accent);
 }
 
 /* Keep opacity transitions; only remove movement (sliding, gap, padding). */
 @media (prefers-reduced-motion: reduce) {
-   .ScanResultsTrashList-caption-enter-active,
-   .ScanResultsTrashList-caption-leave-active {
+   .ScanTrashList-caption-enter-active,
+   .ScanTrashList-caption-leave-active {
       transition: opacity 0.25s var(--ease-standard);
    }
 
-   .ScanResultsTrashList-moveToTrashBtn {
+   .ScanTrashList-moveToTrashBtn {
       transition: opacity 0.2s var(--ease-standard);
    }
 }

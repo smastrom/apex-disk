@@ -25,7 +25,7 @@
 
 /* ── Nav path: match text direction ────────────────────────────────── */
 
-[dir='rtl'] .ScanResultsNav-path {
+[dir='rtl'] .ScanListNav-path {
    text-align: right;
 }
 
@@ -44,8 +44,8 @@
 
 /* ── Trash list caption transition: use margin-right instead ──────── */
 
-[dir='rtl'] .ScanResultsTrashList-caption-enter-active,
-[dir='rtl'] .ScanResultsTrashList-caption-leave-active {
+[dir='rtl'] .ScanTrashList-caption-enter-active,
+[dir='rtl'] .ScanTrashList-caption-leave-active {
    transition:
       opacity 0.25s var(--ease-standard),
       max-width 0.3s var(--ease-standard),
@@ -53,8 +53,8 @@
    margin-left: 0;
 }
 
-[dir='rtl'] .ScanResultsTrashList-caption-enter-from,
-[dir='rtl'] .ScanResultsTrashList-caption-leave-to {
+[dir='rtl'] .ScanTrashList-caption-enter-from,
+[dir='rtl'] .ScanTrashList-caption-leave-to {
    margin-left: 0;
    margin-right: -0.5rem;
 }

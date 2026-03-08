@@ -7,12 +7,12 @@ import { global } from './global'
 import { InformationFooter } from './InformationFooter'
 import { InformationView } from './InformationView'
 import { ScanLaunch } from './ScanLaunch'
+import { ScanProgress } from './ScanProgress'
 import { ScanResultsList } from './ScanResultsList'
 import { ScanResultsListItem } from './ScanResultsListItem'
-import { ScanResultsTrashConfirmation } from './ScanResultsTrashConfirmation'
-import { ScanResultsTrashList } from './ScanResultsTrashList'
-import { ScanScanning } from './ScanScanning'
-import { ScanViewDiskUsage } from './ScanViewDiskUsage'
+import { ScanTrashConfirmation } from './ScanTrashConfirmation'
+import { ScanTrashList } from './ScanTrashList'
+import { ScanViewHeader } from './ScanViewHeader'
 import { SettingsView } from './SettingsView'
 
 export const translations = {
@@ -24,12 +24,12 @@ export const translations = {
    InformationFooter,
    InformationView,
    ScanLaunch,
-   ScanScanning,
+   ScanProgress,
    ScanResultsList,
    ScanResultsListItem,
-   ScanResultsTrashConfirmation,
-   ScanResultsTrashList,
-   ScanViewDiskUsage,
+   ScanTrashConfirmation,
+   ScanTrashList,
+   ScanViewHeader,
 } as const
 
 export type TranslationModule = keyof typeof translations

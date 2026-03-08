@@ -1,12 +1,12 @@
 <!--
-ScanResultsTrashConfirmation
+ScanTrashConfirmation
 
 Purpose: Post-trash screen. Shows resume (items count, size freed) and Scan again button.
 
 Props: deletedSummary ({ count: number, size: number } | null)
 
 Example:
- <ScanResultsTrashConfirmation :deletedSummary="summary" @restart="onRestart" />
+ <ScanTrashConfirmation :deletedSummary="summary" @restart="onRestart" />
 -->
 
 <script setup lang="ts">
@@ -38,22 +38,22 @@ function closeApp() {
 </script>
 
 <template>
-   <div class="ScanResultsTrashConfirmation-root">
-      <div class="ScanResultsTrashConfirmation-content">
+   <div class="ScanTrashConfirmation-root">
+      <div class="ScanTrashConfirmation-content">
          <AnimatedAlertCircle
             v-if="hasErrors"
             :size="48"
-            class="ScanResultsTrashConfirmation-icon ScanResultsTrashConfirmation-iconError"
+            class="ScanTrashConfirmation-icon ScanTrashConfirmation-iconError"
          />
-         <AnimatedCheckCircle v-else :size="48" class="ScanResultsTrashConfirmation-icon" />
-         <h2 class="ScanResultsTrashConfirmation-title">
-            {{ t('ScanResultsTrashConfirmation', hasErrors ? 'titleErrors' : 'title') }}
+         <AnimatedCheckCircle v-else :size="48" class="ScanTrashConfirmation-icon" />
+         <h2 class="ScanTrashConfirmation-title">
+            {{ t('ScanTrashConfirmation', hasErrors ? 'titleErrors' : 'title') }}
          </h2>
-         <p class="ScanResultsTrashConfirmation-resume">
+         <p class="ScanTrashConfirmation-resume">
             {{
                hasErrors
-                  ? t('ScanResultsTrashConfirmation', 'resumeErrors')
-                  : t('ScanResultsTrashConfirmation', 'resume', {
+                  ? t('ScanTrashConfirmation', 'resumeErrors')
+                  : t('ScanTrashConfirmation', 'resume', {
                        count: deletedSummary!.count,
                        size: formatBytes(deletedSummary!.size),
                     })
@@ -61,23 +61,23 @@ function closeApp() {
          </p>
          <button
             type="button"
-            class="ScanResultsTrashConfirmation-scanBtn GradientButton"
+            class="ScanTrashConfirmation-scanBtn GradientButton"
             data-testid="restart"
             @click="$emit('restart')"
          >
             <PhMagnifyingGlass :size="18" weight="regular" aria-hidden="true" />
-            {{ t('ScanResultsTrashConfirmation', 'restart') }}
+            {{ t('ScanTrashConfirmation', 'restart') }}
          </button>
-         <button type="button" class="ScanResultsTrashConfirmation-closeBtn" @click="closeApp">
+         <button type="button" class="ScanTrashConfirmation-closeBtn" @click="closeApp">
             <PhX :size="16" weight="bold" aria-hidden="true" />
-            {{ t('ScanResultsTrashConfirmation', 'closeApp') }}
+            {{ t('ScanTrashConfirmation', 'closeApp') }}
          </button>
       </div>
    </div>
 </template>
 
 <style scoped>
-.ScanResultsTrashConfirmation-root {
+.ScanTrashConfirmation-root {
    flex: 1;
    display: flex;
    flex-direction: column;
@@ -88,7 +88,7 @@ function closeApp() {
    background: var(--color-bg);
 }
 
-.ScanResultsTrashConfirmation-content {
+.ScanTrashConfirmation-content {
    display: flex;
    flex-direction: column;
    align-items: center;
@@ -97,16 +97,16 @@ function closeApp() {
    width: 100%;
 }
 
-.ScanResultsTrashConfirmation-icon {
+.ScanTrashConfirmation-icon {
    color: var(--color-accent);
    flex-shrink: 0;
 }
 
-.ScanResultsTrashConfirmation-iconError {
+.ScanTrashConfirmation-iconError {
    color: var(--color-abort);
 }
 
-.ScanResultsTrashConfirmation-title {
+.ScanTrashConfirmation-title {
    margin: 0;
    font-size: var(--font-size-2xl);
    font-weight: 600;
@@ -114,14 +114,14 @@ function closeApp() {
    text-align: center;
 }
 
-.ScanResultsTrashConfirmation-resume {
+.ScanTrashConfirmation-resume {
    margin: 0;
    font-size: var(--font-size-lg);
    color: var(--color-text-muted);
    text-align: center;
 }
 
-.ScanResultsTrashConfirmation-scanBtn {
+.ScanTrashConfirmation-scanBtn {
    height: var(--cta-btn-height);
    width: 100%;
    display: flex;
@@ -133,7 +133,7 @@ function closeApp() {
    font-size: var(--font-size-lg);
 }
 
-.ScanResultsTrashConfirmation-closeBtn {
+.ScanTrashConfirmation-closeBtn {
    display: flex;
    align-items: center;
    justify-content: center;

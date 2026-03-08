@@ -1,4 +1,4 @@
-export const ScanViewDiskUsage = {
+export const ScanViewHeader = {
    en: {
       total: 'Total',
       free: 'Free',

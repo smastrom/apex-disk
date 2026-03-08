@@ -1,12 +1,12 @@
 <!--
-ScanResultsNav
+ScanListNav
 
 Purpose: Shared nav bar for scan results views. Back (and optional forward), center path/title, optional reset/abort actions.
 
 Props: isForwardShown (boolean?), isBackDisabled (boolean?), isForwardDisabled (boolean?), pathLabel (string), pathTitle (string?), pathIcon ('folder' | 'trash'?), isActionsShown (boolean?), isResetDisabled (boolean?)
 
 Example:
- <ScanResultsNav
+ <ScanListNav
    :isForwardShown="true"
    :isBackDisabled="backStack.length === 0"
    :isForwardDisabled="forwardStack.length === 0"
@@ -60,11 +60,11 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
 </script>
 
 <template>
-   <nav class="ScanResultsNav-root" data-testid="results-nav">
-      <div class="ScanResultsNav-controls">
+   <nav class="ScanListNav-root" data-testid="results-nav">
+      <div class="ScanListNav-controls">
          <button
             type="button"
-            class="ScanResultsNav-btn"
+            class="ScanListNav-btn"
             :disabled="isBackDisabled"
             aria-label="Back"
             data-testid="nav-back"
@@ -75,7 +75,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
          <button
             v-if="isForwardShown"
             type="button"
-            class="ScanResultsNav-btn"
+            class="ScanListNav-btn"
             :disabled="isForwardDisabled"
             aria-label="Forward"
             data-testid="nav-forward"
@@ -84,34 +84,34 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
             <PhCaretRight :size="18" weight="regular" aria-hidden="true" />
          </button>
       </div>
-      <div class="ScanResultsNav-path" data-testid="nav-path-label">
+      <div class="ScanListNav-path" data-testid="nav-path-label">
          <PhTrashSimple
             v-if="pathIcon === 'trash'"
             :size="16"
             weight="regular"
-            class="ScanResultsNav-pathIcon"
+            class="ScanListNav-pathIcon"
             aria-hidden="true"
          />
          <PhFolderSimple
             v-else
             :size="16"
             weight="regular"
-            class="ScanResultsNav-pathIcon"
+            class="ScanListNav-pathIcon"
             aria-hidden="true"
          />
          <span
             ref="pathTextRef"
-            class="ScanResultsNav-pathText"
+            class="ScanListNav-pathText"
             @pointerenter="onPointerEnter"
             @pointerleave="onPointerLeave"
             >{{ pathLabel }}</span
          >
       </div>
-      <div v-if="isActionsShown" class="ScanResultsNav-actions">
+      <div v-if="isActionsShown" class="ScanListNav-actions">
          <button
             v-if="isResetShown"
             type="button"
-            class="ScanResultsNav-resetBtn"
+            class="ScanListNav-resetBtn"
             :disabled="isResetDisabled"
             @click="emit('reset')"
          >
@@ -120,7 +120,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
          <button
             v-if="isCancelShown"
             type="button"
-            class="ScanResultsNav-cancelBtn"
+            class="ScanListNav-cancelBtn"
             data-testid="results-cancel"
             @click="emit('cancel')"
          >
@@ -140,7 +140,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
 </template>
 
 <style scoped>
-.ScanResultsNav-root {
+.ScanListNav-root {
    flex-shrink: 0;
    display: flex;
    align-items: center;
@@ -150,13 +150,13 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
    border-bottom: 1px solid var(--color-bg);
 }
 
-.ScanResultsNav-controls {
+.ScanListNav-controls {
    display: flex;
    align-items: center;
    gap: var(--spacing-sm);
 }
 
-.ScanResultsNav-btn {
+.ScanListNav-btn {
    display: flex;
    align-items: center;
    justify-content: center;
@@ -183,7 +183,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
    }
 }
 
-.ScanResultsNav-path {
+.ScanListNav-path {
    flex: 1;
    min-width: 0;
    display: flex;
@@ -197,7 +197,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
 }
 
 /* Explicit 16×16 and block avoid inline SVG subpixel alignment and blur. */
-.ScanResultsNav-pathIcon {
+.ScanListNav-pathIcon {
    flex-shrink: 0;
    width: 16px;
    height: 16px;
@@ -205,19 +205,19 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
    color: var(--color-accent);
 }
 
-.ScanResultsNav-pathText {
+.ScanListNav-pathText {
    overflow: hidden;
    text-overflow: ellipsis;
    white-space: nowrap;
 }
 
-.ScanResultsNav-actions {
+.ScanListNav-actions {
    display: flex;
    align-items: center;
    gap: var(--spacing-md);
 }
 
-.ScanResultsNav-resetBtn {
+.ScanListNav-resetBtn {
    padding: 0;
    font-size: var(--font-size-md);
    font-weight: 500;
@@ -237,7 +237,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
    }
 }
 
-.ScanResultsNav-cancelBtn {
+.ScanListNav-cancelBtn {
    padding: 0;
    font-size: var(--font-size-md);
    font-weight: 500;

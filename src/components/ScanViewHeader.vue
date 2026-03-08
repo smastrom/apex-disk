@@ -1,12 +1,12 @@
 <!--
-ScanViewDiskUsage
+ScanViewHeader
 
 Purpose: Progress bar showing current disk usage (home volume). Shows "new free" in accent when items are selected for delete.
 
 Props: usage (DiskUsage | null), selectedSize (number?)
 
 Example:
- <ScanViewDiskUsage :usage="diskUsage" :selectedSize="selectedSize" />
+ <ScanViewHeader :usage="diskUsage" :selectedSize="selectedSize" />
 -->
 
 <script setup lang="ts">
@@ -57,52 +57,54 @@ const newFreeSpace = computed(() => {
 </script>
 
 <template>
-   <div v-if="props.usage" class="ScanViewDiskUsage-root" data-testid="disk-usage">
-      <div class="ScanViewDiskUsage-header">
-         <span class="ScanViewDiskUsage-volume">
+   <div v-if="props.usage" class="ScanViewHeader-root" data-testid="disk-usage">
+      <div class="ScanViewHeader-header">
+         <span class="ScanViewHeader-volume">
             <PhHardDrive
                :size="14"
                weight="regular"
-               class="ScanViewDiskUsage-volumeIcon"
+               class="ScanViewHeader-volumeIcon"
                aria-hidden="true"
             />
             {{ props.usage.volume_name }}
          </span>
-         <span class="ScanViewDiskUsage-userBadge"> /{{ props.usage.user_name }} </span>
+         <span class="ScanViewHeader-userBadge"> /{{ props.usage.user_name }} </span>
       </div>
-      <div class="ScanViewDiskUsage-infoRow">
-         <span class="ScanViewDiskUsage-info">
-            <span class="ScanViewDiskUsage-label">{{ t('ScanViewDiskUsage', 'total') }}</span>
-            <span class="ScanViewDiskUsage-value">{{ formatBytes(props.usage.total) }}</span>
+      <div class="ScanViewHeader-infoRow">
+         <span class="ScanViewHeader-info">
+            <span class="ScanViewHeader-label">{{ t('ScanViewHeader', 'total') }}</span>
+            <span class="ScanViewHeader-value"
+               >{{ formatBytes(props.usage.total) }}/{{ formatBytes(props.usage.total) }}</span
+            >
          </span>
-         <span class="ScanViewDiskUsage-info">
-            <span class="ScanViewDiskUsage-label">{{ t('ScanViewDiskUsage', 'free') }}</span>
-            <span class="ScanViewDiskUsage-value">{{ formatBytes(props.usage.free) }}</span>
+         <span class="ScanViewHeader-info">
+            <span class="ScanViewHeader-label">{{ t('ScanViewHeader', 'free') }}</span>
+            <span class="ScanViewHeader-value">{{ formatBytes(props.usage.free) }}</span>
          </span>
          <span
             v-if="newFreeSpace !== null"
-            class="ScanViewDiskUsage-info ScanViewDiskUsage-newFree"
+            class="ScanViewHeader-info ScanViewHeader-newFree"
             data-testid="disk-new-free"
          >
-            <span class="ScanViewDiskUsage-label">{{ t('ScanViewDiskUsage', 'newFree') }}</span>
-            <span class="ScanViewDiskUsage-value ScanViewDiskUsage-newFreeValue">
+            <span class="ScanViewHeader-label">{{ t('ScanViewHeader', 'newFree') }}</span>
+            <span class="ScanViewHeader-value ScanViewHeader-newFreeValue">
                {{ formatBytes(newFreeSpace) }}
             </span>
          </span>
       </div>
-      <div class="ScanViewDiskUsage-barWrap">
+      <div class="ScanViewHeader-barWrap">
          <div
             v-if="props.selectedSize && props.selectedSize > 0"
-            class="ScanViewDiskUsage-barLighter"
+            class="ScanViewHeader-barLighter"
             :style="{ width: lighterBarPercent + '%' }"
          />
-         <div class="ScanViewDiskUsage-barMain" :style="{ width: mainBarPercent + '%' }" />
+         <div class="ScanViewHeader-barMain" :style="{ width: mainBarPercent + '%' }" />
       </div>
    </div>
 </template>
 
 <style scoped>
-.ScanViewDiskUsage-root {
+.ScanViewHeader-root {
    flex-shrink: 0;
    padding: var(--spacing-sm) var(--spacing-md);
    background: var(--color-bg-elevated);
@@ -112,14 +114,14 @@ const newFreeSpace = computed(() => {
    width: 100%;
 }
 
-.ScanViewDiskUsage-header {
+.ScanViewHeader-header {
    display: flex;
    justify-content: space-between;
    align-items: center;
    margin-bottom: var(--spacing-sm);
 }
 
-.ScanViewDiskUsage-volume {
+.ScanViewHeader-volume {
    display: flex;
    align-items: center;
    gap: 6px;
@@ -128,13 +130,13 @@ const newFreeSpace = computed(() => {
    color: var(--color-text);
 }
 
-.ScanViewDiskUsage-volumeIcon {
+.ScanViewHeader-volumeIcon {
    flex-shrink: 0;
    color: var(--color-text-muted);
    opacity: 0.85;
 }
 
-.ScanViewDiskUsage-userBadge {
+.ScanViewHeader-userBadge {
    font-size: var(--font-size-sm);
    font-weight: 600;
    color: var(--color-text);
@@ -143,40 +145,40 @@ const newFreeSpace = computed(() => {
    border-radius: 6px;
 }
 
-.ScanViewDiskUsage-infoRow {
+.ScanViewHeader-infoRow {
    display: flex;
    justify-content: space-between;
    align-items: center;
    font-size: var(--font-size-base);
 }
 
-.ScanViewDiskUsage-info {
+.ScanViewHeader-info {
    display: flex;
    align-items: center;
    gap: var(--spacing-xs);
 }
 
-.ScanViewDiskUsage-label {
+.ScanViewHeader-label {
    color: var(--color-text-muted);
 }
 
-.ScanViewDiskUsage-value {
+.ScanViewHeader-value {
    color: var(--color-text);
    font-weight: 500;
 }
 
-.ScanViewDiskUsage-newFree {
-   .ScanViewDiskUsage-label {
+.ScanViewHeader-newFree {
+   .ScanViewHeader-label {
       color: var(--color-accent);
    }
 }
 
-.ScanViewDiskUsage-newFreeValue {
+.ScanViewHeader-newFreeValue {
    color: var(--color-accent);
    font-weight: 600;
 }
 
-.ScanViewDiskUsage-barWrap {
+.ScanViewHeader-barWrap {
    position: relative;
    margin-top: var(--spacing-sm);
    height: 10px;
@@ -186,7 +188,7 @@ const newFreeSpace = computed(() => {
    box-shadow: var(--glow-inset);
 }
 
-.ScanViewDiskUsage-barLighter {
+.ScanViewHeader-barLighter {
    position: absolute;
    left: 0;
    top: 0;
@@ -197,7 +199,7 @@ const newFreeSpace = computed(() => {
    z-index: 0;
 }
 
-.ScanViewDiskUsage-barMain {
+.ScanViewHeader-barMain {
    position: absolute;
    left: 0;
    top: 0;

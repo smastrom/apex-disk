@@ -1,4 +1,4 @@
-export const ScanScanning = {
+export const ScanProgress = {
    en: {
       scanning: 'Scanning user folder… {{current}} of {{total}}',
       elapsed: 'Elapsed time',

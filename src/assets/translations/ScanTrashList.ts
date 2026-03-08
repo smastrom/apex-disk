@@ -1,4 +1,4 @@
-export const ScanResultsTrashList = {
+export const ScanTrashList = {
    en: {
       navTitle: 'Items to Trash',
       moveToTrash: 'Move to Trash',

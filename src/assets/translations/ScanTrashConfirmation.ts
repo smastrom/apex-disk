@@ -1,4 +1,4 @@
-export const ScanResultsTrashConfirmation = {
+export const ScanTrashConfirmation = {
    en: {
       title: 'Move to Trash complete',
       resume: '{{count}} items moved to Trash, {{size}} freed',

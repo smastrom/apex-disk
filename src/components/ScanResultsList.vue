@@ -11,7 +11,7 @@ Example:
 
 <script setup lang="ts">
 import ScanResultsListItem from './ScanResultsListItem.vue'
-import ScanResultsNav from './ScanResultsNav.vue'
+import ScanListNav from './ScanListNav.vue'
 
 import {
    ref,
@@ -357,7 +357,7 @@ function onCancel() {
 
 <template>
    <div class="ScanResultsList-root" data-testid="results-list">
-      <ScanResultsNav
+      <ScanListNav
          isForwardShown
          :isBackDisabled="backStack.length === 0"
          :isForwardDisabled="forwardStack.length === 0"

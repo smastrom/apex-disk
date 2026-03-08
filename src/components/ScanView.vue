@@ -1,7 +1,7 @@
 <!--
 ScanView
 
-Purpose: Common scan shell. Always shows ScanViewDiskUsage at top; body switches between ScanResults, ScanResultsTrash, or ScanResultsTrashConfirmation.
+Purpose: Common scan shell. Always shows ScanViewHeader at top; body switches between ScanResults, ScanTrash, or ScanTrashConfirmation.
 
 Props: activeView (string), diskUsage (DiskUsage | null)
 
@@ -13,11 +13,11 @@ Example:
 -->
 
 <script setup lang="ts">
-import ScanViewDiskUsage from './ScanViewDiskUsage.vue'
-import ScanResultsTrashList from './ScanResultsTrashList.vue'
-import ScanResultsTrashConfirmation from './ScanResultsTrashConfirmation.vue'
+import ScanViewHeader from './ScanViewHeader.vue'
+import ScanTrashList from './ScanTrashList.vue'
+import ScanTrashConfirmation from './ScanTrashConfirmation.vue'
 import ScanResultsList from './ScanResultsList.vue'
-import ScanScanning from './ScanScanning.vue'
+import ScanProgress from './ScanProgress.vue'
 import ScanLaunch from './ScanLaunch.vue'
 
 import { ref, watch, onDeactivated, useTemplateRef } from 'vue'
@@ -131,7 +131,7 @@ function onRestart() {
 
 <template>
    <main class="ScanView-root">
-      <ScanViewDiskUsage :usage="diskUsage" :selectedSize="selectedSize" />
+      <ScanViewHeader :usage="diskUsage" :selectedSize="selectedSize" />
 
       <Transition name="fade" mode="out-in">
          <KeepAlive>
@@ -141,7 +141,7 @@ function onRestart() {
                @start-scan="loadFolders"
             />
 
-            <ScanScanning
+            <ScanProgress
                v-else-if="activeView === ActiveView.SCANNING"
                class="ScanView-body"
                :progress="progress"
@@ -159,7 +159,7 @@ function onRestart() {
                @cancel="onCancel"
             />
 
-            <ScanResultsTrashList
+            <ScanTrashList
                v-else-if="activeView === ActiveView.TRASH"
                class="ScanView-body"
                :items="deleteItems"
@@ -169,7 +169,7 @@ function onRestart() {
                @cancel="onCancel"
             />
 
-            <ScanResultsTrashConfirmation
+            <ScanTrashConfirmation
                v-else-if="activeView === ActiveView.TRASH_COMPLETE"
                class="ScanView-body"
                :deletedSummary="deletedSummary"
