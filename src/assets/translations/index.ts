@@ -7,29 +7,29 @@ import { global } from './global'
 import { InformationFooter } from './InformationFooter'
 import { InformationView } from './InformationView'
 import { ScanLaunch } from './ScanLaunch'
-import { ScanResultsDeleteConfirmation } from './ScanResultsDeleteConfirmation'
-import { ScanResultsDeleteList } from './ScanResultsDeleteList'
 import { ScanResultsList } from './ScanResultsList'
 import { ScanResultsListItem } from './ScanResultsListItem'
+import { ScanResultsTrashConfirmation } from './ScanResultsTrashConfirmation'
+import { ScanResultsTrashList } from './ScanResultsTrashList'
 import { ScanScanning } from './ScanScanning'
 import { ScanViewDiskUsage } from './ScanViewDiskUsage'
 import { SettingsView } from './SettingsView'
 
 export const translations = {
    global,
-   AppHeader,
    App,
-   ScanViewDiskUsage,
+   AppHeader,
+   AppFooter,
+   SettingsView,
+   InformationFooter,
+   InformationView,
    ScanLaunch,
    ScanScanning,
    ScanResultsList,
    ScanResultsListItem,
-   ScanResultsDeleteList,
-   ScanResultsDeleteConfirmation,
-   SettingsView,
-   InformationFooter,
-   AppFooter,
-   InformationView,
+   ScanResultsTrashConfirmation,
+   ScanResultsTrashList,
+   ScanViewDiskUsage,
 } as const
 
 export type TranslationModule = keyof typeof translations

@@ -13,10 +13,10 @@ MacDiskTree scans your entire user folder and presents everything as a navigable
 ## Features
 
 - **Hyper-fast scanning** — Directory scanning distributes I/O across all available CPU cores for maximum throughput
-- **Smooth UI** — Performance-minded interface with fluid animations, a clean design, and snappy navigation
-- **Smart UX** — Easily spot waste with a size-sorted tree and last-modified dates. See exactly how much space you'll save in the header as you select files.
+- **Smart UX** — Easily spot waste with a size-sorted tree and last-modified dates. See exactly how much space you'll save as you select files.
 - **Safe by design** — Files are moved to the Trash, never deleted directly. Reserved system folders are protected, and sensitive directories (like .ssh or .aws) are automatically skipped.
 - **Optional Full Disk Access** — Works without FDA by default. Granting it allows you to skip repetitive macOS permission prompts.
+- **Smooth UI** — Performance-minded interface with fluid animations, a clean design, and snappy navigation
 - **10 languages** — Support for English, Italian, Spanish, French, Portuguese, German, Russian, Chinese, Japanese, and Arabic (with RTL support)
 - **Accessible** — Engineered for everyone with complete keyboard navigation and screen reader support
 - **Themes** — Multiple color themes to choose from, with more on the way
