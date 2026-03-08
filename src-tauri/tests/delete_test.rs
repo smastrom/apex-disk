@@ -27,14 +27,17 @@ fn filter_items_protected_paths_removed() {
         DeletePathItem {
             path: docs_path.to_string_lossy().into_owned(),
             is_file: false,
+            size: 0,
         },
         DeletePathItem {
             path: lib_path.to_string_lossy().into_owned(),
             is_file: false,
+            size: 0,
         },
         DeletePathItem {
             path: mydata_path.to_string_lossy().into_owned(),
             is_file: false,
+            size: 0,
         },
     ];
 
@@ -72,10 +75,12 @@ fn filter_items_skipped_paths_removed() {
         DeletePathItem {
             path: ssh_path.to_string_lossy().into_owned(),
             is_file: false,
+            size: 0,
         },
         DeletePathItem {
             path: mydata_file.to_string_lossy().into_owned(),
             is_file: true,
+            size: 0,
         },
     ];
 
@@ -99,10 +104,12 @@ fn filter_items_partition_files_and_dirs() {
         DeletePathItem {
             path: file_path.to_string_lossy().into_owned(),
             is_file: true,
+            size: 0,
         },
         DeletePathItem {
             path: dir_path.to_string_lossy().into_owned(),
             is_file: false,
+            size: 0,
         },
     ];
 
@@ -127,10 +134,12 @@ fn filter_items_nonexistent_path_removed() {
         DeletePathItem {
             path: real_file.to_string_lossy().into_owned(),
             is_file: true,
+            size: 0,
         },
         DeletePathItem {
             path: fake_path.to_string_lossy().into_owned(),
             is_file: true,
+            size: 0,
         },
     ];
 
@@ -155,10 +164,12 @@ fn trash_paths_sync_runs_and_filters() {
         DeletePathItem {
             path: file_path.to_string_lossy().into_owned(),
             is_file: true,
+            size: 0,
         },
         DeletePathItem {
             path: dir_path.to_string_lossy().into_owned(),
             is_file: false,
+            size: 0,
         },
     ];
 
@@ -179,10 +190,12 @@ fn trash_paths_sync_does_not_remove_protected() {
         DeletePathItem {
             path: docs_path.to_string_lossy().into_owned(),
             is_file: false,
+            size: 0,
         },
         DeletePathItem {
             path: mydata_path.to_string_lossy().into_owned(),
             is_file: false,
+            size: 0,
         },
     ];
 
@@ -223,14 +236,17 @@ fn filter_items_all_protected_returns_empty() {
         DeletePathItem {
             path: home_canon.join("Documents").to_string_lossy().into_owned(),
             is_file: false,
+            size: 0,
         },
         DeletePathItem {
             path: home_canon.join("Library").to_string_lossy().into_owned(),
             is_file: false,
+            size: 0,
         },
         DeletePathItem {
             path: home_canon.join(".ssh").to_string_lossy().into_owned(),
             is_file: false,
+            size: 0,
         },
     ];
 

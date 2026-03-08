@@ -42,7 +42,7 @@ const props = defineProps<{
 const emit = defineEmits<{
    (e: 'back', checkedItems: DeleteListItem[]): void
    (e: 'update:selectedSize', value: number): void
-   (e: 'complete', items: DeleteListItem[]): void
+   (e: 'complete', summary: { count: number; size: number }): void
    (e: 'cancel'): void
 }>()
 
@@ -207,13 +207,23 @@ async function onDeleteClick() {
    const items = toDelete.map((item) => ({
       path: item.path,
       is_file: item.is_file,
+      size: item.size,
    }))
-   await invoke('delete_paths', { items }).catch(() => {})
+
+   let summary = { count: toDelete.length, size: selectedSize.value }
+   try {
+      const result = await invoke<{ count: number; size: number }>('delete_paths', { items })
+      summary = result
+   } catch {
+      // Fall back to optimistic values
+   }
+
+   log('delete', `Deleted ${summary.count}/${toDelete.length} items (${formatBytes(summary.size)})`)
 
    await new Promise((r) => setTimeout(r, DELETE_POST_DELETE_SLEEP_MS))
    // Keep isDeleting=true visually — the parent will tear down this component
    // after handling `complete`. Resetting here would flash the ready state.
-   emit('complete', toDelete)
+   emit('complete', summary)
 }
 </script>
 

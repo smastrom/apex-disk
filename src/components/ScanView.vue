@@ -70,7 +70,6 @@ const pendingSelection = ref<DeleteListItem[] | null>(null)
 /** When Abort/cancel clears folders and we return to ScanLaunch, reset all scan state. */
 
 function resetInternalState() {
-   console.log('resetInternalState')
    selectedSize.value = 0
    activeView.value = ActiveView.LAUNCH
    deleteItems.value = []
@@ -117,13 +116,9 @@ watch(resultsListRef, (ref) => {
    }
 })
 
-function onDeleteComplete(items: DeleteListItem[]) {
-   log('delete', `Delete complete: ${items.length} items`)
-   deletedSummary.value = {
-      count: items.length,
-      size: items.reduce((sum, i) => sum + i.size, 0),
-   }
-
+function onDeleteComplete(summary: { count: number; size: number }) {
+   log('delete', `Delete complete: ${summary.count} items, ${summary.size} bytes`)
+   deletedSummary.value = summary
    activeView.value = ActiveView.DELETE_COMPLETE
 }
 
