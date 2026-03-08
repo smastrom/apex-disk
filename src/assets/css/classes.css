@@ -156,7 +156,7 @@
    --shine-top-width: 96px;
    --shine-top-height: 6px;
    --shine-top-blur: 6px;
-   --text-shadow: 0 0px 3px rgba(0, 0, 0, 0.2);
+   --text-shadow: 0 0px 4px rgba(0, 0, 0, 0.2);
 
    appearance: none;
    border: none;
@@ -166,7 +166,6 @@
    cursor: pointer;
 
    font-weight: var(--font-weight);
-
    line-height: var(--line-height);
    text-shadow: var(--text-shadow);
    border-radius: var(--radius);
@@ -178,13 +177,12 @@
       var(--btn-gradient-100) 100%
    );
    border: 1px solid rgba(255, 255, 255, 0.25);
-   transition: box-shadow 0.2s var(--ease-standard);
+   transition:
+      box-shadow 0.5s var(--ease-out),
+      filter 0.5s var(--ease-out);
 
    &:hover {
       box-shadow: var(--glow-md);
-   }
-
-   & svg {
-      filter: drop-shadow(var(--text-shadow));
+      filter: brightness(1.05);
    }
 }

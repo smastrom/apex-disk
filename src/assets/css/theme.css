@@ -100,13 +100,13 @@
    --color-accent-bg-hover: rgba(255, 204, 102, 0.06);
    --color-border: #1e2533;
 
-   --btn-gradient-0: #ffcc66;
-   --btn-gradient-50: #e8b755;
-   --btn-gradient-100: #ffcc66;
+   --btn-gradient-0: #c89530;
+   --btn-gradient-50: #b08528;
+   --btn-gradient-100: #c89530;
 
-   --btn-step-0: #ffd580;
-   --btn-step-50: #ffcc66;
-   --btn-step-100: #ffd580;
+   --btn-step-0: #d09e38;
+   --btn-step-50: #c89530;
+   --btn-step-100: #d09e38;
 
    --color-abort: #e24838;
    --btn-action-0: #d47840;
@@ -218,13 +218,13 @@
    --color-accent-bg-hover: hsla(145, 72%, 51%, 0.06);
    --color-border: hsl(150, 8%, 22%);
 
-   --btn-gradient-0: hsl(145, 72%, 51%);
-   --btn-gradient-50: hsl(145, 72%, 44%);
-   --btn-gradient-100: hsl(145, 72%, 51%);
+   --btn-gradient-0: hsl(145, 72%, 38%);
+   --btn-gradient-50: hsl(145, 72%, 32%);
+   --btn-gradient-100: hsl(145, 72%, 38%);
 
-   --btn-step-0: hsl(145, 72%, 57%);
-   --btn-step-50: hsl(145, 72%, 51%);
-   --btn-step-100: hsl(145, 72%, 57%);
+   --btn-step-0: hsl(145, 72%, 42%);
+   --btn-step-50: hsl(145, 72%, 38%);
+   --btn-step-100: hsl(145, 72%, 42%);
 
    --color-abort: hsl(6, 62%, 52%);
 }
