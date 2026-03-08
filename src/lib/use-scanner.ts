@@ -1,3 +1,4 @@
+import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'
 import { useAppSettings } from '@/stores/app-settings'
 import { invoke } from '@tauri-apps/api/core'
@@ -56,7 +57,12 @@ export function useScanner() {
    }
 
    async function loadFolders() {
-      log('scan', 'Scan started')
+      const settings = settingsStore.settings.value
+      log('scan', 'Scan started', {
+         showHiddenFiles: settings.showHiddenFiles,
+         showUnder1Kb: settings.showUnder1Kb,
+         showZeroByte: settings.showZeroByte,
+      })
 
       // Clean up any previous scan's listener before starting a new one
       unlistenProgress?.()
@@ -73,7 +79,6 @@ export function useScanner() {
       })
 
       try {
-         const settings = settingsStore.settings.value
          const options = {
             show_hidden_files: settings.showHiddenFiles,
             show_under_1kb: settings.showUnder1Kb,
@@ -83,7 +88,11 @@ export function useScanner() {
          const result = await invoke<FolderInfo[]>('get_user_folders', { options })
 
          if (gen === scanGeneration.value) {
-            log('scan', `Scan complete: ${result.length} folders`)
+            const totalSize = formatBytes(progress.value.scanned_size_total)
+            log(
+               'scan',
+               `Scan complete: ${result.length} folders, ${totalSize}, ${elapsedSeconds.value}s`
+            )
             folders.value = result
          }
       } catch (error) {
@@ -113,7 +122,7 @@ export function useScanner() {
       try {
          await invoke('cancel_scan')
       } catch (error) {
-         console.error('Failed to cancel scan:', error)
+         log('scan', 'Failed to cancel scan', error)
       }
    }
 

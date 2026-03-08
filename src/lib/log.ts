@@ -1,6 +1,6 @@
 import { invoke } from '@tauri-apps/api/core'
 
-type LogCategory = 'view' | 'nav' | 'scan' | 'file' | 'trash'
+type LogCategory = 'app' | 'view' | 'nav' | 'scan' | 'file' | 'trash' | 'settings'
 
 let _enabled = false
 let _isDev = false

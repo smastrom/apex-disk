@@ -1,3 +1,4 @@
+import { log } from '@/lib/log'
 import { invoke } from '@tauri-apps/api/core'
 import { ref, type Ref } from 'vue'
 
@@ -33,25 +34,32 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
       settings,
       getThemeColor: () => settings.value.themeColor,
       setLanguage: async (lang) => {
+         const prev = settings.value.language
          settings.value = { ...settings.value, language: lang }
+         log('settings', `language: ${prev} → ${lang}`)
          await saveSettings()
          // Update macOS system locale (for context menus) and sync app menu language
          await invoke('set_app_locale', { language: lang })
       },
       setThemeColor: async (theme) => {
+         const prev = settings.value.themeColor
          settings.value = { ...settings.value, themeColor: theme }
+         log('settings', `themeColor: ${prev} → ${theme}`)
          await saveSettings()
       },
       setShowHiddenFiles: async (value) => {
          settings.value = { ...settings.value, showHiddenFiles: value }
+         log('settings', `showHiddenFiles: ${!value} → ${value}`)
          await saveSettings()
       },
       setShowUnder1Kb: async (value) => {
          settings.value = { ...settings.value, showUnder1Kb: value }
+         log('settings', `showUnder1Kb: ${!value} → ${value}`)
          await saveSettings()
       },
       setShowZeroByte: async (value) => {
          settings.value = { ...settings.value, showZeroByte: value }
+         log('settings', `showZeroByte: ${!value} → ${value}`)
          await saveSettings()
       },
    }

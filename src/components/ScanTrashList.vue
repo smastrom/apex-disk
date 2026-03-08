@@ -214,8 +214,8 @@ async function onTrashClick() {
    try {
       const result = await invoke<{ count: number; size: number }>('trash_paths', { items })
       summary = result
-   } catch {
-      // Fall back to optimistic values
+   } catch (error) {
+      log('trash', 'Trash invoke error, using optimistic values', error)
    }
 
    log(
