@@ -33,11 +33,11 @@ export const THEME_COLORS = [
    'smastrom',
 ] as const
 
-/** Ms to show countdown on the Delete button before it becomes clickable. */
-export const DELETE_COUNTDOWN_MS = 1000
+/** Ms to show countdown on the Move to Trash button before it becomes clickable. */
+export const TRASH_COUNTDOWN_MS = 1000
 
-/** Ms to wait after delete_paths completes before emitting complete and clearing spinner. */
-export const DELETE_POST_DELETE_SLEEP_MS = 500
+/** Ms to wait after trash_paths completes before emitting complete and clearing spinner. */
+export const TRASH_POST_TRASH_SLEEP_MS = 500
 
 /** Donate / support link. Opens in default browser when user taps Donate. */
 export const DONATE_URL = 'https://buymeacoffee.com/smastrom'

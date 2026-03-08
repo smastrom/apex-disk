@@ -11,8 +11,8 @@ export interface FolderInfo {
    last_modified?: number
 }
 
-/** Single item in the delete review list (flattened from selection). */
-export interface DeleteListItem {
+/** Single item in the trash review list (flattened from selection). */
+export interface TrashListItem {
    path: string
    name: string
    size: number
