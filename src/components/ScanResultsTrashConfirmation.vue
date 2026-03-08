@@ -1,12 +1,12 @@
 <!--
-ScanResultsDeleteConfirmation
+ScanResultsTrashConfirmation
 
-Purpose: Post-delete screen. Shows resume (items count, size freed) and Scan again button.
+Purpose: Post-trash screen. Shows resume (items count, size freed) and Scan again button.
 
 Props: deletedSummary ({ count: number, size: number } | null)
 
 Example:
- <ScanResultsDeleteConfirmation :deletedSummary="summary" @restart="onRestart" />
+ <ScanResultsTrashConfirmation :deletedSummary="summary" @restart="onRestart" />
 -->
 
 <script setup lang="ts">
@@ -34,15 +34,15 @@ function closeApp() {
 </script>
 
 <template>
-   <div class="ScanResultsDeleteConfirmation-root">
-      <div class="ScanResultsDeleteConfirmation-content">
-         <AnimatedCheckCircle :size="48" class="ScanResultsDeleteConfirmation-icon" />
-         <h2 class="ScanResultsDeleteConfirmation-title">
-            {{ t('ScanResultsDeleteConfirmation', 'titleMoveToTrash') }}
+   <div class="ScanResultsTrashConfirmation-root">
+      <div class="ScanResultsTrashConfirmation-content">
+         <AnimatedCheckCircle :size="48" class="ScanResultsTrashConfirmation-icon" />
+         <h2 class="ScanResultsTrashConfirmation-title">
+            {{ t('ScanResultsTrashConfirmation', 'title') }}
          </h2>
-         <p v-if="deletedSummary" class="ScanResultsDeleteConfirmation-resume">
+         <p v-if="deletedSummary" class="ScanResultsTrashConfirmation-resume">
             {{
-               t('ScanResultsDeleteConfirmation', 'resumeMoveToTrash', {
+               t('ScanResultsTrashConfirmation', 'resume', {
                   count: deletedSummary.count,
                   size: formatBytes(deletedSummary.size),
                })
@@ -50,23 +50,23 @@ function closeApp() {
          </p>
          <button
             type="button"
-            class="ScanResultsDeleteConfirmation-scanBtn GradientButton"
+            class="ScanResultsTrashConfirmation-scanBtn GradientButton"
             data-testid="restart"
             @click="$emit('restart')"
          >
             <PhMagnifyingGlass :size="18" weight="regular" aria-hidden="true" />
-            {{ t('ScanResultsDeleteConfirmation', 'restart') }}
+            {{ t('ScanResultsTrashConfirmation', 'restart') }}
          </button>
-         <button type="button" class="ScanResultsDeleteConfirmation-closeBtn" @click="closeApp">
+         <button type="button" class="ScanResultsTrashConfirmation-closeBtn" @click="closeApp">
             <PhX :size="16" weight="bold" aria-hidden="true" />
-            {{ t('ScanResultsDeleteConfirmation', 'closeApp') }}
+            {{ t('ScanResultsTrashConfirmation', 'closeApp') }}
          </button>
       </div>
    </div>
 </template>
 
 <style scoped>
-.ScanResultsDeleteConfirmation-root {
+.ScanResultsTrashConfirmation-root {
    flex: 1;
    display: flex;
    flex-direction: column;
@@ -77,7 +77,7 @@ function closeApp() {
    background: var(--color-bg);
 }
 
-.ScanResultsDeleteConfirmation-content {
+.ScanResultsTrashConfirmation-content {
    display: flex;
    flex-direction: column;
    align-items: center;
@@ -86,12 +86,12 @@ function closeApp() {
    width: 100%;
 }
 
-.ScanResultsDeleteConfirmation-icon {
+.ScanResultsTrashConfirmation-icon {
    color: var(--color-accent);
    flex-shrink: 0;
 }
 
-.ScanResultsDeleteConfirmation-title {
+.ScanResultsTrashConfirmation-title {
    margin: 0;
    font-size: var(--font-size-2xl);
    font-weight: 600;
@@ -99,14 +99,14 @@ function closeApp() {
    text-align: center;
 }
 
-.ScanResultsDeleteConfirmation-resume {
+.ScanResultsTrashConfirmation-resume {
    margin: 0;
    font-size: var(--font-size-lg);
    color: var(--color-text-muted);
    text-align: center;
 }
 
-.ScanResultsDeleteConfirmation-scanBtn {
+.ScanResultsTrashConfirmation-scanBtn {
    height: var(--cta-btn-height);
    width: 100%;
    display: flex;
@@ -118,7 +118,7 @@ function closeApp() {
    font-size: var(--font-size-lg);
 }
 
-.ScanResultsDeleteConfirmation-closeBtn {
+.ScanResultsTrashConfirmation-closeBtn {
    display: flex;
    align-items: center;
    justify-content: center;

@@ -42,10 +42,10 @@
    left: -4px;
 }
 
-/* ── Delete list caption transition: use margin-right instead ──────── */
+/* ── Trash list caption transition: use margin-right instead ──────── */
 
-[dir='rtl'] .ScanResultsDeleteList-caption-enter-active,
-[dir='rtl'] .ScanResultsDeleteList-caption-leave-active {
+[dir='rtl'] .ScanResultsTrashList-caption-enter-active,
+[dir='rtl'] .ScanResultsTrashList-caption-leave-active {
    transition:
       opacity 0.25s var(--ease-standard),
       max-width 0.3s var(--ease-standard),
@@ -53,8 +53,8 @@
    margin-left: 0;
 }
 
-[dir='rtl'] .ScanResultsDeleteList-caption-enter-from,
-[dir='rtl'] .ScanResultsDeleteList-caption-leave-to {
+[dir='rtl'] .ScanResultsTrashList-caption-enter-from,
+[dir='rtl'] .ScanResultsTrashList-caption-leave-to {
    margin-left: 0;
    margin-right: -0.5rem;
 }

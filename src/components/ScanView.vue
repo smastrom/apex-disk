@@ -1,7 +1,7 @@
 <!--
 ScanView
 
-Purpose: Common scan shell. Always shows ScanViewDiskUsage at top; body switches between ScanResults, ScanResultsDelete, or ScanResultsDeleteConfirmation.
+Purpose: Common scan shell. Always shows ScanViewDiskUsage at top; body switches between ScanResults, ScanResultsTrash, or ScanResultsTrashConfirmation.
 
 Props: activeView (string), diskUsage (DiskUsage | null)
 
@@ -14,8 +14,8 @@ Example:
 
 <script setup lang="ts">
 import ScanViewDiskUsage from './ScanViewDiskUsage.vue'
-import ScanResultsDeleteList from './ScanResultsDeleteList.vue'
-import ScanResultsDeleteConfirmation from './ScanResultsDeleteConfirmation.vue'
+import ScanResultsTrashList from './ScanResultsTrashList.vue'
+import ScanResultsTrashConfirmation from './ScanResultsTrashConfirmation.vue'
 import ScanResultsList from './ScanResultsList.vue'
 import ScanScanning from './ScanScanning.vue'
 import ScanLaunch from './ScanLaunch.vue'
@@ -25,7 +25,7 @@ import { ref, watch, onDeactivated, useTemplateRef } from 'vue'
 import { log } from '@/lib/log'
 import { useScanner } from '@/lib/use-scanner'
 
-import type { DeleteListItem } from '@/types/structs'
+import type { TrashListItem } from '@/types/structs'
 import type { DiskUsage } from '@/types/disk'
 
 defineProps<{
@@ -38,8 +38,8 @@ enum ActiveView {
    LAUNCH = 'launch',
    SCANNING = 'scanning',
    RESULTS = 'results',
-   DELETE = 'delete',
-   DELETE_COMPLETE = 'deleteComplete',
+   TRASH = 'trash',
+   TRASH_COMPLETE = 'trashComplete',
 }
 
 const activeView = ref<ActiveView>(ActiveView.LAUNCH)
@@ -61,11 +61,11 @@ watch(
    { immediate: true }
 )
 
-const deleteItems = ref<DeleteListItem[]>([])
+const deleteItems = ref<TrashListItem[]>([])
 const deletedSummary = ref<{ count: number; size: number } | null>(null)
 const selectedSize = ref(0)
 const resultsListRef = useTemplateRef<InstanceType<typeof ScanResultsList>>('resultsListRef')
-const pendingSelection = ref<DeleteListItem[] | null>(null)
+const pendingSelection = ref<TrashListItem[] | null>(null)
 
 /** When Abort/cancel clears folders and we return to ScanLaunch, reset all scan state. */
 
@@ -87,8 +87,8 @@ watch(
 )
 
 onDeactivated(() => {
-   // If switching app view from this component and we're in DeleteResults page
-   if (activeView.value === ActiveView.DELETE_COMPLETE) {
+   // If switching app view from this component and we're in TrashResults page
+   if (activeView.value === ActiveView.TRASH_COMPLETE) {
       activeView.value = ActiveView.LAUNCH
       onCancel()
    }
@@ -98,13 +98,13 @@ function onSelectedSizeUpdate(value: number) {
    selectedSize.value = value
 }
 
-function onReview(items: DeleteListItem[]) {
-   log('view', `Scan view: delete review (${items.length} items)`)
+function onReview(items: TrashListItem[]) {
+   log('view', `Scan view: trash review (${items.length} items)`)
    deleteItems.value = items
-   activeView.value = ActiveView.DELETE
+   activeView.value = ActiveView.TRASH
 }
 
-function onBackFromDelete(checkedItems: DeleteListItem[]) {
+function onBackFromTrash(checkedItems: TrashListItem[]) {
    pendingSelection.value = checkedItems
    activeView.value = ActiveView.RESULTS
 }
@@ -116,10 +116,10 @@ watch(resultsListRef, (ref) => {
    }
 })
 
-function onDeleteComplete(summary: { count: number; size: number }) {
-   log('delete', `Delete complete: ${summary.count} items, ${summary.size} bytes`)
+function onTrashComplete(summary: { count: number; size: number }) {
+   log('trash', `Trash complete: ${summary.count} items, ${summary.size} bytes`)
    deletedSummary.value = summary
-   activeView.value = ActiveView.DELETE_COMPLETE
+   activeView.value = ActiveView.TRASH_COMPLETE
 }
 
 function onRestart() {
@@ -158,18 +158,18 @@ function onRestart() {
                @cancel="onCancel"
             />
 
-            <ScanResultsDeleteList
-               v-else-if="activeView === ActiveView.DELETE"
+            <ScanResultsTrashList
+               v-else-if="activeView === ActiveView.TRASH"
                class="ScanView-body"
                :items="deleteItems"
-               @back="onBackFromDelete"
+               @back="onBackFromTrash"
                @update:selectedSize="onSelectedSizeUpdate"
-               @complete="onDeleteComplete"
+               @complete="onTrashComplete"
                @cancel="onCancel"
             />
 
-            <ScanResultsDeleteConfirmation
-               v-else-if="activeView === ActiveView.DELETE_COMPLETE"
+            <ScanResultsTrashConfirmation
+               v-else-if="activeView === ActiveView.TRASH_COMPLETE"
                class="ScanView-body"
                :deletedSummary="deletedSummary"
                @restart="onRestart"

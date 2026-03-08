@@ -1,16 +1,16 @@
 <!--
-ScanResultsDeleteList
+ScanResultsTrashList
 
-Purpose: Fullscreen list of items scheduled for delete. Checkboxes (default on) update progress and button size. Red Delete button with countdown then spinner when processing.
+Purpose: Fullscreen list of items scheduled for trash. Checkboxes (default on) update progress and button size. Red Move to Trash button with countdown then spinner when processing.
 
-Props: items (DeleteListItem[]) — countdown starts automatically when component is rendered
+Props: items (TrashListItem[]) — countdown starts automatically when component is rendered
 
 Example:
- <ScanResultsDeleteList :items="deleteItems" @update:selectedSize="onSize" @complete="onComplete" />
+ <ScanResultsTrashList :items="trashItems" @update:selectedSize="onSize" @complete="onComplete" />
 -->
 
 <script setup lang="ts">
-import ScanResultsDeleteListItem from './ScanResultsDeleteListItem.vue'
+import ScanResultsTrashListItem from './ScanResultsTrashListItem.vue'
 import ScanResultsNav from './ScanResultsNav.vue'
 import Spinner from './ui/Spinner.vue'
 
@@ -31,16 +31,16 @@ import { log } from '@/lib/log'
 import { useTranslations } from '@/lib/use-translations'
 import { useReducedMotion } from '@/lib/use-reduced-motion'
 
-import { DELETE_COUNTDOWN_MS, DELETE_POST_DELETE_SLEEP_MS } from '@/lib/constants'
+import { TRASH_COUNTDOWN_MS, TRASH_POST_TRASH_SLEEP_MS } from '@/lib/constants'
 
-import type { DeleteListItem } from '@/types/structs'
+import type { TrashListItem } from '@/types/structs'
 
 const props = defineProps<{
-   items: DeleteListItem[]
+   items: TrashListItem[]
 }>()
 
 const emit = defineEmits<{
-   (e: 'back', checkedItems: DeleteListItem[]): void
+   (e: 'back', checkedItems: TrashListItem[]): void
    (e: 'update:selectedSize', value: number): void
    (e: 'complete', summary: { count: number; size: number }): void
    (e: 'cancel'): void
@@ -49,7 +49,7 @@ const emit = defineEmits<{
 const { t } = useTranslations()
 
 /**
- * Safety countdown: the delete button stays disabled for DELETE_COUNTDOWN_MS
+ * Safety countdown: the trash button stays disabled for TRASH_COUNTDOWN_MS
  * after the view becomes active. Prevents accidental taps when the user just
  * navigated in. A plain `let` timer ID is fine — it's never read reactively.
  */
@@ -63,7 +63,7 @@ function startCountdown() {
       countdownInterval = null
    }
 
-   countdownRemaining.value = DELETE_COUNTDOWN_MS
+   countdownRemaining.value = TRASH_COUNTDOWN_MS
    countdownInterval = setInterval(() => {
       countdownRemaining.value -= 1000
       if (countdownRemaining.value <= 0 && countdownInterval) {
@@ -105,7 +105,7 @@ onUnmounted(stopCountdown)
  * Cleanup when component becomes inactive (KeepAlive scenario).
  * Only reset transient UI states — checkedMapRef is intentionally preserved
  * so selections survive AppView switches. It is cleared on abort or after
- * a successful delete (via parent handling of 'cancel' / 'complete' events).
+ * a successful trash (via parent handling of 'cancel' / 'complete' events).
  */
 onDeactivated(() => {
    stopCountdown()
@@ -128,10 +128,10 @@ const isDeleting = ref(false)
 const { prefersReducedMotion } = useReducedMotion()
 
 /** Tracks which items array was last used to build checkedMapRef. */
-let lastInitializedItems: DeleteListItem[] | null = null
+let lastInitializedItems: TrashListItem[] | null = null
 
 /** Builds a fresh all-checked Map from items and assigns it atomically. */
-function initCheckedMap(items: DeleteListItem[]) {
+function initCheckedMap(items: TrashListItem[]) {
    const next = new Map<string, boolean>()
    for (const item of items) next.set(item.path, true)
    checkedMapRef.value = next
@@ -159,7 +159,7 @@ const selectedSize = computed(() => {
 /** Emits size changes to parent so the disk usage bar stays in sync. */
 watch(selectedSize, (size) => emit('update:selectedSize', size), { immediate: true })
 
-/** Number of checked items. Used to disable the delete button when nothing is checked. */
+/** Number of checked items. Used to disable the trash button when nothing is checked. */
 const checkedCount = computed(() => {
    const map = checkedMapRef.value
    let n = 0
@@ -184,43 +184,46 @@ function toggle(path: string) {
 }
 
 /** Returns checked items for the back-navigation emit (restores selection in ScanResultsList). */
-function getCheckedItems(): DeleteListItem[] {
+function getCheckedItems(): TrashListItem[] {
    const map = checkedMapRef.value
 
    return props.items.filter((item) => map.get(item.path))
 }
 
-const deleteReady = computed(() => countdownRemaining.value <= 0)
+const trashReady = computed(() => countdownRemaining.value <= 0)
 
 /**
- * Delete handler. Guards against double-clicks and empty selections.
- * Calls the Tauri `delete_paths` command, waits a short delay (so the user
- * sees the spinner), then emits `complete` with the deleted items.
+ * Trash handler. Guards against double-clicks and empty selections.
+ * Calls the Tauri `trash_paths` command, waits a short delay (so the user
+ * sees the spinner), then emits `complete` with the trashed items.
  */
-async function onDeleteClick() {
-   if (!deleteReady.value || isDeleting.value || checkedCount.value === 0) return
+async function onTrashClick() {
+   if (!trashReady.value || isDeleting.value || checkedCount.value === 0) return
 
    isDeleting.value = true
-   const toDelete = props.items.filter((item) => checkedMapRef.value.get(item.path))
-   log('delete', `Deleting ${toDelete.length} items (${formatBytes(selectedSize.value)})`)
+   const toTrash = props.items.filter((item) => checkedMapRef.value.get(item.path))
+   log('trash', `Moving ${toTrash.length} items to Trash (${formatBytes(selectedSize.value)})`)
 
-   const items = toDelete.map((item) => ({
+   const items = toTrash.map((item) => ({
       path: item.path,
       is_file: item.is_file,
       size: item.size,
    }))
 
-   let summary = { count: toDelete.length, size: selectedSize.value }
+   let summary = { count: toTrash.length, size: selectedSize.value }
    try {
-      const result = await invoke<{ count: number; size: number }>('delete_paths', { items })
+      const result = await invoke<{ count: number; size: number }>('trash_paths', { items })
       summary = result
    } catch {
       // Fall back to optimistic values
    }
 
-   log('delete', `Deleted ${summary.count}/${toDelete.length} items (${formatBytes(summary.size)})`)
+   log(
+      'trash',
+      `Moved ${summary.count}/${toTrash.length} items to Trash (${formatBytes(summary.size)})`
+   )
 
-   await new Promise((r) => setTimeout(r, DELETE_POST_DELETE_SLEEP_MS))
+   await new Promise((r) => setTimeout(r, TRASH_POST_TRASH_SLEEP_MS))
    // Keep isDeleting=true visually — the parent will tear down this component
    // after handling `complete`. Resetting here would flash the ready state.
    emit('complete', summary)
@@ -228,12 +231,12 @@ async function onDeleteClick() {
 </script>
 
 <template>
-   <div class="ScanResultsDeleteList-root" data-testid="delete-list">
+   <div class="ScanResultsTrashList-root" data-testid="trash-list">
       <ScanResultsNav
          :isForwardShown="false"
          :isBackDisabled="false"
          pathIcon="trash"
-         :pathLabel="t('ScanResultsDeleteList', 'navTitleMoveToTrash')"
+         :pathLabel="t('ScanResultsTrashList', 'navTitle')"
          isActionsShown
          isResetDisabled
          :isResetShown="false"
@@ -241,13 +244,13 @@ async function onDeleteClick() {
          @cancel="emit('cancel')"
       />
       <div
-         class="ScanResultsDeleteList-listWrap"
-         :class="{ 'ScanResultsDeleteList-listWrap--deleting': isDeleting }"
+         class="ScanResultsTrashList-listWrap"
+         :class="{ 'ScanResultsTrashList-listWrap--deleting': isDeleting }"
       >
-         <div class="ScanResultsDeleteList-list ScanResultsDeleteList-listScroll">
-            <div class="ScanResultsDeleteList-listInner">
-               <div v-for="item in items" :key="item.path" class="ScanResultsDeleteList-listItem">
-                  <ScanResultsDeleteListItem
+         <div class="ScanResultsTrashList-list ScanResultsTrashList-listScroll">
+            <div class="ScanResultsTrashList-listInner">
+               <div v-for="item in items" :key="item.path" class="ScanResultsTrashList-listItem">
+                  <ScanResultsTrashListItem
                      :item="item"
                      :isSelected="!!checkedMapRef.get(item.path)"
                      :formatBytes="formatBytes"
@@ -257,43 +260,43 @@ async function onDeleteClick() {
             </div>
          </div>
       </div>
-      <div class="ScanResultsDeleteList-footer">
+      <div class="ScanResultsTrashList-footer">
          <button
             type="button"
-            class="GradientButton ScanResultsDeleteList-moveToTrashBtn"
+            class="GradientButton ScanResultsTrashList-moveToTrashBtn"
             :data-deleting="isDeleting || undefined"
             :disabled="countdownRemaining > 0 || checkedCount === 0 || isDeleting"
-            data-testid="confirm-delete"
-            @click="onDeleteClick"
+            data-testid="confirm-trash"
+            @click="onTrashClick"
          >
-            <Transition name="ScanResultsDeleteList-caption" mode="out-in">
-               <span v-if="!isDeleting" key="ready" class="ScanResultsDeleteList-captionText">
+            <Transition name="ScanResultsTrashList-caption" mode="out-in">
+               <span v-if="!isDeleting" key="ready" class="ScanResultsTrashList-captionText">
                   {{
                      selectedSize > 0
-                        ? t('ScanResultsDeleteList', 'moveToTrashSize', {
+                        ? t('ScanResultsTrashList', 'moveToTrashSize', {
                              size: formatBytes(selectedSize),
                           })
-                        : t('ScanResultsDeleteList', 'moveToTrash')
+                        : t('ScanResultsTrashList', 'moveToTrash')
                   }}
                </span>
                <span
                   v-else-if="prefersReducedMotion"
                   key="deleting-text"
-                  class="ScanResultsDeleteList-captionText"
+                  class="ScanResultsTrashList-captionText"
                >
                   {{
                      selectedSize > 0
-                        ? t('ScanResultsDeleteList', 'movingToTrashSize', {
+                        ? t('ScanResultsTrashList', 'movingToTrashSize', {
                              size: formatBytes(selectedSize),
                           })
-                        : t('ScanResultsDeleteList', 'movingToTrash')
+                        : t('ScanResultsTrashList', 'movingToTrash')
                   }}
                </span>
                <Spinner
                   v-else
                   key="deleting-spinner"
                   :size="18"
-                  class="ScanResultsDeleteList-spinner"
+                  class="ScanResultsTrashList-spinner"
                />
             </Transition>
          </button>
@@ -302,7 +305,7 @@ async function onDeleteClick() {
 </template>
 
 <style scoped>
-.ScanResultsDeleteList-root {
+.ScanResultsTrashList-root {
    position: relative;
    flex: 1;
    display: flex;
@@ -315,7 +318,7 @@ async function onDeleteClick() {
    width: 100%;
 }
 
-.ScanResultsDeleteList-listWrap {
+.ScanResultsTrashList-listWrap {
    position: relative;
    flex: 1;
    min-height: 0;
@@ -336,26 +339,26 @@ async function onDeleteClick() {
    }
 }
 
-.ScanResultsDeleteList-listWrap--deleting {
+.ScanResultsTrashList-listWrap--deleting {
    opacity: 0.5;
    pointer-events: none;
 }
 
-.ScanResultsDeleteList-list {
+.ScanResultsTrashList-list {
    flex: 1;
    min-height: 0;
 }
 
-.ScanResultsDeleteList-listScroll {
+.ScanResultsTrashList-listScroll {
    overflow: auto;
 }
 
-.ScanResultsDeleteList-listInner {
+.ScanResultsTrashList-listInner {
    position: relative;
    width: 100%;
 }
 
-.ScanResultsDeleteList-footer {
+.ScanResultsTrashList-footer {
    flex-shrink: 0;
    padding: var(--spacing-md);
    border-top: 1px solid var(--color-bg);
@@ -363,7 +366,7 @@ async function onDeleteClick() {
    box-shadow: 0 -2px 16px var(--color-bg);
 }
 
-.ScanResultsDeleteList-moveToTrashBtn {
+.ScanResultsTrashList-moveToTrashBtn {
    height: var(--cta-btn-height);
    width: 100%;
    display: flex;
@@ -388,35 +391,35 @@ async function onDeleteClick() {
    }
 }
 
-.ScanResultsDeleteList-captionText {
+.ScanResultsTrashList-captionText {
    display: inline-flex;
    align-items: center;
    gap: 0.5rem;
    white-space: nowrap;
 }
 
-.ScanResultsDeleteList-caption-enter-active,
-.ScanResultsDeleteList-caption-leave-active {
+.ScanResultsTrashList-caption-enter-active,
+.ScanResultsTrashList-caption-leave-active {
    transition: opacity 0.3s var(--ease-standard);
 }
 
-.ScanResultsDeleteList-caption-enter-from,
-.ScanResultsDeleteList-caption-leave-to {
+.ScanResultsTrashList-caption-enter-from,
+.ScanResultsTrashList-caption-leave-to {
    opacity: 0;
 }
 
-.ScanResultsDeleteList-spinner {
+.ScanResultsTrashList-spinner {
    color: var(--color-on-accent);
 }
 
 /* Keep opacity transitions; only remove movement (sliding, gap, padding). */
 @media (prefers-reduced-motion: reduce) {
-   .ScanResultsDeleteList-caption-enter-active,
-   .ScanResultsDeleteList-caption-leave-active {
+   .ScanResultsTrashList-caption-enter-active,
+   .ScanResultsTrashList-caption-leave-active {
       transition: opacity 0.25s var(--ease-standard);
    }
 
-   .ScanResultsDeleteList-moveToTrashBtn {
+   .ScanResultsTrashList-moveToTrashBtn {
       transition: opacity 0.2s var(--ease-standard);
    }
 }

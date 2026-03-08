@@ -1,7 +1,7 @@
 <!--
 ScanResultsList
 
-Purpose: Main content area. Folder/file list with back/forward navigation, selection, and Delete button.
+Purpose: Main content area. Folder/file list with back/forward navigation, selection, and Move to Trash button.
 
 Props: folders (FolderInfo[])
 
@@ -29,7 +29,7 @@ import { log } from '@/lib/log'
 import { useTranslations } from '@/lib/use-translations'
 import { useViewTransition } from '@/lib/use-view-transition'
 
-import type { DeleteListItem, FolderInfo } from '@/types/structs'
+import type { TrashListItem, FolderInfo } from '@/types/structs'
 
 const props = defineProps<{
    folders: FolderInfo[]
@@ -37,7 +37,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
    (e: 'update:selectedSize', value: number): void
-   (e: 'review', items: DeleteListItem[]): void
+   (e: 'review', items: TrashListItem[]): void
    (e: 'cancel'): void
 }>()
 
@@ -142,7 +142,7 @@ watch(
 /**
  * Walks up the directory hierarchy via string slicing to check if any
  * ancestor of `path` is already selected. O(depth) — typically 3-6 levels.
- * Used to avoid double-counting nested selections in size totals and delete lists.
+ * Used to avoid double-counting nested selections in size totals and trash lists.
  */
 function hasSelectedAncestor(path: string): boolean {
    let dir = path
@@ -156,12 +156,12 @@ function hasSelectedAncestor(path: string): boolean {
 }
 
 /**
- * Builds a flat list of selected items for the delete review screen.
+ * Builds a flat list of selected items for the trash review screen.
  * Filters out items whose ancestor folder is already selected (to avoid
  * double-counting), then sorts largest first for user visibility.
  */
-function buildSelectedItemsForDelete(): DeleteListItem[] {
-   const out: DeleteListItem[] = []
+function buildSelectedItemsForTrash(): TrashListItem[] {
+   const out: TrashListItem[] = []
 
    for (const [path, item] of selectedMap) {
       if (!hasSelectedAncestor(path)) {
@@ -255,11 +255,11 @@ function toggleSelect(item: FolderInfo) {
 }
 
 /**
- * Restores selection from DeleteListItem[] (e.g. after returning from the delete
+ * Restores selection from TrashListItem[] (e.g. after returning from the trash
  * review screen). Converts each item to a FolderInfo stub so selectedMap stays
  * consistent. O(items) — no tree walk needed.
  */
-function setSelectedItems(items: DeleteListItem[]) {
+function setSelectedItems(items: TrashListItem[]) {
    selectedMap.clear()
 
    for (const item of items) {
@@ -338,7 +338,7 @@ async function goForward() {
 }
 
 function onReviewClick() {
-   emit('review', buildSelectedItemsForDelete())
+   emit('review', buildSelectedItemsForTrash())
 }
 
 function onCancel() {
@@ -389,15 +389,15 @@ function onCancel() {
       <div class="ScanResultsList-footer">
          <button
             type="button"
-            class="ScanResultsList-deleteBtn GradientButton"
+            class="ScanResultsList-moveToTrashBtn GradientButton"
             :disabled="selectedMap.size === 0"
             data-testid="review-selection"
             @click="onReviewClick"
          >
             {{
                selectedSize > 0
-                  ? t('ScanResultsList', 'reviewSize', { size: formatBytes(selectedSize) })
-                  : t('ScanResultsList', 'review')
+                  ? t('ScanResultsList', 'moveToTrashSize', { size: formatBytes(selectedSize) })
+                  : t('ScanResultsList', 'moveToTrash')
             }}
          </button>
       </div>
@@ -420,7 +420,7 @@ function onCancel() {
    min-height: 0;
    display: flex;
    flex-direction: column;
-   padding-bottom: var(--delete-footer-height);
+   padding-bottom: var(--trash-footer-height);
 
    &::before {
       content: '';
@@ -476,7 +476,7 @@ function onCancel() {
    box-shadow: 0 -2px 16px var(--color-bg);
 }
 
-.ScanResultsList-deleteBtn {
+.ScanResultsList-moveToTrashBtn {
    height: var(--cta-btn-height);
    width: 100%;
    display: flex;
