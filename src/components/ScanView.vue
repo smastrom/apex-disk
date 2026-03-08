@@ -32,7 +32,8 @@ defineProps<{
    diskUsage?: DiskUsage | null
 }>()
 
-const { folders, isScanning, progress, loadFolders, onAbort, onCancel } = useScanner()
+const { folders, isScanning, progress, elapsedSeconds, loadFolders, onAbort, onCancel } =
+   useScanner()
 
 enum ActiveView {
    LAUNCH = 'launch',
@@ -144,7 +145,7 @@ function onRestart() {
                v-else-if="activeView === ActiveView.SCANNING"
                class="ScanView-body"
                :progress="progress"
-               :isScanning="isScanning"
+               :elapsedSeconds="elapsedSeconds"
                @abort="onAbort"
             />
 

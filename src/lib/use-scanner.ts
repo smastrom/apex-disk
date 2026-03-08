@@ -34,6 +34,27 @@ export function useScanner() {
    /** Teardown handle for the Tauri `folder-scan-progress` event listener. */
    let unlistenProgress: (() => void) | null = null
 
+   const elapsedSeconds = ref(0)
+   let elapsedInterval: ReturnType<typeof setInterval> | null = null
+
+   function startElapsed() {
+      stopElapsed()
+      elapsedSeconds.value = 0
+      if (elapsedInterval) return // Guard against multiple concurrent timers
+      elapsedInterval = setInterval(() => {
+         elapsedSeconds.value++
+      }, 1000)
+   }
+
+   function stopElapsed() {
+      if (elapsedInterval) {
+         clearInterval(elapsedInterval)
+         elapsedInterval = null
+      }
+
+      elapsedSeconds.value = 0
+   }
+
    async function loadFolders() {
       log('scan', 'Scan started')
 
@@ -45,6 +66,7 @@ export function useScanner() {
       const gen = scanGeneration.value // snapshot — all callbacks below bail if gen is stale
       isScanning.value = true
       progress.value = { ...INITIAL_PROGRESS }
+      startElapsed()
 
       unlistenProgress = await listen<ScanProgress>('folder-scan-progress', (event) => {
          if (gen === scanGeneration.value) progress.value = event.payload
@@ -66,12 +88,12 @@ export function useScanner() {
          }
       } catch (error) {
          log('scan', 'Scan error', error)
-         if (gen === scanGeneration.value) console.error('Error isLoading folders:', error)
       } finally {
          if (gen === scanGeneration.value) {
             unlistenProgress?.()
             unlistenProgress = null
             isScanning.value = false
+            stopElapsed()
          }
       }
    }
@@ -85,6 +107,7 @@ export function useScanner() {
       folders.value = []
       isScanning.value = false
       progress.value = { ...INITIAL_PROGRESS }
+      stopElapsed()
 
       // Cancel any ongoing Rust scan to free memory
       try {
@@ -98,6 +121,7 @@ export function useScanner() {
       folders,
       isScanning,
       progress,
+      elapsedSeconds,
       loadFolders,
       onAbort,
       onCancel: onAbort,

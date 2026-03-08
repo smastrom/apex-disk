@@ -3,10 +3,10 @@ ScanScanning
 
 Purpose: Active scan view showing disk/user context, live scan progress, and detailed scan metadata while scanning.
 
-Props: progress ({ current: number; total: number; folder: string; size: number; scanned_size_total: number })
+Props: progress (ScanProgress), elapsedSeconds (number)
 
 Example:
- <ScanScanning :progress="progress" @abort="onAbort" />
+ <ScanScanning :progress="progress" :elapsedSeconds="elapsedSeconds" @abort="onAbort" />
 -->
 
 <script setup lang="ts">
@@ -21,6 +21,7 @@ import type { ScanProgress } from '@/types/structs'
 
 const props = defineProps<{
    progress: ScanProgress
+   elapsedSeconds: number
 }>()
 
 const emit = defineEmits<{
@@ -35,9 +36,12 @@ const percent = computed(() => {
    return Math.min(99, Math.round((props.progress.current / props.progress.total) * 100))
 })
 
-const percentDisplay = computed(() => {
-   if (percent.value >= 99) return t('ScanScanning', 'finalizing')
-   return `${formatProgressNumber(percent.value)}%`
+const elapsedDisplay = computed(() => {
+   const total = props.elapsedSeconds
+   const mins = Math.floor(total / 60)
+   const secs = total % 60
+   if (mins > 0) return `${mins}m ${String(secs).padStart(2, '0')}s`
+   return `${secs}s`
 })
 </script>
 
@@ -64,8 +68,8 @@ const percentDisplay = computed(() => {
 
       <div class="ScanScanning-stats">
          <p>
-            <span>{{ t('ScanScanning', 'stage') }}</span>
-            <strong>{{ percentDisplay }}</strong>
+            <span>{{ t('ScanScanning', 'scannedSize') }}</span>
+            <strong>{{ formatBytes(progress.scanned_size_total) }}</strong>
          </p>
          <p>
             <span>{{ t('ScanScanning', 'currentPath') }}</span>
@@ -73,9 +77,10 @@ const percentDisplay = computed(() => {
                {{ progress.folder || t('ScanScanning', 'preparing') }}
             </strong>
          </p>
+
          <p>
-            <span>{{ t('ScanScanning', 'scannedSize') }}</span>
-            <strong>{{ formatBytes(progress.scanned_size_total) }}</strong>
+            <span>{{ t('ScanScanning', 'elapsed') }}</span>
+            <strong>{{ elapsedDisplay }}</strong>
          </p>
       </div>
 
