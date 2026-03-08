@@ -1,9 +1,6 @@
 import type { Language } from '@/types/settings'
 
-import { App } from './App'
 import { AppFooter } from './AppFooter'
-import { AppHeader } from './AppHeader'
-import { global } from './global'
 import { InformationFooter } from './InformationFooter'
 import { InformationView } from './InformationView'
 import { ScanLaunch } from './ScanLaunch'
@@ -16,9 +13,6 @@ import { ScanViewHeader } from './ScanViewHeader'
 import { SettingsView } from './SettingsView'
 
 export const translations = {
-   global,
-   App,
-   AppHeader,
    AppFooter,
    SettingsView,
    InformationFooter,

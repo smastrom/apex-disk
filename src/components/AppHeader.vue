@@ -10,15 +10,13 @@ Example:
 -->
 
 <script setup lang="ts">
-import { useTranslations } from '@/lib/use-translations'
-
-const { t } = useTranslations()
+import { APP_NAME } from '@/lib/constants'
 </script>
 
 <template>
    <header class="AppHeader-root" data-tauri-drag-region data-testid="app-header">
       <div class="AppHeader-inner">
-         <h1 class="AppHeader-title" data-testid="app-title">{{ t('AppHeader', 'title') }}</h1>
+         <h1 class="AppHeader-title" data-testid="app-title">{{ APP_NAME }}</h1>
       </div>
    </header>
 </template>

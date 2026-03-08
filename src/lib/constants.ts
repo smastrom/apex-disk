@@ -1,5 +1,19 @@
 import { version } from '../../package.json'
 
+/** App official description for each language. */
+export const APP_DESCRIPTIONS = {
+   en: 'A macOS tool to easily identify and get rid of big, unused files and folders in seconds.',
+   it: 'Uno strumento per macOS per individuare ed eliminare facilmente file e cartelle ingombranti e inutilizzati in pochi secondi.',
+   es: 'Una herramienta para macOS para identificar y eliminar fácilmente archivos y carpetas grandes que no usas en segundos.',
+   fr: 'Un outil macOS pour identifier et supprimer facilement les fichiers et dossiers volumineux et inutilisés en quelques secondes.',
+   pt: 'Uma ferramenta para macOS para identificar e remover facilmente ficheiros e pastas grandes e não utilizados em segundos.',
+   de: 'Ein macOS-Tool, um große, ungenutzte Dateien und Ordner in Sekundenschnelle zu finden und zu löschen.',
+   ru: 'Инструмент для macOS, позволяющий за считанные секунды находить и удалять большие неиспользуемые файлы и папки.',
+   zh: '一款 macOS 工具，可在几秒钟内轻松识别并清除占用空间大且未使用的文件和文件夹。',
+   ja: '不要な大容量ファイルやフォルダーを数秒で特定し、簡単に削除できる macOS ツール。',
+   ar: 'أداة لنظام macOS لتحديد وحذف الملفات والمجلدات الكبيرة وغير المستخدمة بسهولة في ثوانٍ معدودة.',
+}
+
 /** English, then European (it, es, fr, pt, de), then Russian, then Asiatic (zh, ja, ar). */
 export const APP_LANGUAGES = ['en', 'it', 'es', 'fr', 'pt', 'de', 'ru', 'zh', 'ja', 'ar'] as const
 

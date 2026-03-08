@@ -1,4 +1,4 @@
-import { APP_DESCRIPTIONS } from './App'
+import { APP_DESCRIPTIONS } from '@/lib/constants'
 
 export const InformationView = {
    en: {
