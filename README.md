@@ -20,40 +20,10 @@ MacDiskTree scans your entire user folder and presents everything as a navigable
 - **10 languages** — Support for English, Italian, Spanish, French, Portuguese, German, Russian, Chinese, Japanese, and Arabic (with RTL support)
 - **Themes** — Multiple color themes to choose from, with more on the way
 
-## Preview
-
-![MacDiskTree](./src/assets/images/mac-disk-tree-screenshots.png)
-
 ## Installation
 
 1. Download the latest `.dmg` from [Releases](https://github.com/smastrom/mac-disk-tree/releases)
 2. Drag the app to your Applications folder
-3. Before opening, run this command in Terminal to bypass macOS Gatekeeper:
-
-```bash
-xattr -cr /Applications/MacDiskTree.app
-```
-
-> [!NOTE]
-> **Only install from [GitHub Releases](https://github.com/smastrom/mac-disk-tree/releases).** Downloads from other sources are unverified and may not match the official builds provided here. GitHub is currently the only official distribution channel.
-
-### Security & Notarization
-
-> [!IMPORTANT]
-> As of right now, MacDiskTree is not officially signed or notarized by Apple. Because of it, macOS will likely block it or claim it is "damaged" when you first try to open it.
-> You can fix it by running in your terminal: `xattr -cr /Applications/MacDiskTree.app`.
-
-#### Why this step?
-
-The command simply tells macOS to "clear" the security flags it attaches to apps downloaded from the internet. It doesn't modify the app's code; it just tells your Mac that you trust the software.
-
-If the project gains enough community interest and matures past the early stages, I'll look into official notarization. In the meantime, the code is right here for you to audit.
-
-### Internet & Privacy
-
-MacDiskTree is designed to work entirely offline. It does not use telemetry, tracking, or background data collection.
-
-**Manual Update Checks:** The app only attempts to access the network when you manually click "Check for Updates."
 
 ## Building from source
 
@@ -75,9 +45,25 @@ pnpm install
 # Add the universal macOS target
 rustup target add aarch64-apple-darwin x86_64-apple-darwin
 
-# Build (skips updater artifacts so no signing key is required).
-# The app is ad-hoc signed during the build so it runs with the correct bundle ID and entitlements.
+# Build unsigned binary
+pnpm tauri:build:unsigned
+
+# Build signed binary (required APPLE_SIGNING_IDENTITY, APPLE_ID, APPLE_PASSWORD, APPLE_TEAM_ID environment variables)
 pnpm tauri:build
+```
+
+## Local Development
+
+```bash
+# Clone the repository
+git clone https://github.com/smastrom/mac-disk-tree.git
+cd mac-disk-tree
+
+# Install dependencies
+pnpm install
+
+# Run the development server
+pnpm tauri:dev
 ```
 
 ## License
