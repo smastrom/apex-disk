@@ -51,8 +51,7 @@ pub fn run() {
     let builder = tauri::Builder::default()
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_opener::init())
-        .plugin(tauri_plugin_store::Builder::default().build())
-        .plugin(tauri_plugin_macos_permissions::init());
+        .plugin(tauri_plugin_store::Builder::default().build());
 
     #[cfg(feature = "e2e")]
     let builder = builder.plugin(tauri_plugin_webdriver::init());
@@ -91,6 +90,7 @@ pub fn run() {
             scan::get_user_folders,
             scan::cancel_scan,
             trash::trash_paths,
+            permissions::check_full_disk_access,
             native_dialog::show_message_dialog,
             native_dialog::show_ask_dialog,
             locale::set_app_locale,

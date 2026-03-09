@@ -366,7 +366,7 @@ pub fn get_user_folders_sync_with_progress(
     options: ScanOptions,
 ) -> Result<Vec<FolderInfo>, String> {
     // Check FDA status once at the beginning
-    let has_fda = crate::permissions::check_full_disk_access(&app);
+    let has_fda = crate::permissions::is_full_disk_access_granted();
     let user_dir = dirs::home_dir().ok_or("Unable to determine user directory")?;
 
     let folder_paths: Vec<std::path::PathBuf> = {

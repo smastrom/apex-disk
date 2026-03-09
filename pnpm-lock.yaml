@@ -26,9 +26,6 @@ importers:
       '@tauri-apps/plugin-store':
         specifier: ^2.4.2
         version: 2.4.2
-      tauri-plugin-macos-permissions-api:
-        specifier: ^2.3.0
-        version: 2.3.0
       vue:
         specifier: ^3.5.29
         version: 3.5.29(typescript@5.6.3)
@@ -2411,9 +2408,6 @@ packages:
 
   tar-stream@3.1.8:
     resolution: {integrity: sha512-U6QpVRyCGHva435KoNWy9PRoi2IFYCgtEhq9nmrPPpbRacPs9IH4aJ3gbrFC8dPcXvdSZ4XXfXT5Fshbp2MtlQ==}
-
-  tauri-plugin-macos-permissions-api@2.3.0:
-    resolution: {integrity: sha512-pZp0jmDySysBqrGueknd1a7Rr4XEO9aXpMv9TNrT2PDHP0MSH20njieOagsFYJ5MCVb8A+wcaK0cIkjUC2dOww==}
 
   teex@1.0.1:
     resolution: {integrity: sha512-eYE6iEI62Ni1H8oIa7KlDU6uQBtqr4Eajni3wX7rpfXD8ysFx8z0+dri+KWEPWpBsxXfxu58x/0jvTVT1ekOSg==}
@@ -4970,10 +4964,6 @@ snapshots:
       - bare-abort-controller
       - bare-buffer
       - react-native-b4a
-
-  tauri-plugin-macos-permissions-api@2.3.0:
-    dependencies:
-      '@tauri-apps/api': 2.10.1
 
   teex@1.0.1:
     dependencies:

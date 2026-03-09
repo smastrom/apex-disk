@@ -41,7 +41,6 @@ objc2-foundation = { version = "0.3", features = [
 objc2-app-kit = { version = "0.3", features = ["NSAlert", "NSImage", "NSButton"] }
 tauri-plugin-webdriver = { version = "0.2", optional = true }
 sys-locale = "0.1"
-tauri-plugin-macos-permissions = "2.3.0"
 
 [features]
 default = []
