@@ -22,8 +22,7 @@ MacDiskTree scans your entire user folder and presents everything as a navigable
 
 ## Installation
 
-1. Download the latest `.dmg` from [Releases](https://github.com/smastrom/mac-disk-tree/releases)
-2. Drag the app to your Applications folder
+Download the latest `.dmg` from [Releases](https://github.com/smastrom/mac-disk-tree/releases) and drag the app to your Applications folder.
 
 ## Building from source
 
@@ -52,7 +51,7 @@ pnpm tauri:build:unsigned
 pnpm tauri:build
 ```
 
-## Local Development
+## Local Development
 
 ```bash
 # Clone the repository
