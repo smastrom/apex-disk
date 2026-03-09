@@ -88,9 +88,12 @@ jobs:
            with:
               workspaces: src-tauri
 
-         - name: Build universal macOS binary
+         - name: Build, sign and notarize universal macOS binary
            env:
-              APPLE_SIGNING_IDENTITY: '-'
+              APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+              APPLE_ID: ${{ secrets.APPLE_ID }}
+              APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+              APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
            run: pnpm exec tauri build --target universal-apple-darwin
 
          - name: Extract release notes
