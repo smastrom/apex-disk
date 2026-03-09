@@ -4,19 +4,32 @@ This folder contains the release infrastructure for MacDiskTree.
 
 ## How It Works
 
-A single GitHub Action (`.github/workflows/release.yml`) handles the entire release process. It is triggered manually from the Actions tab. The workflow builds a universal macOS binary (ad-hoc codesigned), packages it as a `.dmg`, and publishes it to a GitHub Release.
+A single GitHub Action (`.github/workflows/release.yml`) handles the entire release process. It is triggered manually from the Actions tab. The workflow builds a universal macOS binary signed with a Developer ID certificate, notarizes it, packages it as a `.dmg`, and publishes it to a GitHub Release.
 
 The app checks for updates by fetching the latest release tag from the GitHub API and comparing it against the current version. If a newer version is available, the user is invited to visit the releases page — no automatic downloads or installs.
 
 ## macOS Codesigning
 
-Tauri v2 skips `codesign` when no `APPLE_SIGNING_IDENTITY` is set, leaving the binary with only the linker's default adhoc signature. This causes macOS TCC to use a wrong, unstable identifier — breaking Full Disk Access and per-folder permission grants.
+Tauri v2 does **not** load `.env` files automatically. When no `APPLE_SIGNING_IDENTITY` is set, it skips `codesign` entirely, leaving the binary with only the linker's default adhoc signature. This causes macOS TCC to use a wrong, unstable identifier — breaking Full Disk Access and per-folder permission grants.
 
-Both `pnpm tauri:build` and CI set `APPLE_SIGNING_IDENTITY="-"` so Tauri ad-hoc signs the `.app` with the correct bundle identifier, embedded entitlements (`src-tauri/Entitlements.plist`), and hardened runtime **before** packaging into DMG. This ensures the release `.dmg` contains the properly signed app.
+### Local builds
 
-`scripts/codesign.sh` is a fallback for when someone runs `tauri build` directly without the env var. It only signs the loose `.app` (not the DMG).
+`pnpm tauri:build` sources `.env` via `scripts/load-env.sh`, which validates that all required variables are set before invoking the build. The `.env` file must contain:
 
-If you later add an Apple Developer ID certificate, set `APPLE_SIGNING_IDENTITY` to your identity string (e.g., `Developer ID Application: Name (TEAMID)`) instead of `"-"`.
+```
+APPLE_SIGNING_IDENTITY="Developer ID Application: Name (TEAMID)"
+APPLE_ID="your@email.com"
+APPLE_PASSWORD="app-specific-password"
+APPLE_TEAM_ID="TEAMID"
+```
+
+If any variable is missing or the `.env` file doesn't exist, the script exits with an error.
+
+To build **without** signing (ad-hoc), use `pnpm tauri:build:unsigned`.
+
+### CI builds
+
+The GitHub Actions workflow sets the same variables from repository secrets directly as environment variables — no `.env` file needed.
 
 ## Creating a Release
 
@@ -72,7 +85,7 @@ The workflow will:
 1. Validate that RELEASES.md, package.json, Cargo.toml, and tauri.conf.json all have the same version
 2. Check that the tag doesn't already exist
 3. Run tests (`pnpm test`)
-4. Build and codesign a universal macOS binary (Intel + Apple Silicon) with `APPLE_SIGNING_IDENTITY="-"`
+4. Build, sign and notarize a universal macOS binary (Intel + Apple Silicon)
 5. Create a git tag (e.g., `v0.2.0`)
 6. Create a GitHub Release with the `.dmg` attached and release notes from RELEASES.md
 
@@ -97,4 +110,4 @@ If it fails before tagging (validation, tests, or build), just fix the issue, pu
 | `RELEASES.md`                   | Changelog — add entries here for each release                      |
 | `README.md`                     | This file                                                          |
 | `.github/workflows/release.yml` | GitHub Action — validates, builds, tags, and publishes releases    |
-| `scripts/codesign.sh`           | Ad-hoc codesigns the `.app` with entitlements and hardened runtime |
+| `scripts/load-env.sh`           | Loads and validates `.env` vars for local signed builds            |
