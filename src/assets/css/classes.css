@@ -183,6 +183,6 @@
 
    &:hover {
       box-shadow: var(--glow-md);
-      filter: brightness(1.05);
+      filter: brightness(1.1);
    }
 }

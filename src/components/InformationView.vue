@@ -45,62 +45,64 @@ const props = defineProps<{
          <!-- System information section -->
          <section class="SettingsGroup" v-if="props.systemInfo">
             <div class="SettingsGroup-row" v-if="props.systemInfo.macos_version">
-               <div class="SettingsGroup-labelWrapper">
+               <span class="SettingsGroup-labelWrapper">
                   <div class="InformationView-detailLabel">
                      {{ t('InformationView', 'macosVersion') }}
                   </div>
-               </div>
-               <div class="InformationView-detailValue">{{ props.systemInfo.macos_version }}</div>
+               </span>
+               <span class="InformationView-detailValue">{{ props.systemInfo.macos_version }}</span>
             </div>
             <div class="SettingsGroup-row" v-if="props.systemInfo.hardware_model">
-               <div class="SettingsGroup-labelWrapper">
+               <span class="SettingsGroup-labelWrapper">
                   <div class="InformationView-detailLabel">
                      {{ t('InformationView', 'hardwareModel') }}
                   </div>
-               </div>
-               <div class="InformationView-detailValue">{{ props.systemInfo.hardware_model }}</div>
+               </span>
+               <span class="InformationView-detailValue">{{
+                  props.systemInfo.hardware_model
+               }}</span>
             </div>
             <div class="SettingsGroup-row" v-if="props.systemInfo.cpu_info">
-               <div class="SettingsGroup-labelWrapper">
+               <span class="SettingsGroup-labelWrapper">
                   <div class="InformationView-detailLabel">{{ t('InformationView', 'cpu') }}</div>
-               </div>
-               <div class="InformationView-detailValue">{{ props.systemInfo.cpu_info }}</div>
+               </span>
+               <span class="InformationView-detailValue">{{ props.systemInfo.cpu_info }}</span>
             </div>
             <div class="SettingsGroup-row" v-if="props.systemInfo.memory_info">
-               <div class="SettingsGroup-labelWrapper">
+               <span class="SettingsGroup-labelWrapper">
                   <div class="InformationView-detailLabel">
                      {{ t('InformationView', 'memory') }}
                   </div>
-               </div>
-               <div class="InformationView-detailValue">{{ props.systemInfo.memory_info }}</div>
+               </span>
+               <span class="InformationView-detailValue">{{ props.systemInfo.memory_info }}</span>
             </div>
             <div class="SettingsGroup-row" v-if="props.systemInfo.system_disk_name">
-               <div class="SettingsGroup-labelWrapper">
+               <span class="SettingsGroup-labelWrapper">
                   <div class="InformationView-detailLabel">
                      {{ t('InformationView', 'systemDisk') }}
                   </div>
-               </div>
-               <div class="InformationView-detailValue">
+               </span>
+               <span class="InformationView-detailValue">
                   {{ props.systemInfo.system_disk_name }}
-               </div>
+               </span>
             </div>
             <div class="SettingsGroup-row" v-if="props.systemInfo.system_disk_size">
-               <div class="SettingsGroup-labelWrapper">
+               <span class="SettingsGroup-labelWrapper">
                   <div class="InformationView-detailLabel">
                      {{ t('InformationView', 'diskSize') }}
                   </div>
-               </div>
-               <div class="InformationView-detailValue">
+               </span>
+               <span class="InformationView-detailValue">
                   {{ formatBytes(props.systemInfo.system_disk_size) }}
-               </div>
+               </span>
             </div>
             <div class="SettingsGroup-row" v-if="props.systemInfo.current_user">
-               <div class="SettingsGroup-labelWrapper">
+               <span class="SettingsGroup-labelWrapper">
                   <div class="InformationView-detailLabel">
                      {{ t('InformationView', 'currentUser') }}
                   </div>
-               </div>
-               <div class="InformationView-detailValue">{{ props.systemInfo.current_user }}</div>
+               </span>
+               <span class="InformationView-detailValue">{{ props.systemInfo.current_user }}</span>
             </div>
          </section>
 

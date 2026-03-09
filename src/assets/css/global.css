@@ -12,10 +12,11 @@ html {
    -moz-osx-font-smoothing: grayscale;
    -webkit-tap-highlight-color: transparent;
    -webkit-touch-callout: none;
-   /* -webkit-user-select: none;
+   user-select: none;
+   -webkit-user-select: none;
    -moz-user-select: none;
    -ms-user-select: none;
-   user-select: none; */
+
    -webkit-overflow-scrolling: touch;
    -webkit-text-size-adjust: 100%;
    cursor: default;
@@ -27,7 +28,22 @@ body {
    overflow: hidden;
 }
 
-/* Focus ring only when focus came from keyboard (class toggled in main.ts) */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span:not(:empty),
+a:not(:empty),
+button:not(:empty) {
+   user-select: text;
+   -webkit-user-select: text;
+   -moz-user-select: text;
+   -ms-user-select: text;
+}
+
 html.focus-ring-keyboard button:focus,
 html.focus-ring-keyboard a:focus,
 html.focus-ring-keyboard select:focus,
