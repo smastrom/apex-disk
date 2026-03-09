@@ -48,15 +48,14 @@ pub struct FolderInfo {
 }
 
 pub fn run() {
-    let mut builder = tauri::Builder::default()
+    let builder = tauri::Builder::default()
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_opener::init())
-        .plugin(tauri_plugin_store::Builder::default().build());
+        .plugin(tauri_plugin_store::Builder::default().build())
+        .plugin(tauri_plugin_macos_permissions::init());
 
     #[cfg(feature = "e2e")]
-    {
-        builder = builder.plugin(tauri_plugin_webdriver::init());
-    }
+    let builder = builder.plugin(tauri_plugin_webdriver::init());
 
     builder
         .enable_macos_default_menu(false)
@@ -92,7 +91,6 @@ pub fn run() {
             scan::get_user_folders,
             scan::cancel_scan,
             trash::trash_paths,
-            permissions::check_full_disk_access,
             native_dialog::show_message_dialog,
             native_dialog::show_ask_dialog,
             locale::set_app_locale,

@@ -1,4 +1,4 @@
-import { invoke } from '@tauri-apps/api/core'
+import { checkFullDiskAccessPermission } from 'tauri-plugin-macos-permissions-api'
 import { ref } from 'vue'
 
 /** Checks macOS Full Disk Access permission on mount and exposes the result as a reactive ref. */
@@ -6,9 +6,9 @@ export async function useFullDiskAccess() {
    const isFdaGranted = ref(false)
 
    try {
-      isFdaGranted.value = await invoke<boolean>('check_full_disk_access')
+      isFdaGranted.value = await checkFullDiskAccessPermission()
    } catch (err) {
-      console.error('[FDA] invoke failed:', err)
+      console.error('[FDA] check failed:', err)
    }
 
    return { isFdaGranted }
