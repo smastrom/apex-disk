@@ -29,7 +29,22 @@ To build **without** signing (ad-hoc), use `pnpm tauri:build:unsigned`.
 
 ### CI builds
 
-The GitHub Actions workflow sets the same variables from repository secrets directly as environment variables — no `.env` file needed.
+The GitHub Actions workflow imports the Developer ID certificate from a base64-encoded secret into a temporary keychain, extracts the signing identity automatically, and passes it to Tauri. The following repository secrets must be configured:
+
+| Secret                       | Description                                                        |
+| ---------------------------- | ------------------------------------------------------------------ |
+| `APPLE_CERTIFICATE`          | Base64-encoded `.p12` Developer ID certificate                     |
+| `APPLE_CERTIFICATE_PASSWORD` | Password for the `.p12` file                                       |
+| `KEYCHAIN_PASSWORD`          | Arbitrary password for the temporary CI keychain                   |
+| `APPLE_ID`                   | Apple ID email for notarization                                    |
+| `APPLE_PASSWORD`             | App-specific password for notarization                             |
+| `APPLE_TEAM_ID`              | Apple Developer Team ID                                            |
+
+To export the certificate as base64:
+
+```sh
+base64 -i YourCertificate.p12 | pbcopy
+```
 
 ## Creating a Release
 
