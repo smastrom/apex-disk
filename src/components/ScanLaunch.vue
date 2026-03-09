@@ -24,13 +24,14 @@ const { t } = useTranslations()
 <template>
    <section class="ScanLaunch-root" data-testid="scan-launch">
       <div class="ScanLaunch-notice">
-         <p class="ScanLaunch-noticeTitle">
+         <h2 class="ScanLaunch-noticeTitle">
             <PhShieldWarning :size="16" weight="regular" aria-hidden="true" />
-            {{ t('ScanLaunch', 'warningTitle') }}
-         </p>
-         <p class="ScanLaunch-noticeBody">
-            {{ t('ScanLaunch', 'warningBody') }}
-         </p>
+            {{ t('ScanLaunch', 'launchTitle') }}
+         </h2>
+         <div class="ScanLaunch-noticeBody">
+            <p>{{ t('ScanLaunch', 'launchBodyLine1') }}</p>
+            <p>{{ t('ScanLaunch', 'launchBodyLine2') }}</p>
+         </div>
       </div>
 
       <button
@@ -79,6 +80,14 @@ const { t } = useTranslations()
    font-size: var(--font-size-base);
    line-height: 1.5;
    color: var(--color-text-muted);
+
+   p {
+      margin: 0;
+   }
+
+   p:not(:last-child) {
+      margin-bottom: 1em;
+   }
 }
 
 .ScanLaunch-scanBtn {
