@@ -67,6 +67,7 @@ const deletedSummary = ref<{ count: number; size: number } | null>(null)
 const selectedSize = ref(0)
 const resultsListRef = useTemplateRef<InstanceType<typeof ScanResultsList>>('resultsListRef')
 const pendingSelection = ref<TrashListItem[] | null>(null)
+const pendingReset = ref(false)
 
 /** When Abort/cancel clears folders and we return to ScanLaunch, reset all scan state. */
 
@@ -110,8 +111,19 @@ function onBackFromTrash(checkedItems: TrashListItem[]) {
    activeView.value = ActiveView.RESULTS
 }
 
+function onResetFromTrash() {
+   pendingReset.value = true
+   pendingSelection.value = null
+   activeView.value = ActiveView.RESULTS
+}
+
 watch(resultsListRef, (ref) => {
-   if (ref && pendingSelection.value) {
+   if (!ref) return
+
+   if (pendingReset.value) {
+      ref.resetAll()
+      pendingReset.value = false
+   } else if (pendingSelection.value) {
       ref.setSelectedItems(pendingSelection.value)
       pendingSelection.value = null
    }
@@ -167,6 +179,7 @@ function onRestart() {
                @update:selectedSize="onSelectedSizeUpdate"
                @complete="onTrashComplete"
                @cancel="onCancel"
+               @reset="onResetFromTrash"
             />
 
             <ScanTrashConfirmation

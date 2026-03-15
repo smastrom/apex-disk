@@ -44,6 +44,7 @@ const emit = defineEmits<{
    (e: 'update:selectedSize', value: number): void
    (e: 'complete', summary: { count: number; size: number }): void
    (e: 'cancel'): void
+   (e: 'reset'): void
 }>()
 
 const { t } = useTranslations()
@@ -238,9 +239,10 @@ async function onTrashClick() {
          pathIcon="trash"
          :pathLabel="t('ScanTrashList', 'navTitle')"
          isActionsShown
-         isResetDisabled
-         :isResetShown="false"
+         :isResetShown="true"
+         :isResetDisabled="false"
          @back="emit('back', getCheckedItems())"
+         @reset="emit('reset')"
          @cancel="emit('cancel')"
       />
       <div

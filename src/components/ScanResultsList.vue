@@ -284,7 +284,18 @@ function setSelectedItems(items: TrashListItem[]) {
    }
 }
 
-defineExpose({ setSelectedItems })
+/** Clears all selections and navigates back to root. */
+function resetAll() {
+   selectedMap.clear()
+   backStack.value = []
+   forwardStack.value = []
+
+   if (homePath.value && props.folders.length > 0) {
+      current.value = { items: props.folders, label: '', path: homePath.value }
+   }
+}
+
+defineExpose({ setSelectedItems, resetAll })
 
 const listWrapRef = useTemplateRef<HTMLElement>('listWrapRef')
 
