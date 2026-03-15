@@ -1,3 +1,4 @@
+import { THEME_COLORS, ROOT_THEME } from '@/lib/constants'
 import { log } from '@/lib/log'
 import { invoke } from '@tauri-apps/api/core'
 import { ref, type Ref } from 'vue'
@@ -22,8 +23,11 @@ let globalStore: AppSettingsStore | null = null
 export async function initTauriAppSettings(): Promise<AppSettingsStore> {
    if (globalStore) return globalStore
 
-   // Load settings from backend
+   // Load settings from backend, falling back to default theme if invalid
    const settingsData = await invoke<AppSettings>('get_settings')
+   if (!THEME_COLORS.includes(settingsData.themeColor)) {
+      settingsData.themeColor = ROOT_THEME
+   }
    const settings = ref<AppSettings>(settingsData)
 
    async function saveSettings() {

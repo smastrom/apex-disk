@@ -1,24 +1,24 @@
 /* ApexDisk — Theme variables */
 
-/* Default theme: ApexDisk — dark graphite base, teal-cyan accent (slightly towards blue);  */
+/* Default theme: Apex — vivid purple-indigo accent, dark base */
 :root {
    /* Semantic colors */
    --color-on-accent: #fff;
-   --color-bg: #1a1c1f;
-   --color-bg-elevated: #22252a;
-   --color-surface: #2a2e34;
-   --color-surface-hover: #353a42;
-   --color-accent: #2aa8ae;
-   --color-accent-hover: #44b5ba;
+   --color-bg: #161418;
+   --color-bg-elevated: #1e1c21;
+   --color-surface: #28262c;
+   --color-surface-hover: #332f36;
+   --color-accent: #7c5cf5;
+   --color-accent-hover: #9b85f8;
    --color-text: #f5f5f7;
-   --color-text-muted: #9ca0a6;
-   --color-text-dim: #6e7379;
+   --color-text-muted: #a8a6ab;
+   --color-text-dim: #7a787e;
 
    /* Glow system */
-   --color-accent-glow: rgba(42, 168, 174, 0.38);
-   --color-accent-bg: rgba(42, 168, 174, 0.12);
-   --color-accent-bg-hover: rgba(42, 168, 174, 0.03);
-   --color-border: #2e3238;
+   --color-accent-glow: rgba(124, 92, 245, 0.45);
+   --color-accent-bg: rgba(77, 57, 133, 0.16);
+   --color-accent-bg-hover: rgba(77, 57, 133, 0.08);
+   --color-border: #2c2a30;
    --glow-sm: 0 0 8px var(--color-accent-glow);
    --glow-md: 0 0 14px var(--color-accent-glow);
    --glow-lg: 0 0 24px var(--color-accent-glow);
@@ -39,17 +39,17 @@
    --spacing-xl: 32px;
 
    /* Gradient button (accent-based) */
-   --btn-gradient-0: #2aa8ae;
-   --btn-gradient-50: #239da3;
-   --btn-gradient-100: #2aa8ae;
+   --btn-gradient-0: #7c5cf5;
+   --btn-gradient-50: #6d4ee7;
+   --btn-gradient-100: #7c5cf5;
 
    /* Step button variants (lighter versions for secondary actions) */
-   --btn-step-0: #44b5ba;
-   --btn-step-50: #3da8ad;
-   --btn-step-100: #44b5ba;
+   --btn-step-0: #9b85f8;
+   --btn-step-50: #7c5cf5;
+   --btn-step-100: #9b85f8;
 
    /* Abort/cancel text color */
-   --color-abort: #e04a3a;
+   --color-abort: #e24838;
 
    /* Action button (move-to-trash CTA) — warm amber alternate */
    --btn-action-0: var(--btn-gradient-0);
@@ -62,8 +62,8 @@
    --focus-ring-width: 2px;
    --focus-ring-offset: 2px;
 
-   /* Footer navigation active color */
-   --footer-nav-active-color: var(--color-accent);
+   /* Footer navigation active color (lighter than accent for distinction) */
+   --footer-nav-active-color: #9b85f8;
 
    /* AppLayout */
    --header-height: 56px;
@@ -84,6 +84,58 @@
    --font-size-2xl: 1.25rem; /* 20px */
 }
 
+/* Theme: Apex Coral — coral-orange accent, same dark base */
+[data-theme='apex-coral'] {
+   --color-accent: #ff6b4a;
+   --color-accent-hover: #ff8566;
+   --color-accent-glow: rgba(255, 107, 74, 0.45);
+   --color-accent-bg: rgba(143, 68, 54, 0.16);
+   --color-accent-bg-hover: rgba(143, 68, 54, 0.08);
+
+   --btn-gradient-0: #ff6b4a;
+   --btn-gradient-50: #f55a38;
+   --btn-gradient-100: #ff6b4a;
+
+   --btn-step-0: #ff8566;
+   --btn-step-50: #ff6b4a;
+   --btn-step-100: #ff8566;
+
+   --color-abort: #e24838;
+}
+
+/* Theme: Apex Ocean — dark graphite base, teal-cyan accent */
+[data-theme='apex-ocean'] {
+   --color-on-accent: #fff;
+   --color-bg: #1a1c1f;
+   --color-bg-elevated: #22252a;
+   --color-surface: #2a2e34;
+   --color-surface-hover: #353a42;
+   --color-accent: #2aa8ae;
+   --color-accent-hover: #44b5ba;
+   --color-text: #f5f5f7;
+   --color-text-muted: #9ca0a6;
+   --color-text-dim: #6e7379;
+   --color-accent-glow: rgba(42, 168, 174, 0.38);
+   --color-accent-bg: rgba(38, 103, 108, 0.16);
+   --color-accent-bg-hover: rgba(38, 103, 108, 0.08);
+   --color-border: #2e3238;
+
+   --btn-gradient-0: #2aa8ae;
+   --btn-gradient-50: #239da3;
+   --btn-gradient-100: #2aa8ae;
+
+   --btn-step-0: #44b5ba;
+   --btn-step-50: #3da8ad;
+   --btn-step-100: #44b5ba;
+
+   --color-abort: #e04a3a;
+   --btn-action-0: var(--btn-gradient-0);
+   --btn-action-50: var(--btn-gradient-50);
+   --btn-action-100: var(--btn-gradient-100);
+   --color-action-glow: var(--color-accent-glow);
+   --footer-nav-active-color: #44b5ba;
+}
+
 /* Theme: Ayu */
 [data-theme='ayu'] {
    --color-bg: #141824;
@@ -96,8 +148,8 @@
    --color-text-muted: #607080;
    --color-text-dim: #4a5566;
    --color-accent-glow: rgba(255, 204, 102, 0.4);
-   --color-accent-bg: rgba(255, 204, 102, 0.12);
-   --color-accent-bg-hover: rgba(255, 204, 102, 0.06);
+   --color-accent-bg: rgba(140, 118, 73, 0.14);
+   --color-accent-bg-hover: rgba(140, 118, 73, 0.07);
    --color-border: #1e2533;
 
    --btn-gradient-0: #c89530;
@@ -128,8 +180,8 @@
    --color-text-muted: #98989d;
    --color-text-dim: #6e6e73;
    --color-accent-glow: rgba(10, 132, 255, 0.35);
-   --color-accent-bg: rgba(10, 132, 255, 0.12);
-   --color-accent-bg-hover: rgba(10, 132, 255, 0.06);
+   --color-accent-bg: rgba(26, 87, 149, 0.15);
+   --color-accent-bg-hover: rgba(26, 87, 149, 0.07);
    --color-border: #3d3d3d;
 
    --btn-gradient-0: #0a84ff;
@@ -156,8 +208,8 @@
    --color-text-muted: #86868b;
    --color-text-dim: #aeaeb2;
    --color-accent-glow: rgba(0, 122, 255, 0.25);
-   --color-accent-bg: rgba(0, 122, 255, 0.08);
-   --color-accent-bg-hover: rgba(0, 122, 255, 0.04);
+   --color-accent-bg: rgba(128, 189, 255, 0.12);
+   --color-accent-bg-hover: rgba(128, 189, 255, 0.06);
    --color-border: #d2d2d7;
 
    --btn-gradient-0: #007aff;
@@ -184,8 +236,8 @@
    --color-text-muted: #76839b;
    --color-text-dim: #505a6b;
    --color-accent-glow: rgba(118, 131, 155, 0.35);
-   --color-accent-bg: rgba(118, 131, 155, 0.12);
-   --color-accent-bg-hover: rgba(118, 131, 155, 0.06);
+   --color-accent-bg: rgba(78, 87, 102, 0.14);
+   --color-accent-bg-hover: rgba(78, 87, 102, 0.07);
    --color-border: #2e333b;
 
    --btn-gradient-0: #76839b;
@@ -214,8 +266,8 @@
    --color-text-muted: hsl(150, 12%, 55%);
    --color-text-dim: hsl(150, 8%, 40%);
    --color-accent-glow: hsla(145, 72%, 51%, 0.35);
-   --color-accent-bg: hsla(145, 72%, 51%, 0.12);
-   --color-accent-bg-hover: hsla(145, 72%, 51%, 0.06);
+   --color-accent-bg: hsla(148, 50%, 31%, 0.14);
+   --color-accent-bg-hover: hsla(148, 50%, 31%, 0.07);
    --color-border: hsl(150, 8%, 22%);
 
    --btn-gradient-0: hsl(145, 72%, 38%);
@@ -227,32 +279,4 @@
    --btn-step-100: hsl(145, 72%, 42%);
 
    --color-abort: hsl(6, 62%, 52%);
-}
-
-/* Theme: Coral Orange — bright dark theme, macOS-focused, 2026-style; coral-orange accent */
-[data-theme='coral-orange'] {
-   --color-on-accent: #fff;
-   --color-bg: #161418;
-   --color-bg-elevated: #1e1c21;
-   --color-surface: #28262c;
-   --color-surface-hover: #332f36;
-   --color-accent: #ff6b4a;
-   --color-accent-hover: #ff8566;
-   --color-text: #f5f5f7;
-   --color-text-muted: #a8a6ab;
-   --color-text-dim: #7a787e;
-   --color-accent-glow: rgba(255, 107, 74, 0.45);
-   --color-accent-bg: rgba(255, 107, 74, 0.14);
-   --color-accent-bg-hover: rgba(255, 107, 74, 0.08);
-   --color-border: #2c2a30;
-
-   --btn-gradient-0: #ff6b4a;
-   --btn-gradient-50: #f55a38;
-   --btn-gradient-100: #ff6b4a;
-
-   --btn-step-0: #ff8566;
-   --btn-step-50: #ff6b4a;
-   --btn-step-100: #ff8566;
-
-   --color-abort: #e24838;
 }
