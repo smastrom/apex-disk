@@ -21,5 +21,5 @@ pub const LICENSE_MENU_ID: &str = "license";
 /// Default language for the application.
 pub const DEFAULT_LANGUAGE: &str = "en";
 
-/// Default theme for the application.
-pub const DEFAULT_THEME: &str = "apex-disk";
+/// Default theme for the application. Must match ROOT_THEME in src/lib/constants.ts.
+pub const DEFAULT_THEME: &str = "apex";
