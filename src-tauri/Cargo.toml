@@ -37,6 +37,10 @@ objc2-foundation = { version = "0.3", features = [
    "NSData",
    "NSArray",
    "NSUserDefaults",
+   "NSURL",
+   "NSDictionary",
+   "NSError",
+   "NSValue",
 ] }
 objc2-app-kit = { version = "0.3", features = ["NSAlert", "NSImage", "NSButton"] }
 tauri-plugin-webdriver = { version = "0.2", optional = true }

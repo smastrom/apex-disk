@@ -1,8 +1,11 @@
 //! Disk usage and volume name for the home directory.
 //!
-//! Uses statvfs for usage stats; volume name from diskutil.
+//! Uses the macOS NSURL API for disk stats (to match Finder); volume name from diskutil.
 
-use nix::sys::statvfs;
+use objc2_foundation::{
+    NSArray, NSNumber, NSString, NSURLVolumeAvailableCapacityForImportantUsageKey,
+    NSURLVolumeTotalCapacityKey, NSURL,
+};
 use std::path::{Path, PathBuf};
 
 /// Parses the volume name from diskutil info stdout. Used by get_volume_name and by tests.
@@ -57,19 +60,54 @@ pub struct DiskUsage {
     pub home_path: String,
 }
 
+/// Gets total and free disk space using the macOS NSURL resource values API.
+/// Uses `volumeAvailableCapacityForImportantUsage` which includes purgeable space,
+/// matching the value shown by macOS Finder.
+fn get_disk_capacity(path: &Path) -> Result<(u64, u64), String> {
+    let path_str = path.to_string_lossy();
+    let ns_path = NSString::from_str(&path_str);
+    let url = NSURL::fileURLWithPath(&ns_path);
+
+    // SAFETY: These are well-known Apple framework constants, always valid at runtime.
+    let (total_key, free_key) = unsafe {
+        (
+            NSURLVolumeTotalCapacityKey,
+            NSURLVolumeAvailableCapacityForImportantUsageKey,
+        )
+    };
+
+    let keys = NSArray::from_slice(&[total_key, free_key]);
+
+    let values = url
+        .resourceValuesForKeys_error(&keys)
+        .map_err(|e| format!("Failed to get disk resource values: {}", e))?;
+
+    let total = values
+        .objectForKey(total_key)
+        .and_then(|v| {
+            v.downcast_ref::<NSNumber>()
+                .map(|n| n.longLongValue() as u64)
+        })
+        .ok_or("Failed to read total capacity")?;
+
+    let free = values
+        .objectForKey(free_key)
+        .and_then(|v| {
+            v.downcast_ref::<NSNumber>()
+                .map(|n| n.longLongValue() as u64)
+        })
+        .ok_or("Failed to read available capacity")?;
+
+    Ok((total, free))
+}
+
 #[tauri::command]
 pub async fn get_disk_usage() -> Result<DiskUsage, String> {
     let home: PathBuf = dirs::home_dir().ok_or("Unable to determine home directory")?;
 
     // Spawn blocking operations on a separate thread to avoid starving the async runtime.
-    // We can return the DiskUsage struct directly from the closure to keep things clean.
     tokio::task::spawn_blocking(move || {
-        let vfs =
-            statvfs::statvfs(&home).map_err(|e| format!("Failed to get disk stats: {}", e))?;
-
-        let block_size = vfs.fragment_size() as u64;
-        let total = vfs.blocks() as u64 * block_size;
-        let free = vfs.blocks_available() as u64 * block_size;
+        let (total, free) = get_disk_capacity(&home)?;
 
         let user_name = home
             .file_name()
