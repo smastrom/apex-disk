@@ -6,11 +6,13 @@ Target: **macOS 10.15 Catalina** (`minimumSystemVersion` in `src-tauri/tauri.con
 
 | Layer | Min Target | Confirmed Compatible |
 |-------|-----------|---------------------|
+| **Architecture** | Intel (x86_64) + Apple Silicon (aarch64) | Yes — universal binary |
 | **Rust / Native APIs** | macOS 10.13+ (all APIs used) | Yes — macOS 10.15 safe |
 | **CSS (lightningcss)** | Safari 13 | Yes — transpiled via `vite.config.ts` |
 | **JavaScript (Vite build)** | Safari 13 (`build.target`) | Yes — transpiled by Vite/Rolldown |
 | **Tauri 2 WKWebView** | macOS 10.15 | Yes — Tauri 2 requires 10.15+ |
 
+**Supported architectures: Intel (x86_64) and Apple Silicon (aarch64) via universal binary**
 **Minimum supported macOS version: 10.15 Catalina (Safari 13.0 / WebKit 605.1.15)**
 
 ---
@@ -19,7 +21,39 @@ Target: **macOS 10.15 Catalina** (`minimumSystemVersion` in `src-tauri/tauri.con
 
 An LLM or developer can re-verify compatibility by following these steps:
 
-### 1. Check the declared minimum macOS version
+### 1. Check architecture support (Intel / Apple Silicon)
+
+The release workflow builds a **universal macOS binary** containing both architectures:
+
+```bash
+grep 'universal-apple-darwin\|targets:.*aarch64\|targets:.*x86_64' .github/workflows/release.yml
+```
+
+Expected:
+- Rust toolchain step installs both targets: `aarch64-apple-darwin,x86_64-apple-darwin`
+- Build step uses `--target universal-apple-darwin`
+- Release uploads from `target/universal-apple-darwin/release/bundle/`
+
+**No architecture-specific code exists in the Rust source.** To verify:
+
+```bash
+# Should return 0 matches — no cfg(target_arch) or arch-gated code:
+grep -rn 'cfg.*target_arch\|#\[cfg.*arch\|x86_64\|aarch64' src-tauri/src/ --include='*.rs'
+```
+
+All `unsafe` blocks use standard POSIX/macOS APIs (`libc::getxattr`, `objc2` Foundation/AppKit bindings) that behave identically on both Intel and Apple Silicon. No raw pointer arithmetic, `transmute`, or pointer-width assumptions exist in application code.
+
+| Aspect | Intel (x86_64) | Apple Silicon (aarch64) |
+|--------|---------------|------------------------|
+| **Rust compilation** | `x86_64-apple-darwin` target | `aarch64-apple-darwin` target |
+| **Binary format** | Included in universal binary | Included in universal binary |
+| **libc / POSIX APIs** | Identical behavior | Identical behavior |
+| **objc2 / Foundation** | Identical behavior | Identical behavior |
+| **Rosetta 2 required?** | No (native) | No (native) |
+
+On Apple Silicon Macs running macOS 11+, the universal binary runs natively without Rosetta 2. On Intel Macs running macOS 10.15+, the x86_64 slice runs natively.
+
+### 2. Check the declared minimum macOS version
 
 ```bash
 grep -A1 minimumSystemVersion src-tauri/tauri.conf.json
@@ -29,7 +63,7 @@ Expected: `"minimumSystemVersion": "10.15"`
 
 macOS 10.15 Catalina ships with Safari 13.0. Users who update Catalina can reach Safari 15.6.1, but the **worst-case baseline is Safari 13.0**.
 
-### 2. Verify CSS transpilation (lightningcss → Safari 13)
+### 3. Verify CSS transpilation (lightningcss → Safari 13)
 
 In `vite.config.ts`, lightningcss is configured to target Safari 13:
 
@@ -65,7 +99,7 @@ pnpm build
 grep -c '&:' dist/assets/*.css
 ```
 
-### 3. Verify JavaScript transpilation (Vite → Safari 13)
+### 4. Verify JavaScript transpilation (Vite → Safari 13)
 
 In `vite.config.ts`:
 
@@ -89,7 +123,7 @@ pnpm build
 grep -c '?\.' dist/assets/*.js
 ```
 
-### 4. Verify Rust / Native macOS API compatibility
+### 5. Verify Rust / Native macOS API compatibility
 
 All Objective-C framework APIs used are available well before macOS 10.15:
 
@@ -116,7 +150,7 @@ grep -rn 'objc2' src-tauri/src/ --include='*.rs'
 
 Then cross-reference each Foundation/AppKit symbol with Apple's developer docs for availability.
 
-### 5. Verify Rust toolchain and dependency MSRV
+### 6. Verify Rust toolchain and dependency MSRV
 
 | Dependency | Version | MSRV |
 |------------|---------|------|
@@ -132,7 +166,7 @@ Then cross-reference each Foundation/AppKit symbol with Apple's developer docs f
 
 No `rust-toolchain.toml` exists — the MSRV is implicit from dependencies.
 
-### 6. Tauri 2 platform requirements
+### 7. Tauri 2 platform requirements
 
 Tauri 2 on macOS:
 - Uses **WKWebView** (system WebKit, tied to macOS version)
@@ -170,4 +204,4 @@ These CSS/Web API features are used but **only work on newer macOS** (they degra
 
 ## Conclusion
 
-The app is fully functional on **macOS 10.15 Catalina (Safari 13.0)** as the absolute minimum. Core functionality works without issue. Visual enhancements (popover animations, view transitions) progressively enhance on newer macOS versions.
+The app ships as a **universal binary** supporting both **Intel (x86_64)** and **Apple Silicon (aarch64)** Macs natively — no Rosetta 2 required on either architecture. It is fully functional on **macOS 10.15 Catalina (Safari 13.0)** as the absolute minimum. Core functionality works without issue. Visual enhancements (popover animations, view transitions) progressively enhance on newer macOS versions.
