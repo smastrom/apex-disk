@@ -5,6 +5,10 @@ import { defineConfig } from 'vite'
 
 const host = process.env.TAURI_DEV_HOST
 
+// Safari version matching minimumSystemVersion in tauri.conf.json (macOS 10.15 = Safari 13)
+// Version encoding: (major << 16) | (minor << 8) | patch
+const safari13 = (13 << 16) | (0 << 8) | 0
+
 // https://vite.dev/config/
 export default defineConfig(async () => ({
    plugins: [vue()],
@@ -12,6 +16,20 @@ export default defineConfig(async () => ({
       alias: {
          '@': path.resolve(__dirname, 'src'),
       },
+   },
+
+   css: {
+      transformer: 'lightningcss',
+      lightningcss: {
+         targets: {
+            safari: safari13,
+         },
+      },
+   },
+
+   build: {
+      // Target Safari 13 (macOS 10.15 Catalina WKWebView)
+      target: 'safari13',
    },
 
    // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
