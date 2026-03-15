@@ -54,6 +54,12 @@ const newFreeSpace = computed(() => {
 
    return u.free + sel
 })
+
+const showNewFree = computed(() => {
+   if (newFreeSpace.value === null || !props.usage) return false
+
+   return formatBytes(props.usage.free) !== formatBytes(newFreeSpace.value)
+})
 </script>
 
 <template>
@@ -81,14 +87,11 @@ const newFreeSpace = computed(() => {
          <span class="ScanViewHeader-info">
             <span class="ScanViewHeader-label">{{ t('ScanViewHeader', 'free') }}</span>
             <span
-               :class="[
-                  'ScanViewHeader-value',
-                  { 'ScanViewHeader-value-oldFree': newFreeSpace !== null },
-               ]"
+               :class="['ScanViewHeader-value', { 'ScanViewHeader-value-oldFree': showNewFree }]"
                >{{ formatBytes(props.usage.free) }}</span
             >
             <svg
-               v-if="newFreeSpace !== null"
+               v-if="showNewFree"
                xmlns="http://www.w3.org/2000/svg"
                width="14"
                height="14"
@@ -105,11 +108,7 @@ const newFreeSpace = computed(() => {
                <path d="m12 5 7 7-7 7" />
             </svg>
 
-            <span
-               v-if="newFreeSpace !== null"
-               class="ScanViewHeader-info"
-               data-testid="disk-new-free"
-            >
+            <span v-if="showNewFree" class="ScanViewHeader-info" data-testid="disk-new-free">
                <span class="ScanViewHeader-value ScanViewHeader-value-newFree">
                   {{ formatBytes(newFreeSpace) }}
                </span>
