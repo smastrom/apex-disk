@@ -53,8 +53,8 @@ export const TRASH_COUNTDOWN_MS = 1000
 /** Ms to wait after trash_paths completes before emitting complete and clearing spinner. */
 export const TRASH_POST_TRASH_SLEEP_MS = 500
 
-/** Donate / support link. Opens in default browser when user taps Donate. */
-export const DONATE_URL = 'https://buymeacoffee.com/smastrom'
+/** Website link. Opens in default browser. */
+export const WEBSITE_URL = 'https://apexdisk.app' as const
 
 /**
  * App-level constants shared with Rust. Keep in sync with src-tauri/src/constants.rs.

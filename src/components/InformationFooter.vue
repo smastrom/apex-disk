@@ -22,7 +22,7 @@ import {
    LICENSE_URL,
    RELEASE_NOTES_URL,
    REPOSITORY_URL,
-   DONATE_URL,
+   WEBSITE_URL,
    RELEASE_YEAR,
 } from '@/lib/constants'
 
@@ -52,11 +52,11 @@ async function openRepository() {
    }
 }
 
-async function openDonate() {
+async function openWebsite() {
    try {
-      await openUrl(DONATE_URL)
+      await openUrl(WEBSITE_URL)
    } catch (err) {
-      console.error('Failed to open donate URL:', err)
+      console.error('Failed to open website:', err)
    }
 }
 </script>
@@ -80,8 +80,8 @@ async function openDonate() {
             {{ t('InformationFooter', 'repository') }}
          </button>
          <span class="InformationFooter-sep" aria-hidden="true">·</span>
-         <button type="button" class="InformationFooter-link" @click="openDonate">
-            {{ t('InformationFooter', 'donate') }}
+         <button type="button" class="InformationFooter-link" @click="openWebsite">
+            {{ t('InformationFooter', 'website') }}
          </button>
       </div>
       <p class="InformationFooter-line InformationFooter-credits">
