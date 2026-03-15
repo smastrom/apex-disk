@@ -1,6 +1,7 @@
 import { APP_LANGUAGES_TO_LOCALE_MAP } from './constants'
 
-/** Formats bytes into human-readable string (e.g. "1.2 GB"). */
+/** Formats bytes into human-readable string (e.g. "1.2 GB").
+ *  Uses SI decimal units (1 KB = 1000 B) to match macOS disk size reporting. */
 export function formatBytes(bytes: unknown): string {
    if (typeof bytes === 'string') bytes = parseFloat(bytes)
    if (typeof bytes !== 'number') return 'Unknown'
@@ -8,7 +9,7 @@ export function formatBytes(bytes: unknown): string {
 
    if (bytes === 0) return '0 B'
 
-   const k = 1024
+   const k = 1000
    const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
    const i = Math.floor(Math.log(bytes) / Math.log(k))
 
