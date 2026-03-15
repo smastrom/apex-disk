@@ -41,11 +41,10 @@ export const THEME_COLORS = [
    ROOT_THEME,
    'apex-coral',
    'apex-ocean',
-   'macos-dark',
-   'macos-light',
-   'macos-graphite',
-   'ayu',
    'smastrom',
+   'macos-dark',
+   'macos-graphite',
+   'macos-light',
 ] as const
 
 /** Ms to show countdown on the Move to Trash button before it becomes clickable. */

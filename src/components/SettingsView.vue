@@ -62,11 +62,10 @@ const themeOptions = computed(() => [
    { value: 'apex' as ThemeColor, label: t('SettingsView', 'themeApex') },
    { value: 'apex-coral' as ThemeColor, label: t('SettingsView', 'themeApexCoral') },
    { value: 'apex-ocean' as ThemeColor, label: t('SettingsView', 'themeApexOcean') },
+   { value: 'smastrom' as ThemeColor, label: t('SettingsView', 'themeApexGreen') },
    { value: 'macos-dark' as ThemeColor, label: t('SettingsView', 'themeMacosDark') },
-   { value: 'macos-light' as ThemeColor, label: t('SettingsView', 'themeMacosLight') },
    { value: 'macos-graphite' as ThemeColor, label: t('SettingsView', 'themeMacosGraphite') },
-   { value: 'ayu' as ThemeColor, label: t('SettingsView', 'themeAyu') },
-   { value: 'smastrom' as ThemeColor, label: t('SettingsView', 'themeSmastrom') },
+   { value: 'macos-light' as ThemeColor, label: t('SettingsView', 'themeMacosLight') },
 ])
 
 function toggleHiddenFiles() {

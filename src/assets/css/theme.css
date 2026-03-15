@@ -137,38 +137,6 @@
    --footer-nav-active-color: #44b5ba;
 }
 
-/* Theme: Ayu */
-[data-theme='ayu'] {
-   --color-bg: #141824;
-   --color-bg-elevated: #181f2c;
-   --color-surface: #20273a;
-   --color-surface-hover: #2c364c;
-   --color-accent: #ffcc66;
-   --color-accent-hover: #ffd580;
-   --color-text: #cccac2;
-   --color-text-muted: #607080;
-   --color-text-dim: #4a5566;
-   --color-accent-glow: rgba(255, 204, 102, 0.4);
-   --color-accent-bg: rgba(140, 118, 73, 0.14);
-   --color-accent-bg-hover: rgba(140, 118, 73, 0.07);
-   --color-border: #1e2533;
-
-   --btn-gradient-0: #c89530;
-   --btn-gradient-50: #b08528;
-   --btn-gradient-100: #c89530;
-
-   --btn-step-0: #d09e38;
-   --btn-step-50: #c89530;
-   --btn-step-100: #d09e38;
-
-   --color-abort: #e24838;
-   --btn-action-0: #d47840;
-   --btn-action-50: #c06830;
-   --btn-action-100: #d47840;
-   --color-action-glow: rgba(212, 120, 64, 0.4);
-   --footer-nav-active-color: #ffd580;
-}
-
 /* Theme: macOS Dark — Apple's system dark appearance */
 [data-theme='macos-dark'] {
    --color-on-accent: #fff;
@@ -258,7 +226,7 @@
    --footer-nav-active-color: #fff;
 }
 
-/* Theme: smastrom (green accent, dark green-tinted base; accent shifted towards hsl(142 75% 53%)) */
+/* Theme: Apex Green — green accent, dark green-tinted base */
 [data-theme='smastrom'] {
    --color-bg: hsl(150, 12%, 7.5%);
    --color-bg-elevated: hsl(150, 12%, 11%);
