@@ -101,6 +101,7 @@
    --btn-step-100: #ff8566;
 
    --color-abort: #e24838;
+   --footer-nav-active-color: #ff8566;
 }
 
 /* Theme: Apex Ocean — dark graphite base, teal-cyan accent */
@@ -165,6 +166,7 @@
    --btn-action-50: #c06830;
    --btn-action-100: #d47840;
    --color-action-glow: rgba(212, 120, 64, 0.4);
+   --footer-nav-active-color: #ffd580;
 }
 
 /* Theme: macOS Dark — Apple's system dark appearance */
@@ -193,6 +195,7 @@
    --btn-step-100: #409cff;
 
    --color-abort: #dc4c3a;
+   --footer-nav-active-color: #409cff;
 }
 
 /* Theme: macOS Light — Apple's system light appearance */
@@ -221,6 +224,7 @@
    --btn-step-100: #409cff;
 
    --color-abort: #c44030;
+   --footer-nav-active-color: #007aff;
 }
 
 /* Theme: macOS Graphite — cool blue-grey, native macOS feel */
@@ -279,4 +283,5 @@
    --btn-step-100: hsl(145, 72%, 42%);
 
    --color-abort: hsl(6, 62%, 52%);
+   --footer-nav-active-color: hsl(145, 72%, 57%);
 }
