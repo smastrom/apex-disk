@@ -286,12 +286,12 @@ function dismissCheckboxTooltip() {
 }
 
 .ScanResultsListItem-check--selected .ScanResultsListItem-checkFilled {
-   color: var(--color-accent);
-   filter: drop-shadow(0 0 4px var(--color-accent-glow));
+   color: var(--color-accent-alt);
+   filter: drop-shadow(0 0 4px var(--color-accent-alt-glow));
 }
 
 .ScanResultsListItem-check--some-selected .ScanResultsListItem-checkPartial {
-   color: var(--color-accent);
+   color: var(--color-accent-alt);
 }
 
 .ScanResultsListItem-check--disabled {

@@ -120,7 +120,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
 }
 
 .ScanTrashListItem-check--selected .ScanTrashListItem-checkFilled {
-   color: var(--color-accent);
+   color: var(--color-accent-alt);
 }
 
 .ScanTrashListItem-checkEmpty {
