@@ -38,7 +38,7 @@ function closeApp() {
 </script>
 
 <template>
-   <div class="ScanTrashConfirmation-root">
+   <div class="ScanTrashConfirmation-root" role="status" aria-live="polite">
       <div class="ScanTrashConfirmation-content">
          <AnimatedAlertCircle
             v-if="hasErrors"

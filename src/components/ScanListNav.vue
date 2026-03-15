@@ -67,7 +67,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
 </script>
 
 <template>
-   <nav class="ScanListNav-root" data-testid="results-nav">
+   <nav class="ScanListNav-root" data-testid="results-nav" aria-label="Directory">
       <div class="ScanListNav-controls">
          <button
             type="button"
@@ -91,7 +91,12 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
             <PhCaretRight :size="18" weight="regular" aria-hidden="true" />
          </button>
       </div>
-      <div class="ScanListNav-path" data-testid="nav-path-label">
+      <div
+         class="ScanListNav-path"
+         data-testid="nav-path-label"
+         aria-live="polite"
+         aria-atomic="true"
+      >
          <PhTrashSimple
             v-if="pathIcon === 'trash'"
             :size="16"
