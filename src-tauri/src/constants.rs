@@ -10,7 +10,7 @@ pub const RELEASE_YEAR: &str = "2026";
 pub const RELEASE_NOTES_URL: &str = "https://github.com/smastrom/apex-disk/releases";
 
 /// URL opened when the user chooses "Read license" from the Help menu.
-pub const LICENSE_URL: &str = "https://github.com/smastrom/apex-disk/blob/main/LICENSE";
+pub const LICENSE_URL: &str = "https://github.com/smastrom/apex-disk/blob/main/LICENSE.md";
 
 /// Menu item id for the release notes action. Handled in lib.rs setup.
 pub const RELEASE_NOTES_MENU_ID: &str = "release-notes";

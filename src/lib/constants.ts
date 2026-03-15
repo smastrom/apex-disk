@@ -64,7 +64,7 @@ export const APP_VERSION = version
 export const APP_CREDITS = 'Simone Mastromattei (smastrom)' as const
 export const RELEASE_YEAR = 2026 as const
 export const RELEASE_NOTES_URL = 'https://github.com/smastrom/apex-disk/releases' as const
-export const LICENSE_URL = 'https://github.com/smastrom/apex-disk/blob/main/LICENSE' as const
+export const LICENSE_URL = 'https://github.com/smastrom/apex-disk/blob/main/LICENSE.md' as const
 
 /** Frontend-only URLs. */
 export const AUTHOR_URL = 'https://github.com/smastrom' as const
