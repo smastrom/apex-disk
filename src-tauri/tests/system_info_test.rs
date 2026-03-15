@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use mac_disk_tree_lib::system_info::{get_system_info, SystemInfo};
+    use apex_disk_lib::system_info::{get_system_info, SystemInfo};
 
     #[tokio::test]
     async fn test_get_system_info_returns_valid_structure() {

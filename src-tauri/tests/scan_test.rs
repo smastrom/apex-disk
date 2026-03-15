@@ -8,8 +8,8 @@
 
 mod support;
 
-use mac_disk_tree_lib::scan;
-use mac_disk_tree_lib::ScanOptions;
+use apex_disk_lib::scan;
+use apex_disk_lib::ScanOptions;
 
 use support::{create_test_home, create_test_home_with_system_files};
 

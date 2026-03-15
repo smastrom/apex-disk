@@ -1,6 +1,6 @@
 //! Protected system folders and sensitive credential paths.
 //!
-//! MacDiskTree uses these lists to ensure the user doesn't break their macOS
+//! ApexDisk uses these lists to ensure the user doesn't break their macOS
 //! installation or accidentally delete irreplaceable security credentials.
 
 use std::path::Path;

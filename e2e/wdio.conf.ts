@@ -11,7 +11,7 @@ let exitClean = false
 function getAppPath(): string {
    const base = path.join(rootDir, 'src-tauri', 'target', 'debug')
    const isWindows = process.platform === 'win32'
-   const name = isWindows ? 'mac-disk-tree.exe' : 'mac-disk-tree'
+   const name = isWindows ? 'apex-disk.exe' : 'apex-disk'
    return path.join(base, name)
 }
 

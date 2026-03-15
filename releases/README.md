@@ -1,6 +1,6 @@
 # Release System
 
-This folder contains the release infrastructure for MacDiskTree.
+This folder contains the release infrastructure for ApexDisk.
 
 ## How It Works
 
@@ -31,14 +31,14 @@ To build **without** signing (ad-hoc), use `pnpm tauri:build:unsigned`.
 
 The GitHub Actions workflow imports the Developer ID certificate from a base64-encoded secret into a temporary keychain, extracts the signing identity automatically, and passes it to Tauri. The following repository secrets must be configured:
 
-| Secret                       | Description                                                        |
-| ---------------------------- | ------------------------------------------------------------------ |
-| `APPLE_CERTIFICATE`          | Base64-encoded `.p12` Developer ID certificate                     |
-| `APPLE_CERTIFICATE_PASSWORD` | Password for the `.p12` file                                       |
-| `KEYCHAIN_PASSWORD`          | Arbitrary password for the temporary CI keychain                   |
-| `APPLE_ID`                   | Apple ID email for notarization                                    |
-| `APPLE_PASSWORD`             | App-specific password for notarization                             |
-| `APPLE_TEAM_ID`              | Apple Developer Team ID                                            |
+| Secret                       | Description                                      |
+| ---------------------------- | ------------------------------------------------ |
+| `APPLE_CERTIFICATE`          | Base64-encoded `.p12` Developer ID certificate   |
+| `APPLE_CERTIFICATE_PASSWORD` | Password for the `.p12` file                     |
+| `KEYCHAIN_PASSWORD`          | Arbitrary password for the temporary CI keychain |
+| `APPLE_ID`                   | Apple ID email for notarization                  |
+| `APPLE_PASSWORD`             | App-specific password for notarization           |
+| `APPLE_TEAM_ID`              | Apple Developer Team ID                          |
 
 To export the certificate as base64:
 
@@ -91,7 +91,7 @@ git push
 
 ### Step 5: Trigger the release
 
-1. Go to https://github.com/smastrom/mac-disk-tree/actions
+1. Go to https://github.com/smastrom/apex-disk/actions
 2. Select the **Release** workflow
 3. Click **Run workflow**
 
@@ -120,9 +120,9 @@ If it fails before tagging (validation, tests, or build), just fix the issue, pu
 
 ## Files
 
-| File                            | Purpose                                                            |
-| ------------------------------- | ------------------------------------------------------------------ |
-| `RELEASES.md`                   | Changelog — add entries here for each release                      |
-| `README.md`                     | This file                                                          |
-| `.github/workflows/release.yml` | GitHub Action — validates, builds, tags, and publishes releases    |
-| `scripts/load-env.sh`           | Loads and validates `.env` vars for local signed builds            |
+| File                            | Purpose                                                         |
+| ------------------------------- | --------------------------------------------------------------- |
+| `RELEASES.md`                   | Changelog — add entries here for each release                   |
+| `README.md`                     | This file                                                       |
+| `.github/workflows/release.yml` | GitHub Action — validates, builds, tags, and publishes releases |
+| `scripts/load-env.sh`           | Loads and validates `.env` vars for local signed builds         |

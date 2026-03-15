@@ -4,8 +4,8 @@
 //! All tests acquire STORE_LOCK before running because the mock Tauri runtime
 //! shares a single backing store, causing parallel tests to interfere.
 
-use mac_disk_tree_lib::constants;
-use mac_disk_tree_lib::store;
+use apex_disk_lib::constants;
+use apex_disk_lib::store;
 
 use serde_json::json;
 use std::sync::Mutex;
@@ -47,7 +47,7 @@ fn initialize_store_writes_defaults_for_empty_store() {
 
     // Clear the store to ensure it's empty
     let store_handle = handle
-        .store(mac_disk_tree_lib::SETTINGS_STORE_PATH)
+        .store(apex_disk_lib::SETTINGS_STORE_PATH)
         .expect("open settings store");
     store_handle.set("app", serde_json::json!({}));
     store_handle.save().expect("clear store");
@@ -56,7 +56,7 @@ fn initialize_store_writes_defaults_for_empty_store() {
     store::initialize_store_with_handle(&handle).expect("initialize store");
 
     let store_handle = handle
-        .store(mac_disk_tree_lib::SETTINGS_STORE_PATH)
+        .store(apex_disk_lib::SETTINGS_STORE_PATH)
         .expect("open settings store");
     let value = store_handle
         .get("app")
@@ -77,7 +77,7 @@ fn get_settings_merges_existing_with_defaults() {
 
     // Clear the store to ensure it's empty
     let store_handle = handle
-        .store(mac_disk_tree_lib::SETTINGS_STORE_PATH)
+        .store(apex_disk_lib::SETTINGS_STORE_PATH)
         .expect("open settings store");
     store_handle.set("app", serde_json::json!({}));
     store_handle.save().expect("clear store");
@@ -110,7 +110,7 @@ fn set_and_get_settings_round_trip() {
 
     // Clear the store to ensure it's empty
     let store_handle = handle
-        .store(mac_disk_tree_lib::SETTINGS_STORE_PATH)
+        .store(apex_disk_lib::SETTINGS_STORE_PATH)
         .expect("open settings store");
     store_handle.set("app", serde_json::json!({}));
     store_handle.save().expect("clear store");
@@ -142,7 +142,7 @@ fn update_setting_preserves_other_fields() {
     let handle = app.handle();
 
     let store_handle = handle
-        .store(mac_disk_tree_lib::SETTINGS_STORE_PATH)
+        .store(apex_disk_lib::SETTINGS_STORE_PATH)
         .expect("open settings store");
     store_handle.set("app", serde_json::json!({}));
     store_handle.save().expect("clear store");
@@ -180,7 +180,7 @@ fn get_setting_returns_single_field() {
     let handle = app.handle();
 
     let store_handle = handle
-        .store(mac_disk_tree_lib::SETTINGS_STORE_PATH)
+        .store(apex_disk_lib::SETTINGS_STORE_PATH)
         .expect("open settings store");
     store_handle.set("app", serde_json::json!({}));
     store_handle.save().expect("clear store");
@@ -201,7 +201,7 @@ fn get_setting_nonexistent_key_returns_none() {
     let handle = app.handle();
 
     let store_handle = handle
-        .store(mac_disk_tree_lib::SETTINGS_STORE_PATH)
+        .store(apex_disk_lib::SETTINGS_STORE_PATH)
         .expect("open settings store");
     store_handle.set("app", serde_json::json!({}));
     store_handle.save().expect("clear store");

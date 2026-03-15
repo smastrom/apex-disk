@@ -3,7 +3,7 @@
 //! Uses temp directories for deterministic behavior (no dependency on real system state).
 //! Also tests against real container paths when available (best-effort).
 
-use mac_disk_tree_lib::xattr;
+use apex_disk_lib::xattr;
 use std::path::Path;
 
 /// A freshly created temp directory must not have the container manager attribute.

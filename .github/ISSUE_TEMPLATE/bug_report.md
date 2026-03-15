@@ -10,6 +10,7 @@ assignees: ''
 A clear description of the issue.
 
 **Steps to reproduce**
+
 1. …
 2. …
 
@@ -17,15 +18,16 @@ A clear description of the issue.
 What you expected to happen instead.
 
 **Environment**
+
 - macOS version:
-- MacDiskTree version:
+- ApexDisk version:
 - Chip (Apple Silicon / Intel):
 
 **Debug log (optional)**
 If the issue is reproducible, relaunch the app from Terminal with debug logging enabled:
 
 ```bash
-MAC_DISK_TREE_DEBUG=1 /Applications/MacDiskTree.app/Contents/MacOS/MacDiskTree
+APEX_DISK_DEBUG=1 /Applications/ApexDisk.app/Contents/MacOS/ApexDisk
 ```
 
 Paste the relevant log output here.

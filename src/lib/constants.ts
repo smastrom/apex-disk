@@ -35,7 +35,7 @@ export const DEFAULT_LANGUAGE = 'en' as const
 /** Languages that use right-to-left script direction. */
 export const RTL_LANGUAGES: ReadonlySet<string> = new Set(['ar'])
 
-export const ROOT_THEME = 'mac-disk-tree' as const
+export const ROOT_THEME = 'apex-disk' as const
 /** Supported theme color presets. Single source of truth for theme IDs. */
 export const THEME_COLORS = [
    ROOT_THEME,
@@ -59,18 +59,18 @@ export const DONATE_URL = 'https://buymeacoffee.com/smastrom'
 /**
  * App-level constants shared with Rust. Keep in sync with src-tauri/src/constants.rs.
  */
-export const APP_NAME = 'MacDiskTree' as const
+export const APP_NAME = 'ApexDisk' as const
 export const APP_VERSION = version
 export const APP_CREDITS = 'Simone Mastromattei (smastrom)' as const
 export const RELEASE_YEAR = 2026 as const
-export const RELEASE_NOTES_URL = 'https://github.com/smastrom/mac-disk-tree/releases' as const
-export const LICENSE_URL = 'https://github.com/smastrom/mac-disk-tree/blob/main/LICENSE' as const
+export const RELEASE_NOTES_URL = 'https://github.com/smastrom/apex-disk/releases' as const
+export const LICENSE_URL = 'https://github.com/smastrom/apex-disk/blob/main/LICENSE' as const
 
 /** Frontend-only URLs. */
 export const AUTHOR_URL = 'https://github.com/smastrom' as const
-export const REPOSITORY_URL = 'https://github.com/smastrom/mac-disk-tree' as const
+export const REPOSITORY_URL = 'https://github.com/smastrom/apex-disk' as const
 export const LATEST_RELEASE_URL =
-   'https://api.github.com/repos/smastrom/mac-disk-tree/releases/latest' as const
+   'https://api.github.com/repos/smastrom/apex-disk/releases/latest' as const
 
 /** File extension sets for icon categorization. */
 export const DOC_EXTENSIONS = new Set([

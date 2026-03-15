@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>MacDiskTree</string>
+	<string>ApexDisk</string>
 	<key>CFBundleDisplayName</key>
-	<string>MacDiskTree</string>
+	<string>ApexDisk</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleLocalizations</key>

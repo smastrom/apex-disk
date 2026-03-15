@@ -6,9 +6,9 @@
 
 mod support;
 
-use mac_disk_tree_lib::trash::filter_items;
-use mac_disk_tree_lib::trash::trash_paths_sync_with_home;
-use mac_disk_tree_lib::trash::TrashPathItem;
+use apex_disk_lib::trash::filter_items;
+use apex_disk_lib::trash::trash_paths_sync_with_home;
+use apex_disk_lib::trash::TrashPathItem;
 
 use support::create_test_home;
 

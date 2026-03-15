@@ -5,7 +5,7 @@
 //! display, and edge cases (empty, no match, first match wins). No subprocess or
 //! filesystem is used.
 
-use mac_disk_tree_lib::disk::parse_volume_name;
+use apex_disk_lib::disk::parse_volume_name;
 
 /// A line "Volume Name: Macintosh HD - Data" must yield "Macintosh HD" (suffix stripped).
 #[test]

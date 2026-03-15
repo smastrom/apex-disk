@@ -3,7 +3,7 @@
 //! Verifies that all supported languages return non-empty labels and that
 //! unknown languages fall back to English defaults.
 
-use mac_disk_tree_lib::menu_translations;
+use apex_disk_lib::menu_translations;
 
 const SUPPORTED_LANGUAGES: &[&str] = &["en", "it", "es", "fr", "pt", "de", "ru", "zh", "ja", "ar"];
 

@@ -1,30 +1,30 @@
-import { APP_VERSION } from '@/lib/constants'
-import { applyTheme, applyDirection } from '@/lib/document'
-import { initLog, log } from '@/lib/log'
-import { useSystemInfo } from '@/lib/use-system-info'
-import { initTauriAppSettings } from '@/stores/app-settings'
-import { createApp } from 'vue'
+import { APP_VERSION } from "@/lib/constants";
+import { applyTheme, applyDirection } from "@/lib/document";
+import { initLog, log } from "@/lib/log";
+import { useSystemInfo } from "@/lib/use-system-info";
+import { initTauriAppSettings } from "@/stores/app-settings";
+import { createApp } from "vue";
 
-import AppShell from './components/AppShell.vue'
+import AppShell from "./components/AppShell.vue";
 
-await initLog()
-const store = await initTauriAppSettings()
+await initLog();
+const store = await initTauriAppSettings();
 
-applyTheme(store.getThemeColor())
-applyDirection(store.settings.value.language)
+applyTheme(store.getThemeColor());
+applyDirection(store.settings.value.language);
 
 // Log app environment for debug output
 try {
-   const { systemInfo } = await useSystemInfo()
-   if (systemInfo.value) {
-      const { macos_version, cpu_info } = systemInfo.value
-      log('app', `v${APP_VERSION} — macOS ${macos_version}, ${cpu_info}`)
-   } else {
-      log('app', `v${APP_VERSION}`)
-   }
+  const { systemInfo } = await useSystemInfo();
+  if (systemInfo.value) {
+    const { macos_version, cpu_info } = systemInfo.value;
+    log("app", `v${APP_VERSION} — macOS ${macos_version}, ${cpu_info}`);
+  } else {
+    log("app", `v${APP_VERSION}`);
+  }
 } catch {
-   log('app', `v${APP_VERSION}`)
+  log("app", `v${APP_VERSION}`);
 }
 
-const app = createApp(AppShell)
-app.mount('#app')
+const app = createApp(AppShell);
+app.mount("#app");

@@ -48,6 +48,32 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
 
 [[package]]
+name = "apex-disk"
+version = "0.0.9"
+dependencies = [
+ "dirs 5.0.1",
+ "libc",
+ "nix 0.29.0",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-foundation",
+ "open",
+ "rayon",
+ "serde",
+ "serde_json",
+ "sys-locale 0.1.0",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-opener",
+ "tauri-plugin-os",
+ "tauri-plugin-store",
+ "tauri-plugin-webdriver",
+ "tempfile",
+ "tokio",
+ "trash",
+]
+
+[[package]]
 name = "async-broadcast"
 version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2151,32 +2177,6 @@ name = "mac"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c41e0c4fef86961ac6d6f8a82609f55f31b05e4fce149ac5710e439df7619ba4"
-
-[[package]]
-name = "mac-disk-tree"
-version = "0.0.9"
-dependencies = [
- "dirs 5.0.1",
- "libc",
- "nix 0.29.0",
- "objc2",
- "objc2-app-kit",
- "objc2-foundation",
- "open",
- "rayon",
- "serde",
- "serde_json",
- "sys-locale 0.1.0",
- "tauri",
- "tauri-build",
- "tauri-plugin-opener",
- "tauri-plugin-os",
- "tauri-plugin-store",
- "tauri-plugin-webdriver",
- "tempfile",
- "tokio",
- "trash",
-]
 
 [[package]]
 name = "markup5ever"

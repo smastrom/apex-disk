@@ -6,7 +6,7 @@
 
 use std::path::Path;
 
-use mac_disk_tree_lib::safe_folders;
+use apex_disk_lib::safe_folders;
 
 const HOME: &str = "/Users/testuser";
 

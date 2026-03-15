@@ -10,7 +10,7 @@ let _isDev = false
  *
  * - Dev builds (`import.meta.env.DEV`): always enabled.
  * - Prod builds: enabled when the user launches the app with
- *   `MAC_DISK_TREE_DEBUG=1` (checked at runtime via Rust).
+ *   `APEX_DISK_DEBUG=1` (checked at runtime via Rust).
  */
 export async function initLog(): Promise<void> {
    if (import.meta.env.DEV) {

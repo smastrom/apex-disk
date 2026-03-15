@@ -1,3 +1,3 @@
 fn main() {
-    mac_disk_tree_lib::run()
+    apex_disk_lib::run()
 }
