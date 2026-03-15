@@ -91,16 +91,19 @@ async function openReleasesPage() {
 </script>
 
 <template>
-   <main class="SettingsView-root" data-testid="settings-view">
+   <section class="SettingsView-root" data-testid="settings-view" aria-label="Settings">
       <div class="SettingsView-content" data-testid="settings-content">
          <!-- App Settings -->
 
          <section class="SettingsGroup">
             <div class="SettingsGroup-row">
-               <span class="SettingsGroup-label">{{ t('SettingsView', 'language') }}</span>
+               <span id="label-language" class="SettingsGroup-label">{{
+                  t('SettingsView', 'language')
+               }}</span>
                <div class="SettingsView-selectWrap">
                   <select
                      class="SettingsSelect"
+                     aria-labelledby="label-language"
                      :value="settings.language"
                      @change="
                         store.setLanguage(($event.target as HTMLSelectElement).value as Language)
@@ -119,10 +122,13 @@ async function openReleasesPage() {
                </div>
             </div>
             <div class="SettingsGroup-row">
-               <span class="SettingsGroup-label">{{ t('SettingsView', 'themeColor') }}</span>
+               <span id="label-theme" class="SettingsGroup-label">{{
+                  t('SettingsView', 'themeColor')
+               }}</span>
                <div class="SettingsView-selectWrap">
                   <select
                      class="SettingsSelect"
+                     aria-labelledby="label-theme"
                      :value="settings.themeColor"
                      @change="
                         store.setThemeColor(
@@ -148,36 +154,48 @@ async function openReleasesPage() {
 
          <section class="SettingsGroup">
             <div class="SettingsGroup-row">
-               <span class="SettingsGroup-label">{{ t('SettingsView', 'scanHiddenFiles') }}</span>
+               <span id="label-hidden-files" class="SettingsGroup-label">{{
+                  t('SettingsView', 'scanHiddenFiles')
+               }}</span>
                <button
                   type="button"
+                  role="switch"
                   class="SettingsToggle"
                   :class="{ 'SettingsToggle--on': settings.showHiddenFiles }"
-                  :aria-pressed="settings.showHiddenFiles"
+                  :aria-checked="settings.showHiddenFiles"
+                  aria-labelledby="label-hidden-files"
                   @click="toggleHiddenFiles"
                >
                   <span class="SettingsToggle-knob" aria-hidden="true" />
                </button>
             </div>
             <div class="SettingsGroup-row">
-               <span class="SettingsGroup-label">{{ t('SettingsView', 'scanUnder1Kb') }}</span>
+               <span id="label-under-1kb" class="SettingsGroup-label">{{
+                  t('SettingsView', 'scanUnder1Kb')
+               }}</span>
                <button
                   type="button"
+                  role="switch"
                   class="SettingsToggle"
                   :class="{ 'SettingsToggle--on': settings.showUnder1Kb }"
-                  :aria-pressed="settings.showUnder1Kb"
+                  :aria-checked="settings.showUnder1Kb"
+                  aria-labelledby="label-under-1kb"
                   @click="toggleUnder1Kb"
                >
                   <span class="SettingsToggle-knob" aria-hidden="true" />
                </button>
             </div>
             <div class="SettingsGroup-row">
-               <span class="SettingsGroup-label">{{ t('SettingsView', 'scanZeroByte') }}</span>
+               <span id="label-zero-byte" class="SettingsGroup-label">{{
+                  t('SettingsView', 'scanZeroByte')
+               }}</span>
                <button
                   type="button"
+                  role="switch"
                   class="SettingsToggle"
                   :class="{ 'SettingsToggle--on': settings.showZeroByte }"
-                  :aria-pressed="settings.showZeroByte"
+                  :aria-checked="settings.showZeroByte"
+                  aria-labelledby="label-zero-byte"
                   @click="toggleZeroByte"
                >
                   <span class="SettingsToggle-knob" aria-hidden="true" />
@@ -291,7 +309,7 @@ async function openReleasesPage() {
             </div>
          </section>
       </div>
-   </main>
+   </section>
 </template>
 
 <style scoped>

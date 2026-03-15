@@ -102,7 +102,7 @@ const showNewFree = computed(() => {
                stroke-linecap="round"
                stroke-linejoin="round"
                class="ScanViewHeader-arrowRight"
-               aria-label="Arrow right"
+               aria-hidden="true"
             >
                <path d="M5 12h14" />
                <path d="m12 5 7 7-7 7" />
@@ -115,15 +115,24 @@ const showNewFree = computed(() => {
             </span>
          </span>
       </div>
-      <div class="ScanViewHeader-barWrap">
+      <div
+         class="ScanViewHeader-barWrap"
+         role="meter"
+         :aria-valuenow="Math.round(mainBarPercent)"
+         aria-valuemin="0"
+         aria-valuemax="100"
+         :aria-label="t('ScanViewHeader', 'total')"
+      >
          <div
             v-if="props.selectedSize && props.selectedSize > 0"
             class="ScanViewHeader-barLighter"
             :style="{ transform: `scaleX(${lighterBarPercent / 100})` }"
+            aria-hidden="true"
          />
          <div
             class="ScanViewHeader-barMain"
             :style="{ transform: `scaleX(${mainBarPercent / 100})` }"
+            aria-hidden="true"
          />
       </div>
    </div>

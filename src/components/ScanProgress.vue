@@ -46,7 +46,7 @@ const elapsedDisplay = computed(() => {
 </script>
 
 <template>
-   <section class="ScanProgress-root" data-testid="scanning-results">
+   <section class="ScanProgress-root" data-testid="scanning-results" aria-label="Scan progress">
       <div class="ScanProgress-progressBlock">
          <div class="ScanProgress-progressHeader">
             <span class="ScanProgress-spinnerWrap">
@@ -61,7 +61,13 @@ const elapsedDisplay = computed(() => {
                }}
             </p>
          </div>
-         <div class="ScanProgress-barWrap">
+         <div
+            class="ScanProgress-barWrap"
+            role="progressbar"
+            :aria-valuenow="percent"
+            aria-valuemin="0"
+            aria-valuemax="100"
+         >
             <div class="ScanProgress-barMain" :style="{ transform: `scaleX(${percent / 100})` }" />
          </div>
       </div>

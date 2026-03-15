@@ -49,6 +49,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
          data-testid="trash-list-row-checkbox"
          :class="{ 'ScanTrashListItem-check--selected': isSelected }"
          :aria-pressed="isSelected"
+         :aria-label="item.name"
          @click.stop="emit('toggle')"
       >
          <CheckboxIcon

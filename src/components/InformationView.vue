@@ -28,14 +28,14 @@ const props = defineProps<{
 </script>
 
 <template>
-   <main class="InformationView-root" data-testid="information-view">
+   <section class="InformationView-root" data-testid="information-view" aria-label="Information">
       <div class="InformationView-content">
          <!-- App branding section -->
          <section class="InformationView-branding">
             <div class="InformationView-logoContainer">
                <Logo class="InformationView-logo" />
             </div>
-            <h1 class="InformationView-title" data-testid="information-title">{{ APP_NAME }}</h1>
+            <h2 class="InformationView-title" data-testid="information-title">{{ APP_NAME }}</h2>
 
             <p class="InformationView-description">
                {{ t('InformationView', 'description') }}
@@ -92,7 +92,7 @@ const props = defineProps<{
 
          <InformationFooter />
       </div>
-   </main>
+   </section>
 </template>
 
 <style scoped>

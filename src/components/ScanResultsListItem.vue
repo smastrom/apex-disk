@@ -145,8 +145,12 @@ function dismissCheckboxTooltip() {
          'ScanResultsListItem-root--selected': isSelected,
          'ScanResultsListItem-root--folder': !item.is_file,
       }"
+      :role="!item.is_file ? 'button' : undefined"
+      :tabindex="!item.is_file ? 0 : undefined"
       :data-testid="item.is_file ? 'results-row-file' : 'results-row-folder'"
       @click="!item.is_file && emit('navigate')"
+      @keydown.enter="!item.is_file && emit('navigate')"
+      @keydown.space.prevent="!item.is_file && emit('navigate')"
    >
       <button
          ref="checkboxTriggerRef"
@@ -159,6 +163,7 @@ function dismissCheckboxTooltip() {
             'ScanResultsListItem-check--disabled': !isSelectable,
          }"
          :aria-pressed="isSelected || isSomeSelected"
+         :aria-label="t('ScanResultsListItem', 'selectItem', { name: item.name })"
          :disabled="!isSelectable"
          :aria-disabled="!isSelectable"
          @click.stop="isSelectable && emit('select')"

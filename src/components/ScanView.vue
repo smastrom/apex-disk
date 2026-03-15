@@ -130,7 +130,7 @@ function onRestart() {
 </script>
 
 <template>
-   <main class="ScanView-root">
+   <section class="ScanView-root" aria-label="Scan">
       <ScanViewHeader :usage="diskUsage" :selectedSize="selectedSize" />
 
       <Transition name="fade" mode="out-in">
@@ -177,7 +177,7 @@ function onRestart() {
             />
          </KeepAlive>
       </Transition>
-   </main>
+   </section>
 </template>
 
 <style scoped>

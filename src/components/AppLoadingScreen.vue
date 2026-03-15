@@ -1,6 +1,6 @@
 <template>
-   <div class="loading-spinner">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+   <div class="loading-spinner" role="status" aria-label="Loading">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
          <circle cx="12" cy="12" r="9.5" fill="none" stroke-width="3" stroke-linecap="round" />
       </svg>
    </div>

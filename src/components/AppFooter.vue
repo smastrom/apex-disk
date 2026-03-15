@@ -26,10 +26,11 @@ const { t } = useTranslations()
 </script>
 
 <template>
-   <footer class="AppFooter-root">
+   <nav class="AppFooter-root" aria-label="Main">
       <button
          class="AppFooter-btn"
          :class="{ 'AppFooter-btn--active': activeView === 'scan' }"
+         :aria-current="activeView === 'scan' ? 'page' : undefined"
          data-testid="footer-scan"
          @click="emit('select-view', 'scan')"
       >
@@ -39,6 +40,7 @@ const { t } = useTranslations()
       <button
          class="AppFooter-btn"
          :class="{ 'AppFooter-btn--active': activeView === 'settings' }"
+         :aria-current="activeView === 'settings' ? 'page' : undefined"
          data-testid="footer-settings"
          @click="emit('select-view', 'settings')"
       >
@@ -48,13 +50,14 @@ const { t } = useTranslations()
       <button
          class="AppFooter-btn"
          :class="{ 'AppFooter-btn--active': activeView === 'information' }"
+         :aria-current="activeView === 'information' ? 'page' : undefined"
          data-testid="footer-information"
          @click="emit('select-view', 'information')"
       >
          <PhInfo :size="24" weight="regular" aria-hidden="true" />
          <span>{{ t('AppFooter', 'information') }}</span>
       </button>
-   </footer>
+   </nav>
 </template>
 
 <style scoped>
