@@ -6,7 +6,7 @@ Purpose: Fullscreen list of items scheduled for trash. Checkboxes (default on) u
 Props: items (TrashListItem[]) — countdown starts automatically when component is rendered
 
 Example:
- <ScanTrashList :items="trashItems" @update:selectedSize="onSize" @complete="onComplete" />
+ <ScanTrashList :items="trashItems" @update:selectedSize="onSize" @complete="onComplete" @reset="onReset" />
 -->
 
 <script setup lang="ts">

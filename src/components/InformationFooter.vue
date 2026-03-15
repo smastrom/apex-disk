@@ -1,7 +1,7 @@
 <!--
 InformationFooter
 
-Purpose: Footer block in InformationView showing app name, version, author, and links to release notes, license, and repository.
+Purpose: Footer block in InformationView showing app name, version, author, and links to release notes, license, repository, and website.
 
 Props: none
 

@@ -3,13 +3,10 @@ ScanView
 
 Purpose: Common scan shell. Always shows ScanViewHeader at top; body switches between ScanResults, ScanTrash, or ScanTrashConfirmation.
 
-Props: activeView (string), diskUsage (DiskUsage | null)
+Props: diskUsage (DiskUsage | null)
 
 Example:
- <ScanView
-   :activeView="activeView"
-   :diskUsage="diskUsage"
- />
+ <ScanView :diskUsage="diskUsage" />
 -->
 
 <script setup lang="ts">

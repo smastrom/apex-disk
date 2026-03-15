@@ -3,7 +3,7 @@ ScanListNav
 
 Purpose: Shared nav bar for scan results views. Back (and optional forward), center path/title, optional reset/abort actions.
 
-Props: isForwardShown (boolean?), isBackDisabled (boolean?), isForwardDisabled (boolean?), pathLabel (string), pathTitle (string?), pathIcon ('folder' | 'trash'?), isActionsShown (boolean?), isResetDisabled (boolean?)
+Props: isForwardShown (boolean?), isBackDisabled (boolean?), isForwardDisabled (boolean?), pathLabel (string), pathTitle (string?), pathIcon ('folder' | 'trash'?), isActionsShown (boolean?), isResetDisabled (boolean?), isResetShown (boolean?), isCancelShown (boolean?)
 
 Example:
  <ScanListNav
@@ -17,7 +17,7 @@ Example:
    @back="goBack"
    @forward="goForward"
    @reset="selectedMap.clear()"
-   @abort="onAbort"
+   @cancel="onCancel"
  />
 -->
 
