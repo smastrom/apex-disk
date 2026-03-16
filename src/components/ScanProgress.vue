@@ -141,7 +141,7 @@ const elapsedDisplay = computed(() => {
 
 .ScanProgress-progressTitle {
    margin: 0;
-   font-size: var(--font-size-md);
+   font-size: var(--font-size-base);
    font-weight: 500;
    color: var(--color-text);
    flex: 1;
@@ -213,7 +213,7 @@ const elapsedDisplay = computed(() => {
 .ScanProgress-abortBtn {
    align-self: flex-start;
    padding: 0;
-   font-size: var(--font-size-md);
+   font-size: var(--font-size-base);
    font-weight: 500;
    color: var(--color-abort);
    background: none;

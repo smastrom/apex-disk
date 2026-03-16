@@ -399,7 +399,6 @@ async function openReleasesPage() {
    margin: 0;
    padding: var(--spacing-md) var(--spacing-lg);
    font-size: var(--font-size-sm);
-   line-height: 1.5;
    color: var(--color-text-muted);
 }
 
@@ -407,7 +406,6 @@ async function openReleasesPage() {
    margin: 0;
    padding: var(--spacing-md) var(--spacing-lg);
    font-size: var(--font-size-sm);
-   line-height: 1.5;
    color: var(--color-text-muted);
 }
 
@@ -432,7 +430,6 @@ async function openReleasesPage() {
    margin: 0;
    padding: var(--spacing-md) var(--spacing-lg);
    font-size: var(--font-size-sm);
-   line-height: 1.5;
    color: var(--color-text-muted);
 }
 

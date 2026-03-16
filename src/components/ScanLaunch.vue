@@ -78,7 +78,6 @@ const { t } = useTranslations()
 .ScanLaunch-noticeBody {
    margin: 0;
    font-size: var(--font-size-base);
-   line-height: 1.5;
    color: var(--color-text-muted);
 
    p {

@@ -1,10 +1,24 @@
 /* ApexDisk — Global styles */
 
+@font-face {
+   font-family: 'Inter';
+   src: url('../fonts/Inter-VariableFont_opsz,wght.woff2') format('truetype');
+   font-weight: 100 900;
+   font-display: swap;
+   font-style: normal;
+}
+
 html {
    font-family:
-      -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif;
+      'Inter',
+      -apple-system,
+      BlinkMacSystemFont,
+      'SF Pro Text',
+      'SF Pro Display',
+      system-ui,
+      sans-serif;
    font-size: 100%;
-   line-height: 1.5;
+   line-height: 1.6;
    font-weight: 500;
    color: var(--color-text);
    background: var(--color-bg);
@@ -37,7 +51,8 @@ h6,
 p,
 span:not(:empty),
 a:not(:empty),
-button:not(:empty) {
+button:not(:empty),
+[popover] {
    user-select: text;
    -webkit-user-select: text;
    -moz-user-select: text;

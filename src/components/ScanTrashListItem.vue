@@ -159,7 +159,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
 }
 
 .ScanTrashListItem-path {
-   font-size: var(--font-size-xs);
+   font-size: var(--font-size-sm);
    color: var(--color-text-dim);
    white-space: nowrap;
    overflow: hidden;
@@ -167,7 +167,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
 }
 
 .ScanTrashListItem-size {
-   font-size: var(--font-size-md);
+   font-size: var(--font-size-base);
    color: var(--color-text-muted);
 }
 </style>

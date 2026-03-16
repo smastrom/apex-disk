@@ -347,7 +347,7 @@ function dismissCheckboxTooltip() {
 }
 
 .ScanResultsListItem-size {
-   font-size: var(--font-size-md);
+   font-size: var(--font-size-base);
    color: var(--color-text-muted);
 }
 
@@ -368,7 +368,6 @@ function dismissCheckboxTooltip() {
    color: var(--color-text);
    font-size: var(--font-size-sm);
    font-weight: 500;
-   line-height: 1.5;
    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
    transform: translateY(-100%);
    pointer-events: auto;

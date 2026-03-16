@@ -139,7 +139,6 @@ const props = defineProps<{
    color: var(--color-text);
    margin: 0 0 var(--spacing-sm) 0;
    max-width: 350px;
-   line-height: 1.4;
 }
 
 .InformationView-detailLabel {
