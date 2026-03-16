@@ -224,6 +224,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
    text-overflow: ellipsis;
    white-space: nowrap;
    font-size: var(--font-size-sm);
+   font-weight: 500;
 }
 
 .ScanListNav-actions {

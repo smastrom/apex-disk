@@ -35,7 +35,7 @@ const props = defineProps<{
    item: FolderInfo
    isSelected: boolean
    isSomeSelected?: boolean
-   isSelectable?: boolean
+   isSelectable?: boolean | 'deselect-only'
    formatBytes: (bytes: number) => string
 }>()
 
@@ -50,6 +50,9 @@ const selectionState = computed(() => {
    if (props.isSomeSelected) return 'partial'
    return 'empty'
 })
+
+/** True when the checkbox is fully disabled (not selectable and not deselect-only). */
+const isCheckDisabled = computed(() => !props.isSelectable)
 
 const triggerRef = useTemplateRef<HTMLElement>('triggerRef')
 const popoverRef = useTemplateRef<HTMLElement>('popoverRef')
@@ -160,15 +163,15 @@ function dismissCheckboxTooltip() {
          :class="{
             'ScanResultsListItem-check--selected': isSelected,
             'ScanResultsListItem-check--some-selected': !isSelected && isSomeSelected,
-            'ScanResultsListItem-check--disabled': !isSelectable,
+            'ScanResultsListItem-check--disabled': isCheckDisabled,
          }"
          :aria-pressed="isSelected || isSomeSelected"
          :aria-label="t('ScanResultsListItem', 'selectItem', { name: item.name })"
-         :disabled="!isSelectable"
-         :aria-disabled="!isSelectable"
-         @click.stop="isSelectable && emit('select')"
-         @pointerenter="!isSelectable && onCheckboxPointerEnter()"
-         @pointerleave="!isSelectable && onCheckboxPointerLeave()"
+         :disabled="isCheckDisabled"
+         :aria-disabled="isCheckDisabled"
+         @click.stop="!isCheckDisabled && emit('select')"
+         @pointerenter="isCheckDisabled && onCheckboxPointerEnter()"
+         @pointerleave="isCheckDisabled && onCheckboxPointerLeave()"
       >
          <SelectionIcon
             :state="selectionState"

@@ -37,8 +37,14 @@ const emit = defineEmits<{
 
 const triggerRef = useTemplateRef<HTMLElement>('triggerRef')
 const popoverRef = useTemplateRef<HTMLElement>('popoverRef')
+const pathTriggerRef = useTemplateRef<HTMLElement>('pathTriggerRef')
+const pathPopoverRef = useTemplateRef<HTMLElement>('pathPopoverRef')
 
 const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRef)
+const { onPointerEnter: onPathPointerEnter, onPointerLeave: onPathPointerLeave } = useLabelPopover(
+   pathTriggerRef,
+   pathPopoverRef
+)
 </script>
 
 <template>
@@ -75,7 +81,13 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
             @pointerleave="onPointerLeave"
             >{{ item.name }}</span
          >
-         <span class="ScanTrashListItem-path">{{ displayPath(item.path) }}</span>
+         <span
+            ref="pathTriggerRef"
+            class="ScanTrashListItem-path"
+            @pointerenter="onPathPointerEnter"
+            @pointerleave="onPathPointerLeave"
+            >{{ displayPath(item.path) }}</span
+         >
       </div>
       <span class="ScanTrashListItem-size">{{ formatBytes(item.size) }}</span>
       <div
@@ -86,6 +98,15 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
          @pointerleave="onPointerLeave"
       >
          {{ item.name }}
+      </div>
+      <div
+         ref="pathPopoverRef"
+         popover="manual"
+         class="Popover"
+         @pointerenter="onPathPointerEnter"
+         @pointerleave="onPathPointerLeave"
+      >
+         {{ displayPath(item.path) }}
       </div>
    </div>
 </template>

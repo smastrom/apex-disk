@@ -387,13 +387,8 @@ async function onTrashClick() {
       opacity 0.2s var(--ease-standard),
       padding 0.3s var(--ease-standard);
 
-   &:hover:not(:disabled) {
-      box-shadow: 0 0 14px var(--color-action-glow);
-   }
-
    &:disabled:not([data-deleting]) {
       opacity: 0.5;
-      cursor: not-allowed;
    }
 }
 

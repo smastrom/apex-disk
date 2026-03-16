@@ -194,8 +194,16 @@
       box-shadow 0.5s var(--ease-out),
       filter 0.5s var(--ease-out);
 
-   &:hover {
+   &:hover:not(:disabled) {
       box-shadow: var(--glow-md);
       filter: brightness(1.1);
+   }
+
+   &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+      filter: none;
+      pointer-events: none;
    }
 }

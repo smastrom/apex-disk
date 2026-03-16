@@ -243,23 +243,86 @@ function deselectDescendants(folderPath: string) {
 }
 
 /**
- * Three-state toggle for item selection:
- * 1. Selected → deselect (remove from map).
- * 2. Indeterminate (has selected descendants) → deselect all descendants.
- * 3. Unselected → select (store FolderInfo reference in map).
+ * Finds the nearest selected ancestor path, or null if none.
+ */
+function findSelectedAncestor(path: string): string | null {
+   let dir = path
+
+   for (;;) {
+      const slash = dir.lastIndexOf('/')
+      if (slash <= 0) return null
+      dir = dir.slice(0, slash)
+      if (selectedMap.has(dir)) return dir
+   }
+}
+
+/**
+ * "Explodes" an ancestor selection to exclude a specific descendant.
+ * Walks from the ancestor down to the target's parent, at each level
+ * selecting all siblings except the one on the path to the target.
+ * O(depth × siblings) — typically 3-6 levels with <100 siblings each.
+ */
+function explodeAncestorExcluding(ancestorPath: string, excludePath: string) {
+   const ancestor = selectedMap.get(ancestorPath)
+   if (!ancestor) return
+
+   selectedMap.delete(ancestorPath)
+
+   // Walk down from ancestor to the exclude target's parent
+   let currentFolder = ancestor
+   let remainingPath = excludePath.slice(ancestorPath.length + 1) // e.g. "sub/deep/file"
+
+   while (remainingPath) {
+      const slashIdx = remainingPath.indexOf('/')
+      const segment = slashIdx === -1 ? remainingPath : remainingPath.slice(0, slashIdx)
+      const targetChildPath = currentFolder.path + '/' + segment
+
+      // Select all siblings at this level except the one on the path to exclude
+      for (const child of currentFolder.children) {
+         if (child.path !== targetChildPath) {
+            selectedMap.set(child.path, child)
+         }
+      }
+
+      if (slashIdx === -1) break // reached the target level
+
+      // Descend into the next level
+      const nextFolder = currentFolder.children.find((c) => c.path === targetChildPath)
+      if (!nextFolder || nextFolder.is_file) break
+      currentFolder = nextFolder
+      remainingPath = remainingPath.slice(slashIdx + 1)
+   }
+}
+
+/**
+ * Four-state toggle for item selection:
+ * 1. Explicitly selected → deselect (remove from map).
+ * 2. Inherited selected (ancestor is selected) → explode ancestor, excluding this item.
+ * 3. Indeterminate (has selected descendants) → deselect all descendants.
+ * 4. Unselected → select (store FolderInfo reference in map).
  */
 function toggleSelect(item: FolderInfo) {
+   // Always allow deselecting descendants even for protected/FDA folders
+   if (someSelectedPaths.value.has(item.path)) {
+      log('file', `Deselect descendants: ${item.name}`)
+      deselectDescendants(item.path)
+      return
+   }
+
    if (item.is_protected) return
 
    if (selectedMap.has(item.path)) {
       log('file', `Deselect: ${item.name}`)
       selectedMap.delete(item.path)
-   } else if (someSelectedPaths.value.has(item.path)) {
-      log('file', `Deselect descendants: ${item.name}`)
-      deselectDescendants(item.path)
    } else {
-      log('file', `Select: ${item.name} (${formatBytes(item.size)})`)
-      selectedMap.set(item.path, item)
+      const ancestor = findSelectedAncestor(item.path)
+      if (ancestor) {
+         log('file', `Explode ancestor selection, excluding: ${item.name}`)
+         explodeAncestorExcluding(ancestor, item.path)
+      } else {
+         log('file', `Select: ${item.name} (${formatBytes(item.size)})`)
+         selectedMap.set(item.path, item)
+      }
    }
 }
 
@@ -393,7 +456,13 @@ function onCancel() {
                      :item="item"
                      :isSelected="isSelectedForUI(item.path)"
                      :isSomeSelected="someSelectedPaths.has(item.path)"
-                     :isSelectable="!item.is_protected && !item.is_fda_required"
+                     :isSelectable="
+                        !item.is_protected && !item.is_fda_required
+                           ? true
+                           : someSelectedPaths.has(item.path)
+                             ? 'deselect-only'
+                             : false
+                     "
                      :formatBytes="formatBytes"
                      @select="() => toggleSelect(item)"
                      @navigate="() => goInto(item)"
@@ -498,7 +567,6 @@ function onCancel() {
    left: 0;
    right: 0;
    z-index: 3;
-   view-transition-name: results-footer;
    padding: var(--spacing-md);
    border-top: 1px solid var(--color-bg);
    background: var(--color-bg-elevated);
@@ -523,17 +591,6 @@ function onCancel() {
       var(--btn-step-100) 100%
    );
    border: 1px solid rgba(255, 255, 255, 0.25);
-   transition: box-shadow 0.2s var(--ease-standard);
-
-   &:hover:not(:disabled) {
-      box-shadow: 0 0 14px var(--color-accent-glow);
-   }
-
-   &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      box-shadow: none;
-   }
 
    & svg {
       filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.2));
