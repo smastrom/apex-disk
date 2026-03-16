@@ -30,6 +30,9 @@ export default defineConfig(async () => ({
    build: {
       // Target Safari 13 (macOS 10.15 Catalina WKWebView)
       target: 'safari13',
+      // Output to project root /dist so Tauri can find it (frontendDist: "../dist")
+      outDir: '../dist',
+      emptyOutDir: true,
    },
 
    // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
