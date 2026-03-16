@@ -56,6 +56,9 @@ export const TRASH_POST_TRASH_SLEEP_MS = 500
 /** Website link. Opens in default browser. */
 export const WEBSITE_URL = 'https://apexdisk.app' as const
 
+/** User folder name for dev mode. */
+export const DEV_USER_FOLDER_NAME = 'smastrom' as const
+
 /**
  * App-level constants shared with Rust. Keep in sync with src-tauri/src/constants.rs.
  */
@@ -68,6 +71,7 @@ export const LICENSE_URL = 'https://github.com/smastrom/apex-disk/blob/main/LICE
 
 /** Frontend-only URLs. */
 export const AUTHOR_URL = 'https://github.com/smastrom' as const
+export const DONATE_URL = 'https://apexdisk.app/donate' as const
 export const REPOSITORY_URL = 'https://github.com/smastrom/apex-disk' as const
 export const LATEST_RELEASE_URL =
    'https://api.github.com/repos/smastrom/apex-disk/releases/latest' as const

@@ -1,7 +1,7 @@
 <!--
 InformationFooter
 
-Purpose: Footer block in InformationView showing app name, version, author, and links to release notes, license, repository, and website.
+Purpose: Footer block in InformationView showing app name, version, author, and links to release notes, license, donate, and website.
 
 Props: none
 
@@ -19,9 +19,9 @@ import {
    APP_CREDITS,
    APP_NAME,
    APP_VERSION,
+   DONATE_URL,
    LICENSE_URL,
    RELEASE_NOTES_URL,
-   REPOSITORY_URL,
    WEBSITE_URL,
    RELEASE_YEAR,
 } from '@/lib/constants'
@@ -44,11 +44,11 @@ async function openLicense() {
    }
 }
 
-async function openRepository() {
+async function openDonate() {
    try {
-      await openUrl(REPOSITORY_URL)
+      await openUrl(DONATE_URL)
    } catch (err) {
-      console.error('Failed to open repository:', err)
+      console.error('Failed to open donate page:', err)
    }
 }
 
@@ -68,6 +68,10 @@ async function openWebsite() {
          <span class="InformationFooter-version">v{{ APP_VERSION }}</span>
       </p>
       <div class="InformationFooter-links">
+         <button type="button" class="InformationFooter-link" @click="openWebsite">
+            {{ t('InformationFooter', 'website') }}
+         </button>
+         <span class="InformationFooter-sep" aria-hidden="true">·</span>
          <button type="button" class="InformationFooter-link" @click="openReleaseNotes">
             {{ t('InformationFooter', 'releaseNotes') }}
          </button>
@@ -76,12 +80,8 @@ async function openWebsite() {
             {{ t('InformationFooter', 'license') }}
          </button>
          <span class="InformationFooter-sep" aria-hidden="true">·</span>
-         <button type="button" class="InformationFooter-link" @click="openRepository">
-            {{ t('InformationFooter', 'repository') }}
-         </button>
-         <span class="InformationFooter-sep" aria-hidden="true">·</span>
-         <button type="button" class="InformationFooter-link" @click="openWebsite">
-            {{ t('InformationFooter', 'website') }}
+         <button type="button" class="InformationFooter-link" @click="openDonate">
+            {{ t('InformationFooter', 'donate') }}
          </button>
       </div>
       <p class="InformationFooter-line InformationFooter-credits">
@@ -117,6 +117,7 @@ async function openWebsite() {
 
 .InformationFooter-credits {
    margin-top: var(--spacing-xxs);
+   font-size: var(--font-size-sm);
 }
 
 .InformationFooter-links {
