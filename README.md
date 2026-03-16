@@ -4,6 +4,10 @@
 
 A macOS tool to easily identify and get rid of big, unused files and folders in seconds.
 
+<br />
+
+![ApexDisk Hero](./src/assets/images/apex-disk-hero.png)
+
 ## Why?
 
 Over time, your home folder quietly fills up with forgotten caches, old installers, duplicate images, leftover app data, and all sorts of files you didn't even know were there. macOS doesn't make it easy to figure out where all that space went.
