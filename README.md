@@ -65,6 +65,15 @@ pnpm i
 pnpm tauri:dev
 ```
 
+## Donate
+
+If you find ApexDisk useful, consider supporting its development:
+
+- [PayPal](https://www.paypal.com/donate/?hosted_button_id=93WKXA68W9WQJ)
+- [Buy Me a Coffee](https://buymeacoffee.com/smastrom)
+
+
+
 ## License
 
 Copyright (C) 2026 Simone Mastromattei. This project is licensed under the [GNU General Public License v3.0](./LICENSE) (GPL-3.0).
