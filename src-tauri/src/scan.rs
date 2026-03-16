@@ -8,6 +8,8 @@
 //! any per-folder permission prompts. No special code path is needed — the
 //! same I/O is used; the OS grants access process-wide when FDA is granted.
 
+use std::cmp::Reverse;
+use std::collections::BinaryHeap;
 use std::path::Path;
 use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -34,6 +36,11 @@ static SCAN_CANCELLED: AtomicBool = AtomicBool::new(false);
 /// Shared state for emitting live progress events during recursive scanning.
 /// File sizes are accumulated at every directory level (not just top-level),
 /// and progress events are throttled to avoid overwhelming the frontend.
+/// Number of add_size calls between time checks. Avoids a SystemTime::now()
+/// syscall on every single directory — at ~150ms throttle and typical I/O
+/// rates, checking every 512 calls is still well within the emission window.
+const EMIT_CHECK_INTERVAL: u64 = 512;
+
 struct LiveScanState {
     completed: AtomicUsize,
     total: usize,
@@ -43,6 +50,7 @@ struct LiveScanState {
     /// this only increases when a folder finishes. The frontend uses
     /// `completed_size * total / current` to estimate the user home size.
     completed_size: AtomicU64,
+    call_count: AtomicU64,
     last_emit_ms: AtomicU64,
     app: tauri::AppHandle,
 }
@@ -51,6 +59,11 @@ impl LiveScanState {
     fn add_size_and_maybe_emit(&self, file_size: u64, folder_name: &str) {
         self.scanned_size_total
             .fetch_add(file_size, Ordering::Relaxed);
+
+        // Skip the syscall unless enough calls have accumulated
+        if self.call_count.fetch_add(1, Ordering::Relaxed) % EMIT_CHECK_INTERVAL != 0 {
+            return;
+        }
 
         let now = SystemTime::now()
             .duration_since(UNIX_EPOCH)
@@ -177,11 +190,28 @@ fn build_folder_tree(
         }
     };
 
-    let mut file_entries: Vec<(String, u64, Option<i64>)> = Vec::new();
+    // Min-heap retains only the N largest files, capping memory at O(MAX_FILES_PER_DIR)
+    // per directory instead of O(total_files). We still accumulate ALL file sizes for accuracy.
+    let mut top_files: BinaryHeap<Reverse<(u64, String, Option<i64>)>> = BinaryHeap::new();
     let mut dir_paths: Vec<std::path::PathBuf> = Vec::new();
     let mut file_size = 0u64;
 
-    for entry in entries.filter_map(|e| e.ok()) {
+    for (i, entry) in entries.filter_map(|e| e.ok()).enumerate() {
+        // Periodic cancellation check inside large directories
+        if i % 1000 == 0 && i > 0 && SCAN_CANCELLED.load(Ordering::Relaxed) {
+            return FolderInfo {
+                name,
+                path: root.to_string_lossy().into_owned(),
+                size: 0,
+                icon: None,
+                children: Vec::new(),
+                is_file: false,
+                is_protected: false,
+                is_fda_required: false,
+                last_modified: None,
+            };
+        }
+
         let ft = match entry.file_type() {
             Ok(ft) if !ft.is_symlink() => ft,
             _ => continue,
@@ -211,7 +241,15 @@ fn build_folder_tree(
                 continue;
             }
             file_size += size;
-            file_entries.push((name, size, last_modified));
+
+            if top_files.len() < MAX_FILES_PER_DIR {
+                top_files.push(Reverse((size, name, last_modified)));
+            } else if let Some(&Reverse((smallest, _, _))) = top_files.peek() {
+                if size > smallest {
+                    top_files.pop();
+                    top_files.push(Reverse((size, name, last_modified)));
+                }
+            }
         } else if ft.is_dir() {
             let path = entry.path();
             if safe_folders::is_path_skipped(&path, home) {
@@ -228,10 +266,15 @@ fn build_folder_tree(
         }
     }
 
-    file_entries.sort_unstable_by(|a, b| b.1.cmp(&a.1));
-    file_entries.truncate(MAX_FILES_PER_DIR);
+    // Drain the min-heap into a sorted vec (largest first).
+    let mut file_entries: Vec<(String, u64, Option<i64>)> = top_files
+        .into_sorted_vec()
+        .into_iter()
+        .map(|Reverse((size, name, lm))| (name, size, lm))
+        .collect();
+    file_entries.reverse();
 
-    // Calculate the most recent last_modified date from non-system files after truncation.
+    // Calculate the most recent last_modified date from non-system files.
     // Only the top N largest files are retained — small files (which include system files
     // like .DS_Store) are intentionally excluded so they don't alter the folder's date.
     let mut most_recent_modified: Option<i64> = None;
@@ -274,10 +317,6 @@ fn build_folder_tree(
     let dir_children: Vec<FolderInfo> = dir_paths
         .par_iter()
         .map(|p| build_folder_tree(p, home, options, has_fda, live))
-        .collect();
-
-    let dir_children: Vec<FolderInfo> = dir_children
-        .into_iter()
         .filter(|c| {
             (options.show_zero_byte || c.size > 0) && (options.show_under_1kb || c.size >= 1024)
         })
@@ -400,6 +439,7 @@ pub fn get_user_folders_sync_with_progress(
         total: folder_paths.len(),
         scanned_size_total: AtomicU64::new(0),
         completed_size: AtomicU64::new(0),
+        call_count: AtomicU64::new(0),
         last_emit_ms: AtomicU64::new(0),
         app,
     };
