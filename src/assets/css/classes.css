@@ -178,6 +178,14 @@
    position: relative;
    cursor: pointer;
 
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 0.5rem;
+   width: 100%;
+   height: var(--cta-btn-height);
+   padding: var(--spacing-md) var(--spacing-lg);
+   font-size: var(--cta-btn-font-size);
    font-weight: var(--font-weight);
    line-height: var(--line-height);
    text-shadow: var(--text-shadow);

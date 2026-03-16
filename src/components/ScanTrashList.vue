@@ -373,15 +373,6 @@ async function onTrashClick() {
 }
 
 .ScanTrashList-moveToTrashBtn {
-   height: var(--cta-btn-height);
-   width: 100%;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   gap: 0.5rem;
-   padding: var(--spacing-md) var(--spacing-lg);
-   font-size: var(--font-size-lg);
-   border-radius: 8px;
    transition:
       box-shadow 0.2s var(--ease-standard),
       opacity 0.2s var(--ease-standard),

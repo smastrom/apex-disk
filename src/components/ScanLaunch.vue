@@ -91,11 +91,6 @@ const { t } = useTranslations()
 
 .ScanLaunch-scanBtn {
    display: inline-flex;
-   align-items: center;
-   justify-content: center;
    gap: 10px;
-   width: 100%;
-   padding: var(--spacing-md) var(--spacing-lg);
-   font-size: var(--cta-btn-font-size);
 }
 </style>

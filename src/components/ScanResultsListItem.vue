@@ -250,7 +250,7 @@ function dismissCheckboxTooltip() {
    display: flex;
    align-items: center;
    gap: var(--spacing-sm);
-   padding: var(--spacing-sm);
+   padding: var(--spacing-xs) var(--spacing-sm);
    height: 64px;
    min-height: 64px;
    margin: calc(var(--spacing-sm) / 2) var(--spacing-sm);

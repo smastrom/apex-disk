@@ -574,23 +574,12 @@ function onCancel() {
 }
 
 .ScanResultsList-moveToTrashBtn {
-   height: var(--cta-btn-height);
-   width: 100%;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   gap: 0.5rem;
-   padding: var(--spacing-md) var(--spacing-lg);
-   font-size: var(--font-size-lg);
-   font-weight: 600;
-   color: var(--color-on-accent);
    background: linear-gradient(
       90deg,
       var(--btn-step-0) 0%,
       var(--btn-step-50) 50%,
       var(--btn-step-100) 100%
    );
-   border: 1px solid rgba(255, 255, 255, 0.25);
 
    & svg {
       filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.2));
