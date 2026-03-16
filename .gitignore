@@ -36,7 +36,8 @@ pnpm-lock.yaml
 .env
 
 # AI agents
-.claude/
+.claude/*
+!.claude/commands/
 .cursor/
 .windsurf/
 .gemini/

@@ -16,7 +16,7 @@ jobs:
          - name: Validate versions
            run: |
               # Parse latest version from RELEASES.md (last ## v heading = most recent)
-              TAG=$(grep '^## v' releases/RELEASES.md | tail -1 | sed 's/^## //')
+              TAG=$(grep '^## v' RELEASES.md | tail -1 | sed 's/^## //')
               VERSION="${TAG#v}"
 
               if [ -z "$VERSION" ]; then
@@ -125,7 +125,7 @@ jobs:
                 /^## ${TAG}\$/ { found=1; next }
                 found && /^## v/ { exit }
                 found { print }
-              " releases/RELEASES.md > release_notes.md
+              " RELEASES.md > release_notes.md
 
               if [ ! -s release_notes.md ]; then
                 echo "::error::No release notes found for ${TAG}"
