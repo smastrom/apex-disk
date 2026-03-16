@@ -14,7 +14,10 @@ import { computed } from 'vue'
 import { PhHardDrive } from '@phosphor-icons/vue'
 
 import { formatBytes } from '@/lib/format'
+import { isDev } from '@/lib/utils'
 import { useTranslations } from '@/lib/use-translations'
+
+import { DEV_USER_FOLDER_NAME } from '@/lib/constants'
 
 import type { DiskUsage } from '@/types/disk'
 
@@ -74,7 +77,9 @@ const showNewFree = computed(() => {
             />
             <span class="ScanViewHeader-volumeName">{{ props.usage.volume_name }}</span>
          </span>
-         <span class="ScanViewHeader-userBadge"> /{{ props.usage.user_name }} </span>
+         <span class="ScanViewHeader-userBadge">
+            /{{ isDev() ? DEV_USER_FOLDER_NAME : props.usage.user_name }}
+         </span>
       </div>
       <div class="ScanViewHeader-infoRow">
          <span class="ScanViewHeader-info">
@@ -160,7 +165,7 @@ const showNewFree = computed(() => {
    display: flex;
    align-items: center;
    gap: 6px;
-   font-size: var(--font-size-md);
+   font-size: var(--font-size-base);
    font-weight: 600;
    color: var(--color-text);
 }
@@ -241,7 +246,7 @@ const showNewFree = computed(() => {
    transform-origin: left;
    background: color-mix(in srgb, var(--color-accent) 45%, var(--color-surface));
    border-radius: 5px;
-   transition: transform 0.5s var(--ease-out);
+   transition: transform 0.3s var(--ease-out);
    z-index: 0;
 }
 
@@ -254,7 +259,7 @@ const showNewFree = computed(() => {
    transform-origin: left;
    background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
    border-radius: 5px;
-   transition: transform 0.5s var(--ease-out);
+   transition: transform 0.3s var(--ease-out);
    box-shadow: var(--glow-sm);
    z-index: 1;
 }

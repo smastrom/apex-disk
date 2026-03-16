@@ -102,7 +102,7 @@ function closeApp() {
 }
 
 .ScanTrashConfirmation-icon {
-   color: var(--color-accent);
+   color: var(--color-accent-alt);
    flex-shrink: 0;
 }
 

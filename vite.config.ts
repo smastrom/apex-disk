@@ -9,8 +9,8 @@ const host = process.env.TAURI_DEV_HOST
 // Version encoding: (major << 16) | (minor << 8) | patch
 const safari13 = (13 << 16) | (0 << 8) | 0
 
-// https://vite.dev/config/
 export default defineConfig(async () => ({
+   root: 'src',
    plugins: [vue()],
    resolve: {
       alias: {
@@ -18,14 +18,14 @@ export default defineConfig(async () => ({
       },
    },
 
-   css: {
+   /* css: {
       transformer: 'lightningcss',
       lightningcss: {
          targets: {
             safari: safari13,
          },
       },
-   },
+   }, */
 
    build: {
       // Target Safari 13 (macOS 10.15 Catalina WKWebView)

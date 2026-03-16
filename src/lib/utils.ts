@@ -41,3 +41,5 @@ export function displayPath(path: string): string {
 export function isHidden(name: string): boolean {
    return name.startsWith('.')
 }
+
+export const isDev = () => import.meta.env.DEV
