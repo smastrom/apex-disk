@@ -12,7 +12,7 @@ export const SettingsView = {
       fdaGranted: 'Granted',
       fdaMissing: 'Not granted',
       fdaDesc:
-         'Optional. The app works without it — scans may ask for access to specific folders as needed. Grant it to avoid repeated prompts: add this app in System Settings, then quit and reopen.',
+         'Optional. The app works without it — scans may ask for access to specific folders as needed. Grant it to avoid repeated prompts and access special folders: add this app in System Settings, then quit and reopen.',
       fdaOpenSettings: 'Open System Settings',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -54,7 +54,7 @@ export const SettingsView = {
       fdaGranted: 'Concesso',
       fdaMissing: 'Non concesso',
       fdaDesc:
-         'Opzionale. L’app funziona anche senza: le scansioni possono chiedere l’accesso alle singole cartelle. Concedilo per evitare richieste ripetute: aggiungi l’app in Impostazioni di Sistema, poi esci e riapri.',
+         'Opzionale. L’app funziona anche senza: le scansioni possono chiedere l’accesso alle singole cartelle. Concedilo per evitare richieste ripetute e accedere a cartelle speciali: aggiungi l’app in Impostazioni di Sistema, poi esci e riapri.',
       fdaOpenSettings: 'Apri Impostazioni di Sistema',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -96,7 +96,7 @@ export const SettingsView = {
       fdaGranted: 'Concedido',
       fdaMissing: 'No concedido',
       fdaDesc:
-         'Opcional. La app funciona sin ello; el análisis puede pedir acceso a carpetas concretas. Concederlo evita solicitudes repetidas: añade la app en Ajustes del Sistema, cierra y vuelve a abrirla.',
+         'Opcional. La app funciona sin ello; el análisis puede pedir acceso a carpetas concretas. Concédelo para evitar solicitudes repetidas y acceder a carpetas especiales: añade la app en Ajustes del Sistema, cierra y vuelve a abrirla.',
       fdaOpenSettings: 'Abrir Ajustes del Sistema',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -138,7 +138,7 @@ export const SettingsView = {
       fdaGranted: '已授予',
       fdaMissing: '未授予',
       fdaDesc:
-         '可选。不授予也可使用，扫描时会按需请求访问特定文件夹。授予后可避免重复提示：在「系统设置」中添加此应用，退出并重新打开即可。',
+         '可选。不授予也可使用，扫描时会按需请求访问特定文件夹。授予后可避免重复提示并访问特殊文件夹：在「系统设置」中添加此应用，退出并重新打开即可。',
       fdaOpenSettings: '打开系统设置',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -179,7 +179,7 @@ export const SettingsView = {
       fdaGranted: '許可済み',
       fdaMissing: '未許可',
       fdaDesc:
-         '任意です。なくてもアプリは動作し、スキャン時にフォルダごとにアクセスを求めます。許可するとその都度のプロンプトを避けられます：システム設定でこのアプリを追加し、終了してから再起動してください。',
+         '任意です。なくてもアプリは動作し、スキャン時にフォルダごとにアクセスを求めます。許可すると繰り返しの確認を避け、特殊なフォルダにもアクセスできます：システム設定でこのアプリを追加し、終了してから再起動してください。',
       fdaOpenSettings: 'システム設定を開く',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -221,7 +221,7 @@ export const SettingsView = {
       fdaGranted: 'مُمنوح',
       fdaMissing: 'غير مُمنوح',
       fdaDesc:
-         'اختياري. التطبيق يعمل بدونه — قد يطلب المسح الوصول إلى مجلدات معينة عند الحاجة. منحه يتجنب الطلبات المتكررة: أضف التطبيق في إعدادات النظام، ثم أغلق وأعد فتحه.',
+         'اختياري. التطبيق يعمل بدونه — قد يطلب المسح الوصول إلى مجلدات معينة عند الحاجة. منحه يتجنب الطلبات المتكررة ويتيح الوصول إلى مجلدات خاصة: أضف التطبيق في إعدادات النظام، ثم أغلق وأعد فتحه.',
       fdaOpenSettings: 'فتح إعدادات النظام',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -263,7 +263,7 @@ export const SettingsView = {
       fdaGranted: 'Предоставлен',
       fdaMissing: 'Не предоставлен',
       fdaDesc:
-         'Необязательно. Приложение работает и без него — при сканировании может запрашиваться доступ к отдельным папкам. Включите, чтобы не видеть повторных запросов: добавьте приложение в «Системные настройки», закройте и снова откройте его.',
+         'Необязательно. Приложение работает и без него — при сканировании может запрашиваться доступ к отдельным папкам. Включите, чтобы не видеть повторных запросов и получить доступ к специальным папкам: добавьте приложение в «Системные настройки», закройте и снова откройте его.',
       fdaOpenSettings: 'Открыть системные настройки',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -305,7 +305,7 @@ export const SettingsView = {
       fdaGranted: 'Accordé',
       fdaMissing: 'Non accordé',
       fdaDesc:
-         'Optionnel. L’app fonctionne sans — les scans peuvent demander l’accès à certains dossiers au besoin. L’accorder évite les demandes répétées : ajoutez l’app dans Réglages Système, puis quittez et rouvrez-la.',
+         'Optionnel. L’app fonctionne sans — les scans peuvent demander l’accès à certains dossiers au besoin. L’accorder évite les demandes répétées et permet d’accéder aux dossiers spéciaux : ajoutez l’app dans Réglages Système, puis quittez et rouvrez-la.',
       fdaOpenSettings: 'Ouvrir les réglages système',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -347,7 +347,7 @@ export const SettingsView = {
       fdaGranted: 'Concedido',
       fdaMissing: 'Não concedido',
       fdaDesc:
-         'Opcional. A app funciona sem ele — a análise pode pedir acesso a pastas específicas quando necessário. Conceder evita pedidos repetidos: adicione a app em Definições do Sistema, feche e reabra.',
+         'Opcional. A app funciona sem ele — a análise pode pedir acesso a pastas específicas quando necessário. Conceder evita pedidos repetidos e permite aceder a pastas especiais: adicione a app em Definições do Sistema, feche e reabra.',
       fdaOpenSettings: 'Abrir Definições do Sistema',
       languageEn: 'English',
       languageIt: 'Italiano',
@@ -389,7 +389,7 @@ export const SettingsView = {
       fdaGranted: 'Erteilt',
       fdaMissing: 'Nicht erteilt',
       fdaDesc:
-         'Optional. Die App funktioniert auch ohne — Scans können bei Bedarf Zugriff auf bestimmte Ordner anfragen. Erteilen Sie ihn, um wiederholte Abfragen zu vermeiden: App in den Systemeinstellungen hinzufügen, beenden und neu starten.',
+         'Optional. Die App funktioniert auch ohne — Scans können bei Bedarf Zugriff auf bestimmte Ordner anfragen. Erteilen Sie ihn, um wiederholte Abfragen zu vermeiden und auf spezielle Ordner zuzugreifen: App in den Systemeinstellungen hinzufügen, beenden und neu starten.',
       fdaOpenSettings: 'Systemeinstellungen öffnen',
       languageEn: 'English',
       languageIt: 'Italiano',
