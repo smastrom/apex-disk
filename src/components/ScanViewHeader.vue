@@ -131,12 +131,12 @@ const showNewFree = computed(() => {
          <div
             v-if="props.selectedSize && props.selectedSize > 0"
             class="ScanViewHeader-barLighter"
-            :style="{ transform: `scaleX(${lighterBarPercent / 100})` }"
+            :style="{ width: `${lighterBarPercent}%` }"
             aria-hidden="true"
          />
          <div
             class="ScanViewHeader-barMain"
-            :style="{ transform: `scaleX(${mainBarPercent / 100})` }"
+            :style="{ width: `${mainBarPercent}%` }"
             aria-hidden="true"
          />
       </div>
@@ -241,12 +241,10 @@ const showNewFree = computed(() => {
    position: absolute;
    left: 0;
    top: 0;
-   width: 100%;
    height: 100%;
-   transform-origin: left;
    background: color-mix(in srgb, var(--color-accent) 45%, var(--color-surface));
    border-radius: 5px;
-   transition: transform 0.3s var(--ease-out);
+   transition: width 0.3s var(--ease-out);
    z-index: 0;
 }
 
@@ -254,12 +252,10 @@ const showNewFree = computed(() => {
    position: absolute;
    left: 0;
    top: 0;
-   width: 100%;
    height: 100%;
-   transform-origin: left;
    background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
    border-radius: 5px;
-   transition: transform 0.3s var(--ease-out);
+   transition: width 0.3s var(--ease-out);
    box-shadow: var(--glow-sm);
    z-index: 1;
 }
