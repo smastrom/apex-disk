@@ -2,6 +2,11 @@ name: Release
 
 on:
    workflow_dispatch:
+      inputs:
+         prerelease:
+            description: 'Mark as pre-release (beta)'
+            type: boolean
+            default: false
 
 jobs:
    release:
@@ -116,6 +121,8 @@ jobs:
               APPLE_ID: ${{ secrets.APPLE_ID }}
               APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
               APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+              TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+              TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
            run: pnpm exec tauri build --target universal-apple-darwin
 
          - name: Extract release notes
@@ -132,6 +139,34 @@ jobs:
                 exit 1
               fi
 
+         - name: Generate updater latest.json
+           run: |
+              VERSION="${TAG#v}"
+              BUNDLE_DIR="src-tauri/target/universal-apple-darwin/release/bundle/macos"
+              TAR_GZ=$(ls "$BUNDLE_DIR"/*.tar.gz | head -1)
+              SIG_FILE="${TAR_GZ}.sig"
+              TAR_NAME=$(basename "$TAR_GZ")
+              SIGNATURE=$(cat "$SIG_FILE")
+              PUB_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+              DOWNLOAD_URL="https://github.com/smastrom/apex-disk/releases/download/${TAG}/${TAR_NAME}"
+
+              cat > latest.json <<EOF
+              {
+                "version": "${VERSION}",
+                "pub_date": "${PUB_DATE}",
+                "platforms": {
+                  "darwin-aarch64": {
+                    "url": "${DOWNLOAD_URL}",
+                    "signature": "${SIGNATURE}"
+                  },
+                  "darwin-x86_64": {
+                    "url": "${DOWNLOAD_URL}",
+                    "signature": "${SIGNATURE}"
+                  }
+                }
+              }
+              EOF
+
          - name: Create tag
            run: |
               git tag "$TAG"
@@ -141,7 +176,11 @@ jobs:
            uses: softprops/action-gh-release@v2
            with:
               tag_name: ${{ env.TAG }}
+              prerelease: ${{ inputs.prerelease }}
               body_path: release_notes.md
               generate_release_notes: false
               files: |
                  src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+                 src-tauri/target/universal-apple-darwin/release/bundle/macos/*.tar.gz
+                 src-tauri/target/universal-apple-darwin/release/bundle/macos/*.tar.gz.sig
+                 latest.json

@@ -3,16 +3,15 @@ SettingsView
 
 Purpose: Settings screen with Language, Theme, Delete behavior (permanent delete), Scan Settings (hidden files, 0 B, under 1 KB), and Permissions. macOS-style grouped list.
 
-Props: isFdaGranted (boolean), newAvailableVersion (string | null)
+Props: isFdaGranted (boolean), isChecking (boolean), availableVersion (string | null)
 
 Example:
- <SettingsView :isFdaGranted="isFdaGranted" :newAvailableVersion="null" />
+ <SettingsView :isFdaGranted="isFdaGranted" :isChecking="false" :availableVersion="null" />
 -->
 
 <script setup lang="ts">
 import {
    PhArrowCircleUp,
-   PhArrowFatDown,
    PhCaretDown,
    PhCheckCircle,
    PhCircle,
@@ -26,14 +25,14 @@ import { openUrl } from '@tauri-apps/plugin-opener'
 import { useTranslations } from '@/lib/use-translations'
 import { useAppSettings } from '@/stores/app-settings'
 
-import { RELEASE_NOTES_URL, APP_VERSION } from '@/lib/constants'
+import { APP_VERSION } from '@/lib/constants'
 
 import type { Language, ThemeColor } from '@/types/settings'
 
 defineProps<{
-   newAvailableVersion: string | null
    isFdaGranted: boolean
    isChecking: boolean
+   availableVersion: string | null
 }>()
 
 const emit = defineEmits<{
@@ -82,10 +81,6 @@ function toggleZeroByte() {
 
 async function openSystemSettings() {
    await openUrl('x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles')
-}
-
-async function openReleasesPage() {
-   await openUrl(RELEASE_NOTES_URL)
 }
 </script>
 
@@ -249,13 +244,13 @@ async function openReleasesPage() {
                <span
                   class="SettingsView-updateStatus"
                   :class="
-                     newAvailableVersion
+                     availableVersion
                         ? 'SettingsView-updateStatus--available'
                         : 'SettingsView-updateStatus--ok'
                   "
                >
                   <PhArrowCircleUp
-                     v-if="newAvailableVersion"
+                     v-if="availableVersion"
                      :size="13"
                      weight="fill"
                      aria-hidden="true"
@@ -264,21 +259,21 @@ async function openReleasesPage() {
                   {{
                      isChecking
                         ? t('SettingsView', 'updateChecking')
-                        : newAvailableVersion
-                          ? newAvailableVersion
-                          : t('SettingsView', 'updateUpToDate')
+                        : availableVersion
+                          ? availableVersion
+                          : t('SettingsView', 'updateUpToDateBadge')
                   }}
                </span>
             </div>
-            <p v-if="newAvailableVersion" class="SettingsView-updateDesc">
-               {{ t('SettingsView', 'updateAvailableHint', { version: newAvailableVersion }) }}
-            </p>
-            <p v-else class="SettingsView-updateDesc">
-               {{ t('SettingsView', 'updateLatestVersion', { version: APP_VERSION }) }}
+            <p class="SettingsView-updateDesc">
+               {{
+                  availableVersion
+                     ? t('SettingsView', 'updateAvailable', { version: availableVersion })
+                     : t('SettingsView', 'updateUpToDate', { version: APP_VERSION })
+               }}
             </p>
             <div class="SettingsView-updateControls">
                <button
-                  v-if="!newAvailableVersion"
                   type="button"
                   class="SettingsView-fdaBtn"
                   :disabled="isChecking"
@@ -295,15 +290,6 @@ async function openReleasesPage() {
                         ? t('SettingsView', 'updateChecking')
                         : t('SettingsView', 'updateCheckButton')
                   }}
-               </button>
-               <button
-                  v-if="newAvailableVersion"
-                  type="button"
-                  class="SettingsView-fdaBtn"
-                  @click="openReleasesPage"
-               >
-                  <PhArrowFatDown :size="13" weight="fill" aria-hidden="true" />
-                  {{ t('SettingsView', 'updateDownloadsButton') }}
                </button>
             </div>
          </section>

@@ -1,25 +1,48 @@
-import { APP_VERSION, LATEST_RELEASE_URL } from '@/lib/constants'
+import { invoke } from '@tauri-apps/api/core'
 import { ref } from 'vue'
 
-export function useAppUpdate() {
-   const newAvailableVersion = ref<string | null>(null)
-   const isChecking = ref(false)
+/**
+ * Dev mock for the silent auto-check on app start.
+ * Set to a version string (e.g. '1.2.0') to simulate "update available" in the
+ * SettingsView UI, or `null` to simulate "up to date".
+ *
+ * This does NOT affect the "Check for Updates" button or menu item — those
+ * always invoke the real Rust updater command with native dialogs.
+ *
+ * Only active when running `pnpm tauri dev`.
+ */
+const DEV_MOCK_VERSION: string | null = null // '1.2.0'
 
-   async function onCheckForUpdates() {
+export function useAppUpdate() {
+   const isChecking = ref(false)
+   const availableVersion = ref<string | null>(null)
+
+   /** Silent check — updates the reactive state without showing dialogs. */
+   async function checkSilently() {
+      if (isChecking.value) return
       try {
          isChecking.value = true
-
-         const res = await fetch(LATEST_RELEASE_URL)
-         if (!res.ok) return
-
-         const data = await res.json()
-         const latestTag: string = data.tag_name ?? ''
-         const latestVersion = latestTag.replace(/^v/, '')
-
-         if (latestVersion && latestVersion !== APP_VERSION) {
-            newAvailableVersion.value = latestVersion
+         if (import.meta.env.DEV) {
+            availableVersion.value = DEV_MOCK_VERSION
          } else {
-            newAvailableVersion.value = null
+            availableVersion.value = await invoke<string | null>('check_for_updates_silent')
+         }
+      } catch (error) {
+         console.error('Silent update check failed:', error)
+      } finally {
+         isChecking.value = false
+      }
+   }
+
+   /** Full update flow — triggers native dialogs (check → confirm → download → restart). */
+   async function onCheckForUpdates() {
+      if (isChecking.value) return
+      try {
+         isChecking.value = true
+         await invoke('check_for_updates')
+         // After the dialog flow completes, refresh the inline status
+         if (!import.meta.env.DEV) {
+            availableVersion.value = await invoke<string | null>('check_for_updates_silent')
          }
       } catch (error) {
          console.error('Error checking for updates:', error)
@@ -28,5 +51,8 @@ export function useAppUpdate() {
       }
    }
 
-   return { newAvailableVersion, isChecking, onCheckForUpdates }
+   // Auto-check on app start
+   checkSilently()
+
+   return { isChecking, availableVersion, onCheckForUpdates }
 }

@@ -73,8 +73,6 @@ export const LICENSE_URL = 'https://github.com/smastrom/apex-disk/blob/main/LICE
 export const AUTHOR_URL = 'https://github.com/smastrom' as const
 export const DONATE_URL = 'https://apexdisk.app/donate' as const
 export const REPOSITORY_URL = 'https://github.com/smastrom/apex-disk' as const
-export const LATEST_RELEASE_URL =
-   'https://api.github.com/repos/smastrom/apex-disk/releases/latest' as const
 
 /** File extension sets for icon categorization. */
 export const DOC_EXTENSIONS = new Set([

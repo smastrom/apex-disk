@@ -51,7 +51,14 @@ watch(
 
 const { t } = useTranslations()
 const { activeView, setActiveView } = useAppViews(mainContentRef)
-const { newAvailableVersion, isChecking, onCheckForUpdates } = useAppUpdate()
+const { isChecking, availableVersion, onCheckForUpdates } = useAppUpdate()
+
+const { systemInfo } = await useSystemInfo()
+const { isFdaGranted } = await useFullDiskAccess()
+const { diskUsage } = await useDiskUsage()
+
+disableNativeContextMenu()
+setupFocusRing()
 
 const viewAnnouncement = computed(() => {
    const key = activeView.value as 'scan' | 'settings' | 'information'
@@ -62,13 +69,6 @@ const viewAnnouncement = computed(() => {
    }
    return labels[key] ?? ''
 })
-
-const { systemInfo } = await useSystemInfo()
-const { isFdaGranted } = await useFullDiskAccess()
-const { diskUsage } = await useDiskUsage()
-
-disableNativeContextMenu()
-setupFocusRing()
 </script>
 
 <template>
@@ -86,9 +86,9 @@ setupFocusRing()
 
                <div v-else-if="activeView === 'settings'" class="App-overlay">
                   <SettingsView
-                     :newAvailableVersion="newAvailableVersion"
                      :isFdaGranted="isFdaGranted"
                      :isChecking="isChecking"
+                     :availableVersion="availableVersion"
                      @check-for-updates="onCheckForUpdates"
                   />
                </div>

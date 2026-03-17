@@ -24,10 +24,18 @@
       ],
       "security": { "csp": null }
    },
+   "plugins": {
+      "updater": {
+         "endpoints": [
+            "https://github.com/smastrom/apex-disk/releases/latest/download/latest.json"
+         ],
+         "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDI5QUI3NTNCOEQ4Mjc4QjUKUldTMWVJS05PM1dyS1JjRU9OZEdoaG0wdDl3NUIrSm9MY0lFNkwycDI2VzBiRVJmMEFhSEIxaUUK"
+      }
+   },
    "bundle": {
       "active": true,
       "targets": ["app", "dmg"],
-      "createUpdaterArtifacts": false,
+      "createUpdaterArtifacts": true,
       "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns"],
       "category": "Utility",
       "shortDescription": "Disk usage analyzer for macOS",

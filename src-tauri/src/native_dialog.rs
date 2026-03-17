@@ -15,7 +15,7 @@ const APP_ICON: &[u8] = include_bytes!("../icons/128x128.png");
 const NS_ALERT_FIRST_BUTTON: isize = 1000;
 
 /// Dispatches an NSAlert to the main thread and blocks until the user responds.
-fn show_alert(
+pub(crate) fn show_alert(
     app: &tauri::AppHandle,
     title: String,
     body: String,

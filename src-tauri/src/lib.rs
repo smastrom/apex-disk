@@ -11,6 +11,7 @@ pub mod scan;
 pub mod store;
 pub mod system_info;
 pub mod trash;
+pub mod updater;
 pub mod xattr;
 
 use tauri::Manager;
@@ -51,7 +52,8 @@ pub fn run() {
     let builder = tauri::Builder::default()
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_opener::init())
-        .plugin(tauri_plugin_store::Builder::default().build());
+        .plugin(tauri_plugin_store::Builder::default().build())
+        .plugin(tauri_plugin_updater::Builder::new().build());
 
     #[cfg(feature = "e2e")]
     let builder = builder.plugin(tauri_plugin_webdriver::init());
@@ -69,7 +71,9 @@ pub fn run() {
 
             app.on_menu_event(|app, event| {
                 let id = event.id().as_ref();
-                if id == constants::RELEASE_NOTES_MENU_ID {
+                if id == constants::CHECK_FOR_UPDATES_MENU_ID {
+                    updater::check_for_updates_from_menu(app);
+                } else if id == constants::RELEASE_NOTES_MENU_ID {
                     let _ = open::that(constants::RELEASE_NOTES_URL);
                 } else if id == constants::LICENSE_MENU_ID {
                     let _ = open::that(constants::LICENSE_URL);
@@ -103,7 +107,9 @@ pub fn run() {
             store::update_setting,
             system_info::get_system_info,
             log::is_debug_mode,
-            log::log_message
+            log::log_message,
+            updater::check_for_updates,
+            updater::check_for_updates_silent
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

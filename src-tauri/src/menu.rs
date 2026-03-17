@@ -61,6 +61,14 @@ pub fn build_app_menu(
         }),
     )?;
     let sep = PredefinedMenuItem::separator(handle)?;
+    let check_for_updates = MenuItem::with_id(
+        handle,
+        constants::CHECK_FOR_UPDATES_MENU_ID,
+        labels.check_for_updates,
+        true,
+        None::<&str>,
+    )?;
+    let sep_updates = PredefinedMenuItem::separator(handle)?;
     // Use translated labels to follow app language setting
     let services = PredefinedMenuItem::services(handle, Some(labels.services))?;
     let sep2 = PredefinedMenuItem::separator(handle)?;
@@ -76,6 +84,8 @@ pub fn build_app_menu(
         &[
             &about,
             &sep,
+            &check_for_updates,
+            &sep_updates,
             &services,
             &sep2,
             &hide,

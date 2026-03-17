@@ -18,6 +18,9 @@ pub const RELEASE_NOTES_MENU_ID: &str = "release-notes";
 /// Menu item id for the license action. Handled in lib.rs setup.
 pub const LICENSE_MENU_ID: &str = "license";
 
+/// Menu item id for the check-for-updates action. Handled in lib.rs setup.
+pub const CHECK_FOR_UPDATES_MENU_ID: &str = "check-for-updates";
+
 /// Default language for the application.
 pub const DEFAULT_LANGUAGE: &str = "en";
 

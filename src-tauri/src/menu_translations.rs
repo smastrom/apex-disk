@@ -28,6 +28,7 @@
 pub struct MenuLabels {
     pub release_notes: &'static str,
     pub license: &'static str,
+    pub check_for_updates: &'static str,
     pub website_label: &'static str,
     pub window: &'static str,
     pub minimize: &'static str,
@@ -51,6 +52,7 @@ pub fn labels_for(lang: &str) -> MenuLabels {
         "it" => MenuLabels {
             release_notes: "Note di versione",
             license: "Licenza",
+            check_for_updates: "Controlla aggiornamenti…",
             website_label: "Note di versione",
             window: "Finestra",
             minimize: "Minimizza",
@@ -66,6 +68,7 @@ pub fn labels_for(lang: &str) -> MenuLabels {
         "es" => MenuLabels {
             release_notes: "Notas de versión",
             license: "Licencia",
+            check_for_updates: "Buscar actualizaciones…",
             website_label: "Notas de versión",
             window: "Ventana",
             minimize: "Minimizar",
@@ -81,6 +84,7 @@ pub fn labels_for(lang: &str) -> MenuLabels {
         "fr" => MenuLabels {
             release_notes: "Notes de version",
             license: "Licence",
+            check_for_updates: "Vérifier les mises à jour…",
             website_label: "Notes de version",
             window: "Fenêtre",
             minimize: "Réduire",
@@ -96,6 +100,7 @@ pub fn labels_for(lang: &str) -> MenuLabels {
         "pt" => MenuLabels {
             release_notes: "Notas de versão",
             license: "Licença",
+            check_for_updates: "Verificar atualizações…",
             website_label: "Notas de versão",
             window: "Janela",
             minimize: "Minimizar",
@@ -111,6 +116,7 @@ pub fn labels_for(lang: &str) -> MenuLabels {
         "de" => MenuLabels {
             release_notes: "Versionshinweise",
             license: "Lizenz",
+            check_for_updates: "Nach Updates suchen…",
             website_label: "Versionshinweise",
             window: "Fenster",
             minimize: "Minimieren",
@@ -126,6 +132,7 @@ pub fn labels_for(lang: &str) -> MenuLabels {
         "ru" => MenuLabels {
             release_notes: "Заметки о выпуске",
             license: "Лицензия",
+            check_for_updates: "Проверить обновления…",
             website_label: "Заметки о выпуске",
             window: "Окно",
             minimize: "Свернуть",
@@ -141,6 +148,7 @@ pub fn labels_for(lang: &str) -> MenuLabels {
         "zh" => MenuLabels {
             release_notes: "发行说明",
             license: "许可证",
+            check_for_updates: "检查更新…",
             website_label: "发行说明",
             window: "窗口",
             minimize: "最小化",
@@ -156,6 +164,7 @@ pub fn labels_for(lang: &str) -> MenuLabels {
         "ja" => MenuLabels {
             release_notes: "リリースノート",
             license: "ライセンス",
+            check_for_updates: "アップデートを確認…",
             website_label: "リリースノート",
             window: "ウインドウ",
             minimize: "最小化",
@@ -171,6 +180,7 @@ pub fn labels_for(lang: &str) -> MenuLabels {
         "ar" => MenuLabels {
             release_notes: "ملاحظات الإصدار",
             license: "الرخصة",
+            check_for_updates: "التحقق من التحديثات…",
             website_label: "ملاحظات الإصدار",
             window: "نافذة",
             minimize: "تصغير",
@@ -187,6 +197,7 @@ pub fn labels_for(lang: &str) -> MenuLabels {
         _ => MenuLabels {
             release_notes: "Release Notes",
             license: "License",
+            check_for_updates: "Check for Updates…",
             website_label: "Release Notes",
             window: "Window",
             minimize: "Minimize",
