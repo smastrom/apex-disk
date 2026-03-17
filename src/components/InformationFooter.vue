@@ -68,16 +68,16 @@ async function openWebsite() {
          <span class="InformationFooter-version">v{{ APP_VERSION }}</span>
       </p>
       <div class="InformationFooter-links">
-         <button type="button" class="InformationFooter-link" @click="openWebsite">
-            {{ t('InformationFooter', 'website') }}
-         </button>
-         <span class="InformationFooter-sep" aria-hidden="true">·</span>
          <button type="button" class="InformationFooter-link" @click="openReleaseNotes">
             {{ t('InformationFooter', 'releaseNotes') }}
          </button>
          <span class="InformationFooter-sep" aria-hidden="true">·</span>
          <button type="button" class="InformationFooter-link" @click="openLicense">
             {{ t('InformationFooter', 'license') }}
+         </button>
+         <span class="InformationFooter-sep" aria-hidden="true">·</span>
+         <button type="button" class="InformationFooter-link" @click="openWebsite">
+            {{ t('InformationFooter', 'website') }}
          </button>
          <span class="InformationFooter-sep" aria-hidden="true">·</span>
          <button type="button" class="InformationFooter-link" @click="openDonate">

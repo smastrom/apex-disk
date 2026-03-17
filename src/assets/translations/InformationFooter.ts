@@ -8,7 +8,7 @@ export const InformationFooter = {
    it: {
       releaseNotes: 'Note di rilascio',
       license: 'Licenza',
-      donate: 'Donazioni',
+      donate: 'Dona',
       website: 'Sito Web',
    },
    es: {
