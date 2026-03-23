@@ -32,7 +32,9 @@ import type { Language, ThemeColor } from '@/types/settings'
 defineProps<{
    isFdaGranted: boolean
    isChecking: boolean
+   isDownloading: boolean
    availableVersion: string | null
+   updateReady: boolean
 }>()
 
 const emit = defineEmits<{
@@ -244,13 +246,15 @@ async function openSystemSettings() {
                <span
                   class="SettingsView-updateStatus"
                   :class="
-                     availableVersion
+                     updateReady
                         ? 'SettingsView-updateStatus--available'
-                        : 'SettingsView-updateStatus--ok'
+                        : availableVersion
+                          ? 'SettingsView-updateStatus--available'
+                          : 'SettingsView-updateStatus--ok'
                   "
                >
                   <PhArrowCircleUp
-                     v-if="availableVersion"
+                     v-if="updateReady || availableVersion"
                      :size="13"
                      weight="fill"
                      aria-hidden="true"
@@ -259,36 +263,49 @@ async function openSystemSettings() {
                   {{
                      isChecking
                         ? t('SettingsView', 'updateChecking')
-                        : availableVersion
-                          ? availableVersion
-                          : t('SettingsView', 'updateUpToDateBadge')
+                        : isDownloading
+                          ? t('SettingsView', 'updateDownloading')
+                          : updateReady && availableVersion
+                            ? availableVersion
+                            : availableVersion
+                              ? availableVersion
+                              : t('SettingsView', 'updateUpToDateBadge')
                   }}
                </span>
             </div>
             <p class="SettingsView-updateDesc">
                {{
-                  availableVersion
-                     ? t('SettingsView', 'updateAvailable', { version: availableVersion })
-                     : t('SettingsView', 'updateUpToDate', { version: APP_VERSION })
+                  updateReady
+                     ? t('SettingsView', 'updateReadyDesc')
+                     : availableVersion
+                       ? t('SettingsView', 'updateAvailable', { version: availableVersion })
+                       : t('SettingsView', 'updateUpToDate', { version: APP_VERSION })
                }}
             </p>
             <div class="SettingsView-updateControls">
                <button
                   type="button"
                   class="SettingsView-fdaBtn"
-                  :disabled="isChecking"
+                  :class="{ 'SettingsView-fdaBtn--accent': updateReady }"
+                  :disabled="isChecking || isDownloading"
                   @click="emit('check-for-updates')"
                >
                   <PhArrowClockwise
+                     v-if="!updateReady"
                      :size="13"
                      weight="fill"
                      aria-hidden="true"
-                     :class="{ 'SettingsView-spinning': isChecking }"
+                     :class="{ 'SettingsView-spinning': isChecking || isDownloading }"
                   />
+                  <PhArrowCircleUp v-else :size="13" weight="fill" aria-hidden="true" />
                   {{
                      isChecking
                         ? t('SettingsView', 'updateChecking')
-                        : t('SettingsView', 'updateCheckButton')
+                        : isDownloading
+                          ? t('SettingsView', 'updateDownloading')
+                          : updateReady
+                            ? t('SettingsView', 'updateRestartButton')
+                            : t('SettingsView', 'updateCheckButton')
                   }}
                </button>
             </div>
@@ -379,6 +396,12 @@ async function openSystemSettings() {
 .SettingsView-fdaBtn:disabled {
    opacity: 0.45;
    cursor: default;
+}
+
+.SettingsView-fdaBtn--accent {
+   background: var(--color-accent);
+   color: var(--color-bg);
+   border-color: var(--color-accent);
 }
 
 .SettingsView-fdaDesc {

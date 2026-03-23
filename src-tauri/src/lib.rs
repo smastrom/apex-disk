@@ -59,6 +59,7 @@ pub fn run() {
     let builder = builder.plugin(tauri_plugin_webdriver::init());
 
     builder
+        .manage(updater::UpdateState::default())
         .enable_macos_default_menu(false)
         .setup(|app| {
             // Initialize store with defaults
@@ -108,8 +109,11 @@ pub fn run() {
             system_info::get_system_info,
             log::is_debug_mode,
             log::log_message,
-            updater::check_for_updates,
-            updater::check_for_updates_silent
+            updater::check_for_updates_silent,
+            updater::download_update,
+            updater::restart_app,
+            updater::set_update_menu_ready,
+            updater::reset_update_menu
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

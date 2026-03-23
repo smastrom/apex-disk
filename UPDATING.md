@@ -4,10 +4,12 @@ ApexDisk uses [tauri-plugin-updater](https://v2.tauri.app/plugin/updater/) for s
 
 ## How It Works
 
-1. The app checks a JSON endpoint on GitHub for the latest version
-2. If a newer version exists, the user is prompted via a native macOS dialog
-3. The update is downloaded, verified (signature check), and installed
-4. The app restarts with the new version
+The update experience follows the pattern used by modern desktop apps (Claude, VS Code, Slack):
+
+1. The app silently checks for updates on startup
+2. If an update is found, it is **downloaded automatically in the background** — no dialogs
+3. Once downloaded, the UI shows a **"Restart to Update"** button in Settings, and the menu item changes to **"Restart to Update (vX.Y.Z)"**
+4. The user restarts at their convenience to apply the update
 
 ### Endpoint
 
@@ -21,9 +23,22 @@ GitHub's `/releases/latest/` URL always resolves to the most recent **non-pre-re
 
 | Trigger | What happens |
 |---|---|
-| **App start** | Silent check — updates the SettingsView status (no dialogs) |
-| **Menu bar** → "Check for Updates…" | Full native dialog flow: check → confirm → download → restart |
-| **Settings** → "Check for Updates" button | Same native dialog flow as the menu item |
+| **App start** | Silent check → auto-download → "Restart to Update" appears in Settings + menu (no dialogs) |
+| **Menu bar** → "Restart to Update (vX.Y.Z)" | Restarts the app to apply the staged update |
+| **Menu bar** → "Check for Updates…" (no update staged) | Checks → if found, downloads silently → prompts Restart / Later via native dialog. If up to date, shows native "No Updates" dialog |
+| **Settings** → "Restart to Update" button | Restarts the app to apply the staged update |
+| **Settings** → "Check for Updates" button (no update staged) | Checks → if found, downloads silently → UI updates to show "Restart to Update" |
+
+### Update Flow Diagram
+
+```
+App start
+  └─ check_for_updates_silent → version available?
+       ├─ No  → UI shows "Updated ✓"
+       └─ Yes → download_update (background, no dialogs)
+            ├─ Success → UI: "Restart to Update" button + menu item text changes
+            └─ Error   → logged to console, UI unchanged
+```
 
 ## Signing Keys
 
@@ -69,23 +84,30 @@ Each release has a direct URL too: `/releases/download/v0.10.0-beta.1/latest.jso
 
 ## Local Development
 
-### Testing the SettingsView UI
+### Private repositories
 
-In `src/lib/use-app-update.ts`, change the `DEV_MOCK_VERSION` constant:
+While the repository is private, GitHub requires authentication to access release assets. Add a `GITHUB_TOKEN` to your `.env` file:
 
-```ts
-// Simulate "update available" — shows version 1.2.0 as available
-const DEV_MOCK_VERSION: string | null = '1.2.0'
-
-// Simulate "up to date" — no update available
-const DEV_MOCK_VERSION: string | null = null
+```env
+GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-This mock is only active during `pnpm tauri dev` (when `import.meta.env.DEV` is true). In production builds, the real updater endpoint is used.
+The Rust updater reads this at runtime and attaches it as an `Authorization` header to all update requests. Once the repository is public, remove the token — it's no longer needed.
 
-### Testing the full update flow locally
+To generate a token: **GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens** with `Contents: Read-only` permission on the repository.
 
-To test the actual download/install flow without GitHub:
+### Testing the update flow against GitHub releases
+
+To test the real update flow during development, your local version must be **older** than the latest GitHub release:
+
+1. Ensure `GITHUB_TOKEN` is set in `.env` (see above)
+2. Temporarily lower the version in `src-tauri/Cargo.toml` (e.g. `version = "0.0.1"`)
+3. Run `pnpm tauri dev`
+4. The app will detect the newer GitHub release, download it, and show "Restart to Update"
+
+Remember to revert `Cargo.toml` after testing.
+
+### Testing the full update flow locally (without GitHub)
 
 1. Build a `.tar.gz` with `pnpm tauri build`
 2. Serve a `latest.json` from a local HTTP server (e.g. `npx serve .`) pointing to the local `.tar.gz`
@@ -107,9 +129,10 @@ To test the actual download/install flow without GitHub:
 
 | File | Role |
 |---|---|
-| `src-tauri/src/updater.rs` | Rust module: silent check command, native dialog flow, menu handler |
-| `src/lib/use-app-update.ts` | Vue composable: reactive state, dev mock, auto-check on start |
-| `src/components/SettingsView.vue` | UI: inline status + "Check for Updates" button |
+| `src-tauri/src/updater.rs` | Rust module: silent check, silent download, restart command, menu-initiated flow with native dialogs |
+| `src/lib/use-app-update.ts` | Vue composable: reactive state (checking → downloading → ready), auto-check + auto-download on start, dev mock |
+| `src/components/SettingsView.vue` | UI: inline status + "Check for Updates" / "Restart to Update" button |
+| `src-tauri/src/menu_translations.rs` | Menu label translations including "Restart to Update" |
 | `src-tauri/tauri.conf.json` | Updater config: endpoint URL, public key, `createUpdaterArtifacts` |
 | `src-tauri/Entitlements.plist` | macOS entitlement: `com.apple.security.network.client` for downloads |
 | `.github/workflows/release.yml` | CI: builds, signs artifacts, generates `latest.json`, uploads to release |

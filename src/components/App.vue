@@ -12,20 +12,19 @@ Example:
 <script setup lang="ts">
 import AppHeader from './AppHeader.vue'
 import AppFooter from './AppFooter.vue'
+import AppViewAnnouncer from './AppViewAnnouncer.vue'
 import ScanView from './ScanView.vue'
 import SettingsView from './SettingsView.vue'
 import InformationView from './InformationView.vue'
 
-import { useTemplateRef, watch, computed } from 'vue'
-
-import { useTranslations } from '@/lib/use-translations'
+import { useTemplateRef, watch } from 'vue'
 import { useAppSettings } from '@/stores/app-settings'
 import { useAppViews } from '@/lib/use-app-views'
 import { useAppUpdate } from '@/lib/use-app-update'
 import { useFullDiskAccess } from '@/lib/use-full-disk-access'
 import { useSystemInfo } from '@/lib/use-system-info'
 import { disableNativeContextMenu } from '@/lib/use-context-menu'
-import { applyTheme, applyDirection } from '@/lib/document'
+import { applyTheme, applyDirection } from '@/lib/dom'
 import { setupFocusRing } from '@/lib/use-focus-ring'
 import { useDiskUsage } from '@/lib/use-disk-usage'
 
@@ -49,9 +48,9 @@ watch(
    (lang) => applyDirection(lang)
 )
 
-const { t } = useTranslations()
 const { activeView, setActiveView } = useAppViews(mainContentRef)
-const { isChecking, availableVersion, onCheckForUpdates } = useAppUpdate()
+const { isChecking, isDownloading, availableVersion, updateReady, onCheckForUpdates } =
+   useAppUpdate()
 
 const { systemInfo } = await useSystemInfo()
 const { isFdaGranted } = await useFullDiskAccess()
@@ -59,16 +58,6 @@ const { diskUsage } = await useDiskUsage()
 
 disableNativeContextMenu()
 setupFocusRing()
-
-const viewAnnouncement = computed(() => {
-   const key = activeView.value as 'scan' | 'settings' | 'information'
-   const labels: Record<string, string> = {
-      scan: t('AppFooter', 'scan'),
-      settings: t('AppFooter', 'settings'),
-      information: t('AppFooter', 'information'),
-   }
-   return labels[key] ?? ''
-})
 </script>
 
 <template>
@@ -88,7 +77,9 @@ const viewAnnouncement = computed(() => {
                   <SettingsView
                      :isFdaGranted="isFdaGranted"
                      :isChecking="isChecking"
+                     :isDownloading="isDownloading"
                      :availableVersion="availableVersion"
+                     :updateReady="updateReady"
                      @check-for-updates="onCheckForUpdates"
                   />
                </div>
@@ -100,7 +91,7 @@ const viewAnnouncement = computed(() => {
          </div>
       </div>
 
-      <div aria-live="polite" aria-atomic="true" class="sr-only">{{ viewAnnouncement }}</div>
+      <AppViewAnnouncer :activeView="activeView" />
 
       <AppFooter :activeView="activeView" @select-view="setActiveView" />
    </div>
