@@ -75,8 +75,7 @@ Enjoying ApexDisk? Your support helps keep the project going:
 
 - [PayPal](https://www.paypal.com/donate/?hosted_button_id=93WKXA68W9WQJ)
 - [Buy Me a Coffee](https://buymeacoffee.com/smastrom)
-
-
+- [Crypto (NOWPayments)](https://nowpayments.io/donation/smastrom)
 
 ## License
 
