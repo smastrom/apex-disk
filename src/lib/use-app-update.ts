@@ -9,6 +9,7 @@ export function useAppUpdate() {
 
    /** Silent check — updates the reactive state without showing dialogs. */
    async function checkSilently() {
+      if (import.meta.env.DEV) return
       if (isChecking.value) return
       try {
          isChecking.value = true
@@ -49,6 +50,7 @@ export function useAppUpdate() {
     * If an update is already staged, restarts. Otherwise checks + downloads.
     */
    async function onCheckForUpdates() {
+      if (import.meta.env.DEV) return
       if (updateReady.value) {
          await restartToUpdate()
          return
@@ -71,7 +73,7 @@ export function useAppUpdate() {
       }
    }
 
-   // Auto-check on app start
+   // Auto-check on app start (production only)
    checkSilently()
 
    return { isChecking, isDownloading, availableVersion, updateReady, onCheckForUpdates }

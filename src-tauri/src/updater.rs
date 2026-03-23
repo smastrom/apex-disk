@@ -175,19 +175,9 @@ fn labels_for(lang: &str) -> UpdateLabels {
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
-/// Builds an updater instance with optional GitHub token authentication.
-/// When `GITHUB_PAT` is set (e.g. in `.env`), adds an `Authorization` header
-/// so the updater can fetch release info from private repositories.
+/// Builds an updater instance from the app handle.
 fn build_updater(app: &tauri::AppHandle) -> Result<tauri_plugin_updater::Updater, String> {
-    let mut builder = app.updater_builder();
-
-    if let Ok(token) = std::env::var("GITHUB_PAT") {
-        builder = builder
-            .header("Authorization", format!("token {}", token))
-            .map_err(|e| e.to_string())?;
-    }
-
-    builder.build().map_err(|e| e.to_string())
+    app.updater_builder().build().map_err(|e| e.to_string())
 }
 
 /// Reads the current app language from the settings store.

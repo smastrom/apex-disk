@@ -84,53 +84,28 @@ Each release has a direct URL too: `/releases/download/v0.10.0-beta.1/latest.jso
 
 ## Local Development
 
-### Private repositories
+### Dev mode behavior
 
-While the repository is private, GitHub requires authentication to access release assets. Add a `GITHUB_TOKEN` to your `.env` file:
+**Updates are disabled during `pnpm tauri dev`.** The frontend composable (`use-app-update.ts`) skips all update checks and downloads when `import.meta.env.DEV` is true. No network requests are made, no errors appear in the console. The Settings UI shows the default "Updated" state.
 
-```env
-GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-```
+This is intentional — the updater endpoint requires a **public** GitHub repository and **signed production builds**, neither of which apply during local development.
 
-The Rust updater reads this at runtime and attaches it as an `Authorization` header to all update requests. Once the repository is public, remove the token — it's no longer needed.
+### Testing the real update flow
 
-To generate a token: **GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens** with `Contents: Read-only` permission on the repository.
+To test the full update experience (check → download → "Restart to Update"):
 
-### Testing the update flow against GitHub releases
+1. Release version `N` via GitHub Actions
+2. Download the `.dmg` from the release page and install it to `/Applications`
+3. Release version `N+1` via GitHub Actions
+4. Open the installed version `N` — it will detect `N+1`, auto-download, and show "Restart to Update"
 
-To test the real update flow during development, your local version must be **older** than the latest GitHub release:
-
-1. Ensure `GITHUB_TOKEN` is set in `.env` (see above)
-2. Temporarily lower the version in `src-tauri/Cargo.toml` (e.g. `version = "0.0.1"`)
-3. Run `pnpm tauri dev`
-4. The app will detect the newer GitHub release, download it, and show "Restart to Update"
-
-Remember to revert `Cargo.toml` after testing.
-
-### Testing the full update flow locally (without GitHub)
-
-1. Build a `.tar.gz` with `pnpm tauri build`
-2. Serve a `latest.json` from a local HTTP server (e.g. `npx serve .`) pointing to the local `.tar.gz`
-3. Override the endpoint in `tauri.dev.conf.json`:
-
-```json
-{
-   "plugins": {
-      "updater": {
-         "endpoints": ["http://localhost:3000/latest.json"]
-      }
-   }
-}
-```
-
-4. Run `pnpm tauri dev` — the app will check your local server
 
 ## File Overview
 
 | File | Role |
 |---|---|
 | `src-tauri/src/updater.rs` | Rust module: silent check, silent download, restart command, menu-initiated flow with native dialogs |
-| `src/lib/use-app-update.ts` | Vue composable: reactive state (checking → downloading → ready), auto-check + auto-download on start, dev mock |
+| `src/lib/use-app-update.ts` | Vue composable: reactive state (checking → downloading → ready), auto-check + auto-download on start (disabled in dev) |
 | `src/components/SettingsView.vue` | UI: inline status + "Check for Updates" / "Restart to Update" button |
 | `src-tauri/src/menu_translations.rs` | Menu label translations including "Restart to Update" |
 | `src-tauri/tauri.conf.json` | Updater config: endpoint URL, public key, `createUpdaterArtifacts` |
