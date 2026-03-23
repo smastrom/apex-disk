@@ -218,6 +218,10 @@ const showNewFree = computed(() => {
    font-weight: 500;
 }
 
+.ScanViewHeader-value-oldFree {
+   color: var(--color-text-muted);
+}
+
 .ScanViewHeader-value-newFree {
    font-weight: 700;
 }
