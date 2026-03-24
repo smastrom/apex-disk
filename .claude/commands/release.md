@@ -1,4 +1,4 @@
-Prepare a new release for ApexDisk version `$ARGUMENTS`.
+Prepare a new release for ApexDisk version `$ARGUMENTS` (semver **without** the `v` prefix, e.g. `0.0.11` — the changelog heading is `## v0.0.11` and the git tag becomes `v0.0.11`).
 
 Walk through each step to prepare the release:
 
@@ -7,7 +7,7 @@ Walk through each step to prepare the release:
    - `src-tauri/Cargo.toml` → `version`
    - `src-tauri/tauri.conf.json` → `"version"`
 
-2. **Update RELEASES.md** — Add a new `## v$ARGUMENTS` section at the top of `RELEASES.md`. Summarize the changes since the last release by reviewing the git log since the last version tag.
+2. **Update RELEASES.md** — Add a new `## v$ARGUMENTS` section at the **end** of the file (after all existing `## v…` blocks). The GitHub **Release** workflow uses the **last** `## vX.Y.Z` line as the canonical version—if you insert at the top, CI would read the wrong version. Summarize changes since the last tag (e.g. `git log` since the previous `v*` tag).
 
 3. **Verify consistency** — Confirm all three version files and RELEASES.md heading match `$ARGUMENTS`.
 

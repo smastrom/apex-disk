@@ -1,0 +1,121 @@
+# Builds a signed, notarized **ApexDisk Nightly** DMG. Trigger: **workflow_dispatch only** (never on push).
+# Publishes a GitHub **pre-release** (tag `nightly-<run_id>`) with the DMG + RELEASES_NIGHTLY.md so testers
+# can install from the Releases page. Also uploads a workflow artifact. No latest.json / updater channel.
+# Version is whatever is on the branch you choose when clicking "Run workflow"—see UPDATES.md.
+
+name: Nightly
+
+on:
+   workflow_dispatch:
+
+jobs:
+   nightly:
+      runs-on: macos-latest
+      permissions:
+         contents: write
+
+      steps:
+         - name: Checkout
+           uses: actions/checkout@v4
+
+         - name: Setup Node
+           uses: actions/setup-node@v4
+           with:
+              node-version: 22
+
+         - name: Setup pnpm
+           uses: pnpm/action-setup@v4
+
+         - name: Install frontend dependencies
+           run: pnpm install
+
+         - name: Run unit tests
+           run: pnpm test:unit
+
+         - name: Setup Rust
+           uses: dtolnay/rust-toolchain@stable
+           with:
+              targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+         - name: Rust cache
+           uses: swatinem/rust-cache@v2
+           with:
+              workspaces: src-tauri
+
+         - name: Import Apple Developer Certificate
+           env:
+              APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+              APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+              KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+           run: |
+              echo $APPLE_CERTIFICATE | base64 --decode > certificate.p12
+              security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+              security default-keychain -s build.keychain
+              security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+              security set-keychain-settings -t 3600 -u build.keychain
+              security import certificate.p12 -k build.keychain -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+              security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+              security find-identity -v -p codesigning build.keychain
+
+         - name: Verify Certificate
+           run: |
+              CERT_INFO=$(security find-identity -v -p codesigning build.keychain | grep "Developer ID")
+              CERT_ID=$(echo "$CERT_INFO" | awk -F'"' '{print $2}')
+              echo "APPLE_SIGNING_IDENTITY=$CERT_ID" >> $GITHUB_ENV
+              echo "Certificate imported: $CERT_ID"
+
+         - name: Build, sign and notarize universal macOS binary (nightly)
+           env:
+              APPLE_SIGNING_IDENTITY: ${{ env.APPLE_SIGNING_IDENTITY }}
+              APPLE_ID: ${{ secrets.APPLE_ID }}
+              APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+              APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+              TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+              TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+           run: pnpm exec tauri build --target universal-apple-darwin --config src-tauri/tauri.nightly.conf.json
+
+         - name: Nightly notes summary
+           run: |
+              echo "## Nightly notes (top section of RELEASES_NIGHTLY.md)" >> "$GITHUB_STEP_SUMMARY"
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+              if awk '/^## /{if(h){exit} h=1} h' RELEASES_NIGHTLY.md | grep -q .; then
+                awk '/^## /{if(h){exit} h=1} h' RELEASES_NIGHTLY.md >> "$GITHUB_STEP_SUMMARY"
+              else
+                echo "_No \`##\` section yet—edit RELEASES_NIGHTLY.md before the run if you want dated notes here._" >> "$GITHUB_STEP_SUMMARY"
+              fi
+
+         - name: Prepare pre-release notes
+           run: |
+              if awk '/^## /{if(h){exit} h=1} h' RELEASES_NIGHTLY.md | grep -q .; then
+                awk '/^## /{if(h){exit} h=1} h' RELEASES_NIGHTLY.md > nightly_prerelease_body.md
+              else
+                echo "## ApexDisk Nightly" > nightly_prerelease_body.md
+                echo "" >> nightly_prerelease_body.md
+                echo "_Add a dated \`##\` section at the top of RELEASES_NIGHTLY.md for richer notes._" >> nightly_prerelease_body.md
+              fi
+              echo "" >> nightly_prerelease_body.md
+              echo "---" >> nightly_prerelease_body.md
+              echo "" >> nightly_prerelease_body.md
+              echo "_Workflow run [\`${{ github.run_id }}\`](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}), commit \`${{ github.sha }}\`._" >> nightly_prerelease_body.md
+
+         - name: Publish GitHub pre-release
+           uses: softprops/action-gh-release@v2
+           with:
+              tag_name: nightly-${{ github.run_id }}
+              name: ApexDisk Nightly (${{ github.run_id }})
+              body_path: nightly_prerelease_body.md
+              prerelease: true
+              generate_release_notes: false
+              fail_on_unmatched_files: true
+              files: |
+                 src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+                 RELEASES_NIGHTLY.md
+
+         - name: Upload DMG and nightly notes
+           uses: actions/upload-artifact@v4
+           with:
+              name: ApexDisk-Nightly-${{ github.run_id }}
+              path: |
+                 src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+                 RELEASES_NIGHTLY.md
+              retention-days: 30
