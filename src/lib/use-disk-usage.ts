@@ -4,6 +4,8 @@ import { ref, onMounted, onUnmounted, type Ref } from 'vue'
 import type { DiskUsage } from '@/types/disk'
 
 import { getDiskUsage } from './disk'
+import { formatBytes } from './format'
+import { log } from './log'
 import { debounce } from './utils'
 
 export interface UseDiskUsageReturn {
@@ -28,9 +30,19 @@ export async function useDiskUsage(): Promise<UseDiskUsageReturn> {
 
    async function setDiskUsage() {
       try {
-         diskUsage.value = await getDiskUsage()
+         const u = await getDiskUsage()
+         diskUsage.value = u
+         const used = Math.max(0, u.total - u.free)
+
+         log(
+            'disk',
+            `Disk: usage — ${u.volume_name} total=${formatBytes(u.total)} free=${formatBytes(u.free)} used=${formatBytes(used)} user=${u.user_name}`,
+            { home_path: u.home_path }
+         )
       } catch (err) {
          console.error('Failed to get disk usage:', err)
+         const msg = err instanceof Error ? err.message : String(err)
+         log('disk', `Disk: fetch failed — ${msg}`)
       }
    }
 

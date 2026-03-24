@@ -41,7 +41,7 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
       setLanguage: async (lang) => {
          const prev = settings.value.language
          settings.value = { ...settings.value, language: lang }
-         log('settings', `language: ${prev} → ${lang}`)
+         log('settings', `Settings: language ${prev} → ${lang}`)
          await saveSettings()
          // Update macOS system locale (for context menus) and sync app menu language
          await invoke('set_app_locale', { language: lang })
@@ -54,22 +54,22 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
       },
       setShowHiddenFiles: async (value) => {
          settings.value = { ...settings.value, showHiddenFiles: value }
-         log('settings', `showHiddenFiles: ${!value} → ${value}`)
+         log('settings', `Settings: showHiddenFiles ${!value} → ${value}`)
          await saveSettings()
       },
       setShowUnder1Kb: async (value) => {
          settings.value = { ...settings.value, showUnder1Kb: value }
-         log('settings', `showUnder1Kb: ${!value} → ${value}`)
+         log('settings', `Settings: showUnder1Kb ${!value} → ${value}`)
          await saveSettings()
       },
       setShowZeroByte: async (value) => {
          settings.value = { ...settings.value, showZeroByte: value }
-         log('settings', `showZeroByte: ${!value} → ${value}`)
+         log('settings', `Settings: showZeroByte ${!value} → ${value}`)
          await saveSettings()
       },
       setAutoUpdates: async (value) => {
          settings.value = { ...settings.value, autoUpdates: value }
-         log('settings', `autoUpdates: ${!value} → ${value}`)
+         log('settings', `Settings: autoUpdates ${!value} → ${value}`)
          await saveSettings()
       },
    }

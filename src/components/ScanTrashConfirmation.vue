@@ -1,7 +1,7 @@
 <!--
 ScanTrashConfirmation
 
-Purpose: Post-trash screen. Shows resume (items count, size freed) and Scan again button.
+Purpose: Post-trash screen. Shows resume (items count, size freed) and Scan again button. When debug logging is on, **Scan again** uses category `trash` (see `LOGGING.md`).
 
 Props: deletedSummary ({ count: number, size: number } | null)
 
@@ -18,19 +18,33 @@ import { computed } from 'vue'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 
 import { formatBytes } from '@/lib/format'
+import { log } from '@/lib/log'
 import { useTranslations } from '@/lib/use-translations'
 
 const props = defineProps<{
    deletedSummary: { count: number; size: number } | null
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
    (e: 'restart'): void
 }>()
 
 const { t } = useTranslations()
 
 const hasErrors = computed(() => !props.deletedSummary || props.deletedSummary.count === 0)
+
+/** Emits `restart` after logging (returns user to results to scan again). */
+function onScanAgain() {
+   const s = props.deletedSummary
+
+   if (s && s.count > 0) {
+      log('trash', `Trash: scan again — last delete ${s.count} item(s), ${formatBytes(s.size)}`)
+   } else {
+      log('trash', 'Trash: scan again')
+   }
+
+   emit('restart')
+}
 
 function closeApp() {
    getCurrentWindow().close()
@@ -67,7 +81,7 @@ function closeApp() {
             type="button"
             class="ScanTrashConfirmation-scanBtn GradientButton"
             data-testid="restart"
-            @click="$emit('restart')"
+            @click="onScanAgain"
          >
             <PhMagnifyingGlass :size="18" weight="regular" aria-hidden="true" />
             {{ t('ScanTrashConfirmation', 'restart') }}

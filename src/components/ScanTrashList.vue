@@ -172,16 +172,35 @@ const checkedCount = computed(() => {
    return n
 })
 
+/** Checked count and total size for log lines (delete review list). */
+function checkedTotalsLabel(): string {
+   return `${checkedCount.value} checked, ${formatBytes(selectedSize.value)}`
+}
+
 /**
  * Toggles a single item's checked state by cloning the Map and replacing the ref.
  * Clone-and-replace ensures Vue sees a new reference and triggers dependents.
  */
 function toggle(path: string) {
+   const item = props.items.find((i) => i.path === path)
    const prev = checkedMapRef.value
+   const wasChecked = !!prev.get(path)
    const next = new Map(prev)
 
-   next.set(path, !prev.get(path))
+   next.set(path, !wasChecked)
    checkedMapRef.value = next
+
+   if (!item) {
+      return
+   }
+
+   const kind = item.is_file ? 'file' : 'folder'
+   const action = wasChecked ? 'Uncheck' : 'Check'
+
+   log(
+      'trash',
+      `Trash: ${action} ${kind} "${item.name}" (${formatBytes(item.size)}) — ${checkedTotalsLabel()}`
+   )
 }
 
 /** Returns checked items for the back-navigation emit (restores selection in ScanResultsList). */
@@ -203,7 +222,7 @@ async function onTrashClick() {
 
    isDeleting.value = true
    const toTrash = props.items.filter((item) => checkedMapRef.value.get(item.path))
-   log('trash', `Moving ${toTrash.length} items to Trash (${formatBytes(selectedSize.value)})`)
+   log('trash', `Trash: moving ${toTrash.length} item(s) (${formatBytes(selectedSize.value)})`)
 
    const items = toTrash.map((item) => ({
       path: item.path,
@@ -216,12 +235,12 @@ async function onTrashClick() {
       const result = await invoke<{ count: number; size: number }>('trash_paths', { items })
       summary = result
    } catch (error) {
-      log('trash', 'Trash invoke error, using optimistic values', error)
+      log('trash', 'Trash: invoke error, using optimistic values', error)
    }
 
    log(
       'trash',
-      `Moved ${summary.count}/${toTrash.length} items to Trash (${formatBytes(summary.size)})`
+      `Trash: moved ${summary.count}/${toTrash.length} item(s) (${formatBytes(summary.size)})`
    )
 
    await new Promise((r) => setTimeout(r, TRASH_POST_TRASH_SLEEP_MS))

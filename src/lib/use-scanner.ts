@@ -58,7 +58,7 @@ export function useScanner() {
 
    async function loadFolders() {
       const settings = settingsStore.settings.value
-      log('scan', 'Scan started', {
+      log('scan', 'Scan: started', {
          showHiddenFiles: settings.showHiddenFiles,
          showUnder1Kb: settings.showUnder1Kb,
          showZeroByte: settings.showZeroByte,
@@ -91,12 +91,12 @@ export function useScanner() {
             const totalSize = formatBytes(progress.value.scanned_size_total)
             log(
                'scan',
-               `Scan complete: ${result.length} folders, ${totalSize}, ${elapsedSeconds.value}s`
+               `Scan: complete — ${result.length} folders, ${totalSize}, ${elapsedSeconds.value}s`
             )
             folders.value = result
          }
       } catch (error) {
-         log('scan', 'Scan error', error)
+         log('scan', 'Scan: error', error)
       } finally {
          if (gen === scanGeneration.value) {
             unlistenProgress?.()
@@ -108,7 +108,7 @@ export function useScanner() {
    }
 
    async function onAbort() {
-      log('scan', 'Scan aborted')
+      log('scan', 'Scan: aborted')
       scanGeneration.value += 1
       unlistenProgress?.()
       unlistenProgress = null
@@ -122,7 +122,7 @@ export function useScanner() {
       try {
          await invoke('cancel_scan')
       } catch (error) {
-         log('scan', 'Failed to cancel scan', error)
+         log('scan', 'Scan: failed to cancel', error)
       }
    }
 

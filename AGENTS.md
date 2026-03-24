@@ -23,6 +23,7 @@ ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for 
 - **Scanning**: Rust (`src-tauri/src/scan.rs`) builds a `FolderInfo` tree, emits progress events. Frontend navigates the tree with browser-style back/forward stacks.
 - **Deletion**: Items moved to macOS Trash (recoverable). Protected/skipped folders filtered in Rust before trashing.
 - **Native menu**: Built in Rust, localized via `menu_translations.rs`, rebuilt on language change.
+- **Diagnostics**: Vue `log()` + Rust `dev_rust_trace` / updater lines — see **`LOGGING.md`** (`APEX_DISK_DEBUG`, `[apex:…]` prefixes).
 
 ## Code conventions
 

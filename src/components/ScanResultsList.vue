@@ -233,12 +233,19 @@ const selectedSize = computed(() => {
 /** Emits size changes to parent so the disk usage bar stays in sync. */
 watch(selectedSize, (size) => emit('update:selectedSize', size), { immediate: true })
 
+/** Selection count and total size (after ancestor de-dupe) for log lines. */
+function selectionTotalsLabel(): string {
+   return `${selectedMap.size} selected, ${formatBytes(selectedSize.value)}`
+}
+
 /** Removes all selectedMap entries whose path is inside `folderPath`. */
 function deselectDescendants(folderPath: string) {
    const prefix = folderPath + '/'
 
    for (const [path] of selectedMap) {
-      if (path.startsWith(prefix)) selectedMap.delete(path)
+      if (path.startsWith(prefix)) {
+         selectedMap.delete(path)
+      }
    }
 }
 
@@ -302,26 +309,39 @@ function explodeAncestorExcluding(ancestorPath: string, excludePath: string) {
  * 4. Unselected → select (store FolderInfo reference in map).
  */
 function toggleSelect(item: FolderInfo) {
+   const kind = item.is_file ? 'file' : 'folder'
+
    // Always allow deselecting descendants even for protected/FDA folders
    if (someSelectedPaths.value.has(item.path)) {
-      log('file', `Deselect descendants: ${item.name}`)
       deselectDescendants(item.path)
+      log(
+         'file',
+         `Results: deselect descendants under ${kind} "${item.name}" — ${selectionTotalsLabel()}`
+      )
       return
    }
 
-   if (item.is_protected) return
+   if (item.is_protected) {
+      return
+   }
 
    if (selectedMap.has(item.path)) {
-      log('file', `Deselect: ${item.name}`)
       selectedMap.delete(item.path)
+      log('file', `Results: deselect ${kind} "${item.name}" — ${selectionTotalsLabel()}`)
    } else {
       const ancestor = findSelectedAncestor(item.path)
       if (ancestor) {
-         log('file', `Explode ancestor selection, excluding: ${item.name}`)
          explodeAncestorExcluding(ancestor, item.path)
+         log(
+            'file',
+            `Results: explode ancestor (exclude ${kind} "${item.name}") — ${selectionTotalsLabel()}`
+         )
       } else {
-         log('file', `Select: ${item.name} (${formatBytes(item.size)})`)
          selectedMap.set(item.path, item)
+         log(
+            'file',
+            `Results: select ${kind} "${item.name}" (${formatBytes(item.size)}) — ${selectionTotalsLabel()}`
+         )
       }
    }
 }
@@ -347,8 +367,19 @@ function setSelectedItems(items: TrashListItem[]) {
    }
 }
 
+/** Clears selection from the nav reset control (selection only; no navigation). */
+function clearSelectionFromNav() {
+   if (selectedMap.size > 0) {
+      log('file', `Results: reset selection — was ${selectionTotalsLabel()}`)
+   }
+   selectedMap.clear()
+}
+
 /** Clears all selections and navigates back to root. */
 function resetAll() {
+   if (selectedMap.size > 0) {
+      log('file', `Results: reset all — was ${selectionTotalsLabel()}`)
+   }
    selectedMap.clear()
    backStack.value = []
    forwardStack.value = []
@@ -377,7 +408,7 @@ function clearListTransitionNames() {
 /** Navigates into a folder's children with a forward view transition. */
 async function goInto(item: FolderInfo) {
    if (item.is_file) return
-   log('nav', `Navigate into: ${item.name} (${item.children.length} children)`)
+   log('nav', `Results: into "${item.name}" (${item.children.length} children)`)
 
    document.documentElement.style.setProperty('--nav-direction', '1')
    enableListTransitionNames()
@@ -392,7 +423,7 @@ async function goInto(item: FolderInfo) {
 /** Navigates to the previous directory with a backward view transition. */
 async function goBack() {
    if (backStack.value.length === 0) return
-   log('nav', `Navigate back to: ${backStack.value[backStack.value.length - 1].label || '~'}`)
+   log('nav', `Results: back to "${backStack.value[backStack.value.length - 1].label || '~'}"`)
 
    document.documentElement.style.setProperty('--nav-direction', '-1')
    enableListTransitionNames()
@@ -408,7 +439,7 @@ async function goForward() {
    if (forwardStack.value.length === 0) return
    log(
       'nav',
-      `Navigate forward to: ${forwardStack.value[forwardStack.value.length - 1].label || '~'}`
+      `Results: forward to "${forwardStack.value[forwardStack.value.length - 1].label || '~'}"`
    )
 
    document.documentElement.style.setProperty('--nav-direction', '1')
@@ -441,7 +472,7 @@ function onCancel() {
          :isResetDisabled="selectedMap.size === 0"
          @back="goBack"
          @forward="goForward"
-         @reset="selectedMap.clear()"
+         @reset="clearSelectionFromNav"
          @cancel="onCancel"
       />
       <div ref="listWrapRef" class="ScanResultsList-listWrap">

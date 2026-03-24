@@ -15,17 +15,17 @@ export function useAppUpdate(options: { autoUpdates: boolean }) {
       if (import.meta.env.DEV) return
       if (!autoUpdates) return
       if (isChecking.value) return
-      log('app', 'Checking for updates (silent)…')
+      log('app', 'Updates: silent check…')
       try {
          isChecking.value = true
          availableVersion.value = await invoke<string | null>('check_for_updates_silent')
          if (availableVersion.value) {
-            log('app', `Update available: v${availableVersion.value}`)
+            log('app', `Updates: available v${availableVersion.value}`)
          } else {
-            log('app', 'No updates available')
+            log('app', 'Updates: none available')
          }
       } catch (error) {
-         log('app', `Silent update check failed: ${error}`)
+         log('app', `Updates: silent check failed — ${error}`)
       } finally {
          isChecking.value = false
       }
@@ -44,9 +44,9 @@ export function useAppUpdate(options: { autoUpdates: boolean }) {
          isDownloading.value = true
          const version = await invoke<string>('download_update')
          updateReady.value = true
-         log('app', `Update v${version} downloaded and ready to install`)
+         log('app', `Updates: v${version} downloaded, ready to install`)
       } catch (error) {
-         log('app', `Update download failed: ${error}`)
+         log('app', `Updates: download failed — ${error}`)
       } finally {
          isDownloading.value = false
       }
