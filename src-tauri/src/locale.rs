@@ -26,6 +26,7 @@ fn to_supported_language(language: &str) -> String {
 
 /// Gets the system language and maps it to app language codes.
 /// Returns the language code that matches our supported languages.
+#[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn get_system_language() -> String {
     match get_locale() {
@@ -95,6 +96,7 @@ pub fn resolve_app_language(app: tauri::AppHandle) -> Result<String, String> {
 
 /// Sets the application locale to match the selected language.
 /// This affects macOS context menus (Look Up, Translate, etc.).
+#[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn set_app_locale(app: tauri::AppHandle, language: String) -> Result<(), String> {
     // Map app language codes to macOS locale identifiers

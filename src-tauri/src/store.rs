@@ -4,6 +4,8 @@
 //! migration, and provides a clean API for other modules to interact with
 //! persistent settings.
 
+use std::sync::Mutex;
+
 use tauri::AppHandle;
 use tauri::Runtime;
 
@@ -12,6 +14,10 @@ use serde_json::json;
 use tauri_plugin_store::StoreExt;
 
 use crate::constants;
+
+/// Application-level lock for store read-modify-write operations.
+/// Prevents concurrent `update_setting` calls from losing updates.
+static STORE_LOCK: Mutex<()> = Mutex::new(());
 
 /// Default settings for the application.
 /// This is the single source of truth for all default values.
@@ -117,12 +123,34 @@ pub fn set_settings(app: AppHandle, settings: serde_json::Value) -> Result<(), S
     set_settings_with_handle(&app, settings)
 }
 
+/// Returns true if the key is a known setting field.
+fn is_valid_setting_key(key: &str) -> bool {
+    get_default_settings()
+        .as_object()
+        .map(|obj| obj.contains_key(key))
+        .unwrap_or(false)
+}
+
 /// Updates a specific setting field for any runtime.
+/// Protected by `STORE_LOCK` to prevent concurrent read-modify-write races.
 pub fn update_setting_with_handle<R: Runtime>(
     app: &tauri::AppHandle<R>,
     key: String,
     value: serde_json::Value,
 ) -> Result<(), String> {
+    if !is_valid_setting_key(&key) {
+        return Err(format!(
+            "Unknown setting key: \"{}\". Valid keys: {:?}",
+            key,
+            get_default_settings()
+                .as_object()
+                .map(|obj| obj.keys().cloned().collect::<Vec<_>>())
+                .unwrap_or_default()
+        ));
+    }
+
+    let _guard = STORE_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+
     let store = app
         .store(crate::SETTINGS_STORE_PATH)
         .map_err(|e| e.to_string())?;

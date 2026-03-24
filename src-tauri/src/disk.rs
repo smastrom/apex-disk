@@ -1,12 +1,16 @@
 //! Disk usage and volume name for the home directory.
 //!
 //! Uses the macOS NSURL API for disk stats (to match Finder); volume name from diskutil.
+//! With debug builds or `APEX_DISK_DEBUG`, [`crate::log::dev_rust_trace`] on channel **`disk`**
+//! logs **`Disk: usage — …`** after a successful read. See **`LOGGING.md`**.
 
 use objc2_foundation::{
     NSArray, NSNumber, NSString, NSURLVolumeAvailableCapacityForImportantUsageKey,
     NSURLVolumeTotalCapacityKey, NSURL,
 };
 use std::path::{Path, PathBuf};
+
+use crate::log;
 
 /// Parses the volume name from diskutil info stdout. Used by get_volume_name and by tests.
 pub fn parse_volume_name(stdout: &str) -> Option<String> {
@@ -86,7 +90,7 @@ fn get_disk_capacity(path: &Path) -> Result<(u64, u64), String> {
         .objectForKey(total_key)
         .and_then(|v| {
             v.downcast_ref::<NSNumber>()
-                .map(|n| n.longLongValue() as u64)
+                .map(|n| u64::try_from(n.longLongValue()).unwrap_or(0))
         })
         .ok_or("Failed to read total capacity")?;
 
@@ -94,7 +98,7 @@ fn get_disk_capacity(path: &Path) -> Result<(u64, u64), String> {
         .objectForKey(free_key)
         .and_then(|v| {
             v.downcast_ref::<NSNumber>()
-                .map(|n| n.longLongValue() as u64)
+                .map(|n| u64::try_from(n.longLongValue()).unwrap_or(0))
         })
         .ok_or("Failed to read available capacity")?;
 
@@ -103,6 +107,7 @@ fn get_disk_capacity(path: &Path) -> Result<(u64, u64), String> {
 
 #[tauri::command]
 pub async fn get_disk_usage() -> Result<DiskUsage, String> {
+    log::dev_rust_trace("disk", "get_disk_usage");
     let home: PathBuf = dirs::home_dir().ok_or("Unable to determine home directory")?;
 
     // Spawn blocking operations on a separate thread to avoid starving the async runtime.
@@ -117,13 +122,29 @@ pub async fn get_disk_usage() -> Result<DiskUsage, String> {
         let volume_name = get_volume_name(&home);
         let home_path = home.to_string_lossy().into_owned();
 
-        Ok(DiskUsage {
+        let disk = DiskUsage {
             total,
             free,
             volume_name,
             user_name,
             home_path,
-        })
+        };
+
+        let used = disk.total.saturating_sub(disk.free);
+        log::dev_rust_trace(
+            "disk",
+            &format!(
+                "Disk: usage — volume={} total={} free={} used={} user={} home={}",
+                disk.volume_name,
+                log::format_bytes_si(disk.total),
+                log::format_bytes_si(disk.free),
+                log::format_bytes_si(used),
+                disk.user_name,
+                disk.home_path,
+            ),
+        );
+
+        Ok(disk)
     })
     .await
     .map_err(|e| format!("Task failed to join: {}", e))?

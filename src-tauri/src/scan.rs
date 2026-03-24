@@ -1,5 +1,9 @@
 //! Recursive folder tree scan with parallel I/O and progress events.
 //!
+//! With debug builds or `APEX_DISK_DEBUG`, [`crate::log::dev_rust_trace`] on channel **`scan`**
+//! logs the directory path being accumulated (throttled) and each completed top-level folder size.
+//! See **`LOGGING.md`**.
+//!
 //! Builds a FolderInfo tree for the user's home top-level directories,
 //! limiting retained file entries per directory to keep memory and IPC bounded.
 //!
@@ -17,6 +21,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use rayon::prelude::*;
 use tauri::Emitter;
 
+use crate::log;
 use crate::safe_folders;
 use crate::xattr;
 use crate::FolderInfo;
@@ -33,6 +38,9 @@ const PROGRESS_THROTTLE_MS: u64 = 150;
 /// Global cancellation flag for ongoing scans
 static SCAN_CANCELLED: AtomicBool = AtomicBool::new(false);
 
+/// Guard that prevents concurrent scans. Only one scan can run at a time.
+static SCAN_RUNNING: AtomicBool = AtomicBool::new(false);
+
 /// Shared state for emitting live progress events during recursive scanning.
 /// File sizes are accumulated at every directory level (not just top-level),
 /// and progress events are throttled to avoid overwhelming the frontend.
@@ -40,6 +48,13 @@ static SCAN_CANCELLED: AtomicBool = AtomicBool::new(false);
 /// syscall on every single directory — at ~150ms throttle and typical I/O
 /// rates, checking every 512 calls is still well within the emission window.
 const EMIT_CHECK_INTERVAL: u64 = 512;
+
+fn scan_path_for_log(path: &Path, home: &Path) -> String {
+    match path.strip_prefix(home) {
+        Ok(p) if !p.as_os_str().is_empty() => p.to_string_lossy().into_owned(),
+        _ => path.to_string_lossy().into_owned(),
+    }
+}
 
 struct LiveScanState {
     completed: AtomicUsize,
@@ -56,7 +71,7 @@ struct LiveScanState {
 }
 
 impl LiveScanState {
-    fn add_size_and_maybe_emit(&self, file_size: u64, folder_name: &str) {
+    fn add_size_and_maybe_emit(&self, file_size: u64, folder_path: &Path, home: &Path) {
         self.scanned_size_total
             .fetch_add(file_size, Ordering::Relaxed);
 
@@ -77,15 +92,36 @@ impl LiveScanState {
                 .compare_exchange(last, now, Ordering::Relaxed, Ordering::Relaxed)
                 .is_ok()
         {
+            let folder_name = folder_path
+                .file_name()
+                .and_then(|n| n.to_str())
+                .unwrap_or("Unknown")
+                .to_string();
+            let scanned = self.scanned_size_total.load(Ordering::Relaxed);
+            let completed_sz = self.completed_size.load(Ordering::Relaxed);
+            let current_top = self.completed.load(Ordering::Relaxed);
+
+            log::dev_rust_trace(
+                "scan",
+                &format!(
+                    "Scan: live — {} (top-level {}/{}) scanned_total={} completed_top={}",
+                    scan_path_for_log(folder_path, home),
+                    current_top,
+                    self.total,
+                    log::format_bytes_si(scanned),
+                    log::format_bytes_si(completed_sz),
+                ),
+            );
+
             let _ = self.app.emit(
                 "folder-scan-progress",
                 &FolderScanProgress {
-                    current: self.completed.load(Ordering::Relaxed),
+                    current: current_top,
                     total: self.total,
-                    folder: folder_name.to_string(),
+                    folder: folder_name,
                     size: 0,
-                    scanned_size_total: self.scanned_size_total.load(Ordering::Relaxed),
-                    completed_size: self.completed_size.load(Ordering::Relaxed),
+                    scanned_size_total: scanned,
+                    completed_size: completed_sz,
                     scanning: None,
                 },
             );
@@ -93,7 +129,7 @@ impl LiveScanState {
     }
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Clone)]
+#[derive(serde::Serialize, Clone)]
 struct FolderScanProgress {
     current: usize,
     total: usize,
@@ -262,7 +298,7 @@ fn build_folder_tree(
     // Accumulate file sizes live so the UI gets a smooth size stream.
     if let Some(state) = live {
         if file_size > 0 {
-            state.add_size_and_maybe_emit(file_size, &name);
+            state.add_size_and_maybe_emit(file_size, root, home);
         }
     }
 
@@ -290,16 +326,16 @@ fn build_folder_tree(
         }
     }
 
-    let root_path = root.to_string_lossy();
     let is_root_protected = safe_folders::is_path_protected(root, home);
     let is_root_fda_required = xattr::has_container_manager_attribute(root) && !has_fda;
     let files: Vec<FolderInfo> = file_entries
         .into_iter()
         .map(|(fname, size, last_modified)| {
-            let path = format!("{}/{}", root_path, fname);
-            let file_path = Path::new(&path);
-            let is_protected = safe_folders::is_path_protected(file_path, home);
-            let is_fda_required = xattr::has_container_manager_attribute(file_path) && !has_fda;
+            let file_path = root.join(&fname);
+            let is_protected = safe_folders::is_path_protected(&file_path, home);
+            // Only check xattr on directories — files never have container-manager attributes.
+            let is_fda_required = false;
+            let path = file_path.to_string_lossy().into_owned();
             FolderInfo {
                 path,
                 name: fname,
@@ -344,7 +380,7 @@ fn build_folder_tree(
 
     FolderInfo {
         name,
-        path: root_path.into_owned(),
+        path: root.to_string_lossy().into_owned(),
         size: file_size + dir_size,
         icon: None,
         children,
@@ -385,10 +421,9 @@ pub fn scan_user_folders_from_home(
         folder_paths.push(path);
     }
 
-    let options_ref = options;
     let mut folders: Vec<FolderInfo> = folder_paths
         .par_iter()
-        .map(|path| build_folder_tree(path, home, options_ref, has_fda, None))
+        .map(|path| build_folder_tree(path, home, options, has_fda, None))
         .collect();
 
     sort_children(&mut folders);
@@ -457,6 +492,21 @@ pub fn get_user_folders_sync_with_progress(
             // Bump completed counter / size and emit a final event for this top-level folder.
             let cur = state.completed.fetch_add(1, Ordering::Relaxed) + 1;
             let done = state.completed_size.fetch_add(info.size, Ordering::Relaxed) + info.size;
+            let scanned_live = state.scanned_size_total.load(Ordering::Relaxed);
+
+            log::dev_rust_trace(
+                "scan",
+                &format!(
+                    "Scan: top-level done — {} size={} progress {}/{} scanned_total={} completed_top={}",
+                    scan_path_for_log(&path, &user_dir),
+                    log::format_bytes_si(info.size),
+                    cur,
+                    state.total,
+                    log::format_bytes_si(scanned_live),
+                    log::format_bytes_si(done),
+                ),
+            );
+
             let _ = state.app.emit(
                 "folder-scan-progress",
                 &FolderScanProgress {
@@ -464,7 +514,7 @@ pub fn get_user_folders_sync_with_progress(
                     total: state.total,
                     folder: info.name.clone(),
                     size: info.size,
-                    scanned_size_total: state.scanned_size_total.load(Ordering::Relaxed),
+                    scanned_size_total: scanned_live,
                     completed_size: done,
                     scanning: None,
                 },
@@ -482,23 +532,40 @@ pub fn get_user_folders_sync_with_progress(
 }
 
 /// Tauri command: runs the folder scan on a blocking task and emits progress events.
+/// Only one scan can run at a time — concurrent calls return an error.
 #[tauri::command]
 pub async fn get_user_folders(
     app: tauri::AppHandle,
     options: Option<crate::ScanOptions>,
 ) -> Result<Vec<crate::FolderInfo>, String> {
+    log::dev_rust_trace("scan", "get_user_folders");
+
+    // Prevent concurrent scans
+    if SCAN_RUNNING
+        .compare_exchange(false, true, Ordering::Acquire, Ordering::Relaxed)
+        .is_err()
+    {
+        return Err("A scan is already in progress".to_string());
+    }
+
     // Reset cancellation flag at the start of a new scan
     SCAN_CANCELLED.store(false, Ordering::Relaxed);
 
     let options = options.unwrap_or_default();
-    tauri::async_runtime::spawn_blocking(move || get_user_folders_sync_with_progress(app, options))
-        .await
-        .map_err(|e| format!("Task join error: {}", e))?
+    let result = tauri::async_runtime::spawn_blocking(move || {
+        get_user_folders_sync_with_progress(app, options)
+    })
+    .await
+    .map_err(|e| format!("Task join error: {}", e))?;
+
+    SCAN_RUNNING.store(false, Ordering::Release);
+    result
 }
 
 /// Tauri command: cancels any ongoing scan and cleans up resources.
 #[tauri::command]
 pub fn cancel_scan() -> Result<(), String> {
-    SCAN_CANCELLED.store(true, Ordering::Relaxed);
+    log::dev_rust_trace("scan", "cancel_scan");
+    SCAN_CANCELLED.store(true, Ordering::Release);
     Ok(())
 }

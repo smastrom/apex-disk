@@ -1,6 +1,9 @@
-use crate::disk::get_volume_name;
 use serde::Serialize;
+
 use std::process::Command;
+
+use crate::disk::get_volume_name;
+use crate::log;
 
 #[derive(Serialize, Debug)]
 pub struct SystemInfo {
@@ -13,110 +16,78 @@ pub struct SystemInfo {
     pub current_user: String,
 }
 
-/// Get macOS version using sw_vers command
-fn get_macos_version() -> String {
-    match Command::new("sw_vers").arg("-productVersion").output() {
-        Ok(output) => match String::from_utf8(output.stdout) {
-            Ok(s) => s.trim().to_string(),
-            Err(_) => "Unknown".to_string(),
-        },
-        Err(_) => "Unknown".to_string(),
-    }
+/// Runs a command and returns trimmed stdout, or `None` on failure.
+fn run_command(cmd: &str, args: &[&str]) -> Option<String> {
+    Command::new(cmd)
+        .args(args)
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty())
 }
 
-/// Get hardware model using system_profiler
-fn get_hardware_model() -> String {
-    match Command::new("system_profiler")
-        .args(&["SPHardwareDataType", "-json"])
-        .output()
-    {
-        Ok(output) => {
-            match String::from_utf8(output.stdout) {
-                Ok(json_str) => {
-                    // Parse JSON to get model name
-                    if let Ok(json) = serde_json::from_str::<serde_json::Value>(&json_str) {
-                        if let Some(data) =
-                            json.get("SPHardwareDataType").and_then(|v| v.as_array())
-                        {
-                            if let Some(first) = data.first() {
-                                if let Some(model) =
-                                    first.get("machine_model").and_then(|v| v.as_str())
-                                {
-                                    return model.to_string();
-                                }
-                            }
-                        }
-                    }
+/// Get macOS version using sw_vers command
+fn get_macos_version() -> String {
+    run_command("sw_vers", &["-productVersion"]).unwrap_or_else(|| "Unknown".to_string())
+}
 
-                    // Fallback to ioreg if system_profiler fails
-                    get_hardware_model_ioreg()
-                }
-                Err(_) => get_hardware_model_ioreg(),
-            }
+/// Get hardware model using system_profiler JSON output
+fn get_hardware_model_from_json(json_str: &str) -> Option<String> {
+    let json: serde_json::Value = serde_json::from_str(json_str).ok()?;
+    json.get("SPHardwareDataType")?
+        .as_array()?
+        .first()?
+        .get("machine_model")?
+        .as_str()
+        .map(String::from)
+}
+
+/// Get hardware model using system_profiler, with ioreg fallback
+fn get_hardware_model() -> String {
+    if let Some(json_str) = run_command("system_profiler", &["SPHardwareDataType", "-json"]) {
+        if let Some(model) = get_hardware_model_from_json(&json_str) {
+            return model;
         }
-        Err(_) => get_hardware_model_ioreg(),
     }
+    get_hardware_model_ioreg()
 }
 
 /// Fallback method using ioreg to get hardware model
 fn get_hardware_model_ioreg() -> String {
-    match Command::new("ioreg")
-        .args(&["-c", "IOPlatformExpertDevice", "-d", "2"])
-        .output()
-    {
-        Ok(output) => match String::from_utf8(output.stdout) {
-            Ok(ioreg_output) => {
-                for line in ioreg_output.lines() {
-                    if line.contains("model") {
-                        if let Some(start) = line.find('"') {
-                            if let Some(end) = line[start + 1..].find('"') {
-                                return line[start + 1..start + 1 + end].to_string();
-                            }
-                        }
-                    }
-                }
-                "Unknown".to_string()
-            }
-            Err(_) => "Unknown".to_string(),
-        },
-        Err(_) => "Unknown".to_string(),
-    }
+    run_command("ioreg", &["-c", "IOPlatformExpertDevice", "-d", "2"])
+        .and_then(|output| {
+            output
+                .lines()
+                .find(|line| line.contains("model"))
+                .and_then(|line| {
+                    let start = line.find('"')? + 1;
+                    let end = start + line[start..].find('"')?;
+                    Some(line[start..end].to_string())
+                })
+        })
+        .unwrap_or_else(|| "Unknown".to_string())
 }
 
 /// Get CPU information using sysctl
 fn get_cpu_info() -> String {
-    match Command::new("sysctl")
-        .args(&["-n", "machdep.cpu.brand_string"])
-        .output()
-    {
-        Ok(output) => match String::from_utf8(output.stdout) {
-            Ok(s) => s.trim().to_string(),
-            Err(_) => "Unknown".to_string(),
-        },
-        Err(_) => "Unknown".to_string(),
-    }
+    run_command("sysctl", &["-n", "machdep.cpu.brand_string"])
+        .unwrap_or_else(|| "Unknown".to_string())
 }
 
 /// Get memory information using sysctl
 fn get_memory_info() -> String {
-    match Command::new("sysctl").args(&["-n", "hw.memsize"]).output() {
-        Ok(output) => match String::from_utf8(output.stdout) {
-            Ok(s) => {
-                if let Ok(bytes) = s.trim().parse::<u64>() {
-                    let gb = bytes as f64 / (1024.0 * 1024.0 * 1024.0);
-                    if gb >= 1024.0 {
-                        format!("{:.1} TB", gb / 1024.0)
-                    } else {
-                        format!("{:.0} GB", gb)
-                    }
-                } else {
-                    "Unknown".to_string()
-                }
+    run_command("sysctl", &["-n", "hw.memsize"])
+        .and_then(|s| s.parse::<u64>().ok())
+        .map(|bytes| {
+            let gb = bytes as f64 / (1024.0 * 1024.0 * 1024.0);
+            if gb >= 1024.0 {
+                format!("{:.1} TB", gb / 1024.0)
+            } else {
+                format!("{:.0} GB", gb)
             }
-            Err(_) => "Unknown".to_string(),
-        },
-        Err(_) => "Unknown".to_string(),
-    }
+        })
+        .unwrap_or_else(|| "Unknown".to_string())
 }
 
 /// Get system disk name using existing disk utility function
@@ -125,60 +96,64 @@ fn get_system_disk_name() -> String {
     get_volume_name(Path::new("/"))
 }
 
+/// Get system disk size from system_profiler storage JSON
+fn get_system_disk_size_from_json(json_str: &str) -> Option<String> {
+    let data: serde_json::Value = serde_json::from_str(json_str).ok()?;
+    data["SPStorageDataType"]
+        .as_array()?
+        .iter()
+        .find(|s| s["mount_point"].as_str() == Some("/"))
+        .and_then(|s| s["size_in_bytes"].as_u64())
+        .map(|size| size.to_string())
+}
+
 /// Get system disk size using system_profiler (for total capacity)
 fn get_system_disk_size() -> String {
-    match Command::new("system_profiler")
-        .args(&["SPStorageDataType", "-json"])
-        .output()
-    {
-        Ok(output) => match String::from_utf8(output.stdout) {
-            Ok(json_str) => {
-                // Parse JSON to find the startup disk and get its total capacity
-                if let Ok(data) = serde_json::from_str::<serde_json::Value>(&json_str) {
-                    if let Some(storage_data) = data["SPStorageDataType"].as_array() {
-                        for storage in storage_data {
-                            // Look for the volume that is mounted at "/" (root)
-                            if let Some(mount_point) = storage["mount_point"].as_str() {
-                                if mount_point == "/" {
-                                    // Get the total size in bytes
-                                    if let Some(size_bytes) = storage["size_in_bytes"].as_u64() {
-                                        return size_bytes.to_string();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                "Unknown".to_string()
-            }
-            Err(_) => "Unknown".to_string(),
-        },
-        Err(_) => "Unknown".to_string(),
-    }
+    run_command("system_profiler", &["SPStorageDataType", "-json"])
+        .and_then(|json_str| get_system_disk_size_from_json(&json_str))
+        .unwrap_or_else(|| "Unknown".to_string())
 }
 
 /// Get current user name using whoami
 fn get_current_user() -> String {
-    match Command::new("whoami").output() {
-        Ok(output) => match String::from_utf8(output.stdout) {
-            Ok(s) => s.trim().to_string(),
-            Err(_) => "Unknown".to_string(),
-        },
-        Err(_) => "Unknown".to_string(),
-    }
+    run_command("whoami", &[]).unwrap_or_else(|| "Unknown".to_string())
 }
 
 #[tauri::command]
 pub async fn get_system_info() -> Result<SystemInfo, String> {
+    log::dev_rust_trace("app", "get_system_info");
     tauri::async_runtime::spawn_blocking(|| {
+        // Parallelize the two slow system_profiler calls with rayon.
+        // The other commands (sw_vers, sysctl, whoami) are fast (<10ms).
+        let (
+            (hardware_model, system_disk_size),
+            (macos_version, cpu_info, memory_info, system_disk_name, current_user),
+        ) = rayon::join(
+            || rayon::join(get_hardware_model, get_system_disk_size),
+            || {
+                let macos_version = get_macos_version();
+                let cpu_info = get_cpu_info();
+                let memory_info = get_memory_info();
+                let system_disk_name = get_system_disk_name();
+                let current_user = get_current_user();
+                (
+                    macos_version,
+                    cpu_info,
+                    memory_info,
+                    system_disk_name,
+                    current_user,
+                )
+            },
+        );
+
         Ok(SystemInfo {
-            macos_version: get_macos_version(),
-            hardware_model: get_hardware_model(),
-            cpu_info: get_cpu_info(),
-            memory_info: get_memory_info(),
-            system_disk_name: get_system_disk_name(),
-            system_disk_size: get_system_disk_size(),
-            current_user: get_current_user(),
+            macos_version,
+            hardware_model,
+            cpu_info,
+            memory_info,
+            system_disk_name,
+            system_disk_size,
+            current_user,
         })
     })
     .await

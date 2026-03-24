@@ -7,6 +7,7 @@
 
 use std::path::Path;
 
+use crate::log;
 use crate::safe_folders;
 
 /// Payload item for the trash command. Matches frontend TrashListItem shape used for trashing.
@@ -18,7 +19,7 @@ pub struct TrashPathItem {
 }
 
 /// Result returned after trashing: how many items were actually trashed and the total size freed.
-#[derive(serde::Serialize, Clone)]
+#[derive(serde::Serialize)]
 pub struct TrashResult {
     pub count: usize,
     pub size: u64,
@@ -87,9 +88,14 @@ pub async fn trash_paths(
     _app: tauri::AppHandle,
     items: Vec<TrashPathItem>,
 ) -> Result<TrashResult, String> {
+    log::dev_rust_trace("trash", &format!("trash_paths ({} items)", items.len()));
+
     #[cfg(feature = "e2e")]
     {
-        let mode = E2E_TRASH_MODE.lock().unwrap().clone();
+        let mode = E2E_TRASH_MODE
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .clone();
         return match mode.as_str() {
             "zero" => Ok(TrashResult { count: 0, size: 0 }),
             "error" => Err("E2E simulated trash error".to_string()),
@@ -110,9 +116,10 @@ pub async fn trash_paths(
     }
 }
 
-/// Global trash mode for e2e tests. Defaults to "success".
+/// Global trash mode for e2e tests. Defaults to "success" (handled by the `_` match arm).
 #[cfg(feature = "e2e")]
 static E2E_TRASH_MODE: std::sync::Mutex<String> = std::sync::Mutex::new(String::new());
+// Note: empty string maps to the `_` arm in trash_paths which behaves as "success".
 
 /// Tauri command: sets the e2e trash mock mode at runtime.
 /// Callable from tests via `window.__TAURI__.core.invoke('set_e2e_trash_mode', { mode })`.
@@ -125,6 +132,6 @@ pub fn set_e2e_trash_mode(mode: String) -> Result<(), String> {
             "Invalid trash mode: {mode}. Must be one of: {valid:?}"
         ));
     }
-    *E2E_TRASH_MODE.lock().unwrap() = mode;
+    *E2E_TRASH_MODE.lock().unwrap_or_else(|e| e.into_inner()) = mode;
     Ok(())
 }

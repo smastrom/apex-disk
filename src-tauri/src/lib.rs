@@ -23,18 +23,24 @@ pub const SETTINGS_STORE_PATH: &str = "settings.json";
 pub const APP_LANGUAGE_INITIALIZED_KEY: &str = "appLanguageInitialized";
 
 /// Options for the user folder scan. Passed from the frontend (settings).
-#[derive(serde::Deserialize, Clone, Default)]
+#[derive(serde::Deserialize, Clone)]
 pub struct ScanOptions {
     #[serde(default)]
     pub show_hidden_files: bool,
-    #[serde(default = "default_show_under_1kb")]
+    #[serde(default)]
     pub show_under_1kb: bool,
     #[serde(default)]
     pub show_zero_byte: bool,
 }
 
-fn default_show_under_1kb() -> bool {
-    true
+impl Default for ScanOptions {
+    fn default() -> Self {
+        Self {
+            show_hidden_files: false,
+            show_under_1kb: false,
+            show_zero_byte: false,
+        }
+    }
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Clone)]
@@ -93,6 +99,9 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler({
+            // Note: generate_handler! is a proc macro and cannot accept macro
+            // invocations, so both blocks must list handlers explicitly.
+            // When adding a new command, update BOTH blocks.
             #[cfg(not(feature = "e2e"))]
             {
                 tauri::generate_handler![
@@ -114,6 +123,7 @@ pub fn run() {
                     system_info::get_system_info,
                     log::is_debug_mode,
                     log::log_message,
+                    log::log_error_message,
                     updater::check_for_updates_silent,
                     updater::check_for_updates_dialog,
                     updater::download_update,
@@ -145,6 +155,7 @@ pub fn run() {
                     system_info::get_system_info,
                     log::is_debug_mode,
                     log::log_message,
+                    log::log_error_message,
                     updater::check_for_updates_silent,
                     updater::check_for_updates_dialog,
                     updater::download_update,

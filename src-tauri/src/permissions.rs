@@ -5,6 +5,8 @@
 #[cfg(not(feature = "e2e"))]
 use std::process::Command;
 
+use crate::log;
+
 /// Returns the macOS major version (e.g. 12 for Monterey, 14 for Sonoma).
 #[cfg(not(feature = "e2e"))]
 fn macos_major_version() -> Option<u32> {
@@ -57,6 +59,7 @@ pub fn is_full_disk_access_granted() -> bool {
 /// Tauri command: checks whether the app has Full Disk Access.
 #[tauri::command]
 pub async fn check_full_disk_access() -> bool {
+    log::dev_rust_trace("permissions", "check_full_disk_access");
     tauri::async_runtime::spawn_blocking(is_full_disk_access_granted)
         .await
         .unwrap_or(false)

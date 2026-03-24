@@ -11,9 +11,10 @@
 //!    and the menu item text changes to "Restart to Update (vX.Y.Z)"
 //! 4. **User restarts** — clicking the button or menu item calls `restart_app`
 //!
-//! Both the frontend and the menu-initiated flow handle errors silently —
-//! failures are logged to stdout (visible via `APEX_DISK_DEBUG=1`) and the
-//! UI / menu text resets to its default state without showing error dialogs.
+//! Both the frontend and the menu-initiated flow avoid spamming users: most
+//! failures either use native dialogs or reset UI state quietly. Optional
+//! diagnostic lines for the update flow go to stdout in **debug builds** (`tauri dev`)
+//! or when `APEX_DISK_DEBUG=1` in release builds.
 
 use std::sync::Mutex;
 
@@ -21,22 +22,21 @@ use tauri::Manager;
 use tauri_plugin_updater::UpdaterExt;
 
 use crate::constants;
+use crate::log;
 use crate::native_dialog;
 use crate::store;
 
-/// Logs an update-related message to stdout using the same format as the
-/// frontend logger (`[HH:MM:SS.mmm] [APP] message`).
+/// Logs an update-related diagnostic to stdout (`[HH:MM:SS.mmm] [apex:rust:updater] …`).
 fn log_update(message: &str) {
-    // Use seconds since midnight as a lightweight timestamp (no chrono dep)
-    let dur = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap_or_default();
-    let secs_today = dur.as_secs() % 86400;
-    let h = secs_today / 3600;
-    let m = (secs_today % 3600) / 60;
-    let s = secs_today % 60;
-    let ms = dur.subsec_millis();
-    println!("[{h:02}:{m:02}:{s:02}.{ms:03}] [APP] {message}");
+    let is_verbose = cfg!(debug_assertions) || log::is_apex_disk_debug();
+    if !is_verbose {
+        return;
+    }
+
+    println!(
+        "[{}] [apex:rust:updater] {message}",
+        log::format_diag_utc_time()
+    );
 }
 
 // ── Shared state ────────────────────────────────────────────────────────────
@@ -187,60 +187,49 @@ fn get_auto_updates(app: &tauri::AppHandle) -> bool {
         .unwrap_or(false)
 }
 
-/// Updates the menu item text to the translated "Restart to Update (vX.Y.Z)".
-fn update_menu_text_to_restart(app: &tauri::AppHandle, version: &str) {
-    let lang = get_current_language(app);
-    let menu_labels = crate::menu_translations::labels_for(&lang);
+/// Updates the "Check for Updates" menu item text and enabled state.
+/// Reads the current language once and applies the label from `label_fn`.
+fn set_update_menu_item(app: &tauri::AppHandle, text: &str, enabled: bool) {
     if let Some(menu) = app.menu() {
         if let Some(tauri::menu::MenuItemKind::MenuItem(item)) =
             menu.get(constants::CHECK_FOR_UPDATES_MENU_ID)
         {
-            let _ = item.set_text(format!("{} (v{})", menu_labels.restart_to_update, version));
-            let _ = item.set_enabled(true);
+            let _ = item.set_text(text);
+            let _ = item.set_enabled(enabled);
         }
     }
+}
+
+/// Updates the menu item text to the translated "Restart to Update (vX.Y.Z)".
+fn update_menu_text_to_restart(app: &tauri::AppHandle, version: &str) {
+    let lang = get_current_language(app);
+    let menu_labels = crate::menu_translations::labels_for(&lang);
+    set_update_menu_item(
+        app,
+        &format!("{} (v{})", menu_labels.restart_to_update, version),
+        true,
+    );
 }
 
 /// Resets the menu item text back to the translated "Check for Updates…".
 fn update_menu_text_to_check(app: &tauri::AppHandle) {
     let lang = get_current_language(app);
     let menu_labels = crate::menu_translations::labels_for(&lang);
-    if let Some(menu) = app.menu() {
-        if let Some(tauri::menu::MenuItemKind::MenuItem(item)) =
-            menu.get(constants::CHECK_FOR_UPDATES_MENU_ID)
-        {
-            let _ = item.set_text(menu_labels.check_for_updates);
-            let _ = item.set_enabled(true);
-        }
-    }
+    set_update_menu_item(app, menu_labels.check_for_updates, true);
 }
 
 /// Sets the menu item text to "Checking for Updates…" and disables it.
 fn update_menu_text_to_checking(app: &tauri::AppHandle) {
     let lang = get_current_language(app);
     let menu_labels = crate::menu_translations::labels_for(&lang);
-    if let Some(menu) = app.menu() {
-        if let Some(tauri::menu::MenuItemKind::MenuItem(item)) =
-            menu.get(constants::CHECK_FOR_UPDATES_MENU_ID)
-        {
-            let _ = item.set_text(menu_labels.checking_for_updates);
-            let _ = item.set_enabled(false);
-        }
-    }
+    set_update_menu_item(app, menu_labels.checking_for_updates, false);
 }
 
 /// Sets the menu item text to "Downloading Update…" and disables it.
 fn update_menu_text_to_downloading(app: &tauri::AppHandle) {
     let lang = get_current_language(app);
     let menu_labels = crate::menu_translations::labels_for(&lang);
-    if let Some(menu) = app.menu() {
-        if let Some(tauri::menu::MenuItemKind::MenuItem(item)) =
-            menu.get(constants::CHECK_FOR_UPDATES_MENU_ID)
-        {
-            let _ = item.set_text(menu_labels.downloading_update);
-            let _ = item.set_enabled(false);
-        }
-    }
+    set_update_menu_item(app, menu_labels.downloading_update, false);
 }
 
 // ── Frontend commands ───────────────────────────────────────────────────────
@@ -278,7 +267,10 @@ pub async fn download_update(app: tauri::AppHandle) -> Result<String, String> {
 
     // Mark as ready in shared state
     let state = app.state::<UpdateState>();
-    *state.ready_version.lock().unwrap() = Some(version.clone());
+    *state
+        .ready_version
+        .lock()
+        .unwrap_or_else(|e| e.into_inner()) = Some(version.clone());
 
     // Only update menu item text when auto-updates is enabled
     if get_auto_updates(&app) {
@@ -397,7 +389,10 @@ async fn run_dialog_update_flow(app: tauri::AppHandle, update_menu: bool) -> Res
 
     log_update(&format!("Dialog: update v{version} ready to install"));
     let state = app.state::<UpdateState>();
-    *state.ready_version.lock().unwrap() = Some(version.clone());
+    *state
+        .ready_version
+        .lock()
+        .unwrap_or_else(|e| e.into_inner()) = Some(version.clone());
 
     if update_menu {
         update_menu_text_to_restart(&app, &version);
@@ -437,7 +432,12 @@ pub fn check_for_updates_from_menu(app: &tauri::AppHandle) {
     if auto_updates {
         // If update is already downloaded, restart immediately
         let state = app.state::<UpdateState>();
-        if state.ready_version.lock().unwrap().is_some() {
+        if state
+            .ready_version
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .is_some()
+        {
             app.restart();
         }
     }
