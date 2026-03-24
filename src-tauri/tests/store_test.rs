@@ -36,6 +36,7 @@ fn default_settings_match_constants() {
     assert_eq!(defaults["showHiddenFiles"], json!(false));
     assert_eq!(defaults["showUnder1Kb"], json!(false));
     assert_eq!(defaults["showZeroByte"], json!(false));
+    assert_eq!(defaults["autoUpdates"], json!(false));
 }
 
 /// initialize_store_with_handle must write defaults when the store is empty.
@@ -98,6 +99,7 @@ fn get_settings_merges_existing_with_defaults() {
     assert_eq!(merged["showHiddenFiles"], json!(false));
     assert_eq!(merged["showUnder1Kb"], json!(false));
     assert_eq!(merged["showZeroByte"], json!(false));
+    assert_eq!(merged["autoUpdates"], json!(false));
 }
 
 /// set_settings_with_handle and get_settings_with_handle must work together to
@@ -123,7 +125,8 @@ fn set_and_get_settings_round_trip() {
         "themeColor": constants::DEFAULT_THEME,
         "showHiddenFiles": true,
         "showUnder1Kb": true,
-        "showZeroByte": true
+        "showZeroByte": true,
+        "autoUpdates": false
     });
 
     store::set_settings_with_handle(&handle, custom.clone())

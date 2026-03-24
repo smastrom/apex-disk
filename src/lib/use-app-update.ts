@@ -3,7 +3,8 @@ import { ref } from 'vue'
 
 import { log } from './log'
 
-export function useAppUpdate(autoUpdates: boolean) {
+export function useAppUpdate(options: { autoUpdates: boolean }) {
+   const { autoUpdates } = options
    const isChecking = ref(false)
    const isDownloading = ref(false)
    const availableVersion = ref<string | null>(null)
