@@ -29,3 +29,9 @@ Testing the release.
 ## v0.0.10
 
 Testing update system.
+
+## v0.0.11
+
+- Unified Vue ↔ Rust diagnostic logging (`LOGGING.md`, `APEX_DISK_DEBUG`, scan/disk live traces).
+- Rust hardening: store validation and locking, `safe_folders` precompute, faster `system_info`, scan/trash/updater fixes, `tauri` test feature in dev-deps only.
+- Nightly: manual workflow publishes a GitHub pre-release DMG; `UPDATES.md`, `RELEASES_NIGHTLY.md`, `src-tauri/README.md`, local `tauri:build:nightly`.
