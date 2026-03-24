@@ -1,21 +1,30 @@
 import { invoke } from '@tauri-apps/api/core'
 import { ref } from 'vue'
 
-export function useAppUpdate() {
+import { log } from './log'
+
+export function useAppUpdate(autoUpdates: boolean) {
    const isChecking = ref(false)
    const isDownloading = ref(false)
    const availableVersion = ref<string | null>(null)
    const updateReady = ref(false)
 
-   /** Silent check — updates the reactive state without showing dialogs. */
+   /** Silent check + auto-download on startup. Only runs when autoUpdates is enabled. */
    async function checkSilently() {
       if (import.meta.env.DEV) return
+      if (!autoUpdates) return
       if (isChecking.value) return
+      log('app', 'Checking for updates (silent)…')
       try {
          isChecking.value = true
          availableVersion.value = await invoke<string | null>('check_for_updates_silent')
+         if (availableVersion.value) {
+            log('app', `Update available: v${availableVersion.value}`)
+         } else {
+            log('app', 'No updates available')
+         }
       } catch (error) {
-         console.error('Silent update check failed:', error)
+         log('app', `Silent update check failed: ${error}`)
       } finally {
          isChecking.value = false
       }
@@ -29,51 +38,29 @@ export function useAppUpdate() {
    /** Downloads the staged update silently. Sets `updateReady` on success. */
    async function downloadSilently() {
       if (isDownloading.value || updateReady.value) return
+      log('app', 'Downloading update…')
       try {
          isDownloading.value = true
-         await invoke<string>('download_update')
+         const version = await invoke<string>('download_update')
          updateReady.value = true
+         log('app', `Update v${version} downloaded and ready to install`)
       } catch (error) {
-         console.error('Silent update download failed:', error)
+         log('app', `Update download failed: ${error}`)
       } finally {
          isDownloading.value = false
       }
    }
 
-   /** Restarts the app to apply the staged update. */
-   async function restartToUpdate() {
-      await invoke('restart_app')
-   }
-
    /**
-    * Handles the "Check for Updates" / "Restart to Update" button click.
-    * If an update is already staged, restarts. Otherwise checks + downloads.
+    * Handles the "Check for Updates" button click.
+    * Always triggers the native dialog flow (check → download → restart prompt).
+    * Same behavior as the menu item click.
     */
    async function onCheckForUpdates() {
-      if (import.meta.env.DEV) return
-      if (updateReady.value) {
-         await restartToUpdate()
-         return
-      }
-
-      if (isChecking.value || isDownloading.value) return
-
-      try {
-         isChecking.value = true
-         availableVersion.value = await invoke<string | null>('check_for_updates_silent')
-      } catch (error) {
-         console.error('Error checking for updates:', error)
-      } finally {
-         isChecking.value = false
-      }
-
-      // If an update was found, download it
-      if (availableVersion.value) {
-         await downloadSilently()
-      }
+      await invoke('check_for_updates_dialog')
    }
 
-   // Auto-check on app start (production only)
+   // Auto-check on app start (production only, auto-updates only)
    checkSilently()
 
    return { isChecking, isDownloading, availableVersion, updateReady, onCheckForUpdates }

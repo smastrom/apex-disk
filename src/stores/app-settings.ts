@@ -13,6 +13,7 @@ export interface AppSettingsStore {
    setShowHiddenFiles: (value: boolean) => Promise<void>
    setShowUnder1Kb: (value: boolean) => Promise<void>
    setShowZeroByte: (value: boolean) => Promise<void>
+   setAutoUpdates: (value: boolean) => Promise<void>
 }
 
 let globalStore: AppSettingsStore | null = null
@@ -64,6 +65,11 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
       setShowZeroByte: async (value) => {
          settings.value = { ...settings.value, showZeroByte: value }
          log('settings', `showZeroByte: ${!value} → ${value}`)
+         await saveSettings()
+      },
+      setAutoUpdates: async (value) => {
+         settings.value = { ...settings.value, autoUpdates: value }
+         log('settings', `autoUpdates: ${!value} → ${value}`)
          await saveSettings()
       },
    }

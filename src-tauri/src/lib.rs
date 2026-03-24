@@ -1,5 +1,7 @@
 pub mod constants;
 pub mod disk;
+#[cfg(feature = "e2e")]
+pub mod e2e_fixtures;
 pub mod locale;
 pub mod log;
 pub mod menu;
@@ -90,31 +92,68 @@ pub fn run() {
             });
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![
-            disk::get_disk_usage,
-            scan::get_user_folders,
-            scan::cancel_scan,
-            trash::trash_paths,
-            permissions::check_full_disk_access,
-            native_dialog::show_message_dialog,
-            native_dialog::show_ask_dialog,
-            locale::set_app_locale,
-            locale::get_system_language,
-            locale::resolve_app_language,
-            menu::set_menu_language,
-            store::get_settings,
-            store::set_settings,
-            store::get_setting,
-            store::update_setting,
-            system_info::get_system_info,
-            log::is_debug_mode,
-            log::log_message,
-            updater::check_for_updates_silent,
-            updater::download_update,
-            updater::restart_app,
-            updater::set_update_menu_ready,
-            updater::reset_update_menu
-        ])
+        .invoke_handler({
+            #[cfg(not(feature = "e2e"))]
+            {
+                tauri::generate_handler![
+                    disk::get_disk_usage,
+                    scan::get_user_folders,
+                    scan::cancel_scan,
+                    trash::trash_paths,
+                    permissions::check_full_disk_access,
+                    native_dialog::show_message_dialog,
+                    native_dialog::show_ask_dialog,
+                    locale::set_app_locale,
+                    locale::get_system_language,
+                    locale::resolve_app_language,
+                    menu::set_menu_language,
+                    store::get_settings,
+                    store::set_settings,
+                    store::get_setting,
+                    store::update_setting,
+                    system_info::get_system_info,
+                    log::is_debug_mode,
+                    log::log_message,
+                    updater::check_for_updates_silent,
+                    updater::check_for_updates_dialog,
+                    updater::download_update,
+                    updater::restart_app,
+                    updater::set_update_menu_ready,
+                    updater::reset_update_menu
+                ]
+            }
+            #[cfg(feature = "e2e")]
+            {
+                tauri::generate_handler![
+                    disk::get_disk_usage,
+                    scan::get_user_folders,
+                    scan::cancel_scan,
+                    trash::trash_paths,
+                    trash::set_e2e_trash_mode,
+                    permissions::check_full_disk_access,
+                    native_dialog::show_message_dialog,
+                    native_dialog::show_ask_dialog,
+                    locale::set_app_locale,
+                    locale::get_system_language,
+                    locale::resolve_app_language,
+                    menu::set_menu_language,
+                    store::get_settings,
+                    store::set_settings,
+                    store::get_setting,
+                    store::update_setting,
+                    store::reset_e2e_state,
+                    system_info::get_system_info,
+                    log::is_debug_mode,
+                    log::log_message,
+                    updater::check_for_updates_silent,
+                    updater::check_for_updates_dialog,
+                    updater::download_update,
+                    updater::restart_app,
+                    updater::set_update_menu_ready,
+                    updater::reset_update_menu
+                ]
+            }
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

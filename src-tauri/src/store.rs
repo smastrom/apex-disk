@@ -22,6 +22,7 @@ pub fn get_default_settings() -> serde_json::Value {
         "showHiddenFiles": false,
         "showUnder1Kb": false,
         "showZeroByte": false,
+        "autoUpdates": false,
     })
 }
 
@@ -174,4 +175,11 @@ pub fn get_setting_with_handle<R: Runtime>(
 #[tauri::command]
 pub fn get_setting(app: AppHandle, key: String) -> Result<Option<serde_json::Value>, String> {
     get_setting_with_handle(&app, key)
+}
+
+/// Resets settings to defaults. Only available in e2e builds.
+#[cfg(feature = "e2e")]
+#[tauri::command]
+pub fn reset_e2e_state(app: AppHandle) -> Result<(), String> {
+    set_settings_with_handle(&app, get_default_settings())
 }

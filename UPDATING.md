@@ -4,12 +4,25 @@ ApexDisk uses [tauri-plugin-updater](https://v2.tauri.app/plugin/updater/) for s
 
 ## How It Works
 
-The update experience follows the pattern used by modern desktop apps (Claude, VS Code, Slack):
+Updates can be **automatic** or **manual**, controlled by the "Automatic Updates" toggle in Settings. Automatic updates are **disabled by default** (opt-in). The setting takes effect on next app start.
+
+### Automatic Updates (opt-in)
+
+When enabled, the app follows the pattern used by modern desktop apps (Claude, VS Code, Slack):
 
 1. The app silently checks for updates on startup
 2. If an update is found, it is **downloaded automatically in the background** — no dialogs
 3. Once downloaded, the UI shows a **"Restart to Update"** button in Settings, and the menu item changes to **"Restart to Update (vX.Y.Z)"**
 4. The user restarts at their convenience to apply the update
+
+### Manual Updates (default)
+
+When automatic updates are disabled:
+
+1. No background checks or downloads happen on startup
+2. The user clicks **"Check for Updates"** (in Settings or menu bar) to trigger a native dialog
+3. The dialog checks for updates, downloads if found, and prompts to restart — all in one flow
+4. The menu item always shows **"Check for Updates…"** (never changes to "Restart to Update")
 
 ### Endpoint
 
@@ -21,23 +34,30 @@ GitHub's `/releases/latest/` URL always resolves to the most recent **non-pre-re
 
 ### Update Entry Points
 
-| Trigger | What happens |
-|---|---|
-| **App start** | Silent check → auto-download → "Restart to Update" appears in Settings + menu (no dialogs) |
-| **Menu bar** → "Restart to Update (vX.Y.Z)" | Restarts the app to apply the staged update |
-| **Menu bar** → "Check for Updates…" (no update staged) | Checks → if found, downloads silently → prompts Restart / Later via native dialog. If up to date, shows native "No Updates" dialog |
-| **Settings** → "Restart to Update" button | Restarts the app to apply the staged update |
-| **Settings** → "Check for Updates" button (no update staged) | Checks → if found, downloads silently → UI updates to show "Restart to Update" |
+Both the menu item and the Settings button **always trigger the same native dialog flow**: check → download → "Restart now?" prompt. The only difference is that when automatic updates are ON and an update is already staged, the menu item restarts immediately.
+
+| Trigger | Auto-updates ON | Auto-updates OFF |
+|---|---|---|
+| **App start** | Silent check → auto-download → "Restart to Update" in Settings + menu | Nothing |
+| **Menu bar** click (update staged) | Restarts immediately | Native dialog flow |
+| **Menu bar** click (no update staged) | Native dialog flow (menu text updates during check/download) | Native dialog flow (menu text unchanged) |
+| **Settings** button click | Native dialog flow | Native dialog flow |
 
 ### Update Flow Diagram
 
 ```
-App start
+App start (auto-updates ON only)
   └─ check_for_updates_silent → version available?
        ├─ No  → UI shows "Updated ✓"
        └─ Yes → download_update (background, no dialogs)
             ├─ Success → UI: "Restart to Update" button + menu item text changes
             └─ Error   → logged to console, UI unchanged
+
+Button / Menu click (both modes)
+  └─ check_for_updates_dialog → native dialog flow
+       ├─ Check fails → "No Updates Available" dialog (error logged)
+       ├─ No update   → "No Updates Available" dialog
+       └─ Update found → download → "Restart now?" dialog
 ```
 
 ## Signing Keys
@@ -61,7 +81,7 @@ The CI build uses these to sign the `.tar.gz` update artifact. The app verifies 
    - `.dmg` — the installer for new users
    - `.tar.gz` + `.tar.gz.sig` — the signed update bundle
    - `latest.json` — the update manifest pointing to the `.tar.gz`
-6. Users running older versions will see the update on next app start or when checking manually
+6. Users running older versions will see the update on next app start (if auto-updates ON) or when checking manually
 
 ### Beta / Pre-release
 
@@ -86,9 +106,7 @@ Each release has a direct URL too: `/releases/download/v0.10.0-beta.1/latest.jso
 
 ### Dev mode behavior
 
-**Updates are disabled during `pnpm tauri dev`.** The frontend composable (`use-app-update.ts`) skips all update checks and downloads when `import.meta.env.DEV` is true. No network requests are made, no errors appear in the console. The Settings UI shows the default "Updated" state.
-
-This is intentional — the updater endpoint requires a **public** GitHub repository and **signed production builds**, neither of which apply during local development.
+The silent auto-check (`checkSilently`) is **skipped during `pnpm tauri dev`** — the `import.meta.env.DEV` guard prevents background update checks. However, the **manual check button** (`onCheckForUpdates`) works in dev mode and will trigger the native dialog flow (which will fail with a logged error since no release endpoint is available).
 
 ### Testing the real update flow
 
@@ -104,10 +122,10 @@ To test the full update experience (check → download → "Restart to Update"):
 
 | File | Role |
 |---|---|
-| `src-tauri/src/updater.rs` | Rust module: silent check, silent download, restart command, menu-initiated flow with native dialogs |
-| `src/lib/use-app-update.ts` | Vue composable: reactive state (checking → downloading → ready), auto-check + auto-download on start (disabled in dev) |
-| `src/components/SettingsView.vue` | UI: inline status + "Check for Updates" / "Restart to Update" button |
-| `src-tauri/src/menu_translations.rs` | Menu label translations including "Restart to Update" |
+| `src-tauri/src/updater.rs` | Rust module: silent check, native dialog flow, menu text updates, `autoUpdates` setting reader |
+| `src/lib/use-app-update.ts` | Vue composable: reactive state (checking → downloading → ready), auto-check on start (auto-updates only), manual check via native dialog |
+| `src/components/SettingsView.vue` | UI: update description + action button, auto-updates toggle |
+| `src-tauri/src/menu_translations.rs` | Menu label translations including "Checking for Updates…", "Downloading Update…", "Restart to Update" |
 | `src-tauri/tauri.conf.json` | Updater config: endpoint URL, public key, `createUpdaterArtifacts` |
 | `src-tauri/Entitlements.plist` | macOS entitlement: `com.apple.security.network.client` for downloads |
 | `.github/workflows/release.yml` | CI: builds, signs artifacts, generates `latest.json`, uploads to release |

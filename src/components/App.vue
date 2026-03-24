@@ -50,7 +50,7 @@ watch(
 
 const { activeView, setActiveView } = useAppViews(mainContentRef)
 const { isChecking, isDownloading, availableVersion, updateReady, onCheckForUpdates } =
-   useAppUpdate()
+   useAppUpdate(settingsStore.settings.value.autoUpdates)
 
 const { systemInfo } = await useSystemInfo()
 const { isFdaGranted } = await useFullDiskAccess()

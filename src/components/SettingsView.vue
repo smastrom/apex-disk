@@ -29,7 +29,7 @@ import { APP_VERSION } from '@/lib/constants'
 
 import type { Language, ThemeColor } from '@/types/settings'
 
-defineProps<{
+const props = defineProps<{
    isFdaGranted: boolean
    isChecking: boolean
    isDownloading: boolean
@@ -69,6 +69,18 @@ const themeOptions = computed(() => [
    { value: 'macos-light' as ThemeColor, label: t('SettingsView', 'themeMacosLight') },
 ])
 
+/**
+ * Resolves the software update action button label from the current update state.
+ */
+const updateActionLabel = computed(() => {
+   if (props.isChecking) return t('SettingsView', 'updateChecking')
+   if (props.isDownloading) return t('SettingsView', 'updateDownloading')
+   if (props.updateReady) return t('SettingsView', 'updateRestartButton')
+   if (props.availableVersion) return t('SettingsView', 'updateInstallButton')
+
+   return t('SettingsView', 'updateCheckButton')
+})
+
 function toggleHiddenFiles() {
    store.setShowHiddenFiles(!settings.value.showHiddenFiles)
 }
@@ -79,6 +91,10 @@ function toggleUnder1Kb() {
 
 function toggleZeroByte() {
    store.setShowZeroByte(!settings.value.showZeroByte)
+}
+
+function toggleAutoUpdates() {
+   store.setAutoUpdates(!settings.value.autoUpdates)
 }
 
 async function openSystemSettings() {
@@ -242,47 +258,16 @@ async function openSystemSettings() {
 
          <section class="SettingsGroup">
             <div class="SettingsGroup-row SettingsGroup-row--canWrap">
-               <span class="SettingsGroup-label">{{ t('SettingsView', 'updateLabel') }}</span>
-               <span
-                  class="SettingsView-updateStatus"
-                  :class="
+               <div class="SettingsGroup-labelWrapper">
+                  <span class="SettingsGroup-label">{{ t('SettingsView', 'updateLabel') }}</span>
+                  <span class="SettingsView-labelDesc">{{
                      updateReady
-                        ? 'SettingsView-updateStatus--available'
+                        ? t('SettingsView', 'updateReadyDesc')
                         : availableVersion
-                          ? 'SettingsView-updateStatus--available'
-                          : 'SettingsView-updateStatus--ok'
-                  "
-               >
-                  <PhArrowCircleUp
-                     v-if="updateReady || availableVersion"
-                     :size="13"
-                     weight="fill"
-                     aria-hidden="true"
-                  />
-                  <PhCheckCircle v-else :size="13" weight="fill" aria-hidden="true" />
-                  {{
-                     isChecking
-                        ? t('SettingsView', 'updateChecking')
-                        : isDownloading
-                          ? t('SettingsView', 'updateDownloading')
-                          : updateReady && availableVersion
-                            ? availableVersion
-                            : availableVersion
-                              ? availableVersion
-                              : t('SettingsView', 'updateUpToDateBadge')
-                  }}
-               </span>
-            </div>
-            <p class="SettingsView-updateDesc">
-               {{
-                  updateReady
-                     ? t('SettingsView', 'updateReadyDesc')
-                     : availableVersion
-                       ? t('SettingsView', 'updateAvailable', { version: availableVersion })
-                       : t('SettingsView', 'updateUpToDate', { version: APP_VERSION })
-               }}
-            </p>
-            <div class="SettingsView-updateControls">
+                          ? t('SettingsView', 'updateAvailable', { version: availableVersion })
+                          : t('SettingsView', 'updateUpToDate', { version: APP_VERSION })
+                  }}</span>
+               </div>
                <button
                   type="button"
                   class="SettingsView-fdaBtn"
@@ -291,22 +276,40 @@ async function openSystemSettings() {
                   @click="emit('check-for-updates')"
                >
                   <PhArrowClockwise
-                     v-if="!updateReady"
+                     v-if="!updateReady && !availableVersion"
                      :size="13"
                      weight="fill"
                      aria-hidden="true"
                      :class="{ 'SettingsView-spinning': isChecking || isDownloading }"
                   />
-                  <PhArrowCircleUp v-else :size="13" weight="fill" aria-hidden="true" />
-                  {{
-                     isChecking
-                        ? t('SettingsView', 'updateChecking')
-                        : isDownloading
-                          ? t('SettingsView', 'updateDownloading')
-                          : updateReady
-                            ? t('SettingsView', 'updateRestartButton')
-                            : t('SettingsView', 'updateCheckButton')
-                  }}
+                  <PhArrowCircleUp
+                     v-else-if="updateReady || availableVersion"
+                     :size="13"
+                     weight="fill"
+                     aria-hidden="true"
+                  />
+                  {{ updateActionLabel }}
+               </button>
+            </div>
+            <div class="SettingsGroup-row">
+               <div class="SettingsGroup-labelWrapper">
+                  <span id="label-auto-updates" class="SettingsGroup-label">{{
+                     t('SettingsView', 'autoUpdatesLabel')
+                  }}</span>
+                  <span class="SettingsView-labelDesc">{{
+                     t('SettingsView', 'autoUpdatesDesc')
+                  }}</span>
+               </div>
+               <button
+                  type="button"
+                  role="switch"
+                  class="SettingsToggle"
+                  :class="{ 'SettingsToggle--on': settings.autoUpdates }"
+                  :aria-checked="settings.autoUpdates"
+                  aria-labelledby="label-auto-updates"
+                  @click="toggleAutoUpdates"
+               >
+                  <span class="SettingsToggle-knob" aria-hidden="true" />
                </button>
             </div>
          </section>
@@ -419,35 +422,9 @@ async function openSystemSettings() {
 }
 
 /* Update row */
-.SettingsView-updateStatus {
-   display: flex;
-   align-items: center;
-   gap: 5px;
-   font-size: var(--font-size-base);
-   font-weight: 500;
-}
-
-.SettingsView-updateStatus--ok {
-   color: var(--color-success, #22c55e);
-}
-
-.SettingsView-updateStatus--available {
-   color: var(--color-accent);
-}
-
-.SettingsView-updateDesc {
-   margin: 0;
-   padding: var(--spacing-md) var(--spacing-lg);
+.SettingsView-labelDesc {
    font-size: var(--font-size-sm);
    color: var(--color-text-muted);
-}
-
-.SettingsView-updateControls {
-   display: flex;
-   justify-content: space-between;
-   gap: 6px;
-   padding: 0 var(--spacing-lg);
-   margin-bottom: var(--spacing-md);
 }
 
 .SettingsView-spinning {

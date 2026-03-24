@@ -11,4 +11,5 @@ export interface AppSettings {
    showHiddenFiles: boolean
    showUnder1Kb: boolean
    showZeroByte: boolean
+   autoUpdates: boolean
 }
