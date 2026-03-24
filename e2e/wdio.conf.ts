@@ -46,6 +46,10 @@ export const config = {
          cwd: path.join(rootDir, 'src-tauri'),
          stdio: ['ignore', 'pipe', 'pipe'],
          detached: process.platform !== 'win32',
+         env: {
+            ...process.env,
+            E2E_FDA: process.env.E2E_FDA || 'false',
+         },
       })
 
       appProcess.on('error', (err) => {

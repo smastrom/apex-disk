@@ -45,12 +45,12 @@ objc2-foundation = { version = "0.3", features = [
 ] }
 objc2-app-kit = { version = "0.3", features = ["NSAlert", "NSImage", "NSButton"] }
 tauri-plugin-webdriver = { version = "0.2", optional = true }
+tempfile = { version = "3", optional = true }
 sys-locale = "0.1"
 
 [features]
 default = []
-e2e = ["tauri-plugin-webdriver"]
-
+e2e = ["tauri-plugin-webdriver", "dep:tempfile"]
 
 [dev-dependencies]
 tempfile = "3"

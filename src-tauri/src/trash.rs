@@ -65,6 +65,7 @@ pub fn trash_paths_sync_with_home(home: &Path, items: Vec<TrashPathItem>) -> Tra
     TrashResult { count, size }
 }
 
+#[cfg(not(feature = "e2e"))]
 fn trash_paths_sync(items: Vec<TrashPathItem>) -> TrashResult {
     let home = match dirs::home_dir() {
         Some(h) => h,
@@ -75,12 +76,55 @@ fn trash_paths_sync(items: Vec<TrashPathItem>) -> TrashResult {
 
 /// Tauri command: runs trashing on a blocking task so the UI stays responsive.
 /// Returns the real count and size of successfully trashed items.
+///
+/// In e2e mode, returns a mock result without actually moving files to Trash.
+/// Controlled by `E2E_TRASH_MODE` (set at runtime via `set_e2e_trash_mode` command):
+/// - `"success"` (default): returns the real count/size as if trashing succeeded
+/// - `"zero"`: returns `{ count: 0, size: 0 }` (simulates all items failing)
+/// - `"error"`: returns `Err(...)` (simulates invoke failure)
 #[tauri::command]
 pub async fn trash_paths(
     _app: tauri::AppHandle,
     items: Vec<TrashPathItem>,
 ) -> Result<TrashResult, String> {
-    tauri::async_runtime::spawn_blocking(move || trash_paths_sync(items))
-        .await
-        .map_err(|e| e.to_string())
+    #[cfg(feature = "e2e")]
+    {
+        let mode = E2E_TRASH_MODE.lock().unwrap().clone();
+        return match mode.as_str() {
+            "zero" => Ok(TrashResult { count: 0, size: 0 }),
+            "error" => Err("E2E simulated trash error".to_string()),
+            _ => {
+                // "success": return optimistic values as if everything was trashed
+                let count = items.len();
+                let size = items.iter().map(|i| i.size).sum();
+                Ok(TrashResult { count, size })
+            }
+        };
+    }
+
+    #[cfg(not(feature = "e2e"))]
+    {
+        tauri::async_runtime::spawn_blocking(move || trash_paths_sync(items))
+            .await
+            .map_err(|e| e.to_string())
+    }
+}
+
+/// Global trash mode for e2e tests. Defaults to "success".
+#[cfg(feature = "e2e")]
+static E2E_TRASH_MODE: std::sync::Mutex<String> = std::sync::Mutex::new(String::new());
+
+/// Tauri command: sets the e2e trash mock mode at runtime.
+/// Callable from tests via `window.__TAURI__.core.invoke('set_e2e_trash_mode', { mode })`.
+#[cfg(feature = "e2e")]
+#[tauri::command]
+pub fn set_e2e_trash_mode(mode: String) -> Result<(), String> {
+    let valid = ["success", "zero", "error"];
+    if !valid.contains(&mode.as_str()) {
+        return Err(format!(
+            "Invalid trash mode: {mode}. Must be one of: {valid:?}"
+        ));
+    }
+    *E2E_TRASH_MODE.lock().unwrap() = mode;
+    Ok(())
 }

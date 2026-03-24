@@ -2,9 +2,11 @@
 //!
 //! Pure Rust port of <https://github.com/inket/FullDiskAccess>.
 
+#[cfg(not(feature = "e2e"))]
 use std::process::Command;
 
 /// Returns the macOS major version (e.g. 12 for Monterey, 14 for Sonoma).
+#[cfg(not(feature = "e2e"))]
 fn macos_major_version() -> Option<u32> {
     let output = Command::new("sw_vers")
         .arg("-productVersion")
@@ -19,6 +21,9 @@ fn macos_major_version() -> Option<u32> {
 /// - Returns `false` if running inside an App Sandbox (FDA is never granted to sandboxed apps).
 /// - On Monterey (12) and later, probes `~/Library/Containers/com.apple.stocks`.
 /// - On Catalina (10.15) through Big Sur (11), probes `~/Library/Safari`.
+///
+/// In e2e mode, reads `E2E_FDA` env var instead of probing the filesystem.
+#[cfg(not(feature = "e2e"))]
 pub fn is_full_disk_access_granted() -> bool {
     // Sandboxed apps cannot have FDA.
     if std::env::var_os("APP_SANDBOX_CONTAINER_ID").is_some() {
@@ -40,6 +45,13 @@ pub fn is_full_disk_access_granted() -> bool {
     };
 
     std::fs::read_dir(probe_dir).is_ok()
+}
+
+#[cfg(feature = "e2e")]
+pub fn is_full_disk_access_granted() -> bool {
+    std::env::var("E2E_FDA")
+        .map(|v| v == "true")
+        .unwrap_or(false)
 }
 
 /// Tauri command: checks whether the app has Full Disk Access.
