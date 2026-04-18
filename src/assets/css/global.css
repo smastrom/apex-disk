@@ -54,32 +54,5 @@ html.focus-ring-keyboard [tabindex='0']:focus {
    outline: none;
    box-shadow:
       0 0 0 var(--focus-ring-offset) var(--color-bg),
-      0 0 0 calc(var(--focus-ring-offset) + 3px) var(--color-accent-glow);
-}
-
-/* macOS-style overlay scrollbars */
-::-webkit-scrollbar {
-   width: 8px;
-   height: 8px;
-}
-
-::-webkit-scrollbar-track {
-   background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-   background: var(--color-scrollbar);
-   border-radius: 8px;
-   border: 2px solid transparent;
-   background-clip: padding-box;
-   transition: background 0.2s var(--ease-apple-out);
-}
-
-::-webkit-scrollbar-thumb:hover {
-   background: var(--color-scrollbar-hover);
-   background-clip: padding-box;
-}
-
-::-webkit-scrollbar-corner {
-   background: transparent;
+      0 0 0 calc(var(--focus-ring-offset) + 2px) var(--color-accent-glow);
 }

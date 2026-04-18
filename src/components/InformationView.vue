@@ -99,6 +99,7 @@ const props = defineProps<{
 .InformationView-root {
    flex: 1;
    overflow-y: auto;
+   overflow-y: overlay;
    padding: var(--spacing-lg) var(--spacing-md);
    background: var(--color-bg);
 }

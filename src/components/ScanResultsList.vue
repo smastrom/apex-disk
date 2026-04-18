@@ -569,6 +569,7 @@ function onCancel() {
 
 .ScanResultsList-listScroll {
    overflow: auto;
+   overflow: overlay;
 }
 
 .ScanResultsList-listInner {

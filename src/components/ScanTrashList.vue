@@ -367,6 +367,7 @@ async function onTrashClick() {
 
 .ScanTrashList-listScroll {
    overflow: auto;
+   overflow: overlay;
 }
 
 .ScanTrashList-listInner {
