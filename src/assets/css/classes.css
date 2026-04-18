@@ -17,7 +17,10 @@
 /* ── Popover styles ── */
 
 .Popover {
-   position: fixed;
+   position: absolute;
+   top: 0;
+   left: 0;
+   z-index: 100;
    margin: 0;
    padding: 6px 10px;
    max-width: 420px;
@@ -32,10 +35,7 @@
    line-height: 1.4;
    word-break: break-all;
    box-shadow: var(--shadow-md);
-   transform: translateY(-100%);
-   pointer-events: auto;
-
-   /* Closed state (for the transition) */
+   pointer-events: none;
    opacity: 0;
    filter: blur(4px);
    transition:
@@ -43,16 +43,10 @@
       filter 0.2s var(--ease-apple-out);
 }
 
-.Popover:popover-open {
+.Popover.is-open {
    opacity: 1;
    filter: blur(0);
-}
-
-@starting-style {
-   .Popover:popover-open {
-      opacity: 0;
-      filter: blur(4px);
-   }
+   pointer-events: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -169,7 +163,6 @@
       box-shadow 0.2s var(--ease-apple-out);
    outline: none;
    border: none;
-   /* border: 1px solid var(--color-hairline); */
 }
 
 .SettingsSelect:hover {

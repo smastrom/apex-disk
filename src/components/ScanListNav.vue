@@ -142,15 +142,17 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
          </button>
       </div>
    </nav>
-   <div
-      ref="pathPopoverRef"
-      popover="manual"
-      class="Popover"
-      @pointerenter="onPointerEnter"
-      @pointerleave="onPointerLeave"
-   >
-      {{ pathTitle || pathLabel }}
-   </div>
+   <Teleport to="body">
+      <div
+         ref="pathPopoverRef"
+         class="Popover"
+         role="tooltip"
+         @pointerenter="onPointerEnter"
+         @pointerleave="onPointerLeave"
+      >
+         {{ pathTitle || pathLabel }}
+      </div>
+   </Teleport>
 </template>
 
 <style scoped>

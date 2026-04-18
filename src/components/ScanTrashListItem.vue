@@ -90,24 +90,26 @@ const { onPointerEnter: onPathPointerEnter, onPointerLeave: onPathPointerLeave }
          >
       </div>
       <span class="ScanTrashListItem-size">{{ formatBytes(item.size) }}</span>
-      <div
-         ref="popoverRef"
-         popover="manual"
-         class="Popover"
-         @pointerenter="onPointerEnter"
-         @pointerleave="onPointerLeave"
-      >
-         {{ item.name }}
-      </div>
-      <div
-         ref="pathPopoverRef"
-         popover="manual"
-         class="Popover"
-         @pointerenter="onPathPointerEnter"
-         @pointerleave="onPathPointerLeave"
-      >
-         {{ displayPath(item.path) }}
-      </div>
+      <Teleport to="body">
+         <div
+            ref="popoverRef"
+            class="Popover"
+            role="tooltip"
+            @pointerenter="onPointerEnter"
+            @pointerleave="onPointerLeave"
+         >
+            {{ item.name }}
+         </div>
+         <div
+            ref="pathPopoverRef"
+            class="Popover"
+            role="tooltip"
+            @pointerenter="onPathPointerEnter"
+            @pointerleave="onPathPointerLeave"
+         >
+            {{ displayPath(item.path) }}
+         </div>
+      </Teleport>
    </div>
 </template>
 

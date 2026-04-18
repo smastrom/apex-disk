@@ -27,6 +27,14 @@ ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for 
 
 ## Code conventions
 
+### Comments
+- Default to no comments. Code must be readable and clean; comments support code, they do not drive it.
+- Only add a comment when the WHY is non-obvious (workaround, subtle invariant, surprising behavior, version constraint, etc.).
+- Do not restate what well-named code already says (e.g. `// Walk up to find the nearest scrollable ancestor` above an obvious loop).
+- Do not write library-introduction or rationale chatter (e.g. "Positioning via @floating-ui/dom" — the import says that).
+- No commented-out code. Delete it.
+- If a function needs a paragraph to explain it, prefer renaming or splitting it instead.
+
 ### File naming
 - `.vue`: PascalCase (`ScanResultsList.vue`)
 - `.ts`: kebab-case (`use-scanner.ts`), except component-coupled files (PascalCase, e.g. `ScanResultsListItem.ts`)

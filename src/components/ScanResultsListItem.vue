@@ -44,23 +44,15 @@ const emit = defineEmits<{
    (e: 'navigate'): void
 }>()
 
-/** Determines the selection state for the SelectionIcon component. */
 const selectionState = computed(() => {
    if (props.isSelected) return 'selected'
    if (props.isSomeSelected) return 'partial'
    return 'empty'
 })
 
-/** True when the checkbox is fully disabled (not selectable and not deselect-only). */
 const isCheckDisabled = computed(() => !props.isSelectable)
 
-/**
- * Press / drag tracking. The row emits `navigate` only on a clean click;
- * if the pointer moves more than DRAG_THRESHOLD_PX between down and up,
- * or the user released with an active text selection, the click is
- * treated as a drag-to-select and swallowed. `isPressing` drives the
- * press animation so that only bona-fide clicks trigger the scale/fill.
- */
+/** Suppress click-to-navigate when the pointer drags far enough to read as a text selection. */
 const isPressing = ref(false)
 const DRAG_THRESHOLD_PX = 4
 let pressStartX = 0
@@ -117,7 +109,6 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRe
 const store = useAppSettings()
 const currentLanguage = store.settings.value.language
 
-// Simple tooltip for checkbox (not dependent on text truncation)
 const showCheckboxTooltip = ref(false)
 let checkboxTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -126,31 +117,22 @@ function onCheckboxPointerEnter() {
    checkboxTimer = setTimeout(() => {
       showCheckboxTooltip.value = true
 
-      // Position the popover relative to the checkbox with viewport clamping
       const trigger = checkboxTriggerRef.value
       const popover = checkboxPopoverRef.value
       if (trigger && popover) {
          const rect = trigger.getBoundingClientRect()
          const EDGE_MARGIN = 16
 
-         // Set initial position
          popover.style.left = `${rect.left}px`
          popover.style.top = `${rect.top - 4}px`
-
-         // Clamp to viewport
-         const maxWidth = window.innerWidth - EDGE_MARGIN * 2
-         popover.style.maxWidth = `${maxWidth}px`
+         popover.style.maxWidth = `${window.innerWidth - EDGE_MARGIN * 2}px`
 
          const popoverRect = popover.getBoundingClientRect()
          const maxLeft = window.innerWidth - EDGE_MARGIN - popoverRect.width
-         const left = Math.max(EDGE_MARGIN, Math.min(rect.left, maxLeft))
-
-         popover.style.left = `${left}px`
+         popover.style.left = `${Math.max(EDGE_MARGIN, Math.min(rect.left, maxLeft))}px`
       }
 
       popover?.showPopover()
-
-      // Add scroll listener to dismiss when scrolling
       addCheckboxScrollListener()
    }, 400)
 }
@@ -159,7 +141,6 @@ function addCheckboxScrollListener() {
    const trigger = checkboxTriggerRef.value
    if (!trigger) return
 
-   // Walk up to find the nearest scrollable ancestor
    let ancestor: HTMLElement | null = trigger.parentElement
    while (ancestor) {
       const { overflow, overflowY } = getComputedStyle(ancestor)
