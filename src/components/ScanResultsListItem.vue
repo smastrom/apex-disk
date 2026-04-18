@@ -262,10 +262,12 @@ function dismissCheckboxTooltip() {
             aria-hidden="true"
          />
       </div>
+   </div>
+   <Teleport to="body">
       <div
          ref="popoverRef"
-         popover="manual"
          class="Popover"
+         role="tooltip"
          @pointerenter="onPointerEnter"
          @pointerleave="onPointerLeave"
       >
@@ -283,7 +285,7 @@ function dismissCheckboxTooltip() {
                : t('ScanResultsListItem', 'protectedTooltip')
          }}
       </div>
-   </div>
+   </Teleport>
 </template>
 
 <style scoped>
