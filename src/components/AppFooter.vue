@@ -62,14 +62,17 @@ const { t } = useTranslations()
 
 <style scoped>
 .AppFooter-root {
+   position: relative;
    height: var(--footer-height);
    display: flex;
    align-items: center;
    padding: 0;
-   background: var(--color-bg-elevated);
+   background: var(--color-chrome);
+   -webkit-backdrop-filter: saturate(180%) blur(30px);
+   backdrop-filter: saturate(180%) blur(30px);
    flex-shrink: 0;
-   border-top: 1px solid var(--color-bg);
-   box-shadow: 0 -1px 12px var(--color-bg);
+   border-top: 1px solid var(--color-chrome-border);
+   z-index: 2;
 }
 
 .AppFooter-btn {
@@ -81,13 +84,18 @@ const { t } = useTranslations()
    gap: var(--spacing-xs);
    padding: var(--spacing-sm);
    color: var(--color-text-muted);
-   border-radius: 8px;
+   border-radius: var(--radius-sm);
    transition:
-      color 0.2s var(--ease-standard),
-      text-shadow 0.3s var(--ease-standard);
+      color 0.2s var(--ease-apple-out),
+      transform 0.15s var(--ease-apple-out),
+      text-shadow 0.3s var(--ease-apple-out);
 
    &:hover {
       color: var(--color-text);
+   }
+
+   &:active {
+      transform: scale(0.96);
    }
 
    > span:not(.AppFooter-iconWrap) {

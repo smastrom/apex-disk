@@ -150,20 +150,23 @@ const elapsedDisplay = computed(() => {
 .ScanProgress-barWrap {
    position: relative;
    width: 100%;
-   height: 6px;
-   border-radius: 3px;
+   height: 8px;
+   border-radius: 4px;
    overflow: hidden;
    background: var(--color-surface);
-   border: 1px solid var(--color-border);
+   box-shadow: inset 0 0.5px 1px rgba(0, 0, 0, 0.24);
 }
 
 .ScanProgress-barMain {
    width: 100%;
    height: 100%;
    transform-origin: left;
-   background: var(--color-accent);
-   border-radius: 3px;
-   transition: transform 0.3s var(--ease-out);
+   background: linear-gradient(90deg, var(--btn-gradient-0) 0%, var(--btn-gradient-100) 100%);
+   border-radius: 4px;
+   box-shadow:
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.3),
+      0 0 8px var(--color-accent-glow);
+   transition: transform 0.3s var(--ease-apple-out);
 }
 
 .ScanProgress-stats {
@@ -171,9 +174,10 @@ const elapsedDisplay = computed(() => {
    flex-direction: column;
    gap: var(--spacing-xs);
    padding: var(--spacing-md);
-   border: 1px solid var(--color-border);
-   border-radius: 8px;
+   border: 1px solid var(--color-hairline);
+   border-radius: var(--radius-lg);
    background: var(--color-bg-elevated);
+   box-shadow: var(--shadow-sm);
 
    p {
       display: flex;
@@ -220,9 +224,16 @@ const elapsedDisplay = computed(() => {
    border: none;
    cursor: pointer;
    margin-top: var(--spacing-md);
+   transition:
+      opacity 0.15s var(--ease-apple-out),
+      transform 0.12s var(--ease-apple-out);
 
    &:hover {
       opacity: 0.75;
+   }
+
+   &:active {
+      transform: scale(0.97);
    }
 }
 </style>

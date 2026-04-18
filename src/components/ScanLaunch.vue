@@ -59,10 +59,11 @@ const { t } = useTranslations()
 }
 
 .ScanLaunch-notice {
-   border: 1px solid var(--color-border);
-   border-radius: 8px;
+   border: 1px solid var(--color-hairline);
+   border-radius: var(--radius-lg);
    padding: var(--spacing-md);
    background: var(--color-bg-elevated);
+   box-shadow: var(--shadow-sm);
 }
 
 .ScanLaunch-noticeTitle {
@@ -73,6 +74,11 @@ const { t } = useTranslations()
    font-size: var(--font-size-base);
    font-weight: 600;
    color: var(--color-text-muted);
+}
+
+.ScanLaunch-noticeTitle :deep(svg) {
+   color: var(--color-accent-alt);
+   filter: drop-shadow(0 0 4px var(--color-accent-alt-glow));
 }
 
 .ScanLaunch-noticeBody {

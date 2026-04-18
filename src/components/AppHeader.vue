@@ -23,15 +23,18 @@ import { APP_NAME } from '@/lib/constants'
 
 <style scoped>
 .AppHeader-root {
+   position: relative;
    height: var(--header-height);
    display: flex;
    align-items: center;
    justify-content: center;
    padding: 0 var(--spacing-md);
-   background: var(--color-bg-elevated);
+   background: var(--color-chrome);
+   -webkit-backdrop-filter: saturate(180%) blur(30px);
+   backdrop-filter: saturate(180%) blur(30px);
    flex-shrink: 0;
-   border-bottom: 1px solid var(--color-bg);
-   box-shadow: 0 1px 12px var(--color-bg);
+   border-bottom: 1px solid var(--color-chrome-border);
+   z-index: 2;
 }
 
 .AppHeader-inner {
