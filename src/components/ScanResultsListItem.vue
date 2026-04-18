@@ -54,6 +54,59 @@ const selectionState = computed(() => {
 /** True when the checkbox is fully disabled (not selectable and not deselect-only). */
 const isCheckDisabled = computed(() => !props.isSelectable)
 
+/**
+ * Press / drag tracking. The row emits `navigate` only on a clean click;
+ * if the pointer moves more than DRAG_THRESHOLD_PX between down and up,
+ * or the user released with an active text selection, the click is
+ * treated as a drag-to-select and swallowed. `isPressing` drives the
+ * press animation so that only bona-fide clicks trigger the scale/fill.
+ */
+const isPressing = ref(false)
+const DRAG_THRESHOLD_PX = 4
+let pressStartX = 0
+let pressStartY = 0
+let hasPressStart = false
+
+function onRootPointerDown(e: PointerEvent) {
+   if (props.item.is_file) return
+   if (e.button !== 0) return
+   pressStartX = e.clientX
+   pressStartY = e.clientY
+   hasPressStart = true
+   isPressing.value = true
+}
+
+function onRootPointerMove(e: PointerEvent) {
+   if (!hasPressStart) return
+   const dx = Math.abs(e.clientX - pressStartX)
+   const dy = Math.abs(e.clientY - pressStartY)
+   if (dx > DRAG_THRESHOLD_PX || dy > DRAG_THRESHOLD_PX) {
+      isPressing.value = false
+   }
+}
+
+function onRootPointerEnd() {
+   isPressing.value = false
+}
+
+function onRootClick(e: MouseEvent) {
+   if (props.item.is_file) return
+   if (hasPressStart) {
+      const dx = Math.abs(e.clientX - pressStartX)
+      const dy = Math.abs(e.clientY - pressStartY)
+      hasPressStart = false
+      if (dx > DRAG_THRESHOLD_PX || dy > DRAG_THRESHOLD_PX) return
+   }
+   const selection = window.getSelection()
+   if (selection && !selection.isCollapsed && selection.toString().trim().length > 0) return
+   emit('navigate')
+}
+
+function onRootNavigateKey() {
+   if (props.item.is_file) return
+   emit('navigate')
+}
+
 const triggerRef = useTemplateRef<HTMLElement>('triggerRef')
 const popoverRef = useTemplateRef<HTMLElement>('popoverRef')
 const checkboxTriggerRef = useTemplateRef<HTMLElement>('checkboxTriggerRef')
@@ -147,13 +200,19 @@ function dismissCheckboxTooltip() {
       :class="{
          'ScanResultsListItem-root--selected': isSelected,
          'ScanResultsListItem-root--folder': !item.is_file,
+         'ScanResultsListItem-root--pressing': isPressing,
       }"
       :role="!item.is_file ? 'button' : undefined"
       :tabindex="!item.is_file ? 0 : undefined"
       :data-testid="item.is_file ? 'results-row-file' : 'results-row-folder'"
-      @click="!item.is_file && emit('navigate')"
-      @keydown.enter="!item.is_file && emit('navigate')"
-      @keydown.space.prevent="!item.is_file && emit('navigate')"
+      @click="onRootClick"
+      @pointerdown="onRootPointerDown"
+      @pointermove="onRootPointerMove"
+      @pointerup="onRootPointerEnd"
+      @pointercancel="onRootPointerEnd"
+      @pointerleave="onRootPointerEnd"
+      @keydown.enter="onRootNavigateKey"
+      @keydown.space.prevent="onRootNavigateKey"
    >
       <button
          ref="checkboxTriggerRef"
@@ -170,6 +229,7 @@ function dismissCheckboxTooltip() {
          :disabled="isCheckDisabled"
          :aria-disabled="isCheckDisabled"
          @click.stop="!isCheckDisabled && emit('select')"
+         @pointerdown.stop
          @pointerenter="isCheckDisabled && onCheckboxPointerEnter()"
          @pointerleave="isCheckDisabled && onCheckboxPointerLeave()"
       >
@@ -254,12 +314,16 @@ function dismissCheckboxTooltip() {
    height: 64px;
    min-height: 64px;
    margin: calc(var(--spacing-sm) / 2) var(--spacing-sm);
-   border-radius: 8px;
+   border-radius: var(--radius-md);
    box-sizing: border-box;
-   transition: background 0.2s var(--ease-standard);
+   background: var(--color-row-idle);
+   transition:
+      background 0.18s var(--ease-apple-out),
+      transform 0.12s var(--ease-apple-out),
+      box-shadow 0.2s var(--ease-apple-out);
 
    &:hover {
-      background: var(--color-accent-bg-hover);
+      background: var(--color-row-hover);
    }
 }
 
@@ -268,15 +332,30 @@ function dismissCheckboxTooltip() {
 }
 
 .ScanResultsListItem-root--selected {
-   background: var(--color-accent-bg);
+   background: var(--color-row-selected);
 
    &:hover {
-      background: var(--color-accent-bg);
+      background: var(--color-row-selected-hover);
+   }
+}
+
+/* JS-driven press state — only set on clean clicks (pointer didn't drag
+ * and release didn't land on the checkbox). Works on all supported
+ * macOS versions; the previous :has()-based rule required Safari 15.4+. */
+.ScanResultsListItem-root--folder.ScanResultsListItem-root--pressing {
+   transform: scale(0.992);
+   background: var(--color-row-press);
+}
+
+@media (prefers-reduced-motion: reduce) {
+   .ScanResultsListItem-root--folder.ScanResultsListItem-root--pressing {
+      transform: none;
    }
 }
 
 .ScanResultsListItem-check {
    flex-shrink: 0;
+   align-self: stretch;
    display: flex;
    align-items: center;
    justify-content: center;
@@ -365,20 +444,22 @@ function dismissCheckboxTooltip() {
    margin: 0;
    padding: var(--spacing-sm) var(--spacing-md);
    max-width: 280px;
-   border: 1px solid var(--color-border);
-   border-radius: 6px;
-   background: var(--color-bg-elevated);
+   border: 1px solid var(--color-chrome-border);
+   border-radius: var(--radius-sm);
+   background: var(--color-chrome);
+   -webkit-backdrop-filter: saturate(180%) blur(30px);
+   backdrop-filter: saturate(180%) blur(30px);
    color: var(--color-text);
    font-size: var(--font-size-sm);
    font-weight: 500;
-   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+   box-shadow: var(--shadow-md);
    transform: translateY(-100%);
    pointer-events: auto;
    opacity: 0;
    filter: blur(4px);
    transition:
-      opacity 0.2s var(--ease-standard),
-      filter 0.2s var(--ease-standard);
+      opacity 0.2s var(--ease-apple-out),
+      filter 0.2s var(--ease-apple-out);
 }
 
 .ScanResultsListItem-checkboxPopover:popover-open {
