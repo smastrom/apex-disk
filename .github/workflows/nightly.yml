@@ -16,15 +16,15 @@ jobs:
 
       steps:
          - name: Checkout
-           uses: actions/checkout@v4
+           uses: actions/checkout@v6
 
          - name: Setup Node
-           uses: actions/setup-node@v4
+           uses: actions/setup-node@v6
            with:
               node-version: 22
 
          - name: Setup pnpm
-           uses: pnpm/action-setup@v4
+           uses: pnpm/action-setup@v5
 
          - name: Install frontend dependencies
            run: pnpm install
@@ -112,7 +112,7 @@ jobs:
                  RELEASES_NIGHTLY.md
 
          - name: Upload DMG and nightly notes
-           uses: actions/upload-artifact@v4
+           uses: actions/upload-artifact@v7
            with:
               name: ApexDisk-Nightly-${{ github.run_id }}
               path: |
