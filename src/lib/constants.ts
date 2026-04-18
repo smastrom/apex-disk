@@ -35,10 +35,11 @@ export const DEFAULT_LANGUAGE = 'en' as const
 /** Languages that use right-to-left script direction. */
 export const RTL_LANGUAGES: ReadonlySet<string> = new Set(['ar'])
 
-export const ROOT_THEME = 'apex' as const
+export const ROOT_THEME = 'core' as const
 /** Supported theme color presets. Single source of truth for theme IDs. */
 export const THEME_COLORS = [
    ROOT_THEME,
+   'apex',
    'apex-coral',
    'apex-ocean',
    'smastrom',
