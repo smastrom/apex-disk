@@ -14,8 +14,8 @@
          {
             "title": "ApexDisk",
             "hiddenTitle": true,
-            "width": 440,
-            "height": 840,
+            "width": 420,
+            "height": 800,
             "resizable": false,
             "fullscreen": false,
             "titleBarStyle": "Overlay",
