@@ -602,6 +602,7 @@ function onCancel() {
    border-top: 1px solid var(--color-bg);
    background: var(--color-bg-elevated);
    box-shadow: 0 -2px 16px var(--color-bg);
+   view-transition-name: scan-list-footer;
 }
 
 .ScanResultsList-moveToTrashBtn {

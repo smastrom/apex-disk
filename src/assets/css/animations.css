@@ -32,24 +32,24 @@
 
 @supports (view-transition-name: none) {
    ::view-transition-old(list-view) {
-      animation: 220ms var(--ease-standard) both vt-slide-out;
+      animation: 320ms var(--ease-apple) both vt-slide-out;
    }
 
    ::view-transition-new(list-view) {
-      animation: 220ms var(--ease-standard) both vt-slide-in;
+      animation: 320ms var(--ease-apple) both vt-slide-in;
    }
 
    @keyframes vt-slide-out {
       to {
          opacity: 0;
-         transform: translateX(calc(-24px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
+         transform: translateX(calc(-40px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
       }
    }
 
    @keyframes vt-slide-in {
       from {
          opacity: 0;
-         transform: translateX(calc(24px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
+         transform: translateX(calc(40px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
       }
    }
 
@@ -82,23 +82,23 @@
 
 @supports (view-transition-name: none) {
    ::view-transition-old(app-view) {
-      animation: 220ms var(--ease-standard) both vt-slide-out-app;
+      animation: 260ms var(--ease-apple) both vt-slide-out-app;
    }
 
    ::view-transition-new(app-view) {
-      animation: 220ms var(--ease-standard) both vt-slide-in-app;
+      animation: 260ms var(--ease-apple) both vt-slide-in-app;
    }
 
    @keyframes vt-slide-out-app {
       to {
-         transform: translateX(calc(-12px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
          opacity: 0;
+         transform: translateX(calc(-20px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
       }
    }
 
    @keyframes vt-slide-in-app {
       from {
-         transform: translateX(calc(12px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
+         transform: translateX(calc(20px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
          opacity: 0;
       }
    }
