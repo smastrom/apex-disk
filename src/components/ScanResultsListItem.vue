@@ -344,6 +344,7 @@ function dismissCheckboxTooltip() {
    justify-content: center;
    padding: 0;
    background: none;
+   border-radius: var(--radius-sm);
    border: none;
    cursor: pointer;
    color: var(--color-text-dim);
