@@ -65,31 +65,43 @@ macOS 10.15 Catalina ships with Safari 13.0. Users who update Catalina can reach
 
 ### 3. Verify CSS transpilation (lightningcss → Safari 13)
 
-In `vite.config.ts`, lightningcss is configured to target Safari 13:
+In `vite.config.ts`, lightningcss is wired in as both the CSS transformer and the minifier, targeting Safari 13:
 
 ```ts
+const safari13 = (13 << 16) | (0 << 8) | 0 // Safari 13.0.0
+
 css: {
    transformer: 'lightningcss',
    lightningcss: {
       targets: {
-         safari: (13 << 16) | (0 << 8) | 0, // Safari 13.0.0
+         safari: safari13,
       },
    },
+},
+
+build: {
+   target: 'safari13',
+   cssMinify: 'lightningcss',
+   ...
 },
 ```
 
 **What lightningcss handles** (transpiles or adds prefixes automatically):
 - CSS Nesting (`&` selector) → flattened to separate rules
+- `:has()` parent selector → preserved (no fallback possible) but emitted only where source uses it
+- Cascade layers (`@layer`) → flattened in source order
 - Vendor prefixes (`-webkit-`) → added where needed
-- Modern color functions → converted to compatible equivalents
-- Logical properties → converted to physical equivalents
+- Modern color functions (`color-mix()` with static operands, `oklch()`, etc.) → converted to compatible equivalents
+- Logical properties (`margin-inline`, `padding-block`, …) → converted to physical equivalents
 
-**What lightningcss does NOT handle** (browser APIs in CSS):
-- `:popover-open` pseudo-class (Safari 17+) — not a transpilable feature, it's a browser API
+**What lightningcss does NOT handle** (browser APIs or runtime-resolved values):
+- `:popover-open` pseudo-class (Safari 17+) — browser API, not transpilable
 - `@starting-style` (Safari 17.5+) — not transpilable
 - `::view-transition-*` pseudo-elements (Safari 18+) — not transpilable
+- `color-mix()` whose operands are CSS custom properties — passes through unchanged (cannot be resolved at build time)
+- `:has()` itself on Safari < 15.4 — emitted as-is and silently no-ops
 
-These browser API features degrade gracefully: they are behind `@supports` checks or are progressive enhancements (popovers, animations) that don't break core functionality.
+These features degrade gracefully: they are either behind `@supports` checks or are progressive enhancements (popovers, animations, hover styling) that do not break core functionality. The `:has()` selectors in the codebase are used for non-essential styling.
 
 To verify CSS output has no untranspilable modern syntax:
 
@@ -97,6 +109,8 @@ To verify CSS output has no untranspilable modern syntax:
 pnpm build
 # Check for CSS nesting (should be 0 — fully flattened):
 grep -c '&:' dist/assets/*.css
+# Check for cascade layers (should be 0 — flattened):
+grep -c '@layer' dist/assets/*.css
 ```
 
 ### 4. Verify JavaScript transpilation (Vite → Safari 13)
@@ -198,7 +212,10 @@ These CSS/Web API features are used but **only work on newer macOS** (they degra
 | Popover API (`:popover-open`) | 17.0 | Popover won't have CSS transitions |
 | `@starting-style` | 17.5 | No entry animations for popovers |
 | View Transitions API (`::view-transition-*`) | 18.0 | Wrapped in `@supports` — no transition animation |
+| `:has()` parent selector | 15.4 | Selector silently no-ops — affected styling is non-essential |
+| `color-mix()` with custom-property operands | 16.2 | Passes through unchanged — falls back to declared base color |
 | CSS Nesting | 17.2 | **Transpiled by lightningcss** — no issue |
+| Cascade Layers (`@layer`) | 15.4 | **Flattened by lightningcss** — no issue |
 
 ---
 
