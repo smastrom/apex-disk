@@ -1,0 +1,160 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+language: en-US
+tone_instructions: >-
+   Be direct and concise. Use imperative mood. Skip filler
+   and marketing language. Assume the reader is a competent
+   developer. State facts, not opinions.
+
+reviews:
+   profile: chill
+   sequence_diagrams: true
+   poem: false
+   auto_review:
+      enabled: true
+      drafts: false
+      auto_incremental_review: true
+      auto_pause_after_reviewed_commits: 0
+      ignore_title_keywords:
+         - 'WIP'
+         - 'DO NOT MERGE'
+      base_branches:
+         - main
+
+   # Never edit PR title or description. Reviews go in comments only.
+   high_level_summary: false
+   high_level_summary_placeholder: ''
+   auto_title_placeholder: ''
+   collapse_walkthrough: true
+
+   path_filters:
+      - '!pnpm-lock.yaml'
+      - '!src-tauri/Cargo.lock'
+      - '!src-tauri/gen/**'
+      - '!src-tauri/target/**'
+      - '!dist/**'
+
+   path_instructions:
+      - path: 'src-tauri/src/**'
+        instructions: |
+           Rust backend (Tauri v2). Pay close attention to:
+           - Memory safety and correctness (no unwrap/expect on user-driven
+             paths; prefer Result and explicit error types)
+           - Filesystem operations: never follow symlinks outside intended
+             scope; respect macOS SIP/protected paths and Full Disk Access
+             requirements. The `safe_folders` module enforces destructive-
+             operation guardrails — changes there need extra scrutiny.
+           - Tauri command surface (`#[tauri::command]`): validate all
+             frontend-supplied inputs at the boundary, never trust paths.
+           - Concurrency: scan uses rayon; check for data races, unbounded
+             channels, and work-cancellation behaviour when scans abort.
+           - Platform gating: objc2 / AppKit calls must be macOS-only and
+             autorelease-safe.
+      - path: 'src-tauri/tests/**'
+        instructions: |
+           Rust integration tests. Use real tempdirs (the `tempfile` crate)
+           rather than mocking the filesystem — prod divergence on mocked
+           fs has bitten this project before. Tests must be deterministic
+           and single-threaded-safe (suite runs with --test-threads=1).
+      - path: 'src/components/**'
+        instructions: |
+           Vue 3 components with `<script setup>` + TypeScript. Enforce:
+           - Composition API only (no Options API).
+           - Scoped styles; consume design tokens from
+             `src/assets/css/theme.css` rather than hard-coded colors.
+           - Accent / hue colors, element placement, and text copy are
+             considered stable — flag changes to any of them.
+           - Accessibility: aria labels, focus management, reduced-motion
+             handling (`@media (prefers-reduced-motion)` is respected
+             across the codebase).
+      - path: 'src/stores/**'
+        instructions: |
+           App-settings store is persisted via tauri-plugin-store. Any
+           schema change needs a migration path — existing users' stored
+           settings must keep working after upgrade.
+      - path: 'src/lib/**'
+        instructions: |
+           Frontend utilities and composables. `use-*.ts` files are Vue
+           composables — verify correct reactivity (refs vs. plain values),
+           cleanup on unmount, and that any Tauri invoke calls handle
+           rejection.
+      - path: 'src/assets/translations/**'
+        instructions: |
+           Translation files. When keys are added in one language, all
+           supported languages must be updated — missing keys fall back
+           silently and are hard to catch.
+      - path: 'src/assets/css/**'
+        instructions: |
+           Design tokens and shared styles. Keep accent/brand colors,
+           layout, and typography scale stable. Neutral palette, shadows,
+           radii, hairlines, and easing curves may evolve.
+      - path: 'e2e/**'
+        instructions: |
+           WebdriverIO end-to-end tests against a built Tauri binary.
+           Use the real backend (tests enable the `e2e` cargo feature
+           which wires `tauri-plugin-webdriver` and real tempdir
+           fixtures) — do not mock commands.
+      - path: 'src-tauri/tauri.conf.json'
+        instructions: |
+           Changing window flags, bundle identifier, updater endpoint,
+           entitlements, or capabilities has release / signing / auto-
+           update implications. Call out any field change explicitly.
+      - path: 'src-tauri/capabilities/**'
+        instructions: |
+           Tauri v2 capability files grant the frontend access to
+           commands and plugins. Widen permissions only with explicit
+           justification — this is the app's security boundary.
+      - path: '.github/workflows/**'
+        instructions: |
+           Release (`release.yml`) and nightly (`nightly.yml`) workflows
+           handle code signing, notarization, and updater artifact
+           generation. Breaking these ships broken updates to users.
+           Ensure pinned action versions and secret handling are intact.
+
+   tools:
+      eslint:
+         enabled: false
+      biome:
+         enabled: false
+      markdownlint:
+         enabled: true
+      actionlint:
+         enabled: true
+      gitleaks:
+         enabled: true
+
+   finishing_touches:
+      docstrings:
+         enabled: false
+      unit_tests:
+         enabled: false
+      simplify:
+         enabled: false
+
+chat:
+   auto_reply: false
+   allow_non_org_members: false
+
+code_generation:
+   unit_tests:
+      path_instructions:
+         - path: 'src-tauri/tests/**'
+           instructions: |
+              Rust integration tests live here. Use the `tempfile` crate
+              for real on-disk fixtures (no fs mocks). Keep tests
+              single-threaded-safe — the suite is invoked with
+              `cargo test -- --test-threads=1`.
+         - path: 'e2e/**'
+           instructions: |
+              WebdriverIO specs driving a real Tauri binary built with
+              the `e2e` feature. Prefer user-visible assertions
+              (data-testid selectors already present in components) over
+              implementation details.
+
+knowledge_base:
+   learnings:
+      scope: local
+   web_search:
+      enabled: true
+   code_guidelines:
+      enabled: true
