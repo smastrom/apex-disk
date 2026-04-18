@@ -18,19 +18,18 @@ export default defineConfig(async () => ({
       },
    },
 
-   /* css: {
+   css: {
       transformer: 'lightningcss',
       lightningcss: {
          targets: {
             safari: safari13,
          },
       },
-   }, */
+   },
 
    build: {
-      // Target Safari 13 (macOS 10.15 Catalina WKWebView)
       target: 'safari13',
-      // Output to project root /dist so Tauri can find it (frontendDist: "../dist")
+      cssMinify: 'lightningcss',
       outDir: '../dist',
       emptyOutDir: true,
    },

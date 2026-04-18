@@ -72,6 +72,7 @@
       "@wdio/mocha-framework": "^9.27.0",
       "@wdio/spec-reporter": "^9.27.0",
       "husky": "^9.1.7",
+      "lightningcss": "^1.32.0",
       "lint-staged": "^15.5.2",
       "oxfmt": "^0.35.0",
       "tsx": "^4.21.0",
