@@ -160,7 +160,7 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
    align-items: center;
    justify-content: space-between;
    gap: var(--spacing-md);
-   padding: var(--spacing-md);
+   padding: var(--spacing-md) var(--spacing-md) 10px var(--spacing-md);
    border-bottom: 1px solid var(--color-bg);
 }
 
