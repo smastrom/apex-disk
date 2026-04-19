@@ -29,9 +29,6 @@ lerna-debug.log*
 *.sln
 *.sw?
 
-# Lock files
-pnpm-lock.yaml
-
 # Environment (signing keys)
 .env
 
