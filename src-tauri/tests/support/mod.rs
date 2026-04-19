@@ -82,6 +82,7 @@ fn write_file(path: std::path::PathBuf, size: usize) {
 }
 
 /// Creates a test home with system files that have recent modification dates to test exclusion logic
+#[allow(dead_code)]
 pub fn create_test_home_with_system_files() -> tempfile::TempDir {
     let dir = create_test_home();
     let path = dir.path();
