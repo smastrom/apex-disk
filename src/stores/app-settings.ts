@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 import { THEME_COLORS, ROOT_THEME } from '@/lib/constants'
 import { log } from '@/lib/log'
 import { invoke } from '@tauri-apps/api/core'

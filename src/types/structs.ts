@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 /** Folder/file info from Tauri scan. Matches Rust struct field names (snake_case). */
 export interface FolderInfo {
    name: string

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 export const ScanProgress = {
    en: {
       scanning: 'Scanning user folder… {{current}} of {{total}}',

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 //! Safe trashing of user-selected files and folders.
 //!
 //! Items are moved to the macOS Trash so the user can recover them. Items

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 //! Extended attributes detection for macOS.
 //!
 //! Detects folders with `com.apple.containermanager.*` attributes that require

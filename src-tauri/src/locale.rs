@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 //! App language detection, persistence, and macOS locale sync.
 //!
 //! On first launch, detects the system language and persists it as the app

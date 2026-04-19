@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 import { log } from '@/lib/log'
 import { useViewTransition } from '@/lib/use-view-transition'
 import { ref, type ShallowRef } from 'vue'

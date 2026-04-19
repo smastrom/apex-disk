@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 /**
  * E2E: Scan lifecycle — launch, progress, results, abort, re-scan.
  *

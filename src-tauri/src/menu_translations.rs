@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 //! Menu label translations for the supported app languages.
 //!
 //! Covers every menu item ApexDisk builds — native (About, Services, Hide,

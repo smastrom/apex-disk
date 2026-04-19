@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { ref, onMounted, onUnmounted, type Ref } from 'vue'
 
@@ -15,7 +18,7 @@ export interface UseDiskUsageReturn {
 export async function useDiskUsage(): Promise<UseDiskUsageReturn> {
    let unlisten = () => {}
 
-   // Register lifecycle hooks before any await
+   // Register lifecycle hooks
    onMounted(async () => {
       unlisten = await getCurrentWindow().onFocusChanged(({ payload: focused }) => {
          if (focused) debouncedFetchUsage()

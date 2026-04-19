@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 //! Full Disk Access (FDA) check for macOS.
 //!
 //! Pure Rust port of <https://github.com/inket/FullDiskAccess>.

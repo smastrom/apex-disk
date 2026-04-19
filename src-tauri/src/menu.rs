@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 //! Native application menu bar (App, Window, Help submenus).
 //!
 //! All labels — native items included (About, Services, Hide, Show All, Quit,

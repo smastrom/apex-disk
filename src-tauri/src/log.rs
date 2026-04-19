@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 //! Diagnostic logging shared with the Vue frontend (`src/lib/log.ts`).
 //!
 //! Scheme, streams, and channel names: see **`docs/LOGGING.md`**.

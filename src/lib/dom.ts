@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 import { ROOT_THEME, RTL_LANGUAGES } from '@/lib/constants'
 
 /** Applies theme to document. ROOT_THEME uses :root in CSS; others set data-theme. */

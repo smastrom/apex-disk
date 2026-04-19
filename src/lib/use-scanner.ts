@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'
 import { useAppSettings } from '@/stores/app-settings'

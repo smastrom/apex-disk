@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Simone Mastromattei
+
 # Load .env file and validate that all required Apple signing variables are set.
 # Usage: source scripts/load-env.sh
 

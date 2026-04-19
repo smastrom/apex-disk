@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 /**
  * E2E: Selection model — 4-state checkbox (empty / partial / selected) with
  * parent/child propagation, inherited selection, "explode ancestor" logic,

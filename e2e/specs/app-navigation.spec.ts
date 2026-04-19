@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 /**
  * E2E: App main view navigation (Scan ↔ Settings ↔ Information).
  * Ensures footer navigation works LEFT → RIGHT, RIGHT → LEFT, and each view renders its content.

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 import { nextTick } from 'vue'
 
 const VIEW_TRANSITION_SUPPORTED =

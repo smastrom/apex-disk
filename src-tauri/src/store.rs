@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 //! Centralized store access for app settings.
 //!
 //! Handles store initialization, default values, and read/write access for

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 //! Recursive folder tree scan with parallel I/O and progress events.
 //!
 //! With debug builds or `APEX_DISK_DEBUG`, [`crate::log::dev_rust_trace`] on channel **`scan`**

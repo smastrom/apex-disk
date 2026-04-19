@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 import { APP_LANGUAGES_TO_LOCALE_MAP } from './constants'
 
 /** Formats bytes into human-readable string (e.g. "1.2 GB").

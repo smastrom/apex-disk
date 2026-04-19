@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 //! Seamless in-app update flow using tauri-plugin-updater.
 //!
 //! Checks for updates against the GitHub releases endpoint configured in

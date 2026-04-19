@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 //! App-level constants shared with the frontend. Keep in sync with src/lib/constants.ts.
 
 /// App name shown in the menu bar and About dialog. Keep in sync with tauri.conf.json productName.

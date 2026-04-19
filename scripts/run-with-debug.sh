@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Simone Mastromattei
+
 # Run a packaged ApexDisk build with verbose logging (frontend + updater diagnostics).
 # macOS does not pass custom env vars through `open -a`, so invoke the binary inside the .app.
 #

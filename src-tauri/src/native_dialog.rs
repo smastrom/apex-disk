@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 //! Native macOS dialogs using NSAlert with the embedded app icon.
 //!
 //! Provides Tauri commands that show native OS dialogs displaying the same

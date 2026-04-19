@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 import { createT } from '@/assets/translations'
 import { useAppSettings } from '@/stores/app-settings'
 import { computed } from 'vue'

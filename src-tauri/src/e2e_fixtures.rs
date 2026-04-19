@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 //! E2E test fixtures: builds a deterministic fake home directory for e2e tests.
 //!
 //! This module is only compiled when the `e2e` feature is enabled. It provides a

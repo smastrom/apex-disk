@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Simone Mastromattei
+
 import { computePosition, flip, offset, shift, type Placement } from '@floating-ui/dom'
 import { ref, onUnmounted, type Ref } from 'vue'
 
