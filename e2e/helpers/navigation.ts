@@ -39,6 +39,9 @@ export const sel = {
    restart: '[data-testid="restart"]',
    settingsView: '[data-testid="settings-view"]',
    settingsContent: '[data-testid="settings-content"]',
+   settingsToggleHiddenFiles: '[aria-labelledby="label-hidden-files"]',
+   settingsToggleUnder1Kb: '[aria-labelledby="label-under-1kb"]',
+   settingsToggleZeroByte: '[aria-labelledby="label-zero-byte"]',
 } as const
 
 // ---------------------------------------------------------------------------
@@ -223,4 +226,196 @@ export async function assertRowExists(name: string) {
 export async function assertRowNotExists(name: string) {
    const row = await getRowByName(name)
    expect(row).toBeNull()
+}
+
+// ---------------------------------------------------------------------------
+// Selection helpers
+// ---------------------------------------------------------------------------
+
+/** Click the checkbox button inside a row. Does not navigate into the folder. */
+export async function clickRowCheckbox(row: WebdriverIO.Element) {
+   const checkbox = await getCheckbox(row)
+   await checkbox.click()
+}
+
+/** Click the checkbox for a row identified by name. */
+export async function clickCheckboxByName(name: string) {
+   const row = await requireRowByName(name)
+   await clickRowCheckbox(row)
+}
+
+/** Click the reset-selection button in the results nav. */
+export async function clickResetSelection() {
+   const resetBtn = await $(sel.resultsNav).$(`button[aria-label*="eset" i]`)
+   await resetBtn.click()
+}
+
+/**
+ * Navigate back until the back button is disabled (i.e. at root).
+ * Useful in `beforeEach` when preceding tests may have descended into folders.
+ */
+export async function navigateBackToRoot() {
+   const back = $(sel.navBack)
+   for (let i = 0; i < 10; i++) {
+      const disabled = await back.getAttribute('disabled')
+      if (disabled !== null) return
+      await back.click()
+      await browser.pause(TRANSITION_SETTLE_MS)
+   }
+}
+
+/** Get the current review button text (includes size and count when selected). */
+export async function getReviewButtonText(): Promise<string> {
+   return getReviewButton().getText()
+}
+
+/**
+ * Extract the formatted byte count from the review button text.
+ * Returns the value in bytes (SI decimal, matching `formatBytes` in the app),
+ * or null if no size is rendered (e.g. empty selection).
+ */
+export async function getReviewButtonBytes(): Promise<number | null> {
+   const text = await getReviewButtonText()
+   const match = text.match(/([\d.,]+)\s*(B|KB|MB|GB|TB)/)
+   if (!match) return null
+   const n = parseFloat(match[1].replace(',', '.'))
+   if (Number.isNaN(n)) return null
+   const unit = match[2]
+   const mult = { B: 1, KB: 1000, MB: 1e6, GB: 1e9, TB: 1e12 }[unit]!
+   return n * mult
+}
+
+/** Click the review button to enter the trash review view. */
+export async function clickReviewSelection() {
+   const btn = getReviewButton()
+   await btn.click()
+}
+
+// ---------------------------------------------------------------------------
+// App view navigation
+// ---------------------------------------------------------------------------
+
+/** Click the Scan footer tab and wait for the scan view to be ready. */
+export async function goToScanView() {
+   await $(sel.footerScan).click()
+   await browser.pause(TRANSITION_SETTLE_MS)
+}
+
+/** Click the Settings footer tab and wait for the settings view. */
+export async function goToSettingsView() {
+   await $(sel.footerSettings).click()
+   const view = $(sel.settingsView)
+   await view.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
+}
+
+// ---------------------------------------------------------------------------
+// Trash list helpers
+// ---------------------------------------------------------------------------
+
+/** Wait for the trash review list to be displayed. */
+export async function waitForTrashList() {
+   const list = $(sel.trashList)
+   await list.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
+}
+
+/** Get all trash review rows in display order. */
+export async function getTrashRows(): Promise<WebdriverIO.Element[]> {
+   return (await $$(sel.trashRow)) as unknown as WebdriverIO.Element[]
+}
+
+/** Find a trash row by item name. Returns null if not found. */
+export async function getTrashRowByName(name: string): Promise<WebdriverIO.Element | null> {
+   const rows = await getTrashRows()
+   for (const row of rows) {
+      const text = await row.getText()
+      if (text.includes(name)) return row
+   }
+   return null
+}
+
+/** Toggle a trash row's checkbox by clicking it (has @click.stop). */
+export async function toggleTrashRow(row: WebdriverIO.Element) {
+   const checkbox = await row.$(sel.trashRowCheckbox)
+   await checkbox.click()
+}
+
+/** Wait for the post-trash confirmation screen (either success or error variant). */
+export async function waitForTrashConfirmation() {
+   const restart = $(sel.restart)
+   await restart.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
+}
+
+// ---------------------------------------------------------------------------
+// Settings helpers
+// ---------------------------------------------------------------------------
+
+/** Read the aria-checked state of a settings toggle (boolean). */
+export async function getToggleState(selector: string): Promise<boolean> {
+   const toggle = $(selector)
+   const v = await toggle.getAttribute('aria-checked')
+   return v === 'true'
+}
+
+/** Click a settings toggle and wait a tick for the store to persist. */
+export async function clickToggle(selector: string) {
+   await $(selector).click()
+   await browser.pause(100)
+}
+
+/**
+ * Cancel the current scan results (X button) and return to the scan launch screen.
+ * No-op if already on the launch screen.
+ */
+export async function cancelToLaunch() {
+   const cancel = $(sel.resultsCancel)
+   const onResults = await cancel.isDisplayed().catch(() => false)
+   if (onResults) {
+      await cancel.click()
+      await browser.pause(TRANSITION_SETTLE_MS)
+   }
+   await waitForScanLaunch()
+}
+
+/**
+ * Throw away any existing scan results and kick off a fresh scan.
+ * Use this after toggling settings that only take effect on the next scan.
+ */
+export async function rescanFresh() {
+   await goToScanView()
+   await cancelToLaunch()
+   await scanAndWaitForResults()
+}
+
+// ---------------------------------------------------------------------------
+// Whole-suite setup: reset state, navigate to Scan, run fresh scan
+// ---------------------------------------------------------------------------
+
+/**
+ * Bring the app back to a known state and run a fresh scan.
+ * - Resets settings to defaults (so hidden/<1 KB/0 B filters are off).
+ * - Switches to Scan view.
+ * - If already on results, navigates to root and clears any selection.
+ * - Otherwise starts a new scan and waits for results.
+ */
+export async function resetAndScan() {
+   await resetE2eState()
+   await goToScanView()
+
+   // If results are already displayed (KeepAlive), go back to root and clear selection.
+   const results = $(sel.resultsList)
+   const hasResults = await results.isDisplayed().catch(() => false)
+   if (hasResults) {
+      await navigateBackToRoot()
+      const resetBtn = await $(sel.resultsNav).$(`button[aria-label*="eset" i]`)
+      const disabled = await resetBtn.getAttribute('disabled')
+      if (disabled === null) await resetBtn.click()
+      return
+   }
+
+   // Otherwise we're on the launch screen — start a new scan.
+   const launch = $(sel.scanLaunch)
+   const onLaunch = await launch.isDisplayed().catch(() => false)
+   if (onLaunch) {
+      await scanAndWaitForResults()
+   }
 }
