@@ -7,25 +7,30 @@ import { createApp } from 'vue'
 
 import AppShell from './components/AppShell.vue'
 
-await initLog()
-const store = await initTauriAppSettings()
+;(async () => {
+   await initLog()
 
-applyTheme(store.getThemeColor())
-applyDirection(store.settings.value.language)
+   const store = await initTauriAppSettings()
 
-// Log app environment for debug output
-try {
-   const { systemInfo } = await useSystemInfo()
-   if (systemInfo.value) {
-      const { macos_version, cpu_info } = systemInfo.value
-      log('app', `App: v${APP_VERSION} — macOS ${macos_version}, ${cpu_info}`)
-   } else {
+   applyTheme(store.getThemeColor())
+   applyDirection(store.settings.value.language)
+
+   // Log app environment for debug output
+   try {
+      const { systemInfo } = await useSystemInfo()
+
+      if (systemInfo.value) {
+         const { macos_version, cpu_info } = systemInfo.value
+         log('app', `App: v${APP_VERSION} — macOS ${macos_version}, ${cpu_info}`)
+      } else {
+         log('app', `App: v${APP_VERSION}`)
+      }
+   } catch {
       log('app', `App: v${APP_VERSION}`)
    }
-} catch {
-   log('app', `App: v${APP_VERSION}`)
-}
 
-const app = createApp(AppShell)
-registerDiagnosticHandlers(app)
-app.mount('#app')
+   const app = createApp(AppShell)
+   registerDiagnosticHandlers(app)
+
+   app.mount('#app')
+})()
