@@ -30,7 +30,7 @@ import AppShell from './components/AppShell.vue'
    }
 
    const app = createApp(AppShell)
-   registerDiagnosticHandlers(app)
 
+   registerDiagnosticHandlers(app)
    app.mount('#app')
 })()
