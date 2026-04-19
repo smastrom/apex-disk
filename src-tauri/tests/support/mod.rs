@@ -21,7 +21,7 @@ use std::io::Write;
 ///
 /// **Normal (user data, deletable):**
 /// - `MyData` — contains small.txt (100 B), empty.txt (0 B), big.txt (2 KB), .hidden (50 B)
-/// - `Projects` — empty dir and a 5 KB file
+/// - `Projects` — contains a 5 KB file (`app`)
 ///
 /// **Files for scan option tests:**
 /// - 0 B: MyData/empty.txt

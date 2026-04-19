@@ -1,7 +1,9 @@
 //! Tests for `menu_translations::labels_for`.
 //!
-//! Verifies that all supported languages return non-empty labels and that
-//! unknown languages fall back to English defaults.
+//! Verifies that all supported languages return non-empty labels for every
+//! `MenuLabels` field (including the update-flow labels), that unknown language
+//! codes fall back to English, and that each non-English language differs from
+//! English for at least one label (so translations aren't silent copies).
 
 use apex_disk_lib::menu_translations;
 
@@ -34,6 +36,22 @@ fn all_supported_languages_have_non_empty_labels() {
         assert!(!labels.hide_others.is_empty(), "{lang}: hide_others empty");
         assert!(!labels.show_all.is_empty(), "{lang}: show_all empty");
         assert!(!labels.quit.is_empty(), "{lang}: quit empty");
+        assert!(
+            !labels.check_for_updates.is_empty(),
+            "{lang}: check_for_updates empty"
+        );
+        assert!(
+            !labels.checking_for_updates.is_empty(),
+            "{lang}: checking_for_updates empty"
+        );
+        assert!(
+            !labels.downloading_update.is_empty(),
+            "{lang}: downloading_update empty"
+        );
+        assert!(
+            !labels.restart_to_update.is_empty(),
+            "{lang}: restart_to_update empty"
+        );
     }
 }
 

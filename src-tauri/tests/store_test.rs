@@ -228,3 +228,37 @@ fn set_settings_rejects_non_object() {
     assert!(result.is_err());
     assert_eq!(result.unwrap_err(), "Settings must be an object");
 }
+
+/// update_setting_with_handle must reject unknown keys so typos or stale
+/// frontend code can't silently write new fields into the persisted settings.
+#[test]
+fn update_setting_rejects_unknown_key() {
+    let _lock = STORE_LOCK.lock().unwrap();
+    let app = create_app_with_store();
+    let handle = app.handle();
+
+    let store_handle = handle
+        .store(apex_disk_lib::SETTINGS_STORE_PATH)
+        .expect("open settings store");
+    store_handle.set("app", serde_json::json!({}));
+    store_handle.save().expect("clear store");
+    store_handle.close_resource();
+
+    store::initialize_store_with_handle(&handle).expect("initialize store");
+
+    let result =
+        store::update_setting_with_handle(&handle, "bogusField".to_string(), json!("value"));
+    assert!(result.is_err(), "unknown key must be rejected");
+    let err = result.unwrap_err();
+    assert!(
+        err.contains("bogusField"),
+        "error should mention the offending key, got: {err}"
+    );
+
+    // Persisted settings must be unchanged after a rejected update.
+    let settings = store::get_settings_with_handle(&handle).expect("get settings");
+    assert!(
+        settings.get("bogusField").is_none(),
+        "unknown key must not be persisted"
+    );
+}
