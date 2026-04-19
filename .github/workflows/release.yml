@@ -184,3 +184,8 @@ jobs:
                  src-tauri/target/universal-apple-darwin/release/bundle/macos/*.tar.gz
                  src-tauri/target/universal-apple-darwin/release/bundle/macos/*.tar.gz.sig
                  latest.json
+
+         - name: Trigger Cloudflare Pages rebuild
+           env:
+              CF_PAGES_DEPLOY_HOOK_URL: ${{ secrets.CF_PAGES_DEPLOY_HOOK_URL }}
+           run: curl -fsSL -X POST "$CF_PAGES_DEPLOY_HOOK_URL"
