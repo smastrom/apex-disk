@@ -112,6 +112,8 @@ No other events today — trash and updater are fully request/response.
 
 `tauri_plugin_store` writes a JSON file inside the app support directory. Both sides read it, but **only Rust writes it**. The webview always mutates via `set_settings` / `update_setting`; `store.rs` takes an internal `STORE_LOCK` mutex so concurrent writes don't lose updates, and it re-merges defaults on every read so new fields added in a Rust upgrade don't fail deserialization.
 
+Adding a new setting is a one-line change: register the key and its default in `get_default_settings()` inside `store.rs`. `is_valid_setting_key()` accepts it automatically, and existing installs get the field backfilled on next `get_settings`.
+
 Frontend mirrors the store in a reactive module-level singleton: `src/stores/app-settings.ts` calls `initTauriAppSettings()` once from `main.ts`, then `useAppSettings()` returns refs. **No `provide` / `inject`** — an explicit init + assertion caught "used before ready" bugs early; we kept it.
 
 ## Boundary conventions
