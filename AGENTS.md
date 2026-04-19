@@ -55,6 +55,12 @@ Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`, `CODE_OF_CONDUCT.md`
 - `.vue`: PascalCase (`ScanResultsList.vue`)
 - `.ts`: kebab-case (`use-scanner.ts`), except component-coupled files (PascalCase, e.g. `ScanResultsListItem.ts`)
 
+### License headers
+
+- Every first-party source file (`.ts`, `.tsx`, `.vue`, `.rs`, `.sh` under `src/`, `src-tauri/src/`, `e2e/`, `tests/`, `scripts/`) carries an SPDX + copyright header on the top two lines (comment syntax varies by language; shell scripts keep the shebang on line 1).
+- `pnpm headers` adds the header to any new file and is idempotent; it runs automatically as step 1 of `/sync` and `/force-sync`.
+- `pnpm headers:check` exits non-zero if any covered file is missing the header — suitable for CI.
+
 ### Vue
 
 - Always `<script setup lang="ts">`. No Options API.

@@ -41,6 +41,8 @@
       "dev": "vite",
       "fmt": "oxfmt --write",
       "fmt:check": "oxfmt --check",
+      "headers": "scripts/add-license-headers.sh",
+      "headers:check": "scripts/add-license-headers.sh --check",
       "prepare": "husky",
       "tauri": "tauri",
       "tauri:build": "source scripts/load-env.sh && tauri build --target universal-apple-darwin --verbose",
