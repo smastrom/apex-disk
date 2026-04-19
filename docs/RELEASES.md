@@ -21,7 +21,7 @@ Use the `/release` slash command or follow these steps by hand:
    - `package.json` → `"version"`
    - `src-tauri/Cargo.toml` → `version`
    - `src-tauri/tauri.conf.json` → `"version"`
-2. **Prepend** a new `## v0.0.13` section at the top of `../RELEASES.md` (directly under the `---` rule). The Release workflow reads the **first** `## vX.Y.Z` heading, so appending at the bottom would make CI read the wrong version.
+2. **Prepend** a new `## v0.0.13` section at the top of `../RELEASES.md` (directly under the `---` rule). The Release workflow reads the **first** `## vX.Y.Z` heading, so appending at the bottom would make CI read the wrong version. Group the bullets under `###` subheadings — see [Authoring conventions](#authoring-conventions).
 3. Commit and push to `main`.
 4. Go to **Actions → Release → Run workflow**, leave "Mark as pre-release" **unchecked**.
 5. CI builds, signs, notarizes, tags `v0.0.13`, and creates a GitHub Release with:
@@ -72,7 +72,13 @@ The project does **not** embed build metadata (e.g. `0.0.13+beta.abc1234`) — a
 
 Both files are **newest-first**. Always prepend new sections at the top, directly below the `---` rule.
 
-- `../RELEASES.md`: `## vX.Y.Z` heading, one short paragraph or bulleted list summarizing changes since the previous tag (`git log <prev-tag>..HEAD`).
+- `../RELEASES.md`: `## vX.Y.Z` heading summarizing changes since the previous tag (`git log <prev-tag>..HEAD`), with bullets grouped under these `###` subheadings in this order:
+  - **New Features** — user-visible additions.
+  - **Improvements** — enhancements to existing behavior, UX polish, perf wins, refactors with observable effects.
+  - **Bug Fixes** — defect fixes.
+  - **Chores** — internal housekeeping with no user-visible effect (deps bumps, CI, docs, dead-code removal, test-only changes).
+
+  Omit any group that has no entries (no empty `###` headings). One bullet per change. Classify by the dominant effect of the commit, not the commit-message prefix. Older entries pre-date this convention and are not retroactively rewritten.
 - `../RELEASES_BETA.md`: `## YYYY-MM-DD` (UTC) heading, a one-line summary, then bullets covering UI flows that changed, updater/menu/store touches, and macOS-version-sensitive behavior.
 
 Never edit older sections to retcon history.

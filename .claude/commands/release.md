@@ -7,7 +7,13 @@ Walk through each step to prepare the release:
    - `src-tauri/Cargo.toml` → `version`
    - `src-tauri/tauri.conf.json` → `"version"`
 
-2. **Update RELEASES.md** — Add a new `## v$ARGUMENTS` section at the **top** of the changelog (newest-first), directly below the `---` horizontal rule and above the previous entry. The GitHub **Release** workflow uses the **first** `## vX.Y.Z` line as the canonical version—if you append at the bottom, CI would read the wrong version. Summarize changes since the last tag (e.g. `git log` since the previous `v*` tag).
+2. **Update RELEASES.md** — Add a new `## v$ARGUMENTS` section at the **top** of the changelog (newest-first), directly below the `---` horizontal rule and above the previous entry. The GitHub **Release** workflow uses the **first** `## vX.Y.Z` line as the canonical version—if you append at the bottom, CI would read the wrong version. Summarize changes since the last tag (e.g. `git log` since the previous `v*` tag), **grouped under these `###` subheadings in this order**:
+   - **New Features** — user-visible additions.
+   - **Improvements** — enhancements to existing behavior, UX polish, perf wins, refactors with observable effects.
+   - **Bug Fixes** — defect fixes.
+   - **Chores** — internal housekeeping with no user-visible effect (deps bumps, CI, docs, dead-code removal, test-only changes).
+
+   Omit any group that has no entries; do **not** leave an empty `###` heading. Each entry is a single bullet. Classify by the dominant effect of the commit, not the commit-message prefix.
 
 3. **Verify consistency** — Confirm all three version files and RELEASES.md heading match `$ARGUMENTS`.
 
