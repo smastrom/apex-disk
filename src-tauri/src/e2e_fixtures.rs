@@ -75,14 +75,18 @@ fn create_test_home() -> tempfile::TempDir {
     write_file(path.join("MyData/big.txt"), 2048);
     write_file(path.join("MyData/.hidden"), 50);
 
-    // Nested subdirectory for explode/indeterminate tests
+    // Nested subdirectory for explode/indeterminate tests.
+    // Siblings are ≥ 1 KB so they remain visible under the default `showUnder1Kb=false`
+    // filter — the multi-level explode test pins these siblings at each intermediate
+    // level and needs to see them in the scan results.
     fs::create_dir(path.join("MyData/SubFolder")).expect("MyData/SubFolder");
     write_file(path.join("MyData/SubFolder/alpha.txt"), 1024);
-    write_file(path.join("MyData/SubFolder/beta.txt"), 512);
+    write_file(path.join("MyData/SubFolder/beta.txt"), 1500);
 
-    // 3-level nesting for deep explode tests
+    // 3-level nesting for deep explode tests. Deep/gamma.txt is ≥ 1 KB so the
+    // Deep folder itself passes the default directory size filter (>= 1024).
     fs::create_dir(path.join("MyData/SubFolder/Deep")).expect("MyData/SubFolder/Deep");
-    write_file(path.join("MyData/SubFolder/Deep/gamma.txt"), 256);
+    write_file(path.join("MyData/SubFolder/Deep/gamma.txt"), 1024);
 
     // Files in Projects
     write_file(path.join("Projects/app"), 5120);

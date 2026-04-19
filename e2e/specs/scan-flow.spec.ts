@@ -51,10 +51,11 @@ describe('Scan flow', () => {
       const rows = await $$(sel.rowFolder)
       expect(rows.length).toBeGreaterThanOrEqual(3)
 
-      // Projects has app (5120) + src/main.rs (1024) = 6144
-      // MyData has big.txt (2048) + SubFolder (1792) + small.txt (100) = ~3990
-      // Documents has report.txt (2048) + note.txt (500) = 2548
-      // So order should be: Projects > MyData > Documents (among the data folders)
+      // With default filters (no hidden / no under 1 KB / no zero-byte):
+      // Projects: app (5120) + src/main.rs (1024) = 6144
+      // MyData: big.txt (2048) + SubFolder (alpha 1024 + beta 1500 + Deep/gamma 1024) = 5596
+      // Documents: report.txt (2048)  [note.txt 500 is filtered out]
+      // So order is: Projects > MyData > Documents.
       const texts: string[] = []
       for (const row of rows) {
          texts.push(await row.getText())

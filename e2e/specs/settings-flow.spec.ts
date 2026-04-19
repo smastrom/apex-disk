@@ -70,9 +70,12 @@ describe('Settings flow', () => {
          await assertRowNotExists('.hidden')
       })
 
-      it('on: .hidden appears', async () => {
+      it('on (with under 1 KB also on, since .hidden is 50 B): .hidden appears', async () => {
          await goToSettingsView()
+         // .hidden is 50 B, so the under-1 KB cutoff also hides it — both
+         // toggles must be on for the file to show.
          await clickToggle(sel.settingsToggleHiddenFiles)
+         await clickToggle(sel.settingsToggleUnder1Kb)
 
          await rescanFresh()
          await navigateIntoFolder('MyData')
