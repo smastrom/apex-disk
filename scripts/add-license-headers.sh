@@ -61,6 +61,8 @@ apply_header() {
       cat "$file" >> "$tmp"
    fi
 
+   # Preserve the original file's mode; `mv` would carry mktemp's 0600 over.
+   chmod --reference="$file" "$tmp" 2>/dev/null || chmod "$(stat -f '%A' "$file" 2>/dev/null || stat -c '%a' "$file")" "$tmp"
    mv "$tmp" "$file"
    updated=$((updated + 1))
    echo "added header: $file"
