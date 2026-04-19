@@ -21,7 +21,7 @@
 - [ ] `pnpm test:unit` passes (required for any Rust / `src-tauri/` change)
 - [ ] `pnpm test:e2e` passes if UI flows changed
 - [ ] `docs/` reviewed — updated any file whose contents no longer match this change, or confirmed none apply
-- [ ] `RELEASES.md` entry added under the correct section (Features / Improvements / Bugs / Chores) if user-visible
+- [ ] Commits follow the repo style: imperative subject, short body only when the _why_ isn't obvious, `Co-Authored-By` trailer when a commit was made by an agent
 - [ ] No new platform-specific code for Windows/Linux (macOS-only project)
 
 ## Screenshots / screen recording
@@ -31,3 +31,16 @@
 ## Notes for reviewers
 
 <!-- Anything non-obvious: tradeoffs considered, follow-ups intentionally deferred, areas you'd like a careful look at. -->
+
+---
+
+<details>
+<summary>Using Claude Code? Helpful slash commands</summary>
+
+- **`/sync`** — groups your uncommitted work into logical commits, runs the `docs/` + `AGENTS.md` sweep, and pushes.
+- **`/force-sync`** — reconciles `docs/` and `AGENTS.md` against recent commits that bypassed the sweep.
+- **`/compatibility-check`** — verifies the change stays within the supported macOS / Safari / architecture targets declared in `docs/COMPATIBILITY.md`.
+
+Release-channel commands (`/release`, `/beta-notes`) are maintainer-only — please don't run them in a PR.
+
+</details>
