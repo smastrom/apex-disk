@@ -8,6 +8,7 @@ ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for 
 
 `docs/` holds reference material agents are expected to read and keep current:
 
+- **`docs/ARCHITECTURE.md`** — frontend/backend split: what each side owns, how they talk (commands/events/store), subsystem walkthroughs, directory map.
 - **`docs/COMPATIBILITY.md`** — macOS / Safari / architecture targets and per-feature progressive-enhancement matrix.
 - **`docs/LOGGING.md`** — unified Vue + Rust diagnostic scheme (`[apex:…]` prefixes, channels, `APEX_DISK_DEBUG`).
 - **`docs/RELEASES.md`** — how to cut stable and Beta builds: version fields, changelog conventions, workflows.
