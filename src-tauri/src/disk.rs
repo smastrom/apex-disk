@@ -28,7 +28,6 @@ pub fn parse_volume_name(stdout: &str) -> Option<String> {
 pub fn get_volume_name(path: &Path) -> String {
     use std::process::Command;
 
-    // A simpler, more readable way to build our fallback paths
     let mut paths = vec![];
     if let Some(p) = path.to_str() {
         paths.push(p);

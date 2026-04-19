@@ -75,8 +75,8 @@ pub fn run() {
 
             // Initialize locale (handles first-load system detection).
             // This also sets the macOS locale and builds the menu via
-            // resolve_app_language_inner → set_app_locale → set_menu_language.
-            locale::resolve_app_language_inner(app.handle().clone())?;
+            // resolve_app_language → set_app_locale → set_menu_language.
+            locale::resolve_app_language(app.handle().clone())?;
 
             app.on_menu_event(|app, event| {
                 let id = event.id().as_ref();

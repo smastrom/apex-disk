@@ -188,7 +188,6 @@ fn get_auto_updates(app: &tauri::AppHandle) -> bool {
 }
 
 /// Updates the "Check for Updates" menu item text and enabled state.
-/// Reads the current language once and applies the label from `label_fn`.
 fn set_update_menu_item(app: &tauri::AppHandle, text: &str, enabled: bool) {
     if let Some(menu) = app.menu() {
         if let Some(tauri::menu::MenuItemKind::MenuItem(item)) =

@@ -18,9 +18,10 @@ pub fn test_home_path() -> PathBuf {
 
 /// Builds a temp dir that looks like a minimal but realistic home directory.
 ///
-/// **Protected (must not be deletable):**
+/// **Protected (folders themselves must not be deletable):**
 /// - Top-level: Applications, Desktop, Documents, Downloads, Library, Movies, Music, Pictures, Public
 /// - Under Library: Application Support, Preferences
+/// - Files inside (deletable): `Documents/report.txt` (2 KB), `Documents/note.txt` (500 B)
 ///
 /// **Skipped (excluded from scan, must not be deletable):**
 /// - `.ssh` (with a fake `id_rsa` so descendant is skipped)

@@ -1,9 +1,11 @@
 //! Safe trashing of user-selected files and folders.
 //!
-//! Items are moved to the macOS Trash so the user can recover them.
-//! Protected system folders (see `safe_folders`) are never trashed.
-//! Individual failures (permission, in-use, etc.) are ignored so the UI can report
-//! success and the user experience stays macOS-style: no error dialogs.
+//! Items are moved to the macOS Trash so the user can recover them. Items
+//! whose canonical path is protected OR skipped (see `safe_folders`) are
+//! filtered out before trashing. Individual failures (permission, in-use,
+//! etc.) are silently skipped — the returned count/size reflect only the
+//! items actually trashed, so the UI can surface a real number without
+//! per-item error dialogs.
 
 use std::path::Path;
 

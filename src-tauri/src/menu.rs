@@ -1,25 +1,14 @@
-//! Native application menu for the menu bar.
+//! Native application menu bar (App, Window, Help submenus).
 //!
-//! ## Multilanguage Behavior
+//! All labels — native items included (About, Services, Hide, Show All, Quit,
+//! Minimize, Close Window) and custom items (Check for Updates, Release Notes,
+//! License) — are pulled from `menu_translations::labels_for(lang)` so the
+//! menu bar follows the app language rather than the macOS system language.
 //!
-//! All menu items are now translated to follow the app language setting:
-//!
-//! **All menu items** (About, Services, Hide, Show All, Quit, Minimize, Close Window, Release Notes, License):
-//! - Use translated labels from `menu_translations::labels_for(lang)`
-//! - These items follow the APP language setting, not system language
-//! - When user changes app language, all items update immediately via `set_menu_language`
-//! - Examples: "About", "Hide", "Quit" will appear in Italian when app language is set to Italian, regardless of system language
-//!
-//! ## Language Sync Flow
-//!
-//! 1. App startup: `resolve_app_language_inner` detects system language or uses stored preference
-//! 2. `set_app_locale` sets macOS `AppleLanguages` (for context menus) and calls `set_menu_language`
-//! 3. `set_menu_language` rebuilds menu with translations for current app language
-//! 4. User changes language: Frontend calls `set_app_locale` → menu updates immediately
-//! 5. Context menus (Look Up, Translate) require app restart to pick up new `AppleLanguages`
-//!
-//! Builds the app menu (About, Quit), Window (minimize, close), and Help
-//! (release notes, license).
+//! `set_menu_language` is called by `locale::set_app_locale` whenever the
+//! language changes; the menu is rebuilt in place. macOS context menus (Look
+//! Up, Translate, etc.) read `AppleLanguages` at launch and still require an
+//! app restart to pick up a new language.
 
 use crate::constants;
 use crate::menu_translations;
@@ -36,15 +25,14 @@ pub fn set_menu_language(app: tauri::AppHandle, lang: String) -> Result<(), Stri
     Ok(())
 }
 
-/// Builds the application menu. On macOS this becomes
-/// the menu bar: app submenu, Window, Help. All items follow app language.
+/// Builds the application menu (app submenu, Window, Help) using labels for `lang`.
 pub fn build_app_menu(
     handle: &tauri::AppHandle,
     lang: &str,
 ) -> Result<tauri::menu::Menu<tauri::Wry>, tauri::Error> {
     let labels = menu_translations::labels_for(lang);
 
-    // ── App submenu ── (all items now follow app language)
+    // ── App submenu ──
     let about_icon = tauri::image::Image::from_bytes(APP_ICON).ok();
     let about = PredefinedMenuItem::about(
         handle,
@@ -69,7 +57,6 @@ pub fn build_app_menu(
         None::<&str>,
     )?;
     let sep_updates = PredefinedMenuItem::separator(handle)?;
-    // Use translated labels to follow app language setting
     let services = PredefinedMenuItem::services(handle, Some(labels.services))?;
     let sep2 = PredefinedMenuItem::separator(handle)?;
     let hide = PredefinedMenuItem::hide(handle, Some(labels.hide))?;
@@ -96,7 +83,7 @@ pub fn build_app_menu(
         ],
     )?;
 
-    // ── Window submenu ── (custom items need translation)
+    // ── Window submenu ──
     let minimize = MenuItem::with_id(handle, "minimize", labels.minimize, true, Some("cmd+m"))?;
     let close_window = MenuItem::with_id(
         handle,
@@ -113,7 +100,7 @@ pub fn build_app_menu(
         &[&minimize, &close_window],
     )?;
 
-    // ── Help submenu ── (custom items need translation)
+    // ── Help submenu ──
     let release_notes = MenuItem::with_id(
         handle,
         constants::RELEASE_NOTES_MENU_ID,

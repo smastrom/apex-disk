@@ -41,9 +41,6 @@ static SCAN_CANCELLED: AtomicBool = AtomicBool::new(false);
 /// Guard that prevents concurrent scans. Only one scan can run at a time.
 static SCAN_RUNNING: AtomicBool = AtomicBool::new(false);
 
-/// Shared state for emitting live progress events during recursive scanning.
-/// File sizes are accumulated at every directory level (not just top-level),
-/// and progress events are throttled to avoid overwhelming the frontend.
 /// Number of add_size calls between time checks. Avoids a SystemTime::now()
 /// syscall on every single directory — at ~150ms throttle and typical I/O
 /// rates, checking every 512 calls is still well within the emission window.
@@ -56,6 +53,9 @@ fn scan_path_for_log(path: &Path, home: &Path) -> String {
     }
 }
 
+/// Shared state for emitting live progress events during recursive scanning.
+/// File sizes are accumulated at every directory level (not just top-level),
+/// and progress events are throttled to avoid overwhelming the frontend.
 struct LiveScanState {
     completed: AtomicUsize,
     total: usize,
@@ -333,8 +333,6 @@ fn build_folder_tree(
         .map(|(fname, size, last_modified)| {
             let file_path = root.join(&fname);
             let is_protected = safe_folders::is_path_protected(&file_path, home);
-            // Only check xattr on directories — files never have container-manager attributes.
-            let is_fda_required = false;
             let path = file_path.to_string_lossy().into_owned();
             FolderInfo {
                 path,
@@ -344,7 +342,8 @@ fn build_folder_tree(
                 children: Vec::new(),
                 is_file: true,
                 is_protected,
-                is_fda_required,
+                // Only directories can have container-manager xattrs.
+                is_fda_required: false,
                 last_modified,
             }
         })

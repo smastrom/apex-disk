@@ -1,4 +1,10 @@
-//! macOS locale management for context menu localization.
+//! App language detection, persistence, and macOS locale sync.
+//!
+//! On first launch, detects the system language and persists it as the app
+//! language. On later launches, reads the stored preference. Setting the
+//! language also updates the macOS `AppleLanguages` default (so native
+//! context menus like Look Up / Translate follow the app) and rebuilds the
+//! menu bar via `menu::set_menu_language`.
 
 use crate::{APP_LANGUAGE_INITIALIZED_KEY, SETTINGS_STORE_PATH};
 
@@ -10,16 +16,7 @@ use tauri_plugin_store::StoreExt;
 
 fn to_supported_language(language: &str) -> String {
     match language {
-        "en" => "en".to_string(),
-        "it" => "it".to_string(),
-        "es" => "es".to_string(),
-        "fr" => "fr".to_string(),
-        "pt" => "pt".to_string(),
-        "de" => "de".to_string(),
-        "ru" => "ru".to_string(),
-        "zh" => "zh".to_string(),
-        "ja" => "ja".to_string(),
-        "ar" => "ar".to_string(),
+        "en" | "it" | "es" | "fr" | "pt" | "de" | "ru" | "zh" | "ja" | "ar" => language.to_string(),
         _ => "en".to_string(),
     }
 }
@@ -45,7 +42,8 @@ pub fn get_system_language() -> String {
 }
 
 /// Resolves the app language during setup or via command.
-pub fn resolve_app_language_inner(app: tauri::AppHandle) -> Result<String, String> {
+#[tauri::command]
+pub fn resolve_app_language(app: tauri::AppHandle) -> Result<String, String> {
     let store = app.store(SETTINGS_STORE_PATH).map_err(|e| e.to_string())?;
 
     let initialized = store
@@ -71,7 +69,7 @@ pub fn resolve_app_language_inner(app: tauri::AppHandle) -> Result<String, Strin
         };
 
         if let Some(obj) = next_settings.as_object_mut() {
-            obj.insert("language".to_string(), json!(detected.clone()));
+            obj.insert("language".to_string(), json!(&detected));
         }
 
         store.set("app", next_settings);
@@ -87,11 +85,6 @@ pub fn resolve_app_language_inner(app: tauri::AppHandle) -> Result<String, Strin
     set_app_locale(app.clone(), resolved_language.clone())?;
 
     Ok(resolved_language)
-}
-
-#[tauri::command]
-pub fn resolve_app_language(app: tauri::AppHandle) -> Result<String, String> {
-    resolve_app_language_inner(app)
 }
 
 /// Sets the application locale to match the selected language.

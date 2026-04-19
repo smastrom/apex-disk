@@ -1,30 +1,14 @@
-//! Menu label translations for all supported languages.
+//! Menu label translations for the supported app languages.
 //!
-//! ## Multilanguage Behavior
+//! Covers every menu item ApexDisk builds — native (About, Services, Hide,
+//! Show All, Quit, Minimize, Close Window), custom (Check for Updates,
+//! Release Notes, License), and submenu titles (Window, Help) — so the menu
+//! bar tracks the app language instead of the macOS system language.
 //!
-//! This file provides translations for ALL menu items to ensure they follow the app language setting:
-//!
-//! **All menu items (translated here)**:
-//! - Native items: About, Services, Hide, Show All, Quit, Minimize, Close Window
-//! - Custom items: Release Notes, License (app-specific functionality)
-//! - Submenu titles: Window and Help (custom submenu headers)
-//! - All items follow the APP language setting and update immediately when language changes
-//!
-//! ## Language Coordination
-//!
-//! - The `lang` parameter comes from the current app language setting
-//! - This is typically the same as system language on first launch, or user's chosen language
-//! - When user changes app language, `set_menu_language` rebuilds menu with new translations
-//! - All menu items now follow the app language, not the macOS system language
-//!
-//! Keep translations in sync with frontend language list in
-//! `src/lib/constants.ts` (`APP_LANGUAGES`).
+//! Keep the language list in sync with `APP_LANGUAGES` in
+//! `src/lib/constants.ts`.
 
-/// Localized labels for all menu items.
-///
-/// Includes both custom items (app-specific functionality) and native items
-/// (About, Services, Hide, etc.) to ensure they follow the app language setting
-/// rather than the macOS system language.
+/// Localized labels for every menu item ApexDisk renders.
 pub struct MenuLabels {
     pub release_notes: &'static str,
     pub license: &'static str,
@@ -37,7 +21,6 @@ pub struct MenuLabels {
     pub minimize: &'static str,
     pub close_window: &'static str,
     pub help: &'static str,
-    // Native menu items (now translated to follow app language)
     pub about: &'static str,
     pub services: &'static str,
     pub hide: &'static str,
@@ -46,10 +29,7 @@ pub struct MenuLabels {
     pub quit: &'static str,
 }
 
-/// Returns menu labels for all menu items.
-///
-/// All menu items (both native and custom) are now translated to follow
-/// the app language setting rather than the macOS system language.
+/// Returns menu labels for the given language code, falling back to English.
 pub fn labels_for(lang: &str) -> MenuLabels {
     match lang {
         "it" => MenuLabels {

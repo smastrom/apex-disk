@@ -1,8 +1,9 @@
-//! Centralized store management for app settings and persistence.
+//! Centralized store access for app settings.
 //!
-//! This module handles all store operations including initialization, defaults,
-//! migration, and provides a clean API for other modules to interact with
-//! persistent settings.
+//! Handles store initialization, default values, and read/write access for
+//! other modules. `get_settings_with_handle` fills in defaults for any keys
+//! missing from a previously persisted store so newly added settings appear
+//! with their default value on first read.
 
 use std::sync::Mutex;
 
