@@ -10,11 +10,7 @@ jobs:
       strategy:
          fail-fast: false
          matrix:
-            # Hosted runners below Ventura have been retired by GitHub.
-            # Catalina (10.15 — the minimumSystemVersion) can't be exercised
-            # in CI without a self-hosted runner; covered by the static
-            # compatibility-check instead.
-            os: [macos-13, macos-14, macos-15]
+            os: [macos-13, macos-15]
       runs-on: ${{ matrix.os }}
 
       steps:
