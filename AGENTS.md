@@ -94,6 +94,14 @@ Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`, `CODE_OF_CONDUCT.md`
 - No conventional commit prefixes. Use imperative verb + short description.
 - Co-authored-by trailer when commit is agent-made.
 
+### External scripts (codegen, build tooling, one-off utilities)
+
+- Run on **Bun** and use **Bun APIs** (`Bun.file`, `Bun.write`, `Bun.Glob`, `Bun.spawnSync`, `Bun.YAML.parse`, etc.). Do not use `tsx` / `ts-node` / plain `node`.
+- Scripts live in `scripts/` as `.ts` files with a `// SPDX…` header and run via `bun run scripts/<name>.ts` (wrap behind a `pnpm <name>` alias).
+- YAML parsing: use the built-in `Bun.YAML.parse` — no extra package.
+- If a script needs to emit `.d.ts` files, use **tsdown**, not `tsc`/`dts-bundle-generator`/etc.
+- Vite bundling runs on Rolldown, which is Rollup-plugin-compatible — reach for `@rollup/plugin-*` before writing custom transforms.
+
 ## Key directories
 
 ```
