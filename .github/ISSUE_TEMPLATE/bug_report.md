@@ -31,7 +31,7 @@ APEX_DISK_DEBUG=1 /Applications/ApexDisk.app/Contents/MacOS/ApexDisk
 # or, from the repo: ./scripts/run-with-debug.sh
 ```
 
-Prefix reference: **`LOGGING.md`**. In the log paste: `[apex:vue:…]` = intentional TS logs; `[apex:vue/…]` = uncaught web errors (stderr); `[apex:rust:…]` = Rust IPC / updater. Unprefixed lines may be Tauri/Wry.
+Prefix reference: **`docs/LOGGING.md`**. In the log paste: `[apex:vue:…]` = intentional TS logs; `[apex:vue/…]` = uncaught web errors (stderr); `[apex:rust:…]` = Rust IPC / updater. Unprefixed lines may be Tauri/Wry.
 
 Paste the relevant log output here.
 

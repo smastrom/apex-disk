@@ -1,6 +1,6 @@
 //! Diagnostic logging shared with the Vue frontend (`src/lib/log.ts`).
 //!
-//! Scheme, streams, and channel names: see **`LOGGING.md`** at the repo root.
+//! Scheme, streams, and channel names: see **`docs/LOGGING.md`**.
 //!
 //! - [`dev_rust_trace`] — stdout `[apex:rust:{channel}]` for IPC entry traces
 //! - [`log_message`] / [`log_error_message`] — Tauri commands used by TS

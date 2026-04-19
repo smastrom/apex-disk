@@ -1,6 +1,6 @@
 # Releases
 
-Changelog for **stable** builds shipped via the GitHub **Release** workflow (DMG + signed updater bundle + `latest.json`). For nightly QA DMGs, see **`UPDATES.md`** and **`RELEASES_NIGHTLY.md`** — they do **not** use this file for versioning.
+Changelog for **stable** builds shipped via the GitHub **Release** workflow (DMG + signed updater bundle + `latest.json`). For nightly QA DMGs, see **`docs/UPDATES.md`** and **`RELEASES_NIGHTLY.md`** — they do **not** use this file for versioning.
 
 ## What to set for a stable release (vs nightly)
 
@@ -32,6 +32,6 @@ Testing update system.
 
 ## v0.0.11
 
-- Unified Vue ↔ Rust diagnostic logging (`LOGGING.md`, `APEX_DISK_DEBUG`, scan/disk live traces).
+- Unified Vue ↔ Rust diagnostic logging (`docs/LOGGING.md`, `APEX_DISK_DEBUG`, scan/disk live traces).
 - Rust hardening: store validation and locking, `safe_folders` precompute, faster `system_info`, scan/trash/updater fixes, `tauri` test feature in dev-deps only.
-- Nightly: manual workflow publishes a GitHub pre-release DMG; `UPDATES.md`, `RELEASES_NIGHTLY.md`, `src-tauri/README.md`, local `tauri:build:nightly`.
+- Nightly: manual workflow publishes a GitHub pre-release DMG; `docs/UPDATES.md`, `RELEASES_NIGHTLY.md`, `src-tauri/README.md`, local `tauri:build:nightly`.

@@ -1,6 +1,6 @@
 Run a full compatibility verification for ApexDisk against the declared minimum target (macOS 10.15 Catalina, Safari 13).
 
-Follow the steps documented in `COMPATIBILITY.md` at the project root. For each section:
+Follow the steps documented in `docs/COMPATIBILITY.md`. For each section:
 
 1. **Architecture** — Verify the release workflow builds a universal binary (Intel + Apple Silicon). Check that no `cfg(target_arch)` gates exist in Rust source.
 2. **Minimum macOS version** — Confirm `minimumSystemVersion` in `src-tauri/tauri.conf.json` is `10.15`.
@@ -10,4 +10,4 @@ Follow the steps documented in `COMPATIBILITY.md` at the project root. For each 
 6. **Tauri 2 requirements** — Confirm Tauri 2's WKWebView hard requirement of macOS 10.15 is met.
 7. **Progressive enhancement** — List any CSS/Web API features that only work on newer macOS and confirm they degrade gracefully (behind `@supports`, no core functionality broken).
 
-After completing all checks, update `COMPATIBILITY.md` with any findings that differ from the current content. If everything checks out, say so.
+After completing all checks, update `docs/COMPATIBILITY.md` with any findings that differ from the current content. If everything checks out, say so.

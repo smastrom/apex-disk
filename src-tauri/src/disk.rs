@@ -2,7 +2,7 @@
 //!
 //! Uses the macOS NSURL API for disk stats (to match Finder); volume name from diskutil.
 //! With debug builds or `APEX_DISK_DEBUG`, [`crate::log::dev_rust_trace`] on channel **`disk`**
-//! logs **`Disk: usage — …`** after a successful read. See **`LOGGING.md`**.
+//! logs **`Disk: usage — …`** after a successful read. See **`docs/LOGGING.md`**.
 
 use objc2_foundation::{
     NSArray, NSNumber, NSString, NSURLVolumeAvailableCapacityForImportantUsageKey,

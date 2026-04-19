@@ -178,4 +178,4 @@ cargo test --test store_test
 | `APEX_DISK_DEBUG=1` or `true` | **Release:** enables intentional `log()` lines on stdout, updater diagnostics on stdout, and mirrored **stderr** lines for uncaught web/Vue errors. **Dev:** same, except updater stdout also uses debug builds without the env var. |
 | Launch from Terminal          | Use `APEX_DISK_DEBUG=1 /Applications/ApexDisk.app/Contents/MacOS/ApexDisk`, or **`./scripts/run-with-debug.sh`**. `open -a` does **not** pass this env var.                                            |
 
-Full Vue/Rust logging scheme (categories, `[apex:…]` prefixes, stdout vs stderr, source files): **`LOGGING.md`** at the repo root.
+Full Vue/Rust logging scheme (categories, `[apex:…]` prefixes, stdout vs stderr, source files): **`docs/LOGGING.md`**.

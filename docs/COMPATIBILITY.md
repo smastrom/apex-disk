@@ -98,10 +98,10 @@ build: {
 - `:popover-open` pseudo-class (Safari 17+) — browser API, not transpilable
 - `@starting-style` (Safari 17.5+) — not transpilable
 - `::view-transition-*` pseudo-elements (Safari 18+) — not transpilable
+- `overflow: overlay` (WebKit-only, all Safari versions) — passes through; non-WebKit engines ignore it and fall back to the `overflow: auto` declared on the line above
 - `color-mix()` whose operands are CSS custom properties — passes through unchanged (cannot be resolved at build time)
-- `:has()` itself on Safari < 15.4 — emitted as-is and silently no-ops
 
-These features degrade gracefully: they are either behind `@supports` checks or are progressive enhancements (popovers, animations, hover styling) that do not break core functionality. The `:has()` selectors in the codebase are used for non-essential styling.
+These features degrade gracefully: `::view-transition-*` rules are wrapped in `@supports (view-transition-name: none)` so older WebKit simply doesn't animate; `:popover-open` + `@starting-style` are used only by the selection-count popover (see below) and have no layout fallback needed. Label popovers on list rows use `@floating-ui/dom` with `<Teleport to="body">` instead of the native Popover API so they work on Safari 13+.
 
 To verify CSS output has no untranspilable modern syntax:
 
@@ -209,11 +209,11 @@ These CSS/Web API features are used but **only work on newer macOS** (they degra
 
 | Feature | Min Safari | Fallback behavior |
 |---------|-----------|-------------------|
-| Popover API (`:popover-open`) | 17.0 | Popover won't have CSS transitions |
-| `@starting-style` | 17.5 | No entry animations for popovers |
-| View Transitions API (`::view-transition-*`) | 18.0 | Wrapped in `@supports` — no transition animation |
-| `:has()` parent selector | 15.4 | Selector silently no-ops — affected styling is non-essential |
-| `color-mix()` with custom-property operands | 16.2 | Passes through unchanged — falls back to declared base color |
+| Popover API (`popover=` + `:popover-open`) | 17.0 | Only the selection-count popover on result rows uses the native API. On older Safari it just doesn't open via the popover mechanism — the counter remains readable elsewhere in the UI. Row **label** popovers (item name, full path) use `@floating-ui/dom` + `<Teleport to="body">` and work on Safari 13+. |
+| `@starting-style` | 17.5 | No entry animation on the popover above |
+| View Transitions API (`::view-transition-*`) | 18.0 | All rules wrapped in `@supports (view-transition-name: none)` — navigation simply cuts without animation |
+| `overflow: overlay` (native macOS auto-hide scrollbars) | 14.0 (WebKit) | Non-WebKit / older WebKit falls back to the `overflow: auto` declared on the preceding line — classic always-visible scrollbars |
+| `color-mix()` with custom-property operands | 16.2 | Passes through unchanged — renderer falls back to the declared base color |
 | CSS Nesting | 17.2 | **Transpiled by lightningcss** — no issue |
 | Cascade Layers (`@layer`) | 15.4 | **Flattened by lightningcss** — no issue |
 
@@ -221,4 +221,4 @@ These CSS/Web API features are used but **only work on newer macOS** (they degra
 
 ## Conclusion
 
-The app ships as a **universal binary** supporting both **Intel (x86_64)** and **Apple Silicon (aarch64)** Macs natively — no Rosetta 2 required on either architecture. It is fully functional on **macOS 10.15 Catalina (Safari 13.0)** as the absolute minimum. Core functionality works without issue. Visual enhancements (popover animations, view transitions) progressively enhance on newer macOS versions.
+The app ships as a **universal binary** supporting both **Intel (x86_64)** and **Apple Silicon (aarch64)** Macs natively — no Rosetta 2 required on either architecture. It is fully functional on **macOS 10.15 Catalina (Safari 13.0)** as the absolute minimum. Core functionality works without issue. Visual enhancements (native-popover animations, view transitions, overlay scrollbars) progressively enhance on newer macOS versions; label popovers use `@floating-ui/dom` so row tooltips work even on the 10.15 baseline.

@@ -2,7 +2,19 @@
 
 ## Project
 
-ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for disk usage analysis and cleanup. Ships as a universal binary (Intel + Apple Silicon). Minimum macOS 10.15. Supported macOS/Safari/architecture ranges are documented in `COMPATIBILITY.md` — keep new dependencies and syntax within that range.
+ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for disk usage analysis and cleanup. Ships as a universal binary (Intel + Apple Silicon). Minimum macOS 10.15. Supported macOS/Safari/architecture ranges are documented in `docs/COMPATIBILITY.md` — keep new dependencies and syntax within that range.
+
+## Agent-facing docs (`docs/`)
+
+`docs/` holds reference material agents are expected to read and keep current:
+
+- **`docs/COMPATIBILITY.md`** — macOS / Safari / architecture targets and per-feature progressive-enhancement matrix.
+- **`docs/LOGGING.md`** — unified Vue + Rust diagnostic scheme (`[apex:…]` prefixes, channels, `APEX_DISK_DEBUG`).
+- **`docs/UPDATES.md`** — in-app update flow, endpoints, stable-vs-nightly split.
+
+**Before every commit, check whether the change affects any file in `docs/` and update accordingly.** This includes (non-exhaustive): bumping dependencies, touching `vite.config.ts` / Cargo deps, switching a UI feature to a different API (e.g. native Popover ↔ Floating UI), adding/changing a log category or Rust trace channel, changing the updater flow or menu items, adding a progressive-enhancement CSS feature. If none apply, say so in the commit message is not required — just confirm mentally. Never commit code that contradicts `docs/`.
+
+Root-level `RELEASES.md`, `RELEASES_NIGHTLY.md`, `LICENSE.md`, `CODE_OF_CONDUCT.md`, `README.md` stay at the repo root — they are user-/CI-facing, not agent instructions.
 
 ## Stack
 
@@ -23,7 +35,7 @@ ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for 
 - **Scanning**: Rust (`src-tauri/src/scan.rs`) builds a `FolderInfo` tree, emits progress events. Frontend navigates the tree with browser-style back/forward stacks.
 - **Deletion**: Items moved to macOS Trash (recoverable). Protected/skipped folders filtered in Rust before trashing.
 - **Native menu**: Built in Rust, localized via `menu_translations.rs`, rebuilt on language change.
-- **Diagnostics**: Vue `log()` + Rust `dev_rust_trace` / updater lines — see **`LOGGING.md`** (`APEX_DISK_DEBUG`, `[apex:…]` prefixes).
+- **Diagnostics**: Vue `log()` + Rust `dev_rust_trace` / updater lines — see **`docs/LOGGING.md`** (`APEX_DISK_DEBUG`, `[apex:…]` prefixes).
 
 ## Code conventions
 

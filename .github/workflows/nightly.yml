@@ -1,7 +1,7 @@
 # Builds a signed, notarized **ApexDisk Nightly** DMG. Trigger: **workflow_dispatch only** (never on push).
 # Publishes a GitHub **pre-release** (tag `nightly-<run_id>`) with the DMG + RELEASES_NIGHTLY.md so testers
 # can install from the Releases page. Also uploads a workflow artifact. No latest.json / updater channel.
-# Version is whatever is on the branch you choose when clicking "Run workflow"—see UPDATES.md.
+# Version is whatever is on the branch you choose when clicking "Run workflow"—see docs/UPDATES.md.
 
 name: Nightly
 
