@@ -238,7 +238,7 @@ const showNewFree = computed(() => {
    background: var(--color-surface);
    border-radius: 5px;
    overflow: hidden;
-   box-shadow: var(--glow-inset);
+   box-shadow: inset 0 0.5px 1px rgba(0, 0, 0, 0.24);
 }
 
 .ScanViewHeader-barLighter {
@@ -260,7 +260,9 @@ const showNewFree = computed(() => {
    background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
    border-radius: 5px;
    transition: width 0.3s var(--ease-out);
-   box-shadow: var(--glow-sm);
+   box-shadow:
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.3),
+      var(--glow-sm);
    z-index: 1;
 }
 </style>
