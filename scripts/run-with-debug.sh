@@ -4,7 +4,7 @@
 #
 # Usage:
 #   ./scripts/run-with-debug.sh
-#   ./scripts/run-with-debug.sh "/Applications/ApexDisk Nightly.app"
+#   ./scripts/run-with-debug.sh "/Applications/ApexDisk Beta.app"
 
 set -euo pipefail
 

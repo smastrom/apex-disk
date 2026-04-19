@@ -106,7 +106,7 @@ reviews:
            justification — this is the app's security boundary.
       - path: '.github/workflows/**'
         instructions: |
-           Release (`release.yml`) and nightly (`nightly.yml`) workflows
+           Release (`release.yml`) and beta (`beta.yml`) workflows
            handle code signing, notarization, and updater artifact
            generation. Breaking these ships broken updates to users.
            Ensure pinned action versions and secret handling are intact.

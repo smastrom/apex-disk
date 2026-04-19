@@ -44,7 +44,7 @@
       "prepare": "husky",
       "tauri": "tauri",
       "tauri:build": "source scripts/load-env.sh && tauri build --target universal-apple-darwin --verbose",
-      "tauri:build:nightly": "source scripts/load-env.sh && tauri build --target universal-apple-darwin --config src-tauri/tauri.nightly.conf.json --verbose",
+      "tauri:build:beta": "source scripts/load-env.sh && tauri build --target universal-apple-darwin --config src-tauri/tauri.beta.conf.json --verbose",
       "tauri:build:unsigned": "APPLE_SIGNING_IDENTITY='-' tauri build --target universal-apple-darwin",
       "tauri:clean": "cargo clean --manifest-path src-tauri/Cargo.toml && rm -rf target",
       "tauri:dev": "tauri dev --config src-tauri/tauri.dev.conf.json",

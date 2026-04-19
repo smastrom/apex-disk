@@ -4,7 +4,7 @@ on:
    workflow_dispatch:
       inputs:
          prerelease:
-            description: 'Mark as pre-release (beta)'
+            description: 'Mark as pre-release (e.g. semver -beta.1 / -rc.1)'
             type: boolean
             default: false
 
@@ -20,8 +20,8 @@ jobs:
 
          - name: Validate versions
            run: |
-              # Parse latest version from RELEASES.md (last ## v heading = most recent)
-              TAG=$(grep '^## v' RELEASES.md | tail -1 | sed 's/^## //')
+              # Parse latest version from RELEASES.md (first ## v heading = most recent, newest-first)
+              TAG=$(grep '^## v' RELEASES.md | head -1 | sed 's/^## //')
               VERSION="${TAG#v}"
 
               if [ -z "$VERSION" ]; then
