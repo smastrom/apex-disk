@@ -60,7 +60,6 @@ const languageOptions = computed(() => [
 ])
 
 const themeOptions = computed(() => [
-   { value: 'core' as ThemeColor, label: t('SettingsView', 'themeCore') },
    { value: 'apex' as ThemeColor, label: t('SettingsView', 'themeApex') },
    { value: 'apex-coral' as ThemeColor, label: t('SettingsView', 'themeApexCoral') },
    { value: 'apex-ocean' as ThemeColor, label: t('SettingsView', 'themeApexOcean') },
