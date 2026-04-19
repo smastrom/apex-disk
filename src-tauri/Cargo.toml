@@ -1,6 +1,6 @@
 [package]
 name = "apex-disk"
-version = "0.0.12"
+version = "0.0.13"
 description = "Tool to easily identify and get rid of big, unused files and folders in seconds."
 authors = ["smastrom"]
 edition = "2021"

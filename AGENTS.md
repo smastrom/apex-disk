@@ -20,14 +20,14 @@ Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`, `CODE_OF_CONDUCT.md`
 
 ## Stack
 
-| Layer | Tech |
-|-------|------|
-| Backend | Rust, Tauri 2, objc2 (Foundation/AppKit bindings) |
-| Frontend | Vue 3 (`<script setup lang="ts">`), TypeScript, Vite |
-| Styling | Scoped CSS with CSS nesting, lightningcss (Safari 13 target) |
-| Testing | Rust: `cargo test` (src-tauri/tests/), E2E: WebdriverIO (e2e/) |
-| Formatting | Oxfmt (import sorting, code formatting) |
-| Package manager | pnpm |
+| Layer           | Tech                                                           |
+| --------------- | -------------------------------------------------------------- |
+| Backend         | Rust, Tauri 2, objc2 (Foundation/AppKit bindings)              |
+| Frontend        | Vue 3 (`<script setup lang="ts">`), TypeScript, Vite           |
+| Styling         | Scoped CSS with CSS nesting, lightningcss (Safari 13 target)   |
+| Testing         | Rust: `cargo test` (src-tauri/tests/), E2E: WebdriverIO (e2e/) |
+| Formatting      | Oxfmt (import sorting, code formatting)                        |
+| Package manager | pnpm                                                           |
 
 ## Architecture
 
@@ -42,6 +42,7 @@ Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`, `CODE_OF_CONDUCT.md`
 ## Code conventions
 
 ### Comments
+
 - Default to no comments. Code must be readable and clean; comments support code, they do not drive it.
 - Only add a comment when the WHY is non-obvious (workaround, subtle invariant, surprising behavior, version constraint, etc.).
 - Do not restate what well-named code already says (e.g. `// Walk up to find the nearest scrollable ancestor` above an obvious loop).
@@ -50,10 +51,12 @@ Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`, `CODE_OF_CONDUCT.md`
 - If a function needs a paragraph to explain it, prefer renaming or splitting it instead.
 
 ### File naming
+
 - `.vue`: PascalCase (`ScanResultsList.vue`)
 - `.ts`: kebab-case (`use-scanner.ts`), except component-coupled files (PascalCase, e.g. `ScanResultsListItem.ts`)
 
 ### Vue
+
 - Always `<script setup lang="ts">`. No Options API.
 - Script order: `defineProps` → `defineEmits` → blank line → all other logic.
 - Template refs: `useTemplateRef('name')`, not `ref<HTMLElement>(null)`.
@@ -63,21 +66,25 @@ Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`, `CODE_OF_CONDUCT.md`
 - Semantic HTML: use landmarks, correct heading hierarchy, lists. Use `aria-live="polite"` for dynamic status/navigation changes; `assertive` only for urgent messages.
 
 ### CSS
+
 - Class format: `ComponentName-nestedElement` (matches filename).
 - Use CSS nesting with `&` for pseudo-selectors/states.
 - BEM modifiers: full class names at root (`ComponentName-element--modifier`), never `&--modifier`.
 - Media queries: nested inside the selector, never at root.
 
 ### TypeScript
+
 - Blank line between groups of different statement types (`const`, `let`, expressions, `return`).
 - `if` bodies: braces required unless condition + statement fit on one line.
 - Prefer `!value` over `value === false`.
 - Tauri boundary objects: snake_case. Frontend-only objects: camelCase.
 
 ### Rust
+
 - Import order: framework → std → 3rd-party → crate-internal. Blank line between groups.
 
 ### Commits
+
 - No conventional commit prefixes. Use imperative verb + short description.
 - Co-authored-by trailer when commit is agent-made.
 
@@ -101,6 +108,7 @@ src-tauri/
 ## Testing rules
 
 When touching Rust code or `src-tauri/`:
+
 1. Run `pnpm test:unit` (or `cd src-tauri && cargo test`).
 2. If tests fail: fix the test if your change is correct and the test is outdated; add tests if none exist for the changed code.
 3. Tests use temp dirs, never the real user home.

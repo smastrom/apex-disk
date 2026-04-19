@@ -4,6 +4,22 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 
 ---
 
+## v0.0.13
+
+### Improvements
+
+- Rework `GradientButton` shadows so the rest→hover transition interpolates cleanly (matching layer counts) and the drop/glow/inset are theme tokens. macOS Light softens the drops and strengthens the hover glow so it's visible on a light surface.
+
+### Chores
+
+- Refresh the README hero image.
+- Consolidate release guidance into `docs/RELEASES.md`; slim root `RELEASES.md` and `RELEASES_BETA.md` to pointers, and scope `docs/UPDATES.md` to updater behavior only.
+- Add `docs/ARCHITECTURE.md` documenting the Rust/webview boundary: per-side responsibilities, IPC, subsystem walkthroughs, and directory map.
+- Require stable `RELEASES.md` entries to be grouped under `### New Features / Improvements / Bug Fixes / Chores`; `/release` and the authoring conventions in `docs/RELEASES.md` now enforce the format.
+- Strengthen the `AGENTS.md` pre-commit rule: analyze **every** file under `docs/` for update eligibility, with an expanded trigger list (renames, boundary shifts, workflow edits).
+- Trigger a Cloudflare Pages rebuild from the Release workflow via the `CF_PAGES_DEPLOY_HOOK_URL` secret so the marketing site re-publishes against each new tag.
+- Add the `/sync` slash command for splitting in-flight work into logical commits, sweeping `docs/`, and pushing.
+
 ## v0.0.12
 
 - Rename the manual QA release channel from **Nightly** to **Beta** end-to-end: workflow (`beta.yml`, tag prefix `beta-<run_id>`), Tauri config (`tauri.beta.conf.json`, bundle id `com.smastrom.apex-disk.beta`, product name "ApexDisk Beta"), `pnpm tauri:build:beta`, and the companion `RELEASES_BETA.md`. The slash command is now `/beta-notes`.
