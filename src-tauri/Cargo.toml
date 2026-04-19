@@ -1,9 +1,15 @@
 [package]
 name = "apex-disk"
 version = "0.0.13"
-description = "Tool to easily identify and get rid of big, unused files and folders in seconds."
-authors = ["smastrom"]
+description = "macOS tool to easily identify and get rid of big, unused files and folders in seconds."
+authors = ["Simone Mastromattei <smastrom@proton.me>"]
 edition = "2021"
+license = "GPL-3.0"
+repository = "https://github.com/smastrom/apex-disk"
+homepage = "https://github.com/smastrom/apex-disk"
+readme = "README.md"
+keywords = ["tauri", "macos", "disk-usage", "storage-cleaner", "treemap"]
+categories = ["filesystem", "gui"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
