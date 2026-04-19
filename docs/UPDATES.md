@@ -1,6 +1,6 @@
 # Updates
 
-Stable **in-app updates** use [tauri-plugin-updater](https://v2.tauri.app/plugin/updater/) and GitHub Releases. **Beta** builds are triggered **only** via **Actions → Beta → Run workflow** (no push trigger); each run publishes a **pre-release** on GitHub (tag `beta-<run_id>`) with the DMG plus `../RELEASES_BETA.md`, and still uploads a workflow artifact. No `latest.json` / beta updater channel.
+In-app update behavior for **stable** builds (the [tauri-plugin-updater](https://v2.tauri.app/plugin/updater/) channel backed by GitHub Releases). For how stable and Beta builds are **cut** — release workflow, version fields, changelog files, Beta channel — see `RELEASES.md`.
 
 ## In-App Updates (Stable Releases)
 
@@ -69,82 +69,14 @@ Updates are signed with a keypair generated via `pnpm tauri signer generate`. Th
 
 The **Release** workflow uses these to sign the `.tar.gz` update artifact. The app verifies the signature against the embedded public key before applying any update.
 
-## Release Workflow
+## Why stable users don't receive pre-releases
 
-The **Release** workflow reads the version from **`../RELEASES.md`** (the last `## vX.Y.Z` heading) and fails if `package.json`, `tauri.conf.json`, and `Cargo.toml` do not match.
-
-### Stable Release
-
-1. Update the version in `package.json`, `tauri.conf.json`, `Cargo.toml`, and add a heading in `../RELEASES.md`
-2. Commit and push to `main`
-3. Go to **Actions → Release → Run workflow**
-4. Leave "Mark as pre-release" **unchecked**
-5. CI builds, signs, notarizes, creates a GitHub Release with:
-   - `.dmg` — the installer for new users
-   - `.tar.gz` + `.tar.gz.sig` — the signed update bundle
-   - `latest.json` — the update manifest pointing to the `.tar.gz`
-6. Users running older versions will see the update on next app start (if auto-updates ON) or when checking manually
-
-### Semver Pre-release (e.g. `-beta.1`, `-rc.1`)
-
-Distinct from the **Beta channel** — this is a **Release-workflow** run that ships through the same pipeline as stable but marks the GitHub release as a pre-release so stable users do not auto-update to it.
-
-1. Update the version to something like `0.10.0-beta.1` in all the same files
-2. Commit and push
-3. Go to **Actions → Release → Run workflow**
-4. **Check** "Mark as pre-release"
-5. CI builds the same artifacts and creates a GitHub **pre-release**
-6. **Stable users are not affected** — the `/releases/latest/` URL still points to the last stable release, so `latest.json` from the pre-release is not served to them
-7. To test it, download the `.dmg` directly from the GitHub pre-release page
-
-### Why stable users don't receive pre-releases
-
-GitHub's URL `https://github.com/.../releases/latest/download/latest.json` is a redirect. GitHub resolves `latest` to the most recent release that is **not** marked as a pre-release. So:
+The updater endpoint `https://github.com/.../releases/latest/download/latest.json` is a redirect. GitHub resolves `latest` to the most recent release that is **not** marked as a pre-release. So:
 
 - `v0.9.0` (stable) → `latest.json` is served from here
 - `v0.10.0-beta.1` (pre-release) → has its own `latest.json`, but nobody fetches it because `/releases/latest/` still points to `v0.9.0`
 
-Each release has a direct URL too: `/releases/download/v0.10.0-beta.1/latest.json` — but the app never uses that URL.
-
-## `../RELEASES.md` vs `../RELEASES_BETA.md`
-
-| | `../RELEASES.md` | `../RELEASES_BETA.md` |
-| --- | --- | --- |
-| **Used by CI for version?** | **Yes.** The **Release** workflow takes the version from the **last** `## vX.Y.Z` heading and checks it matches `package.json`, `tauri.conf.json`, and `Cargo.toml`. | **No.** The Beta workflow does not change semver; it tags pre-releases as `beta-<run_id>` only. |
-| **Used by CI at all?** | Drives tag, release notes body, and build. | Attached to each **Beta** pre-release, included in the workflow artifact, and the **first** `## …` section is echoed into the job summary. |
-| **Purpose** | Canonical shipping history + semver for the updater and installers. | Optional tester-facing notes (what to smoke-test, known issues) for a given `main` snapshot. |
-
-So **`../RELEASES_BETA.md` is not a duplicate of `../RELEASES.md`**: it does not replace version bookkeeping because Beta builds **reuse the repo's current semver** (see below). If you tried to drive Beta versions from a second file, you would either duplicate `../RELEASES.md` or conflict with it.
-
-## Version nomenclature (stable vs Beta channel)
-
-**Stable and semver pre-releases (Release workflow)**  
-One **semantic version** (e.g. `0.0.10`, or `0.10.0-beta.1`) lives in `package.json`, `src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml`, and the newest `## v…` block in **`../RELEASES.md`**. That number is what appears in the app, the Git tag (`v0.0.10`), and `latest.json`.
-
-**Beta channel**  
-The **ApexDisk Beta** build uses the **same** version fields as whatever is on the **branch you select** when you run the workflow manually. The Beta workflow does **not** bump or validate them against a second doc.
-
-Implications:
-
-- **Several Beta builds in a row can show the same version** (e.g. three builds while `main` is still `0.0.10`). That is expected: Beta is a **snapshot of the branch**, not a new release line.
-- **Tell builds apart** using the GitHub **run** (artifact name includes the run id), **commit SHA**, or the date you downloaded the artifact—not the About-box semver alone.
-- **Optional team policy:** only bump `../RELEASES.md` / semver when cutting a real **Release**; Beta builds between releases keep reporting the last shipped version until you merge a version bump. Alternatively bump version on `main` right after each release so Beta builds show the *upcoming* version early—still one source of truth, no `RELEASES_BETA` version.
-
-The project does **not** currently append build metadata (e.g. `0.0.10+beta.abc1234`) in CI; adding that would require changing the three version fields (or build scripts) on every Beta run.
-
-## Beta Channel (QA Only)
-
-The Beta channel runs **only when you start it manually** (no `push` trigger). Each run creates a **GitHub pre-release** (tag `beta-<run_id>`) with the signed DMG and `../RELEASES_BETA.md`, so testers can install from **Releases** (filter or scroll to pre-releases). The workflow also uploads **`ApexDisk-Beta-<run id>`** as an artifact. There is **no** Beta updater channel.
-
-1. Optionally edit **`../RELEASES_BETA.md`** (add a new `## YYYY-MM-DD` section at the top with tester notes — it becomes the top of the pre-release body).
-2. Go to **Actions → Beta → Run workflow**, choose the **branch** to build (e.g. `main`, `beta`, or `dev`).
-3. When the job finishes: open the **pre-release** on the repo's Releases page, or download the artifact. Install the DMG like any app. The job summary still shows the first `##` section from `../RELEASES_BETA.md`.
-
-**Config** (`src-tauri/tauri.beta.conf.json`): **ApexDisk Beta** / `com.smastrom.apex-disk.beta` so it does not replace the store build, and `bundle.createUpdaterArtifacts` is **false** (no `.tar.gz` / signatures for the updater).
-
-**Local build:** `pnpm tauri:build:beta` (same signing env as a normal release build).
-
-The updater plugin and stable endpoint are still in the binary; the project does **not** publish `latest.json` or artifacts for Beta in-app updates. Treat Beta like dev for update expectations: focus on the DMG, not on seamless upgrades between Beta builds.
+Each release has a direct URL too: `/releases/download/v0.10.0-beta.1/latest.json` — but the app never uses that URL. This also keeps Beta-channel builds (tag `beta-<run_id>`) off the updater: they're GitHub pre-releases and don't ship `latest.json` anyway.
 
 ## Local Development
 

@@ -10,7 +10,8 @@ ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for 
 
 - **`docs/COMPATIBILITY.md`** — macOS / Safari / architecture targets and per-feature progressive-enhancement matrix.
 - **`docs/LOGGING.md`** — unified Vue + Rust diagnostic scheme (`[apex:…]` prefixes, channels, `APEX_DISK_DEBUG`).
-- **`docs/UPDATES.md`** — in-app update flow, endpoints, stable-vs-beta split.
+- **`docs/RELEASES.md`** — how to cut stable and Beta builds: version fields, changelog conventions, workflows.
+- **`docs/UPDATES.md`** — in-app updater behavior (auto/manual, endpoint, signing, dialogs).
 
 **Before every commit, check whether the change affects any file in `docs/` and update accordingly.** This includes (non-exhaustive): bumping dependencies, touching `vite.config.ts` / Cargo deps, switching a UI feature to a different API (e.g. native Popover ↔ Floating UI), adding/changing a log category or Rust trace channel, changing the updater flow or menu items, adding a progressive-enhancement CSS feature. If none apply, say so in the commit message is not required — just confirm mentally. Never commit code that contradicts `docs/`.
 
