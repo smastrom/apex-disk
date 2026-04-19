@@ -124,7 +124,7 @@ static E2E_TRASH_MODE: std::sync::Mutex<String> = std::sync::Mutex::new(String::
 // Note: empty string maps to the `_` arm in trash_paths which behaves as "success".
 
 /// Tauri command: sets the e2e trash mock mode at runtime.
-/// Callable from tests via `window.__TAURI__.core.invoke('set_e2e_trash_mode', { mode })`.
+/// Callable from tests via `window.__TAURI_INTERNALS__.invoke('set_e2e_trash_mode', { mode })`.
 #[cfg(feature = "e2e")]
 #[tauri::command]
 pub fn set_e2e_trash_mode(mode: String) -> Result<(), String> {

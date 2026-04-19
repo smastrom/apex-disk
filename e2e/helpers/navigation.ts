@@ -198,18 +198,54 @@ export async function isReviewButtonDisabled(): Promise<boolean> {
 // Tauri invoke helpers (call Rust commands from tests)
 // ---------------------------------------------------------------------------
 
+/**
+ * Classic WebDriver's sync `execute` can't serialize a Promise return, and
+ * async script bodies still return one. `executeAsync` is the only way to
+ * await an async Tauri `invoke` over the chromedriver session.
+ */
+
 /** Reset app settings to defaults via the e2e Tauri command. */
 export async function resetE2eState() {
-   await browser.execute(() => {
-      return (window as any).__TAURI__.core.invoke('reset_e2e_state')
+   const err = await browser.executeAsync<string | null, []>((done: any) => {
+      ;(window as any).__TAURI_INTERNALS__
+         .invoke('reset_e2e_state')
+         .then(() => done(null))
+         .catch((e: unknown) => done(String(e && (e as Error).message ? (e as Error).message : e)))
    })
+   if (err) throw new Error(`reset_e2e_state failed: ${err}`)
+
+   // The Vue settings ref is loaded once at startup and doesn't re-read after
+   // a Rust-side reset, so any scan filter that's currently "on" in the UI
+   // would still bias the next scan. Normalize the UI to match the store
+   // defaults by flipping any lingering "on" toggle back to "off".
+   await normalizeScanFilterToggles()
+}
+
+async function normalizeScanFilterToggles() {
+   await goToSettingsView()
+   const selectors = [
+      sel.settingsToggleHiddenFiles,
+      sel.settingsToggleUnder1Kb,
+      sel.settingsToggleZeroByte,
+   ]
+   for (const selector of selectors) {
+      const on = await getToggleState(selector)
+      if (on) {
+         await $(selector).click()
+         await browser.pause(80)
+      }
+   }
 }
 
 /** Set the trash mock mode ('success' | 'zero' | 'error'). */
 export async function setTrashMode(mode: 'success' | 'zero' | 'error') {
-   await browser.execute((m: string) => {
-      return (window as any).__TAURI__.core.invoke('set_e2e_trash_mode', { mode: m })
+   const err = await browser.executeAsync<string | null, [string]>((m: string, done: any) => {
+      ;(window as any).__TAURI_INTERNALS__
+         .invoke('set_e2e_trash_mode', { mode: m })
+         .then(() => done(null))
+         .catch((e: unknown) => done(String(e && (e as Error).message ? (e as Error).message : e)))
    }, mode)
+   if (err) throw new Error(`set_e2e_trash_mode failed: ${err}`)
 }
 
 // ---------------------------------------------------------------------------
@@ -394,14 +430,34 @@ export async function rescanFresh() {
  * Bring the app back to a known state and run a fresh scan.
  * - Resets settings to defaults (so hidden/<1 KB/0 B filters are off).
  * - Switches to Scan view.
- * - If already on results, navigates to root and clears any selection.
- * - Otherwise starts a new scan and waits for results.
+ * - If on the trash confirmation screen, restarts back to results.
+ * - If on the trash list, navigates back to results.
+ * - If on results, navigates to root and clears any selection.
+ * - If on launch, starts a fresh scan.
  */
 export async function resetAndScan() {
    await resetE2eState()
    await goToScanView()
 
-   // If results are already displayed (KeepAlive), go back to root and clear selection.
+   // Trash confirmation screen (TRASH_COMPLETE): click restart to return to results.
+   const restart = $(sel.restart)
+   const onConfirm = await restart.isDisplayed().catch(() => false)
+   if (onConfirm) {
+      await restart.click()
+      await browser.pause(TRANSITION_SETTLE_MS)
+   }
+
+   // Trash list (TRASH): click back to return to results.
+   const trashList = $(sel.trashList)
+   const onTrash = await trashList.isDisplayed().catch(() => false)
+   if (onTrash) {
+      const back = $(sel.navBack)
+      await back.click()
+      await browser.pause(TRANSITION_SETTLE_MS)
+   }
+
+   // If results are displayed (either directly or after the step above), go
+   // back to root and clear any lingering selection.
    const results = $(sel.resultsList)
    const hasResults = await results.isDisplayed().catch(() => false)
    if (hasResults) {
