@@ -63,7 +63,7 @@ Entry points: `main.rs` delegates to `lib.rs::run()`, which installs plugins (`t
 | Selection state (which rows are checked for trash) | Scan result components, not a global store |
 | Settings **UI** + typed access (hidden-files toggle, theme, language, auto-updates) | `src/stores/app-settings.ts`, `src/components/SettingsView.vue` |
 | Theme application — `data-theme` attribute on `<html>`, CSS variables | `src/assets/css/theme.css`, `src/stores/app-settings.ts` |
-| Translations — per-component `.ts` files, reactive via `useTranslations()` | `src/assets/translations/`, `src/lib/use-translations.ts` |
+| Translations — per-component `.yaml` files (key-first), reactive via `useTranslations()` | `src/assets/translations/`, `src/lib/use-translations.ts` |
 | All presentational primitives (buttons, popovers, spinners, icons) | `src/components/ui/` |
 | Animations, view transitions, reduced-motion handling | `src/assets/css/animations.css`, `src/lib/use-view-transition.ts`, `src/lib/use-reduced-motion.ts` |
 | Vue-side diagnostic log (forwards to Rust when `APEX_DISK_DEBUG` is on) | `src/lib/log.ts` |
@@ -232,7 +232,7 @@ src/                           # Webview
     app-settings.ts            # Reactive mirror of the Rust settings store
   assets/
     css/                       # theme.css, classes.css, animations.css, global.css, reset.css, rtl.css
-    translations/              # Per-component .ts files + index factory
+    translations/              # Per-component .yaml files + index factory
   types/                       # Boundary types mirroring Rust structs (snake_case fields)
 
 src-tauri/

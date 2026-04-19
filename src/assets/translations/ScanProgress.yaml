@@ -1,0 +1,74 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Simone Mastromattei
+
+scanning:
+  en: Scanning user folder… {{current}} of {{total}}
+  it: Scansione cartella utente... {{current}} di {{total}}
+  es: Escaneando carpeta de usuario... {{current}} de {{total}}
+  fr: Analyse du dossier utilisateur… {{current}} sur {{total}}
+  pt: A analisar pasta do utilizador… {{current}} de {{total}}
+  de: Benutzerordner wird gescannt… {{current}} von {{total}}
+  ru: Сканирование папки... {{current}} из {{total}}
+  zh: 正在扫描用户文件夹... {{current}} / {{total}}
+  ja: ユーザーフォルダをスキャン中... {{current}} / {{total}}
+  ar: مسح مجلد المستخدم... {{current}} من {{total}}
+
+elapsed:
+  en: Elapsed time
+  it: Tempo trascorso
+  es: Tiempo transcurrido
+  fr: Temps écoulé
+  pt: Tempo decorrido
+  de: Verstrichene Zeit
+  ru: Прошло времени
+  zh: 已用时间
+  ja: 経過時間
+  ar: الوقت المنقضي
+
+scannedSize:
+  en: Analyzed size
+  it: Dimensione analizzata
+  es: Tamaño analizado
+  fr: Taille analysée
+  pt: Tamanho analisado
+  de: Analysierte Größe
+  ru: Проанализированный объем
+  zh: 已分析大小
+  ja: 解析済みサイズ
+  ar: الحجم الذي تم تحليله
+
+currentPath:
+  en: Current folder
+  it: Cartella attuale
+  es: Carpeta actual
+  fr: Dossier actuel
+  pt: Pasta atual
+  de: Aktueller Ordner
+  ru: Текущая папка
+  zh: 当前文件夹
+  ja: 現在のフォルダ
+  ar: المجلد الحالي
+
+preparing:
+  en: Preparing scan...
+  it: Preparazione...
+  es: Preparando...
+  fr: Préparation...
+  pt: A preparar...
+  de: Vorbereitung...
+  ru: Подготовка...
+  zh: 正在准备...
+  ja: 準備中...
+  ar: جاري تحضير...
+
+abort:
+  en: Abort
+  it: Interrompi
+  es: Abortar
+  fr: Abandonner
+  pt: Abortar
+  de: Abbrechen
+  ru: Прервать
+  zh: 终止
+  ja: 中止
+  ar: إلغاء

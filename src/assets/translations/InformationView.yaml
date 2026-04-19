@@ -1,0 +1,210 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Simone Mastromattei
+
+description:
+  en: >-
+    A macOS tool to easily identify and get rid of big, unused files and folders
+    in seconds.
+  it: >-
+    Uno strumento per macOS per individuare ed eliminare facilmente file e
+    cartelle ingombranti e inutilizzati in pochi secondi.
+  es: >-
+    Una herramienta para macOS para identificar y eliminar fácilmente archivos
+    y carpetas grandes que no usas en segundos.
+  fr: >-
+    Un outil macOS pour identifier et supprimer facilement les fichiers et
+    dossiers volumineux et inutilisés en quelques secondes.
+  pt: >-
+    Uma ferramenta para macOS para identificar e remover facilmente ficheiros e
+    pastas grandes e não utilizados em segundos.
+  de: >-
+    Ein macOS-Tool, um große, ungenutzte Dateien und Ordner in Sekundenschnelle
+    zu finden und zu löschen.
+  ru: >-
+    Инструмент для macOS, позволяющий за считанные секунды находить и удалять
+    большие неиспользуемые файлы и папки.
+  zh: 一款 macOS 工具，可在几秒钟内轻松识别并清除占用空间大且未使用的文件和文件夹。
+  ja: 不要な大容量ファイルやフォルダーを数秒で特定し、簡単に削除できる macOS ツール。
+  ar: >-
+    أداة لنظام macOS لتحديد وحذف الملفات والمجلدات الكبيرة وغير المستخدمة بسهولة
+    في ثوانٍ معدودة.
+
+byAuthor:
+  en: by {author}
+  it: di {author}
+  es: por {author}
+  fr: par {author}
+  pt: por {author}
+  de: von {author}
+  ru: автор {author}
+  zh: 作者 {author}
+  ja: 作成者 {author}
+  ar: بواسطة {author}
+
+releaseInfo:
+  en: Release Information
+  it: Informazioni di Rilascio
+  es: Información de Lanzamiento
+  fr: Informations de Version
+  pt: Informações de Lançamento
+  de: Versionsinformationen
+  ru: Информация о выпуске
+  zh: 发布信息
+  ja: リリース情報
+  ar: معلومات الإصدار
+
+releaseNotes:
+  en: Release Notes
+  it: Note di Rilascio
+  es: Notas de Lanzamiento
+  fr: Notes de Version
+  pt: Notas de Lançamento
+  de: Versionshinweise
+  ru: Заметки о выпуске
+  zh: 发布说明
+  ja: リリースノート
+  ar: ملاحظات الإصدار
+
+license:
+  en: License
+  it: Licenza
+  es: Licencia
+  fr: Licence
+  pt: Licença
+  de: Lizenz
+  ru: Лицензия
+  zh: 许可证
+  ja: ライセンス
+  ar: الرخصة
+
+repository:
+  en: Repository
+  it: Repository
+  es: Repositorio
+  fr: Dépôt
+  pt: Repositório
+  de: Repository
+  ru: Репозиторий
+  zh: 代码仓库
+  ja: リポジトリ
+  ar: المستودع
+
+version:
+  en: Version
+  it: Versione
+  es: Versión
+  fr: Version
+  pt: Versão
+  de: Version
+  ru: Версия
+  zh: 版本
+  ja: バージョン
+  ar: الإصدار
+
+releaseDate:
+  en: Release Date
+  it: Data di Rilascio
+  es: Fecha de Lanzamiento
+  fr: Date de Version
+  pt: Data de Lançamento
+  de: Veröffentlichungsdatum
+  ru: Дата выпуска
+  zh: 发布日期
+  ja: リリース日
+  ar: تاريخ الإصدار
+
+systemInfo:
+  en: System Information
+  it: Informazioni di Sistema
+  es: Información del Sistema
+  fr: Informations Système
+  pt: Informações do Sistema
+  de: Systeminformationen
+  ru: Информация о системе
+  zh: 系统信息
+  ja: システム情報
+  ar: معلومات النظام
+
+macosVersion:
+  en: macOS Version
+  it: Versione macOS
+  es: Versión macOS
+  fr: Version macOS
+  pt: Versão macOS
+  de: macOS-Version
+  ru: Версия macOS
+  zh: macOS 版本
+  ja: macOSバージョン
+  ar: إصدار macOS
+
+hardwareModel:
+  en: Hardware Model
+  it: Modello Hardware
+  es: Modelo de Hardware
+  fr: Modèle Matériel
+  pt: Modelo de Hardware
+  de: Hardware-Modell
+  ru: Модель оборудования
+  zh: 硬件型号
+  ja: ハードウェアモデル
+  ar: نموذج الأجهزة
+
+cpu:
+  en: Processor
+  it: Processore
+  es: Procesador
+  fr: Processeur
+  pt: Processador
+  de: Prozessor
+  ru: Процессор
+  zh: 处理器
+  ja: プロセッサ
+  ar: المعالج
+
+memory:
+  en: Memory
+  it: Memoria
+  es: Memoria
+  fr: Mémoire
+  pt: Memória
+  de: Speicher
+  ru: Память
+  zh: 内存
+  ja: メモリ
+  ar: الذاكرة
+
+systemDisk:
+  en: System Disk
+  it: Disco di Sistema
+  es: Disco del Sistema
+  fr: Disque Système
+  pt: Disco do Sistema
+  de: Systemfestplatte
+  ru: Системный диск
+  zh: 系统磁盘
+  ja: システムディスク
+  ar: قرص النظام
+
+diskSize:
+  en: Disk Space (Scannable)
+  it: Spazio Disco (Scansionabile)
+  es: Espacio en Disco (Escaneable)
+  fr: Espace Disque (Analysable)
+  pt: Espaço em Disco (Analisável)
+  de: Speicherplatz (Scannbar)
+  ru: Место на Диске (Скан.)
+  zh: 磁盘空间 (可扫描)
+  ja: スキャン可能なディスク容量
+  ar: مساحة القرص (للمسح)
+
+currentUser:
+  en: Current User
+  it: Utente Corrente
+  es: Usuario Actual
+  fr: Utilisateur Actuel
+  pt: Usuário Atual
+  de: Aktueller Benutzer
+  ru: Текущий пользователь
+  zh: 当前用户
+  ja: 現在のユーザー
+  ar: المستخدم الحالي

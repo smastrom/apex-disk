@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Simone Mastromattei
+
+scan:
+  en: Scan
+  it: Scansiona
+  es: Escanear
+  fr: Analyser
+  pt: Analisar
+  de: Scannen
+  ru: Сканировать
+  zh: 扫描
+  ja: スキャン
+  ar: مسح
+
+settings:
+  en: Settings
+  it: Impostazioni
+  es: Ajustes
+  fr: Réglages
+  pt: Definições
+  de: Einstellungen
+  ru: Настройки
+  zh: 设置
+  ja: 設定
+  ar: الإعدادات
+
+information:
+  en: Information
+  it: Informazioni
+  es: Información
+  fr: Informations
+  pt: Informações
+  de: Informationen
+  ru: Информация
+  zh: 信息
+  ja: 情報
+  ar: المعلومات

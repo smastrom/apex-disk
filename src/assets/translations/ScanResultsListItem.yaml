@@ -1,0 +1,113 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Simone Mastromattei
+
+itemOne:
+  en: 1 item
+  it: 1 elemento
+  es: 1 elemento
+  fr: 1 élément
+  pt: 1 item
+  de: 1 Element
+  ru: 1 элемент
+  zh: 1 项
+  ja: 1 項目
+  ar: عنصر واحد
+
+itemsCount:
+  en: "{{count}} items"
+  it: "{{count}} elementi"
+  es: "{{count}} elementos"
+  fr: "{{count}} éléments"
+  pt: "{{count}} itens"
+  de: "{{count}} Elemente"
+  ru: "{{count}} элементов"
+  zh: "{{count}} 项"
+  ja: "{{count}} 項目"
+  ar: "{{count}} عناصر"
+
+lastModified:
+  en: Edited
+  it: Modif.
+  es: Editado
+  fr: Modifié
+  pt: Editado
+  de: Bearb.
+  ru: Изменено
+  zh: 已编辑
+  ja: 編集済
+  ar: عُدّل
+
+selectItem:
+  en: Select {{name}}
+  it: Seleziona {{name}}
+  es: Seleccionar {{name}}
+  fr: Sélectionner {{name}}
+  pt: Selecionar {{name}}
+  de: "{{name}} auswählen"
+  ru: Выбрать {{name}}
+  zh: 选择 {{name}}
+  ja: "{{name}} を選択"
+  ar: اختيار {{name}}
+
+fdaRequiredTooltip:
+  en: >-
+    This folder requires Full Disk Access to be moved to Trash. You can explore
+    it and move its contents to Trash.
+  it: >-
+    La cartella richiede Accesso Completo al Disco per essere spostata nel
+    Cestino. Puoi esplorarla e spostare i suoi oggetti nel Cestino.
+  es: >-
+    Esta carpeta requiere Acceso Completo al Disco para ser movida a la
+    Papelera. Puedes explorarla y mover su contenido a la Papelera.
+  fr: >-
+    Ce dossier nécessite un accès complet au disque pour être déplacé dans la
+    corbeille. Vous pouvez l'explorer et déplacer son contenu dans la corbeille.
+  pt: >-
+    Esta pasta requer Acesso Total ao Disco para ser movida para o Lixo. Você
+    pode explorá-la e mover seu conteúdo para o Lixo.
+  de: >-
+    Dieser Ordner erfordert vollen Festplattenzugriff, um in den Papierkorb
+    verschoben zu werden. Sie können ihn erkunden und seinen Inhalt in den
+    Papierkorb verschieben.
+  ru: >-
+    Для перемещения этой папки в корзину требуется полный доступ к диску. Вы
+    можете исследовать ее и переместить ее содержимое в корзину.
+  zh: 将此文件夹移至废纸篓需要完全磁盘访问权限。您可以浏览并将其内容移至废纸篓。
+  ja: このフォルダーをゴミ箱に移動するには、フルディスクアクセスが必要です。探索してその内容をゴミ箱に移動できます。
+  ar: >-
+    يتطلب هذا المجلد الوصول الكامل إلى القرص ليتم نقله إلى سلة المهملات. يمكنك
+    استكشافه ونقل محتوياته إلى سلة المهملات.
+
+protectedTooltip:
+  en: >-
+    This system folder is required for macOS to work correctly and cannot be
+    moved to Trash. You can explore it and move its contents to Trash.
+  it: >-
+    La cartella di sistema è necessaria per il corretto funzionamento di macOS
+    e non può essere spostata nel Cestino. Puoi esplorarla e spostare i suoi
+    oggetti nel Cestino.
+  es: >-
+    Esta carpeta del sistema es necesaria para el correcto funcionamiento de
+    macOS y no se puede mover a la Papelera. Puedes explorarla y mover su
+    contenido a la Papelera.
+  fr: >-
+    Ce dossier système est nécessaire au bon fonctionnement de macOS et ne peut
+    pas être déplacé dans la corbeille. Vous pouvez l'explorer et déplacer son
+    contenu dans la corbeille.
+  pt: >-
+    Esta pasta do sistema é necessária para o funcionamento correto do macOS e
+    não pode ser movida para o Lixo. Você pode explorá-la e mover seu conteúdo
+    para o Lixo.
+  de: >-
+    Dieser Systemordner ist für die korrekte Funktion von macOS erforderlich
+    und kann nicht in den Papierkorb verschoben werden. Sie können ihn erkunden
+    und seinen Inhalt in den Papierkorb verschieben.
+  ru: >-
+    Эта системная папка необходима для правильной работы macOS и не может быть
+    перемещена в корзину. Вы можете исследовать ее и переместить ее содержимое
+    в корзину.
+  zh: 此系统文件夹是macOS正常运行所必需的，无法移至废纸篓。您可以浏览并将其内容移至废纸篓。
+  ja: このシステムフォルダーはmacOSが正常に機能するために必要であり、ゴミ箱に移動できません。探索してその内容をゴミ箱に移動できます。
+  ar: >-
+    هذا المجلد النظام ضروري ليعمل macOS بشكل صحيح ولا يمكن نقله إلى سلة
+    المهملات. يمكنك استكشافه ونقل محتوياته إلى سلة المهملات.

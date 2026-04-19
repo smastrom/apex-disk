@@ -1,5 +1,6 @@
 import path from 'path'
 
+import yaml from '@rollup/plugin-yaml'
 import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
 
@@ -9,9 +10,9 @@ const host = process.env.TAURI_DEV_HOST
 // Version encoding: (major << 16) | (minor << 8) | patch
 const safari13 = (13 << 16) | (0 << 8) | 0
 
-export default defineConfig(async () => ({
+export default defineConfig(() => ({
    root: 'src',
-   plugins: [vue()],
+   plugins: [vue(), yaml()],
    resolve: {
       alias: {
          '@': path.resolve(__dirname, 'src'),
@@ -19,7 +20,7 @@ export default defineConfig(async () => ({
    },
 
    css: {
-      transformer: 'lightningcss',
+      transformer: 'lightningcss' as const,
       lightningcss: {
          targets: {
             safari: safari13,
@@ -29,7 +30,7 @@ export default defineConfig(async () => ({
 
    build: {
       target: 'safari13',
-      cssMinify: 'lightningcss',
+      cssMinify: 'lightningcss' as const,
       outDir: '../dist',
       emptyOutDir: true,
    },

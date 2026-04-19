@@ -1,0 +1,62 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Simone Mastromattei
+
+navTitle:
+  en: Items to Trash
+  it: Elementi da cestinare
+  es: Elementos para la papelera
+  fr: Éléments à mettre à la corbeille
+  pt: Itens para o Lixo
+  de: Elemente für den Papierkorb
+  ru: Элементы для корзины
+  zh: 待清理项目
+  ja: ゴミ箱に入れる項目
+  ar: عناصر للسلة
+
+moveToTrash:
+  en: Move to Trash
+  it: Sposta nel Cestino
+  es: Mover a la Papelera
+  fr: Déplacer dans la corbeille
+  pt: Mover para o Lixo
+  de: In den Papierkorb verschieben
+  ru: Переместить в корзину
+  zh: 移至废纸篓
+  ja: ゴミ箱に移動
+  ar: نقل إلى سلة المهملات
+
+moveToTrashSize:
+  en: Move to Trash ({{size}})
+  it: Sposta nel Cestino ({{size}})
+  es: Mover a la Papelera ({{size}})
+  fr: Déplacer dans la corbeille ({{size}})
+  pt: Mover para o Lixo ({{size}})
+  de: In den Papierkorb verschieben ({{size}})
+  ru: Переместить в корзину ({{size}})
+  zh: 移至废纸篓 ({{size}})
+  ja: ゴミ箱に移動 ({{size}})
+  ar: نقل إلى سلة المهملات ({{size}})
+
+movingToTrash:
+  en: Moving to Trash…
+  it: Spostamento nel Cestino…
+  es: Moviendo a la Papelera…
+  fr: Déplacement dans la corbeille…
+  pt: Movendo para o Lixo…
+  de: Verschieben in den Papierkorb…
+  ru: Перемещение в корзину…
+  zh: 移至废纸篓中…
+  ja: ゴミ箱に移動中…
+  ar: جاري النقل إلى سلة المهملات…
+
+movingToTrashSize:
+  en: Moving to Trash… ({{size}})
+  it: Spostamento nel Cestino… ({{size}})
+  es: Moviendo a la Papelera… ({{size}})
+  fr: Déplacement dans la corbeille… ({{size}})
+  pt: Movendo para o Lixo… ({{size}})
+  de: Verschieben in den Papierkorb… ({{size}})
+  ru: Перемещение в корзину… ({{size}})
+  zh: 移至废纸篓中… ({{size}})
+  ja: ゴミ箱に移動中… ({{size}})
+  ar: جاري النقل إلى سلة المهملات… ({{size}})

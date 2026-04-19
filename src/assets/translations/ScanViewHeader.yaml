@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Simone Mastromattei
+
+total:
+  en: Total
+  it: Totale
+  es: Total
+  fr: Total
+  pt: Total
+  de: Gesamt
+  ru: Всего
+  zh: 总计
+  ja: 合計
+  ar: المجموع
+
+free:
+  en: Free
+  it: Libero
+  es: Libre
+  fr: Disponible
+  pt: Livre
+  de: Frei
+  ru: Свободно
+  zh: 可用
+  ja: 空き
+  ar: متاح

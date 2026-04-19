@@ -3,17 +3,17 @@
 
 import type { Language } from '@/types/settings'
 
-import { AppFooter } from './AppFooter'
-import { InformationFooter } from './InformationFooter'
-import { InformationView } from './InformationView'
-import { ScanLaunch } from './ScanLaunch'
-import { ScanProgress } from './ScanProgress'
-import { ScanResultsList } from './ScanResultsList'
-import { ScanResultsListItem } from './ScanResultsListItem'
-import { ScanTrashConfirmation } from './ScanTrashConfirmation'
-import { ScanTrashList } from './ScanTrashList'
-import { ScanViewHeader } from './ScanViewHeader'
-import { SettingsView } from './SettingsView'
+import AppFooter from './AppFooter.yaml'
+import InformationFooter from './InformationFooter.yaml'
+import InformationView from './InformationView.yaml'
+import ScanLaunch from './ScanLaunch.yaml'
+import ScanProgress from './ScanProgress.yaml'
+import ScanResultsList from './ScanResultsList.yaml'
+import ScanResultsListItem from './ScanResultsListItem.yaml'
+import ScanTrashConfirmation from './ScanTrashConfirmation.yaml'
+import ScanTrashList from './ScanTrashList.yaml'
+import ScanViewHeader from './ScanViewHeader.yaml'
+import SettingsView from './SettingsView.yaml'
 
 export const translations = {
    AppFooter,
@@ -42,9 +42,9 @@ export function createT(lang: Language) {
       key: string,
       vars?: Record<string, string | number>
    ): string {
-      const mod = translations[module] as Record<Language, Record<string, string>>
-      const str = mod[lang]?.[key] ?? mod.en?.[key] ?? key
-
+      const mod = translations[module] as Record<string, Record<string, string>>
+      const entry = mod[key]
+      const str = entry?.[lang] ?? entry?.en ?? key
       return vars ? interpolate(str, vars) : str
    }
 }

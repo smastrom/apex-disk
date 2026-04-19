@@ -32,7 +32,7 @@ Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`, `CODE_OF_CONDUCT.md`
 ## Architecture
 
 - **Settings**: Rust-side persistence via `tauri_plugin_store`. Frontend store in `src/stores/app-settings.ts` — no provide/inject.
-- **Translations**: Per-component files in `src/assets/translations/`. Composable: `useTranslations()` → `t(module, key, vars?)`. 10 languages.
+- **Translations**: Per-component YAML files in `src/assets/translations/` (key-first: one entry per phrase with a language sub-key under `en, it, es, fr, pt, de, ru, zh, ja, ar`). Imported directly via `@rollup/plugin-yaml` registered in `vite.config.ts`. Composable: `useTranslations()` → `t(module, key, vars?)`. 10 languages. Long prose uses `>-` folded scalars; CJK (zh, ja) values must stay on one line — `>-` inserts a space at line joins and there are no inter-word spaces in CJK.
 - **Themes**: CSS variables in `src/assets/css/theme.css`. `data-theme` attribute on `<html>`. 8 themes.
 - **Scanning**: Rust (`src-tauri/src/scan.rs`) builds a `FolderInfo` tree, emits progress events. Frontend navigates the tree with browser-style back/forward stacks.
 - **Deletion**: Items moved to macOS Trash (recoverable). Protected/skipped folders filtered in Rust before trashing.

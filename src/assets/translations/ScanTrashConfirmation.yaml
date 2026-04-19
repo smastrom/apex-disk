@@ -1,0 +1,86 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Simone Mastromattei
+
+title:
+  en: Move to Trash complete
+  it: Spostamento nel Cestino completato
+  es: Movimiento a la Papelera completado
+  fr: Déplacement dans la corbeille terminé
+  pt: Movimento para o Lixo concluído
+  de: Verschieben in den Papierkorb abgeschlossen
+  ru: Перемещение в корзину завершено
+  zh: 移至废纸篓完成
+  ja: ゴミ箱への移動が完了しました
+  ar: اكتمل النقل إلى سلة المهملات
+
+resumeOne:
+  en: "{{count}} item moved to Trash, {{size}} freed"
+  it: "{{count}} elemento spostato nel Cestino, {{size}} liberati"
+  es: "{{count}} elemento movido a la Papelera, {{size}} liberados"
+  fr: "{{count}} élément déplacé dans la corbeille, {{size}} libérés"
+  pt: "{{count}} item movido para o Lixo, {{size}} libertados"
+  de: "{{count}} Element in den Papierkorb verschoben, {{size}} freigegeben"
+  ru: "Перемещён в корзину: {{count}} элемент, освобождено: {{size}}"
+  zh: 已将 {{count}} 项移至废纸篓，已释放 {{size}}
+  ja: "{{count}} 項目をゴミ箱に移動し、{{size}} を解放しました"
+  ar: "تم نقل {{count}} عنصر إلى سلة المهملات، وتحرير {{size}}"
+
+resume:
+  en: "{{count}} items moved to Trash, {{size}} freed"
+  it: "{{count}} elementi spostati nel Cestino, {{size}} liberati"
+  es: "{{count}} elementos movidos a la Papelera, {{size}} liberados"
+  fr: "{{count}} éléments déplacés dans la corbeille, {{size}} libérés"
+  pt: "{{count}} itens movidos para o Lixo, {{size}} libertados"
+  de: "{{count}} Elemente in den Papierkorb verschoben, {{size}} freigegeben"
+  ru: "Перемещено в корзину: {{count}} элементов, освобождено: {{size}}"
+  zh: 已将 {{count}} 项移至废纸篓，已释放 {{size}}
+  ja: "{{count}} 項目をゴミ箱に移動し、{{size}} を解放しました"
+  ar: "تم نقل {{count}} عنصر إلى سلة المهملات، وتحرير {{size}}"
+
+titleErrors:
+  en: Something went wrong
+  it: Qualcosa è andato storto
+  es: Algo salió mal
+  fr: Quelque chose s'est mal passé
+  pt: Algo deu errado
+  de: Etwas ist schief gelaufen
+  ru: Что-то пошло не так
+  zh: 出了点问题
+  ja: 何かがおかしいです
+  ar: هناك خطأ ما
+
+resumeErrors:
+  en: No items were moved to Trash.
+  it: Nessun elemento è stato spostato nel Cestino.
+  es: No se movieron elementos a la Papelera.
+  fr: Aucun élément na été déplacé dans la corbeille.
+  pt: Nenhum item foi movido para o Lixo.
+  de: Keine Elemente in den Papierkorb verschoben.
+  ru: В корзину не перемещено ни одного элемента.
+  zh: 没有项目被移至废纸篓。
+  ja: ゴミ箱に移動した項目はありません。
+  ar: لم يتم نقل أي عناصر إلى سلة المهملات.
+
+restart:
+  en: Start over
+  it: Ricomincia
+  es: Empezar de nuevo
+  fr: Recommencer
+  pt: Recomeçar
+  de: Neu starten
+  ru: Начать заново
+  zh: 重新开始
+  ja: 最初からやり直す
+  ar: ابدأ من جديد
+
+closeApp:
+  en: Close app
+  it: Esci dall'app
+  es: Cerrar app
+  fr: Fermer l'app
+  pt: Fechar app
+  de: App schließen
+  ru: Закрыть приложение
+  zh: 关闭应用
+  ja: アプリを終了
+  ar: إغلاق التطبيق

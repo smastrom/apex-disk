@@ -1,0 +1,50 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Simone Mastromattei
+
+releaseNotes:
+  en: Release notes
+  it: Note di rilascio
+  es: Notas de la versión
+  fr: Notes de version
+  pt: Notas da versão
+  de: Versionshinweise
+  ru: Заметки о Версии
+  zh: 发行说明
+  ja: リリースノート
+  ar: ملاحظات الإصدار
+
+license:
+  en: License
+  it: Licenza
+  es: Licencia
+  fr: Licence
+  pt: Licença
+  de: Lizenz
+  ru: Лицензия
+  zh: 许可证
+  ja: ライセンス
+  ar: الترخيص
+
+donate:
+  en: Donate
+  it: Dona
+  es: Donar
+  fr: Faire un don
+  pt: Doar
+  de: Donate
+  ru: Пожертвовать
+  zh: 捐赠
+  ja: 寄付
+  ar: تبرع
+
+website:
+  en: Website
+  it: Sito Web
+  es: Sitio Web
+  fr: Site web
+  pt: Website
+  de: Webseite
+  ru: Сайт
+  zh: 网站
+  ja: ウェブサイト
+  ar: الموقع
