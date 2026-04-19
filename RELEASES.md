@@ -19,6 +19,8 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 - Strengthen the `AGENTS.md` pre-commit rule: analyze **every** file under `docs/` for update eligibility, with an expanded trigger list (renames, boundary shifts, workflow edits).
 - Trigger a Cloudflare Pages rebuild from the Release workflow via the `CF_PAGES_DEPLOY_HOOK_URL` secret so the marketing site re-publishes against each new tag.
 - Add the `/sync` slash command for splitting in-flight work into logical commits, sweeping `docs/`, and pushing.
+- Cover the core flows with e2e specs (`selection-checkbox`, `trash-review`, `settings-flow`) on top of the existing Rust-side `e2e` fixture; add shared WDIO helpers in `e2e/helpers/navigation.ts` for checkbox state assertions, trash list traversal, settings toggles, and byte parsing from the review button.
+- Run the e2e workflow as a matrix across `macos-13`, `macos-14`, and `macos-15` with `fail-fast: false`; older hosted runners have been retired by GitHub, so the 10.15 `minimumSystemVersion` stays enforced via the static compatibility check rather than a runner.
 
 ## v0.0.12
 
