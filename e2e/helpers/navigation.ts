@@ -75,10 +75,29 @@ export async function waitForListSlideSettled(): Promise<void> {
    )
 }
 
+/**
+ * WebDriver-driven WebKit occasionally starves the rAF that drives Vue's
+ * `<Transition>` `*-from` → `*-to` class swap, leaving the leaving element
+ * parked mid-transition forever. setTimeout isn't throttled the same way.
+ */
+async function patchRequestAnimationFrame(): Promise<void> {
+   await browser.execute(() => {
+      const w = window as unknown as { __e2eRafPatched?: boolean }
+      if (w.__e2eRafPatched) return
+      w.__e2eRafPatched = true
+      window.requestAnimationFrame = ((cb: FrameRequestCallback) =>
+         setTimeout(
+            () => cb(performance.now()),
+            16
+         ) as unknown as number) as typeof requestAnimationFrame
+   })
+}
+
 /** Wait for the app to be ready (header visible). */
 export async function waitForAppReady() {
    const header = $(sel.appHeader)
    await header.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
+   await patchRequestAnimationFrame()
 }
 
 /** Wait for the scan launch screen. */
