@@ -16,7 +16,7 @@ ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for 
 
 **Before every commit, analyze every file in `docs/` for update eligibility and update any whose contents no longer match the change.** Do not skim for matches — open each file and check. Triggers include (non-exhaustive): bumping dependencies, touching `vite.config.ts` / Cargo deps, switching a UI feature to a different API (e.g. native Popover ↔ Floating UI), adding/changing a log category or Rust trace channel, changing the updater flow or menu items, adding a progressive-enhancement CSS feature, renaming modules or restructuring directories, moving responsibility across the Rust/webview boundary, adjusting the release or Beta workflows. If none of the docs need changes, that is fine — just confirm you looked at each one. Never commit code that contradicts `docs/`.
 
-Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `README.md` stay at the repo root — they are user-/CI-facing, not agent instructions.
+Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `README.md`, `FAQs.md` stay at the repo root — they are user-/CI-facing, not agent instructions.
 
 ## Stack
 

@@ -2,7 +2,7 @@
 
 # ApexDisk for Mac
 
-A macOS tool to easily identify and get rid of big, unused files and folders in seconds.
+macOS tool to easily identify and get rid of big, unused files and folders in seconds.
 
 <br />
 
