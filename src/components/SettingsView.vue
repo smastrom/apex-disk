@@ -323,6 +323,7 @@ async function openSystemSettings() {
 <style scoped>
 .SettingsView-root {
    flex: 1;
+   overflow-x: hidden;
    overflow-y: auto;
    overflow-y: overlay;
    padding: var(--spacing-md);

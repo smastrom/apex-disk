@@ -73,3 +73,48 @@ html.focus-ring-keyboard [tabindex='0']:focus {
       0 0 0 var(--focus-ring-offset) var(--color-bg),
       0 0 0 calc(var(--focus-ring-offset) + 2px) var(--color-accent-glow);
 }
+
+/*
+ * Auto-hide overlay scrollbars, styled uniformly across every supported macOS.
+ *
+ * Why we style them ourselves: on macOS 11 / Safari 14 the OS-supplied bar
+ * obeys System Preferences → "Show scroll bars". Users with that set to
+ * "Always" (or anyone where WKWebView's overlay heuristic doesn't kick in)
+ * see the chrome Aqua track, which clashes with the rest of the UI. Custom
+ * `::-webkit-scrollbar` styling bypasses the OS preference entirely and works
+ * on every Safari ≥ 13.
+ *
+ * The pseudo-element only renders when the container actually overflows, so
+ * non-scrolling regions never get a visible bar. The thumb is transparent at
+ * rest and fades in on hover of the scrollable container, then brightens on
+ * direct thumb hover.
+ *
+ * `overflow: overlay` (declared per-container) still governs whether the bar
+ * steals layout space; our styling here only paints it.
+ */
+::-webkit-scrollbar {
+   width: 10px;
+   height: 10px;
+   background: transparent;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+   background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+   background-color: transparent;
+   border: 2px solid transparent;
+   border-radius: 5px;
+   background-clip: padding-box;
+   transition: background-color 0.2s ease;
+}
+
+:hover::-webkit-scrollbar-thumb {
+   background-color: var(--color-scrollbar);
+}
+
+::-webkit-scrollbar-thumb:hover {
+   background-color: var(--color-scrollbar-hover);
+}

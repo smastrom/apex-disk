@@ -542,8 +542,12 @@ function onCancel() {
 }
 
 .ScanResultsList-listScroll {
-   overflow: auto;
-   overflow: overlay;
+   /* Clip horizontal overflow so the list-slide transition (translateX ±10px
+      during folder navigation) doesn't trigger a transient horizontal
+      scrollbar from our custom ::-webkit-scrollbar styling. */
+   overflow-x: hidden;
+   overflow-y: auto;
+   overflow-y: overlay;
 }
 
 .ScanResultsList-listInner {
