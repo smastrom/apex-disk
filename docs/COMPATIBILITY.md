@@ -99,7 +99,7 @@ build: {
 
 **What lightningcss does NOT handle** (browser APIs or runtime-resolved values):
 - `overflow: overlay` (WebKit-only, all Safari versions) — passes through; non-WebKit engines ignore it and fall back to the `overflow: auto` declared on the line above
-- `color-mix()` whose operands are CSS custom properties — passes through unchanged (cannot be resolved at build time); see *Features That Rely on Progressive Enhancement* for the one site that uses it
+- `color-mix()` whose operands are CSS custom properties — would pass through unchanged (cannot be resolved at build time). The codebase deliberately avoids this form: the one previous use (a 45% accent-over-surface tint on the scan progress bar's secondary segment) was rewritten as `background: var(--color-accent); opacity: 0.45`, which is mathematically identical in sRGB and works on Safari 13+.
 
 To verify CSS output has no untranspilable modern syntax:
 
@@ -232,7 +232,6 @@ These CSS/Web API features are used but **only render with the visual upgrade on
 | Feature | Min Safari | Fallback behavior |
 |---------|-----------|-------------------|
 | `overflow: overlay` (scrollbar overlays content instead of stealing layout space) | 14.0 (WebKit) | Non-WebKit / older WebKit falls back to the `overflow: auto` declared on the preceding line — the bar takes layout space but is otherwise styled identically (see below). |
-| `color-mix()` with custom-property operands | 16.2 | One usage: `background: color-mix(in srgb, var(--color-accent) 45%, var(--color-surface))` in [ScanViewHeader.vue:252](../src/components/ScanViewHeader.vue#L252). Older Safari ignores the rule and falls back to whatever `background` was previously declared in the cascade. |
 | CSS Nesting | 17.2 | **Transpiled by lightningcss** — no issue at runtime |
 | Cascade Layers (`@layer`) | 15.4 | **Flattened by lightningcss** — no issue at runtime |
 | `inset` shorthand | 14.5 | **Expanded by lightningcss** to `top/right/bottom/left` — no issue at runtime |
@@ -259,4 +258,4 @@ The test machine was deliberately kept at its shipping Safari 14.0 (no Safari Te
 
 The app ships as a **universal binary** supporting both **Intel (x86_64)** and **Apple Silicon (aarch64)** Macs natively — no Rosetta 2 required on either architecture. It is fully functional on **macOS 10.15 Catalina (Safari 13.0)** as the absolute minimum, and has been validated on **macOS 11 Big Sur / Safari 14.0** (real-device test, 2026-05-07) with no remaining visual regressions vs. the macOS 14+ experience.
 
-The animation, popover, focus-ring, and scrollbar systems are intentionally implemented in Vue + JS + `@floating-ui/dom` + custom `::-webkit-scrollbar` styling rather than the corresponding newer-Safari/OS APIs (`startViewTransition`, the Popover API, `:focus-visible`, native overlay scrollbars), so behavior is uniform across every supported Safari version. The only feature that still progressively enhances on newer macOS is `overflow: overlay` (Safari 14+), which only governs whether the scrollbar steals layout space — its visual styling is fully controlled by the codebase on every supported version. `color-mix()` with custom-property operands (Safari 16.2+) is also listed below for completeness.
+The animation, popover, focus-ring, and scrollbar systems are intentionally implemented in Vue + JS + `@floating-ui/dom` + custom `::-webkit-scrollbar` styling rather than the corresponding newer-Safari/OS APIs (`startViewTransition`, the Popover API, `:focus-visible`, native overlay scrollbars), so behavior is uniform across every supported Safari version. The only feature that still progressively enhances on newer macOS is `overflow: overlay` (Safari 14+), which only governs whether the scrollbar steals layout space — its visual styling is fully controlled by the codebase on every supported version.

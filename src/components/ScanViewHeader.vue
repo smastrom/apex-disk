@@ -249,7 +249,8 @@ const showNewFree = computed(() => {
    left: 0;
    top: 0;
    height: 100%;
-   background: color-mix(in srgb, var(--color-accent) 45%, var(--color-surface));
+   background: var(--color-accent);
+   opacity: 0.45;
    border-radius: 5px;
    transition: width 0.3s var(--ease-out);
    z-index: 0;

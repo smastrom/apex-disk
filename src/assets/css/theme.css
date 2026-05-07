@@ -77,8 +77,7 @@
    --gbtn-inset-top-hover: rgba(255, 255, 255, 0.4);
    --gbtn-glow-hover: 0 0 18px var(--color-accent-glow);
 
-   /* List row state fills — fixed rgba (no color-mix) so it resolves on
-    * macOS 10.15+ WebKit. See tauri.conf.json minimumSystemVersion. */
+   /* List row state fills */
    --color-row-idle: rgba(0, 0, 0, 0.04);
    --color-row-hover: rgba(255, 255, 255, 0.05);
    --color-row-selected: rgba(255, 255, 255, 0.04);
