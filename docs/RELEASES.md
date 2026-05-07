@@ -4,12 +4,12 @@ How to cut **stable** and **Beta** builds of ApexDisk. For the in-app update beh
 
 There are two changelog files at the repo root, one per channel:
 
-| | `../RELEASES.md` | `../RELEASES_BETA.md` |
-| --- | --- | --- |
-| **Contents** | One `## vX.Y.Z` section per shipped stable version, newest-first. | One `## YYYY-MM-DD` section per Beta run you want to annotate, newest-first. |
-| **Used by CI for version?** | **Yes** — the Release workflow reads the **first** `## vX.Y.Z` heading (`grep '^## v' | head -1`) and fails if `package.json`, `tauri.conf.json`, and `Cargo.toml` don't match. | **No** — the Beta workflow does not touch semver; it tags pre-releases as `beta-<run_id>`. |
-| **Used by CI at all?** | Drives the Git tag, GitHub-Release body, and build. | The **first** `## …` section becomes the pre-release body and the job summary; the full file is attached as an artifact. |
-| **Purpose** | Canonical shipping history + semver for the updater and installers. | Optional tester-facing notes (what to smoke-test, known issues) for a given branch snapshot. |
+|                             | `../RELEASES.md`                                                                      | `../RELEASES_BETA.md`                                                                                                    |
+| --------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| **Contents**                | One `## vX.Y.Z` section per shipped stable version, newest-first.                     | One `## YYYY-MM-DD` section per Beta run you want to annotate, newest-first.                                             |
+| **Used by CI for version?** | **Yes** — the Release workflow reads the **first** `## vX.Y.Z` heading (`grep '^## v' | head -1`) and fails if `package.json`, `tauri.conf.json`, and `Cargo.toml` don't match.                                  | **No** — the Beta workflow does not touch semver; it tags pre-releases as `beta-<run_id>`. |
+| **Used by CI at all?**      | Drives the Git tag, GitHub-Release body, and build.                                   | The **first** `## …` section becomes the pre-release body and the job summary; the full file is attached as an artifact. |
+| **Purpose**                 | Canonical shipping history + semver for the updater and installers.                   | Optional tester-facing notes (what to smoke-test, known issues) for a given branch snapshot.                             |
 
 So `../RELEASES_BETA.md` is **not** a duplicate of `../RELEASES.md`: it does not replace version bookkeeping because Beta builds reuse the repo's current semver (see [Version nomenclature](#version-nomenclature) below).
 
@@ -64,7 +64,7 @@ Implications:
 
 - Several Beta builds can share the same version (e.g. three builds while `main` is still `0.0.13`). Beta is a branch **snapshot**, not a new release line.
 - Tell builds apart by **run id** (in the artifact name), **commit SHA**, or download date — not the About-box semver.
-- Optional policy: bump `../RELEASES.md` / semver only when cutting a real Release, or bump right after each release so Beta builds report the *upcoming* version early. Either way, still one source of truth — no `RELEASES_BETA` version.
+- Optional policy: bump `../RELEASES.md` / semver only when cutting a real Release, or bump right after each release so Beta builds report the _upcoming_ version early. Either way, still one source of truth — no `RELEASES_BETA` version.
 
 The project does **not** embed build metadata (e.g. `0.0.13+beta.abc1234`) — adding that would require mutating the three version fields on every Beta run.
 
@@ -73,12 +73,13 @@ The project does **not** embed build metadata (e.g. `0.0.13+beta.abc1234`) — a
 Both files are **newest-first**. Always prepend new sections at the top, directly below the `---` rule.
 
 - `../RELEASES.md`: `## vX.Y.Z` heading summarizing changes since the previous tag (`git log <prev-tag>..HEAD`), with bullets grouped under these `###` subheadings in this order:
-  - **New Features** — user-visible additions.
-  - **Improvements** — enhancements to existing behavior, UX polish, perf wins, refactors with observable effects.
-  - **Bug Fixes** — defect fixes.
-  - **Chores** — internal housekeeping with no user-visible effect (deps bumps, CI, docs, dead-code removal, test-only changes).
+   - **New Features** — user-visible additions.
+   - **Improvements** — enhancements to existing behavior, UX polish, perf wins, refactors with observable effects.
+   - **Bug Fixes** — defect fixes.
+   - **Chores** — internal housekeeping with no user-visible effect (deps bumps, CI, docs, dead-code removal, test-only changes).
 
-  Omit any group that has no entries (no empty `###` headings). One bullet per change. Classify by the dominant effect of the commit, not the commit-message prefix. Older entries pre-date this convention and are not retroactively rewritten.
+   Omit any group that has no entries (no empty `###` headings). One bullet per change. Classify by the dominant effect of the commit, not the commit-message prefix. Older entries pre-date this convention and are not retroactively rewritten.
+
 - `../RELEASES_BETA.md`: `## YYYY-MM-DD` (UTC) heading, a one-line summary, then bullets covering UI flows that changed, updater/menu/store touches, and macOS-version-sensitive behavior.
 
 Never edit older sections to retcon history.

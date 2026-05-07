@@ -31,23 +31,23 @@ For related docs: see [`UPDATES.md`](UPDATES.md) (in-app updater behavior), [`RE
 
 ### Rust (`src-tauri/src/`) owns
 
-| Responsibility | Module |
-| --- | --- |
-| Home-folder scan (walk, size, filter protected/skipped paths, emit progress, support cancel) | `scan.rs` |
-| Move-to-Trash (with protected-path filter applied again before delete) | `trash.rs` |
-| Persistent settings (read/write/merge with defaults, concurrent-write locking) | `store.rs` |
-| Protected + skipped folder lists (single source of truth, consumed by scan *and* trash) | `safe_folders.rs` |
-| Disk volume usage (total / free / used for the home volume) | `disk.rs` |
-| System info (OS version, arch, memory) | `system_info.rs` |
-| Full Disk Access (FDA) TCC check | `permissions.rs` |
-| macOS locale detection + `AppleLanguages` sync via objc2 | `locale.rs` |
-| Native menu build + per-language rebuild | `menu.rs`, `menu_translations.rs` |
-| Native message / ask dialogs | `native_dialog.rs` |
-| Update check / download / restart, plus menu-text updates | `updater.rs` |
-| Diagnostic logging (Rust-side `dev_rust_trace`, IPC logging command) | `log.rs` |
-| macOS extended-attribute helpers | `xattr.rs` |
-| App-wide constants (menu ids, URLs, default language/theme) | `constants.rs` |
-| E2E-only fixtures (trash dry-run, state reset) | `e2e_fixtures.rs` |
+| Responsibility                                                                               | Module                            |
+| -------------------------------------------------------------------------------------------- | --------------------------------- |
+| Home-folder scan (walk, size, filter protected/skipped paths, emit progress, support cancel) | `scan.rs`                         |
+| Move-to-Trash (with protected-path filter applied again before delete)                       | `trash.rs`                        |
+| Persistent settings (read/write/merge with defaults, concurrent-write locking)               | `store.rs`                        |
+| Protected + skipped folder lists (single source of truth, consumed by scan _and_ trash)      | `safe_folders.rs`                 |
+| Disk volume usage (total / free / used for the home volume)                                  | `disk.rs`                         |
+| System info (OS version, arch, memory)                                                       | `system_info.rs`                  |
+| Full Disk Access (FDA) TCC check                                                             | `permissions.rs`                  |
+| macOS locale detection + `AppleLanguages` sync via objc2                                     | `locale.rs`                       |
+| Native menu build + per-language rebuild                                                     | `menu.rs`, `menu_translations.rs` |
+| Native message / ask dialogs                                                                 | `native_dialog.rs`                |
+| Update check / download / restart, plus menu-text updates                                    | `updater.rs`                      |
+| Diagnostic logging (Rust-side `dev_rust_trace`, IPC logging command)                         | `log.rs`                          |
+| macOS extended-attribute helpers                                                             | `xattr.rs`                        |
+| App-wide constants (menu ids, URLs, default language/theme)                                  | `constants.rs`                    |
+| E2E-only fixtures (trash dry-run, state reset)                                               | `e2e_fixtures.rs`                 |
 
 Entry points: `main.rs` delegates to `lib.rs::run()`, which installs plugins (`tauri_plugin_store`, `tauri_plugin_updater`, `tauri_plugin_os`, `tauri_plugin_opener`; `tauri_plugin_webdriver` under the `e2e` feature), registers every command in `tauri::generate_handler!`, and runs the setup hook (store defaults, locale bootstrap, menu build).
 
@@ -55,20 +55,20 @@ Entry points: `main.rs` delegates to `lib.rs::run()`, which installs plugins (`t
 
 ### Frontend (`src/`) owns
 
-| Responsibility | Location |
-| --- | --- |
-| Vue component tree + routing between views (scan / settings / information) | `src/components/`, `src/lib/use-app-views.ts` |
-| Scan flow UI (launch, progress, results list, trash review, confirmation) | `src/components/Scan*.vue` |
-| Browser-style **back/forward navigation stacks** inside a folder tree | `src/components/ScanResultsList.vue` (state lives in the component) |
-| Selection state (which rows are checked for trash) | Scan result components, not a global store |
-| Settings **UI** + typed access (hidden-files toggle, theme, language, auto-updates) | `src/stores/app-settings.ts`, `src/components/SettingsView.vue` |
-| Theme application — `data-theme` attribute on `<html>`, CSS variables | `src/assets/css/theme.css`, `src/stores/app-settings.ts` |
-| Translations — per-component `.yaml` files (key-first), reactive via `useTranslations()` | `src/assets/translations/`, `src/lib/use-translations.ts` |
-| All presentational primitives (buttons, popovers, spinners, icons) | `src/components/ui/` |
-| Animations, view transitions, reduced-motion handling | `src/assets/css/animations.css`, `src/lib/use-view-transition.ts`, `src/lib/use-reduced-motion.ts` |
-| Vue-side diagnostic log (forwards to Rust when `APEX_DISK_DEBUG` is on) | `src/lib/log.ts` |
+| Responsibility                                                                           | Location                                                                                           |
+| ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Vue component tree + routing between views (scan / settings / information)               | `src/components/`, `src/lib/use-app-views.ts`                                                      |
+| Scan flow UI (launch, progress, results list, trash review, confirmation)                | `src/components/Scan*.vue`                                                                         |
+| Browser-style **back/forward navigation stacks** inside a folder tree                    | `src/components/ScanResultsList.vue` (state lives in the component)                                |
+| Selection state (which rows are checked for trash)                                       | Scan result components, not a global store                                                         |
+| Settings **UI** + typed access (hidden-files toggle, theme, language, auto-updates)      | `src/stores/app-settings.ts`, `src/components/SettingsView.vue`                                    |
+| Theme application — `data-theme` attribute on `<html>`, CSS variables                    | `src/assets/css/theme.css`, `src/stores/app-settings.ts`                                           |
+| Translations — per-component `.yaml` files (key-first), reactive via `useTranslations()` | `src/assets/translations/`, `src/lib/use-translations.ts`                                          |
+| All presentational primitives (buttons, popovers, spinners, icons)                       | `src/components/ui/`                                                                               |
+| Animations, view transitions, reduced-motion handling                                    | `src/assets/css/animations.css`, `src/lib/use-view-transition.ts`, `src/lib/use-reduced-motion.ts` |
+| Vue-side diagnostic log (forwards to Rust when `APEX_DISK_DEBUG` is on)                  | `src/lib/log.ts`                                                                                   |
 
-**Frontend owns no filesystem logic.** If a feature needs to know *what's on disk* (including whether a path is protected), it asks Rust. The "protected" flag on a `FolderInfo` is filled server-side so the UI never re-evaluates it.
+**Frontend owns no filesystem logic.** If a feature needs to know _what's on disk_ (including whether a path is protected), it asks Rust. The "protected" flag on a `FolderInfo` is filled server-side so the UI never re-evaluates it.
 
 ## How the two sides communicate
 

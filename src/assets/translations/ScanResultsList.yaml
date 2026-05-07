@@ -2,73 +2,73 @@
 # Copyright (C) 2026 Simone Mastromattei
 
 goToReview:
-  en: Review items
-  it: Revisiona
-  es: Revisar
-  fr: Vérifier
-  pt: Rever
-  de: Prüfen
-  ru: Просмотр именности
-  zh: 查看
-  ja: 確認
-  ar: التعليق إلى
+   en: Review items
+   it: Revisiona
+   es: Revisar
+   fr: Vérifier
+   pt: Rever
+   de: Prüfen
+   ru: Просмотр именности
+   zh: 查看
+   ja: 確認
+   ar: التعليق إلى
 
 goToReviewSizeOne:
-  en: Review {{count}} item ({{size}})
-  it: Revisiona {{count}} elemento ({{size}})
-  es: Revisar {{count}} elemento ({{size}})
-  fr: Vérifier {{count}} élément ({{size}})
-  pt: Rever {{count}} item ({{size}})
-  de: Prüfen {{count}} Element ({{size}})
-  ru: Просмотр именности в {{count}} папку ({{size}})
-  zh: 查看 {{count}} 个元素 ({{size}})
-  ja: 確認 {{count}} の要素 ({{size}})
-  ar: التعليق إلى {{count}} المجلد ({{size}})
+   en: Review {{count}} item ({{size}})
+   it: Revisiona {{count}} elemento ({{size}})
+   es: Revisar {{count}} elemento ({{size}})
+   fr: Vérifier {{count}} élément ({{size}})
+   pt: Rever {{count}} item ({{size}})
+   de: Prüfen {{count}} Element ({{size}})
+   ru: Просмотр именности в {{count}} папку ({{size}})
+   zh: 查看 {{count}} 个元素 ({{size}})
+   ja: 確認 {{count}} の要素 ({{size}})
+   ar: التعليق إلى {{count}} المجلد ({{size}})
 
 goToReviewSize:
-  en: Review {{count}} items ({{size}})
-  it: Revisiona {{count}} elementi ({{size}})
-  es: Revisar {{count}} elementos ({{size}})
-  fr: Vérifier {{count}} éléments ({{size}})
-  pt: Rever {{count}} itens ({{size}})
-  de: Prüfen {{count}} Elemente ({{size}})
-  ru: Просмотр именности в {{count}} папк ({{size}})
-  zh: 查看 {{count}} 个元素 ({{size}})
-  ja: 確認 {{count}} の要素 ({{size}})
-  ar: التعليق إلى {{count}} المجلد ({{size}})
+   en: Review {{count}} items ({{size}})
+   it: Revisiona {{count}} elementi ({{size}})
+   es: Revisar {{count}} elementos ({{size}})
+   fr: Vérifier {{count}} éléments ({{size}})
+   pt: Rever {{count}} itens ({{size}})
+   de: Prüfen {{count}} Elemente ({{size}})
+   ru: Просмотр именности в {{count}} папк ({{size}})
+   zh: 查看 {{count}} 个元素 ({{size}})
+   ja: 確認 {{count}} の要素 ({{size}})
+   ar: التعليق إلى {{count}} المجلد ({{size}})
 
 resetSelection:
-  en: Reset
-  it: Resetta
-  es: Restablecer
-  fr: Réinitialiser
-  pt: Repor
-  de: Zurücksetzen
-  ru: Сбросить
-  zh: 重置
-  ja: リセット
-  ar: إعادة تعيين
+   en: Reset
+   it: Resetta
+   es: Restablecer
+   fr: Réinitialiser
+   pt: Repor
+   de: Zurücksetzen
+   ru: Сбросить
+   zh: 重置
+   ja: リセット
+   ar: إعادة تعيين
 
 cancel:
-  en: Cancel
-  it: Annulla
-  es: Cancelar
-  fr: Annuler
-  pt: Cancelar
-  de: Abbrechen
-  ru: Отмена
-  zh: 取消
-  ja: キャンセル
-  ar: إلغاء
+   en: Cancel
+   it: Annulla
+   es: Cancelar
+   fr: Annuler
+   pt: Cancelar
+   de: Abbrechen
+   ru: Отмена
+   zh: 取消
+   ja: キャンセル
+   ar: إلغاء
 
 truncated:
-  en: Only the 100 largest files are shown per folder.
-  it: Vengono mostrati solo i 100 file più grandi per cartella.
-  es: Solo se muestran los 100 archivos más grandes por carpeta.
-  fr: Seuls les 100 fichiers les plus volumineux sont affichés par dossier.
-  pt: Apenas os 100 maiores ficheiros são mostrados por pasta.
-  de: Es werden nur die 100 größten Dateien pro Ordner angezeigt.
-  ru: Показаны только 100 самых больших файлов в каждой папке.
-  zh: 每个文件夹仅显示最大的 100 个文件。
-  ja: フォルダごとに最大100件のファイルのみ表示されます。
-  ar: يتم عرض أكبر 100 ملف فقط لكل مجلد.
+   en: Only the 100 largest files are shown per folder.
+   it: Vengono mostrati solo i 100 file più grandi per cartella.
+   es: Solo se muestran los 100 archivos más grandes por carpeta.
+   fr: Seuls les 100 fichiers les plus volumineux sont affichés par dossier.
+   pt: Apenas os 100 maiores ficheiros são mostrados por pasta.
+   de: Es werden nur die 100 größten Dateien pro Ordner angezeigt.
+   ru: Показаны только 100 самых больших файлов в каждой папке.
+   zh: 每个文件夹仅显示最大的 100 个文件。
+   ja: フォルダごとに最大100件のファイルのみ表示されます。
+   ar: يتم عرض أكبر 100 ملف فقط لكل مجلد.

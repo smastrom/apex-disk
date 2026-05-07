@@ -9,7 +9,7 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 ### Improvements
 
 - Implement the macOS 11 UI normalization plan: replace the View Transitions API, the native Popover API, and reliance on `:focus-visible` UA heuristics with portable Vue `<Transition>` + `@floating-ui/dom` + JS-driven focus tracking, so folder/tab slide animations, the disabled-checkbox explainer tooltip, and the keyboard-only focus ring all work uniformly on every supported Safari (≥ 13) instead of just Safari 17/18+.
-- Style scrollbars via custom `::-webkit-scrollbar` rules (transparent thumb that fades in on hover and brightens on direct thumb hover), bypassing the OS *Show scroll bars* preference for a consistent look on macOS 11+.
+- Style scrollbars via custom `::-webkit-scrollbar` rules (transparent thumb that fades in on hover and brightens on direct thumb hover), bypassing the OS _Show scroll bars_ preference for a consistent look on macOS 11+.
 - Drop runtime `color-mix()` in favor of `background + opacity` composition so the scan-progress bar's secondary segment renders correctly on Safari 13–16.1 as well.
 - Adjust the default window size to 425×785.
 

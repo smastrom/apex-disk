@@ -2,523 +2,523 @@
 # Copyright (C) 2026 Simone Mastromattei
 
 loadingSettings:
-  en: Loading settings…
-  it: Caricamento impostazioni…
-  es: Cargando ajustes…
-  fr: Chargement des paramètres…
-  pt: A carregar definições…
-  de: Einstellungen werden geladen…
-  ru: Загрузка настроек…
-  zh: 正在加载设置…
-  ja: 設定を読み込み中…
-  ar: جاري تحميل الإعدادات…
+   en: Loading settings…
+   it: Caricamento impostazioni…
+   es: Cargando ajustes…
+   fr: Chargement des paramètres…
+   pt: A carregar definições…
+   de: Einstellungen werden geladen…
+   ru: Загрузка настроек…
+   zh: 正在加载设置…
+   ja: 設定を読み込み中…
+   ar: جاري تحميل الإعدادات…
 
 language:
-  en: Language
-  it: Lingua
-  es: Idioma
-  fr: Langue
-  pt: Idioma
-  de: Sprache
-  ru: Язык
-  zh: 语言
-  ja: 言語
-  ar: اللغة
+   en: Language
+   it: Lingua
+   es: Idioma
+   fr: Langue
+   pt: Idioma
+   de: Sprache
+   ru: Язык
+   zh: 语言
+   ja: 言語
+   ar: اللغة
 
 themeColor:
-  en: Theme Color
-  it: Tema colore
-  es: Color del tema
-  fr: Couleur du thème
-  pt: Cor do tema
-  de: Themenfarbe
-  ru: Цвет темы
-  zh: 主题颜色
-  ja: テーマの色
-  ar: لون السمة
+   en: Theme Color
+   it: Tema colore
+   es: Color del tema
+   fr: Couleur du thème
+   pt: Cor do tema
+   de: Themenfarbe
+   ru: Цвет темы
+   zh: 主题颜色
+   ja: テーマの色
+   ar: لون السمة
 
 scanHiddenFiles:
-  en: Scan hidden files and folders
-  it: Scansiona file e cartelle nascosti
-  es: Escanear archivos y carpetas ocultos
-  fr: Scanner les fichiers et dossiers masqués
-  pt: Escanear ficheiros e pastas ocultos
-  de: Versteckte Dateien und Ordner scannen
-  ru: Сканировать скрытые файлы и папки
-  zh: 扫描隐藏文件和文件夹
-  ja: 隠しファイルとフォルダをスキャン
-  ar: مسح الملفات والمجلدات المخفية
+   en: Scan hidden files and folders
+   it: Scansiona file e cartelle nascosti
+   es: Escanear archivos y carpetas ocultos
+   fr: Scanner les fichiers et dossiers masqués
+   pt: Escanear ficheiros e pastas ocultos
+   de: Versteckte Dateien und Ordner scannen
+   ru: Сканировать скрытые файлы и папки
+   zh: 扫描隐藏文件和文件夹
+   ja: 隠しファイルとフォルダをスキャン
+   ar: مسح الملفات والمجلدات المخفية
 
 scanUnder1Kb:
-  en: Scan files and folders under 1 KB
-  it: Scansiona file e cartelle sotto 1 KB
-  es: Escanear archivos y carpetas menores de 1 KB
-  fr: Scanner les fichiers et dossiers de moins de 1 Ko
-  pt: Escanear ficheiros e pastas com menos de 1 KB
-  de: Dateien und Ordner unter 1 KB scannen
-  ru: Сканировать файлы и папки менее 1 КБ
-  zh: 扫描小于 1 KB 的文件和文件夹
-  ja: 1 KB 未満のファイルとフォルダをスキャン
-  ar: مسح الملفات والمجلدات أقل من 1 كيلوبايت
+   en: Scan files and folders under 1 KB
+   it: Scansiona file e cartelle sotto 1 KB
+   es: Escanear archivos y carpetas menores de 1 KB
+   fr: Scanner les fichiers et dossiers de moins de 1 Ko
+   pt: Escanear ficheiros e pastas com menos de 1 KB
+   de: Dateien und Ordner unter 1 KB scannen
+   ru: Сканировать файлы и папки менее 1 КБ
+   zh: 扫描小于 1 KB 的文件和文件夹
+   ja: 1 KB 未満のファイルとフォルダをスキャン
+   ar: مسح الملفات والمجلدات أقل من 1 كيلوبايت
 
 scanZeroByte:
-  en: Scan empty files and folders (0 B)
-  it: Scansiona file e cartelle vuoti (0 B)
-  es: Escanear archivos y carpetas vacíos (0 B)
-  fr: Scanner les fichiers et dossiers vides (0 o)
-  pt: Escanear ficheiros e pastas vazios (0 B)
-  de: Leere Dateien und Ordner scannen (0 B)
-  ru: Сканировать пустые файлы и папки (0 Б)
-  zh: 扫描空文件和文件夹 (0 B)
-  ja: 空のファイルとフォルダをスキャン (0 B)
-  ar: مسح الملفات والمجلدات الفارغة (0 ب)
+   en: Scan empty files and folders (0 B)
+   it: Scansiona file e cartelle vuoti (0 B)
+   es: Escanear archivos y carpetas vacíos (0 B)
+   fr: Scanner les fichiers et dossiers vides (0 o)
+   pt: Escanear ficheiros e pastas vazios (0 B)
+   de: Leere Dateien und Ordner scannen (0 B)
+   ru: Сканировать пустые файлы и папки (0 Б)
+   zh: 扫描空文件和文件夹 (0 B)
+   ja: 空のファイルとフォルダをスキャン (0 B)
+   ar: مسح الملفات والمجلدات الفارغة (0 ب)
 
 resultsEffectiveNextScan:
-  en: Applied on next scan
-  it: Applicato alla prossima scansione
-  es: Se aplica en el próximo análisis
-  fr: Appliqué au prochain scan
-  pt: Aplicado na próxima análise
-  de: Gilt beim nächsten Scan
-  ru: Применится при следующем сканировании
-  zh: 下次扫描时生效
-  ja: 次回のスキャン時に適用
-  ar: تطبق في المسح التالي
+   en: Applied on next scan
+   it: Applicato alla prossima scansione
+   es: Se aplica en el próximo análisis
+   fr: Appliqué au prochain scan
+   pt: Aplicado na próxima análise
+   de: Gilt beim nächsten Scan
+   ru: Применится при следующем сканировании
+   zh: 下次扫描时生效
+   ja: 次回のスキャン時に適用
+   ar: تطبق في المسح التالي
 
 permissionsGroup:
-  en: Permissions
-  it: Permessi
-  es: Permisos
-  fr: Autorisations
-  pt: Permissões
-  de: Berechtigungen
-  ru: Разрешения
-  zh: 权限
-  ja: アクセス許可
-  ar: الأذونات
+   en: Permissions
+   it: Permessi
+   es: Permisos
+   fr: Autorisations
+   pt: Permissões
+   de: Berechtigungen
+   ru: Разрешения
+   zh: 权限
+   ja: アクセス許可
+   ar: الأذونات
 
 fdaLabel:
-  en: Full Disk Access
-  it: Accesso completo al disco
-  es: Acceso completo al disco
-  fr: Accès complet au disque
-  pt: Acesso total ao disco
-  de: Vollständiger Datenträgerzugriff
-  ru: Полный доступ к диску
-  zh: 完全磁盘访问权限
-  ja: フルディスクアクセス
-  ar: الوصول الكامل للقرص
+   en: Full Disk Access
+   it: Accesso completo al disco
+   es: Acceso completo al disco
+   fr: Accès complet au disque
+   pt: Acesso total ao disco
+   de: Vollständiger Datenträgerzugriff
+   ru: Полный доступ к диску
+   zh: 完全磁盘访问权限
+   ja: フルディスクアクセス
+   ar: الوصول الكامل للقرص
 
 fdaGranted:
-  en: Granted
-  it: Concesso
-  es: Concedido
-  fr: Accordé
-  pt: Concedido
-  de: Erteilt
-  ru: Предоставлен
-  zh: 已授予
-  ja: 許可済み
-  ar: مُمنوح
+   en: Granted
+   it: Concesso
+   es: Concedido
+   fr: Accordé
+   pt: Concedido
+   de: Erteilt
+   ru: Предоставлен
+   zh: 已授予
+   ja: 許可済み
+   ar: مُمنوح
 
 fdaMissing:
-  en: Not granted
-  it: Non concesso
-  es: No concedido
-  fr: Non accordé
-  pt: Não concedido
-  de: Nicht erteilt
-  ru: Не предоставлен
-  zh: 未授予
-  ja: 未許可
-  ar: غير مُمنوح
+   en: Not granted
+   it: Non concesso
+   es: No concedido
+   fr: Non accordé
+   pt: Não concedido
+   de: Nicht erteilt
+   ru: Не предоставлен
+   zh: 未授予
+   ja: 未許可
+   ar: غير مُمنوح
 
 fdaDesc:
-  en: >-
-    Optional. The app works without it — scans may ask for access to specific
-    folders as needed. Grant it to avoid repeated prompts and access special
-    folders: add this app in System Settings, then quit and reopen.
-  it: >-
-    Opzionale. L’app funziona anche senza: le scansioni possono chiedere
-    l’accesso alle singole cartelle. Concedilo per evitare richieste ripetute
-    e accedere a cartelle speciali: aggiungi l’app in Impostazioni di Sistema,
-    poi esci e riapri.
-  es: >-
-    Opcional. La app funciona sin ello; el análisis puede pedir acceso a
-    carpetas concretas. Concédelo para evitar solicitudes repetidas y acceder
-    a carpetas especiales: añade la app en Ajustes del Sistema, cierra y vuelve
-    a abrirla.
-  fr: >-
-    Optionnel. L’app fonctionne sans — les scans peuvent demander l’accès à
-    certains dossiers au besoin. L’accorder évite les demandes répétées et
-    permet d’accéder aux dossiers spéciaux : ajoutez l’app dans Réglages
-    Système, puis quittez et rouvrez-la.
-  pt: >-
-    Opcional. A app funciona sem ele — a análise pode pedir acesso a pastas
-    específicas quando necessário. Conceder evita pedidos repetidos e permite
-    aceder a pastas especiais: adicione a app em Definições do Sistema, feche
-    e reabra.
-  de: >-
-    Optional. Die App funktioniert auch ohne — Scans können bei Bedarf Zugriff
-    auf bestimmte Ordner anfragen. Erteilen Sie ihn, um wiederholte Abfragen
-    zu vermeiden und auf spezielle Ordner zuzugreifen: App in den
-    Systemeinstellungen hinzufügen, beenden und neu starten.
-  ru: >-
-    Необязательно. Приложение работает и без него — при сканировании может
-    запрашиваться доступ к отдельным папкам. Включите, чтобы не видеть
-    повторных запросов и получить доступ к специальным папкам: добавьте
-    приложение в «Системные настройки», закройте и снова откройте его.
-  zh: 可选。不授予也可使用，扫描时会按需请求访问特定文件夹。授予后可避免重复提示并访问特殊文件夹：在「系统设置」中添加此应用，退出并重新打开即可。
-  ja: 任意です。なくてもアプリは動作し、スキャン時にフォルダごとにアクセスを求めます。許可すると繰り返しの確認を避け、特殊なフォルダにもアクセスできます：システム設定でこのアプリを追加し、終了してから再起動してください。
-  ar: >-
-    اختياري. التطبيق يعمل بدونه — قد يطلب المسح الوصول إلى مجلدات معينة عند
-    الحاجة. منحه يتجنب الطلبات المتكررة ويتيح الوصول إلى مجلدات خاصة: أضف
-    التطبيق في إعدادات النظام، ثم أغلق وأعد فتحه.
+   en: >-
+      Optional. The app works without it — scans may ask for access to specific
+      folders as needed. Grant it to avoid repeated prompts and access special
+      folders: add this app in System Settings, then quit and reopen.
+   it: >-
+      Opzionale. L’app funziona anche senza: le scansioni possono chiedere
+      l’accesso alle singole cartelle. Concedilo per evitare richieste ripetute
+      e accedere a cartelle speciali: aggiungi l’app in Impostazioni di Sistema,
+      poi esci e riapri.
+   es: >-
+      Opcional. La app funciona sin ello; el análisis puede pedir acceso a
+      carpetas concretas. Concédelo para evitar solicitudes repetidas y acceder
+      a carpetas especiales: añade la app en Ajustes del Sistema, cierra y vuelve
+      a abrirla.
+   fr: >-
+      Optionnel. L’app fonctionne sans — les scans peuvent demander l’accès à
+      certains dossiers au besoin. L’accorder évite les demandes répétées et
+      permet d’accéder aux dossiers spéciaux : ajoutez l’app dans Réglages
+      Système, puis quittez et rouvrez-la.
+   pt: >-
+      Opcional. A app funciona sem ele — a análise pode pedir acesso a pastas
+      específicas quando necessário. Conceder evita pedidos repetidos e permite
+      aceder a pastas especiais: adicione a app em Definições do Sistema, feche
+      e reabra.
+   de: >-
+      Optional. Die App funktioniert auch ohne — Scans können bei Bedarf Zugriff
+      auf bestimmte Ordner anfragen. Erteilen Sie ihn, um wiederholte Abfragen
+      zu vermeiden und auf spezielle Ordner zuzugreifen: App in den
+      Systemeinstellungen hinzufügen, beenden und neu starten.
+   ru: >-
+      Необязательно. Приложение работает и без него — при сканировании может
+      запрашиваться доступ к отдельным папкам. Включите, чтобы не видеть
+      повторных запросов и получить доступ к специальным папкам: добавьте
+      приложение в «Системные настройки», закройте и снова откройте его.
+   zh: 可选。不授予也可使用，扫描时会按需请求访问特定文件夹。授予后可避免重复提示并访问特殊文件夹：在「系统设置」中添加此应用，退出并重新打开即可。
+   ja: 任意です。なくてもアプリは動作し、スキャン時にフォルダごとにアクセスを求めます。許可すると繰り返しの確認を避け、特殊なフォルダにもアクセスできます：システム設定でこのアプリを追加し、終了してから再起動してください。
+   ar: >-
+      اختياري. التطبيق يعمل بدونه — قد يطلب المسح الوصول إلى مجلدات معينة عند
+      الحاجة. منحه يتجنب الطلبات المتكررة ويتيح الوصول إلى مجلدات خاصة: أضف
+      التطبيق في إعدادات النظام، ثم أغلق وأعد فتحه.
 
 fdaOpenSettings:
-  en: Open System Settings
-  it: Apri Impostazioni di Sistema
-  es: Abrir Ajustes del Sistema
-  fr: Ouvrir les réglages système
-  pt: Abrir Definições do Sistema
-  de: Systemeinstellungen öffnen
-  ru: Открыть системные настройки
-  zh: 打开系统设置
-  ja: システム設定を開く
-  ar: فتح إعدادات النظام
+   en: Open System Settings
+   it: Apri Impostazioni di Sistema
+   es: Abrir Ajustes del Sistema
+   fr: Ouvrir les réglages système
+   pt: Abrir Definições do Sistema
+   de: Systemeinstellungen öffnen
+   ru: Открыть системные настройки
+   zh: 打开系统设置
+   ja: システム設定を開く
+   ar: فتح إعدادات النظام
 
 languageEn:
-  en: English
-  it: English
-  es: English
-  fr: English
-  pt: English
-  de: English
-  ru: English
-  zh: English
-  ja: English
-  ar: English
+   en: English
+   it: English
+   es: English
+   fr: English
+   pt: English
+   de: English
+   ru: English
+   zh: English
+   ja: English
+   ar: English
 
 languageIt:
-  en: Italiano
-  it: Italiano
-  es: Italiano
-  fr: Italiano
-  pt: Italiano
-  de: Italiano
-  ru: Italiano
-  zh: Italiano
-  ja: Italiano
-  ar: Italiano
+   en: Italiano
+   it: Italiano
+   es: Italiano
+   fr: Italiano
+   pt: Italiano
+   de: Italiano
+   ru: Italiano
+   zh: Italiano
+   ja: Italiano
+   ar: Italiano
 
 languageEs:
-  en: Español
-  it: Español
-  es: Español
-  fr: Español
-  pt: Español
-  de: Español
-  ru: Español
-  zh: Español
-  ja: Español
-  ar: Español
+   en: Español
+   it: Español
+   es: Español
+   fr: Español
+   pt: Español
+   de: Español
+   ru: Español
+   zh: Español
+   ja: Español
+   ar: Español
 
 languageZh:
-  en: 简体中文
-  it: 简体中文
-  es: 简体中文
-  fr: 简体中文
-  pt: 简体中文
-  de: 简体中文
-  ru: 简体中文
-  zh: 简体中文
-  ja: 简体中文
-  ar: 简体中文
+   en: 简体中文
+   it: 简体中文
+   es: 简体中文
+   fr: 简体中文
+   pt: 简体中文
+   de: 简体中文
+   ru: 简体中文
+   zh: 简体中文
+   ja: 简体中文
+   ar: 简体中文
 
 languageJa:
-  en: 日本語
-  it: 日本語
-  es: 日本語
-  fr: 日本語
-  pt: 日本語
-  de: 日本語
-  ru: 日本語
-  zh: 日本語
-  ja: 日本語
-  ar: 日本語
+   en: 日本語
+   it: 日本語
+   es: 日本語
+   fr: 日本語
+   pt: 日本語
+   de: 日本語
+   ru: 日本語
+   zh: 日本語
+   ja: 日本語
+   ar: 日本語
 
 languageAr:
-  en: العربية
-  it: العربية
-  es: العربية
-  fr: العربية
-  pt: العربية
-  de: العربية
-  ru: العربية
-  zh: العربية
-  ja: العربية
-  ar: العربية
+   en: العربية
+   it: العربية
+   es: العربية
+   fr: العربية
+   pt: العربية
+   de: العربية
+   ru: العربية
+   zh: العربية
+   ja: العربية
+   ar: العربية
 
 languageRu:
-  en: Русский
-  it: Русский
-  es: Русский
-  fr: Русский
-  pt: Русский
-  de: Русский
-  ru: Русский
-  zh: Русский
-  ja: Русский
-  ar: Русский
+   en: Русский
+   it: Русский
+   es: Русский
+   fr: Русский
+   pt: Русский
+   de: Русский
+   ru: Русский
+   zh: Русский
+   ja: Русский
+   ar: Русский
 
 languageFr:
-  en: Français
-  it: Français
-  es: Français
-  fr: Français
-  pt: Français
-  de: Français
-  ru: Français
-  zh: Français
-  ja: Français
-  ar: Français
+   en: Français
+   it: Français
+   es: Français
+   fr: Français
+   pt: Français
+   de: Français
+   ru: Français
+   zh: Français
+   ja: Français
+   ar: Français
 
 languagePt:
-  en: Português
-  it: Português
-  es: Português
-  fr: Português
-  pt: Português
-  de: Português
-  ru: Português
-  zh: Português
-  ja: Português
-  ar: Português
+   en: Português
+   it: Português
+   es: Português
+   fr: Português
+   pt: Português
+   de: Português
+   ru: Português
+   zh: Português
+   ja: Português
+   ar: Português
 
 languageDe:
-  en: Deutsch
-  it: Deutsch
-  es: Deutsch
-  fr: Deutsch
-  pt: Deutsch
-  de: Deutsch
-  ru: Deutsch
-  zh: Deutsch
-  ja: Deutsch
-  ar: Deutsch
+   en: Deutsch
+   it: Deutsch
+   es: Deutsch
+   fr: Deutsch
+   pt: Deutsch
+   de: Deutsch
+   ru: Deutsch
+   zh: Deutsch
+   ja: Deutsch
+   ar: Deutsch
 
 themeApex:
-  en: Apex
-  it: Apex
-  es: Apex
-  fr: Apex
-  pt: Apex
-  de: Apex
-  ru: Apex
-  zh: Apex
-  ja: Apex
-  ar: Apex
+   en: Apex
+   it: Apex
+   es: Apex
+   fr: Apex
+   pt: Apex
+   de: Apex
+   ru: Apex
+   zh: Apex
+   ja: Apex
+   ar: Apex
 
 themeApexCoral:
-  en: Apex Coral
-  it: Apex Coral
-  es: Apex Coral
-  fr: Apex Coral
-  pt: Apex Coral
-  de: Apex Coral
-  ru: Apex Coral
-  zh: Apex Coral
-  ja: Apex Coral
-  ar: Apex Coral
+   en: Apex Coral
+   it: Apex Coral
+   es: Apex Coral
+   fr: Apex Coral
+   pt: Apex Coral
+   de: Apex Coral
+   ru: Apex Coral
+   zh: Apex Coral
+   ja: Apex Coral
+   ar: Apex Coral
 
 themeApexOcean:
-  en: Apex Ocean
-  it: Apex Ocean
-  es: Apex Ocean
-  fr: Apex Ocean
-  pt: Apex Ocean
-  de: Apex Ocean
-  ru: Apex Ocean
-  zh: Apex Ocean
-  ja: Apex Ocean
-  ar: Apex Ocean
+   en: Apex Ocean
+   it: Apex Ocean
+   es: Apex Ocean
+   fr: Apex Ocean
+   pt: Apex Ocean
+   de: Apex Ocean
+   ru: Apex Ocean
+   zh: Apex Ocean
+   ja: Apex Ocean
+   ar: Apex Ocean
 
 themeApexGreen:
-  en: Apex Green
-  it: Apex Green
-  es: Apex Green
-  fr: Apex Green
-  pt: Apex Green
-  de: Apex Green
-  ru: Apex Green
-  zh: Apex Green
-  ja: Apex Green
-  ar: Apex Green
+   en: Apex Green
+   it: Apex Green
+   es: Apex Green
+   fr: Apex Green
+   pt: Apex Green
+   de: Apex Green
+   ru: Apex Green
+   zh: Apex Green
+   ja: Apex Green
+   ar: Apex Green
 
 themeMacosDark:
-  en: macOS Dark
-  it: macOS Dark
-  es: macOS Dark
-  fr: macOS Dark
-  pt: macOS Dark
-  de: macOS Dark
-  ru: macOS Dark
-  zh: macOS Dark
-  ja: macOS Dark
-  ar: macOS Dark
+   en: macOS Dark
+   it: macOS Dark
+   es: macOS Dark
+   fr: macOS Dark
+   pt: macOS Dark
+   de: macOS Dark
+   ru: macOS Dark
+   zh: macOS Dark
+   ja: macOS Dark
+   ar: macOS Dark
 
 themeMacosGraphite:
-  en: macOS Graphite
-  it: macOS Graphite
-  es: macOS Graphite
-  fr: macOS Graphite
-  pt: macOS Graphite
-  de: macOS Graphite
-  ru: macOS Graphite
-  zh: macOS Graphite
-  ja: macOS Graphite
-  ar: macOS Graphite
+   en: macOS Graphite
+   it: macOS Graphite
+   es: macOS Graphite
+   fr: macOS Graphite
+   pt: macOS Graphite
+   de: macOS Graphite
+   ru: macOS Graphite
+   zh: macOS Graphite
+   ja: macOS Graphite
+   ar: macOS Graphite
 
 themeMacosLight:
-  en: macOS Light
-  it: macOS Light
-  es: macOS Light
-  fr: macOS Light
-  pt: macOS Light
-  de: macOS Light
-  ru: macOS Light
-  zh: macOS Light
-  ja: macOS Light
-  ar: macOS Light
+   en: macOS Light
+   it: macOS Light
+   es: macOS Light
+   fr: macOS Light
+   pt: macOS Light
+   de: macOS Light
+   ru: macOS Light
+   zh: macOS Light
+   ja: macOS Light
+   ar: macOS Light
 
 updateLabel:
-  en: Software Update
-  it: Aggiornamento software
-  es: Actualización de software
-  fr: Mise à jour logicielle
-  pt: Atualização de software
-  de: Softwareupdate
-  ru: Обновление ПО
-  zh: 软件更新
-  ja: ソフトウェア更新
-  ar: تحديث البرمجيات
+   en: Software Update
+   it: Aggiornamento software
+   es: Actualización de software
+   fr: Mise à jour logicielle
+   pt: Atualização de software
+   de: Softwareupdate
+   ru: Обновление ПО
+   zh: 软件更新
+   ja: ソフトウェア更新
+   ar: تحديث البرمجيات
 
 updateUpToDate:
-  en: You are using the latest version (v{{version}})
-  it: Stai usando l'ultima versione (v{{version}})
-  es: Estás usando la última versión (v{{version}})
-  fr: Vous utilisez la dernière version (v{{version}})
-  pt: Está a utilizar a última versão (v{{version}})
-  de: Sie verwenden die neueste Version (v{{version}})
-  ru: Вы используете последнюю версию (v{{version}})
-  zh: 您正在使用最新版本 (v{{version}})
-  ja: 最新バージョン (v{{version}}) を使用中
-  ar: أنت تستخدم أحدث إصدار (v{{version}})
+   en: You are using the latest version (v{{version}})
+   it: Stai usando l'ultima versione (v{{version}})
+   es: Estás usando la última versión (v{{version}})
+   fr: Vous utilisez la dernière version (v{{version}})
+   pt: Está a utilizar a última versão (v{{version}})
+   de: Sie verwenden die neueste Version (v{{version}})
+   ru: Вы используете последнюю версию (v{{version}})
+   zh: 您正在使用最新版本 (v{{version}})
+   ja: 最新バージョン (v{{version}}) を使用中
+   ar: أنت تستخدم أحدث إصدار (v{{version}})
 
 updateAvailable:
-  en: Version {{version}} is available
-  it: La versione {{version}} è disponibile
-  es: La versión {{version}} está disponible
-  fr: La version {{version}} est disponible
-  pt: A versão {{version}} está disponível
-  de: Version {{version}} ist verfügbar
-  ru: Доступна версия {{version}}
-  zh: 版本 {{version}} 可用
-  ja: バージョン {{version}} が利用可能です
-  ar: الإصدار {{version}} متاح
+   en: Version {{version}} is available
+   it: La versione {{version}} è disponibile
+   es: La versión {{version}} está disponible
+   fr: La version {{version}} est disponible
+   pt: A versão {{version}} está disponível
+   de: Version {{version}} ist verfügbar
+   ru: Доступна версия {{version}}
+   zh: 版本 {{version}} 可用
+   ja: バージョン {{version}} が利用可能です
+   ar: الإصدار {{version}} متاح
 
 updateChecking:
-  en: Checking…
-  it: Controllo…
-  es: Verificando…
-  fr: Vérification…
-  pt: Verificando…
-  de: Überprüfung…
-  ru: Проверка…
-  zh: 检查中…
-  ja: 確認中…
-  ar: التحقق…
+   en: Checking…
+   it: Controllo…
+   es: Verificando…
+   fr: Vérification…
+   pt: Verificando…
+   de: Überprüfung…
+   ru: Проверка…
+   zh: 检查中…
+   ja: 確認中…
+   ar: التحقق…
 
 updateDownloading:
-  en: Downloading…
-  it: Download in corso…
-  es: Descargando…
-  fr: Téléchargement…
-  pt: A transferir…
-  de: Herunterladen…
-  ru: Загрузка…
-  zh: 下载中…
-  ja: ダウンロード中…
-  ar: جارٍ التنزيل…
+   en: Downloading…
+   it: Download in corso…
+   es: Descargando…
+   fr: Téléchargement…
+   pt: A transferir…
+   de: Herunterladen…
+   ru: Загрузка…
+   zh: 下载中…
+   ja: ダウンロード中…
+   ar: جارٍ التنزيل…
 
 updateCheckButton:
-  en: Check for Updates
-  it: Controlla aggiornamenti
-  es: Buscar actualizaciones
-  fr: Vérifier les mises à jour
-  pt: Verificar atualizações
-  de: Updates prüfen
-  ru: Проверить обновления
-  zh: 检查更新
-  ja: 更新を確認
-  ar: تحقق من التحديثات
+   en: Check for Updates
+   it: Controlla aggiornamenti
+   es: Buscar actualizaciones
+   fr: Vérifier les mises à jour
+   pt: Verificar atualizações
+   de: Updates prüfen
+   ru: Проверить обновления
+   zh: 检查更新
+   ja: 更新を確認
+   ar: تحقق من التحديثات
 
 updateInstallButton:
-  en: Install and Relaunch
-  it: Installa e riavvia
-  es: Instalar y reiniciar
-  fr: Installer et redémarrer
-  pt: Instalar e reiniciar
-  de: Installieren und neu starten
-  ru: Установить и перезапустить
-  zh: 安装并重启
-  ja: インストールして再起動
-  ar: تثبيت وإعادة التشغيل
+   en: Install and Relaunch
+   it: Installa e riavvia
+   es: Instalar y reiniciar
+   fr: Installer et redémarrer
+   pt: Instalar e reiniciar
+   de: Installieren und neu starten
+   ru: Установить и перезапустить
+   zh: 安装并重启
+   ja: インストールして再起動
+   ar: تثبيت وإعادة التشغيل
 
 updateRestartButton:
-  en: Restart to Update
-  it: Riavvia per aggiornare
-  es: Reiniciar para actualizar
-  fr: Redémarrer pour mettre à jour
-  pt: Reiniciar para atualizar
-  de: Neu starten zum Aktualisieren
-  ru: Перезапустить для обновления
-  zh: 重启以更新
-  ja: 再起動して更新
-  ar: إعادة التشغيل للتحديث
+   en: Restart to Update
+   it: Riavvia per aggiornare
+   es: Reiniciar para actualizar
+   fr: Redémarrer pour mettre à jour
+   pt: Reiniciar para atualizar
+   de: Neu starten zum Aktualisieren
+   ru: Перезапустить для обновления
+   zh: 重启以更新
+   ja: 再起動して更新
+   ar: إعادة التشغيل للتحديث
 
 updateReadyDesc:
-  en: An update has been downloaded and is ready to install
-  it: Un aggiornamento è stato scaricato ed è pronto per l'installazione
-  es: Se ha descargado una actualización y está lista para instalar
-  fr: Une mise à jour a été téléchargée et est prête à être installée
-  pt: Uma atualização foi transferida e está pronta para instalar
-  de: Ein Update wurde heruntergeladen und ist installationsbereit
-  ru: Обновление загружено и готово к установке
-  zh: 更新已下载，准备安装
-  ja: アップデートがダウンロードされ、インストールの準備ができました
-  ar: تم تنزيل التحديث وهو جاهز للتثبيت
+   en: An update has been downloaded and is ready to install
+   it: Un aggiornamento è stato scaricato ed è pronto per l'installazione
+   es: Se ha descargado una actualización y está lista para instalar
+   fr: Une mise à jour a été téléchargée et est prête à être installée
+   pt: Uma atualização foi transferida e está pronta para instalar
+   de: Ein Update wurde heruntergeladen und ist installationsbereit
+   ru: Обновление загружено и готово к установке
+   zh: 更新已下载，准备安装
+   ja: アップデートがダウンロードされ、インストールの準備ができました
+   ar: تم تنزيل التحديث وهو جاهز للتثبيت
 
 autoUpdatesLabel:
-  en: Automatic Updates
-  it: Aggiornamenti automatici
-  es: Actualizaciones automáticas
-  fr: Mises à jour automatiques
-  pt: Atualizações automáticas
-  de: Automatische Updates
-  ru: Автоматические обновления
-  zh: 自动更新
-  ja: 自動アップデート
-  ar: التحديثات التلقائية
+   en: Automatic Updates
+   it: Aggiornamenti automatici
+   es: Actualizaciones automáticas
+   fr: Mises à jour automatiques
+   pt: Atualizações automáticas
+   de: Automatische Updates
+   ru: Автоматические обновления
+   zh: 自动更新
+   ja: 自動アップデート
+   ar: التحديثات التلقائية
 
 autoUpdatesDesc:
-  en: Applied on next app start
-  it: Applicato al prossimo avvio
-  es: Se aplica en el próximo inicio
-  fr: Appliqué au prochain démarrage
-  pt: Aplicado no próximo início
-  de: Gilt beim nächsten Start
-  ru: Применится при следующем запуске
-  zh: 下次启动时生效
-  ja: 次回の起動時に適用
-  ar: تطبق عند بدء التشغيل التالي
+   en: Applied on next app start
+   it: Applicato al prossimo avvio
+   es: Se aplica en el próximo inicio
+   fr: Appliqué au prochain démarrage
+   pt: Aplicado no próximo início
+   de: Gilt beim nächsten Start
+   ru: Применится при следующем запуске
+   zh: 下次启动时生效
+   ja: 次回の起動時に適用
+   ar: تطبق عند بدء التشغيل التالي

@@ -121,12 +121,12 @@ src-tauri/
 
 ## Testing rules
 
-| Suite | Command | When to run |
-|-------|---------|-------------|
-| Vue + TS typecheck | `pnpm typecheck` (= `vue-tsc --noEmit`) | Before each commit that touches `*.ts` / `*.tsx` / `*.vue`. Committed code must be type-clean — no `// @ts-ignore` or `as any` to silence the checker. |
-| Rust unit/integration | `pnpm test:unit` (or `cd src-tauri && cargo test -- --test-threads=1`) | Any change to Rust (`src-tauri/**`). |
-| End-to-end (WebdriverIO + debug Tauri build) | `pnpm test:e2e` | Any change to user-visible behavior — frontend (`src/**`), Rust (`src-tauri/**`), or e2e specs themselves (`e2e/**`). |
-| Format / headers | `pnpm fmt:check` and `pnpm headers:check` | Always. |
+| Suite                                        | Command                                                                | When to run                                                                                                                                            |
+| -------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Vue + TS typecheck                           | `pnpm typecheck` (= `vue-tsc --noEmit`)                                | Before each commit that touches `*.ts` / `*.tsx` / `*.vue`. Committed code must be type-clean — no `// @ts-ignore` or `as any` to silence the checker. |
+| Rust unit/integration                        | `pnpm test:unit` (or `cd src-tauri && cargo test -- --test-threads=1`) | Any change to Rust (`src-tauri/**`).                                                                                                                   |
+| End-to-end (WebdriverIO + debug Tauri build) | `pnpm test:e2e`                                                        | Any change to user-visible behavior — frontend (`src/**`), Rust (`src-tauri/**`), or e2e specs themselves (`e2e/**`).                                  |
+| Format / headers                             | `pnpm fmt:check` and `pnpm headers:check`                              | Always.                                                                                                                                                |
 
 Rules:
 

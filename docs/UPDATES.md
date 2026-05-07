@@ -36,12 +36,12 @@ GitHub's `/releases/latest/` URL always resolves to the most recent **non-pre-re
 
 The **Settings** update button always runs the native dialog flow (check → download → "Restart now?"). The **menu** matches that when no update is staged; when automatic updates are **on** and an update is **already staged**, the menu item **restarts the app immediately** instead of opening the dialog.
 
-| Trigger | Auto-updates ON | Auto-updates OFF |
-|---|---|---|
-| **App start** | Silent check → auto-download → "Restart to Update" in Settings + menu | Nothing |
-| **Menu bar** click (update staged) | Restarts immediately | Native dialog flow |
-| **Menu bar** click (no update staged) | Native dialog flow (menu text updates during check/download) | Native dialog flow (menu text unchanged) |
-| **Settings** button click | Native dialog flow | Native dialog flow |
+| Trigger                               | Auto-updates ON                                                       | Auto-updates OFF                         |
+| ------------------------------------- | --------------------------------------------------------------------- | ---------------------------------------- |
+| **App start**                         | Silent check → auto-download → "Restart to Update" in Settings + menu | Nothing                                  |
+| **Menu bar** click (update staged)    | Restarts immediately                                                  | Native dialog flow                       |
+| **Menu bar** click (no update staged) | Native dialog flow (menu text updates during check/download)          | Native dialog flow (menu text unchanged) |
+| **Settings** button click             | Native dialog flow                                                    | Native dialog flow                       |
 
 ### Update Flow Diagram
 
@@ -95,15 +95,15 @@ To test the full update experience (check → download → "Restart to Update"):
 
 ## File Overview
 
-| File | Role |
-|---|---|
-| `src-tauri/src/updater.rs` | Rust module: silent check, native dialog flow, menu text updates, `autoUpdates` setting reader |
-| `src/lib/use-app-update.ts` | Vue composable: reactive state (checking → downloading → ready), auto-check on start (auto-updates only), manual check via native dialog |
-| `src/components/SettingsView.vue` | UI: update description + action button, auto-updates toggle |
-| `src-tauri/src/menu_translations.rs` | Menu label translations including "Checking for Updates…", "Downloading Update…", "Restart to Update" |
-| `src-tauri/tauri.conf.json` | Updater config: endpoint URL, public key, `createUpdaterArtifacts` |
-| `src-tauri/tauri.beta.conf.json` | Merge config for the Beta-channel DMG: bundle id / product name, `createUpdaterArtifacts: false` |
-| `src-tauri/Entitlements.plist` | macOS entitlement: `com.apple.security.network.client` for downloads |
-| `.github/workflows/release.yml` | CI: builds, signs artifacts, generates `latest.json`, uploads to release |
-| `.github/workflows/beta.yml` | CI: `workflow_dispatch` only — unit tests, Beta DMG, **pre-release** (`beta-<run_id>`) + artifact |
-| `../RELEASES_BETA.md` | Optional Beta QA notes; pre-release body + artifact; first `##` section in job summary; not used for semver |
+| File                                 | Role                                                                                                                                     |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `src-tauri/src/updater.rs`           | Rust module: silent check, native dialog flow, menu text updates, `autoUpdates` setting reader                                           |
+| `src/lib/use-app-update.ts`          | Vue composable: reactive state (checking → downloading → ready), auto-check on start (auto-updates only), manual check via native dialog |
+| `src/components/SettingsView.vue`    | UI: update description + action button, auto-updates toggle                                                                              |
+| `src-tauri/src/menu_translations.rs` | Menu label translations including "Checking for Updates…", "Downloading Update…", "Restart to Update"                                    |
+| `src-tauri/tauri.conf.json`          | Updater config: endpoint URL, public key, `createUpdaterArtifacts`                                                                       |
+| `src-tauri/tauri.beta.conf.json`     | Merge config for the Beta-channel DMG: bundle id / product name, `createUpdaterArtifacts: false`                                         |
+| `src-tauri/Entitlements.plist`       | macOS entitlement: `com.apple.security.network.client` for downloads                                                                     |
+| `.github/workflows/release.yml`      | CI: builds, signs artifacts, generates `latest.json`, uploads to release                                                                 |
+| `.github/workflows/beta.yml`         | CI: `workflow_dispatch` only — unit tests, Beta DMG, **pre-release** (`beta-<run_id>`) + artifact                                        |
+| `../RELEASES_BETA.md`                | Optional Beta QA notes; pre-release body + artifact; first `##` section in job summary; not used for semver                              |
