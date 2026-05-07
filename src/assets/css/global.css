@@ -86,15 +86,15 @@ html.focus-ring-keyboard [tabindex='0']:focus {
  *
  * The pseudo-element only renders when the container actually overflows, so
  * non-scrolling regions never get a visible bar. The thumb is transparent at
- * rest and fades in on hover of the scrollable container, then brightens on
- * direct thumb hover.
+ * rest and fades in when the scrollable container or the scrollbar itself is
+ * hovered, then brightens on direct thumb hover.
  *
  * `overflow: overlay` (declared per-container) still governs whether the bar
  * steals layout space; our styling here only paints it.
  */
 ::-webkit-scrollbar {
-   width: 10px;
-   height: 10px;
+   width: var(--scrollbar-inline-gutter, 10px);
+   height: var(--scrollbar-inline-gutter, 10px);
    background: transparent;
 }
 
@@ -111,10 +111,6 @@ html.focus-ring-keyboard [tabindex='0']:focus {
    transition: background-color 0.2s ease;
 }
 
-:hover::-webkit-scrollbar-thumb {
-   background-color: var(--color-scrollbar);
-}
-
 ::-webkit-scrollbar-thumb:hover {
-   background-color: var(--color-scrollbar-hover);
+   background-color: var(--color-scrollbar);
 }

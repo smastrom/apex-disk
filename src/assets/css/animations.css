@@ -52,18 +52,18 @@
 .app-slide-enter-active,
 .app-slide-leave-active {
    transition:
-      opacity 260ms var(--ease-apple),
-      transform 260ms var(--ease-apple);
+      opacity 160ms var(--ease-apple),
+      transform 160ms var(--ease-apple);
 }
 
 .app-slide-leave-to {
    opacity: 0;
-   transform: translateX(calc(-20px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
+   transform: translateX(calc(-10px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
 }
 
 .app-slide-enter-from {
    opacity: 0;
-   transform: translateX(calc(20px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
+   transform: translateX(calc(10px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
 }
 
 @media (prefers-reduced-motion: reduce) {

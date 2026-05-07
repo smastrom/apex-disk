@@ -107,215 +107,222 @@ async function openSystemSettings() {
 
 <template>
    <section class="SettingsView-root" data-testid="settings-view" aria-label="Settings">
-      <div class="SettingsView-content" data-testid="settings-content">
-         <!-- App Settings -->
+      <div class="SettingsView-scroll">
+         <div class="SettingsView-content" data-testid="settings-content">
+            <!-- App Settings -->
 
-         <section class="SettingsGroup">
-            <div class="SettingsGroup-row">
-               <span id="label-language" class="SettingsGroup-label">{{
-                  t('SettingsView', 'language')
-               }}</span>
-               <div class="SettingsView-selectWrap">
-                  <select
-                     class="SettingsSelect"
-                     aria-labelledby="label-language"
-                     :value="settings.language"
-                     @change="
-                        store.setLanguage(($event.target as HTMLSelectElement).value as Language)
-                     "
-                  >
-                     <option v-for="opt in languageOptions" :key="opt.value" :value="opt.value">
-                        {{ opt.label }}
-                     </option>
-                  </select>
-                  <PhCaretDown
-                     :size="14"
-                     weight="regular"
-                     class="SettingsView-selectChevron"
-                     aria-hidden="true"
-                  />
+            <section class="SettingsGroup">
+               <div class="SettingsGroup-row">
+                  <span id="label-language" class="SettingsGroup-label">{{
+                     t('SettingsView', 'language')
+                  }}</span>
+                  <div class="SettingsView-selectWrap">
+                     <select
+                        class="SettingsSelect"
+                        aria-labelledby="label-language"
+                        :value="settings.language"
+                        @change="
+                           store.setLanguage(($event.target as HTMLSelectElement).value as Language)
+                        "
+                     >
+                        <option v-for="opt in languageOptions" :key="opt.value" :value="opt.value">
+                           {{ opt.label }}
+                        </option>
+                     </select>
+                     <PhCaretDown
+                        :size="14"
+                        weight="regular"
+                        class="SettingsView-selectChevron"
+                        aria-hidden="true"
+                     />
+                  </div>
                </div>
-            </div>
-            <div class="SettingsGroup-row">
-               <span id="label-theme" class="SettingsGroup-label">{{
-                  t('SettingsView', 'themeColor')
-               }}</span>
-               <div class="SettingsView-selectWrap">
-                  <select
-                     class="SettingsSelect"
-                     aria-labelledby="label-theme"
-                     :value="settings.themeColor"
-                     @change="
-                        store.setThemeColor(
-                           ($event.target as HTMLSelectElement).value as ThemeColor
-                        )
-                     "
-                  >
-                     <option v-for="opt in themeOptions" :key="opt.value" :value="opt.value">
-                        {{ opt.label }}
-                     </option>
-                  </select>
-                  <PhCaretDown
-                     :size="14"
-                     weight="regular"
-                     class="SettingsView-selectChevron"
-                     aria-hidden="true"
-                  />
+               <div class="SettingsGroup-row">
+                  <span id="label-theme" class="SettingsGroup-label">{{
+                     t('SettingsView', 'themeColor')
+                  }}</span>
+                  <div class="SettingsView-selectWrap">
+                     <select
+                        class="SettingsSelect"
+                        aria-labelledby="label-theme"
+                        :value="settings.themeColor"
+                        @change="
+                           store.setThemeColor(
+                              ($event.target as HTMLSelectElement).value as ThemeColor
+                           )
+                        "
+                     >
+                        <option v-for="opt in themeOptions" :key="opt.value" :value="opt.value">
+                           {{ opt.label }}
+                        </option>
+                     </select>
+                     <PhCaretDown
+                        :size="14"
+                        weight="regular"
+                        class="SettingsView-selectChevron"
+                        aria-hidden="true"
+                     />
+                  </div>
                </div>
-            </div>
-         </section>
+            </section>
 
-         <!-- Scan Settings -->
+            <!-- Scan Settings -->
 
-         <section class="SettingsGroup">
-            <div class="SettingsGroup-row">
-               <span id="label-hidden-files" class="SettingsGroup-label">{{
-                  t('SettingsView', 'scanHiddenFiles')
-               }}</span>
-               <button
-                  type="button"
-                  role="switch"
-                  class="SettingsToggle"
-                  :class="{ 'SettingsToggle--on': settings.showHiddenFiles }"
-                  :aria-checked="settings.showHiddenFiles"
-                  aria-labelledby="label-hidden-files"
-                  @click="toggleHiddenFiles"
-               >
-                  <span class="SettingsToggle-knob" aria-hidden="true" />
-               </button>
-            </div>
-            <div class="SettingsGroup-row">
-               <span id="label-under-1kb" class="SettingsGroup-label">{{
-                  t('SettingsView', 'scanUnder1Kb')
-               }}</span>
-               <button
-                  type="button"
-                  role="switch"
-                  class="SettingsToggle"
-                  :class="{ 'SettingsToggle--on': settings.showUnder1Kb }"
-                  :aria-checked="settings.showUnder1Kb"
-                  aria-labelledby="label-under-1kb"
-                  @click="toggleUnder1Kb"
-               >
-                  <span class="SettingsToggle-knob" aria-hidden="true" />
-               </button>
-            </div>
-            <div class="SettingsGroup-row">
-               <span id="label-zero-byte" class="SettingsGroup-label">{{
-                  t('SettingsView', 'scanZeroByte')
-               }}</span>
-               <button
-                  type="button"
-                  role="switch"
-                  class="SettingsToggle"
-                  :class="{ 'SettingsToggle--on': settings.showZeroByte }"
-                  :aria-checked="settings.showZeroByte"
-                  aria-labelledby="label-zero-byte"
-                  @click="toggleZeroByte"
-               >
-                  <span class="SettingsToggle-knob" aria-hidden="true" />
-               </button>
-            </div>
-            <p class="SettingsView-resultsNotice">
-               {{ t('SettingsView', 'resultsEffectiveNextScan') }}
-            </p>
-         </section>
-
-         <!-- FDA -->
-
-         <section class="SettingsGroup">
-            <div class="SettingsGroup-row">
-               <span class="SettingsGroup-label">{{ t('SettingsView', 'fdaLabel') }}</span>
-               <span
-                  class="SettingsView-fdaStatus"
-                  :class="
-                     isFdaGranted
-                        ? 'SettingsView-fdaStatus--ok'
-                        : 'SettingsView-fdaStatus--optional'
-                  "
-               >
-                  <PhCheckCircle v-if="isFdaGranted" :size="13" weight="fill" aria-hidden="true" />
-                  <PhCircle v-else :size="13" weight="regular" aria-hidden="true" />
-                  {{
-                     isFdaGranted
-                        ? t('SettingsView', 'fdaGranted')
-                        : t('SettingsView', 'fdaMissing')
-                  }}
-               </span>
-            </div>
-            <template v-if="!isFdaGranted">
-               <p class="SettingsView-fdaDesc">
-                  {{ t('SettingsView', 'fdaDesc') }}
-               </p>
-
-               <div class="SettingsView-fdaControls">
-                  <button type="button" class="SettingsView-fdaBtn" @click="openSystemSettings">
-                     <PhGearSix :size="13" weight="fill" aria-hidden="true" />
-                     {{ t('SettingsView', 'fdaOpenSettings') }}
+            <section class="SettingsGroup">
+               <div class="SettingsGroup-row">
+                  <span id="label-hidden-files" class="SettingsGroup-label">{{
+                     t('SettingsView', 'scanHiddenFiles')
+                  }}</span>
+                  <button
+                     type="button"
+                     role="switch"
+                     class="SettingsToggle"
+                     :class="{ 'SettingsToggle--on': settings.showHiddenFiles }"
+                     :aria-checked="settings.showHiddenFiles"
+                     aria-labelledby="label-hidden-files"
+                     @click="toggleHiddenFiles"
+                  >
+                     <span class="SettingsToggle-knob" aria-hidden="true" />
                   </button>
                </div>
-            </template>
-         </section>
-
-         <!-- Software Update -->
-
-         <section class="SettingsGroup">
-            <div class="SettingsGroup-row SettingsGroup-row--canWrap">
-               <div class="SettingsGroup-labelWrapper">
-                  <span class="SettingsGroup-label">{{ t('SettingsView', 'updateLabel') }}</span>
-                  <span class="SettingsView-labelDesc">{{
-                     updateReady
-                        ? t('SettingsView', 'updateReadyDesc')
-                        : availableVersion
-                          ? t('SettingsView', 'updateAvailable', { version: availableVersion })
-                          : t('SettingsView', 'updateUpToDate', { version: APP_VERSION })
+               <div class="SettingsGroup-row">
+                  <span id="label-under-1kb" class="SettingsGroup-label">{{
+                     t('SettingsView', 'scanUnder1Kb')
                   }}</span>
+                  <button
+                     type="button"
+                     role="switch"
+                     class="SettingsToggle"
+                     :class="{ 'SettingsToggle--on': settings.showUnder1Kb }"
+                     :aria-checked="settings.showUnder1Kb"
+                     aria-labelledby="label-under-1kb"
+                     @click="toggleUnder1Kb"
+                  >
+                     <span class="SettingsToggle-knob" aria-hidden="true" />
+                  </button>
                </div>
-               <button
-                  type="button"
-                  class="SettingsView-fdaBtn"
-                  :class="{ 'SettingsView-fdaBtn--accent': updateReady }"
-                  :disabled="isChecking || isDownloading"
-                  @click="emit('check-for-updates')"
-               >
-                  <PhArrowClockwise
-                     v-if="!updateReady && !availableVersion"
-                     :size="13"
-                     weight="fill"
-                     aria-hidden="true"
-                     :class="{ 'SettingsView-spinning': isChecking || isDownloading }"
-                  />
-                  <PhArrowCircleUp
-                     v-else-if="updateReady || availableVersion"
-                     :size="13"
-                     weight="fill"
-                     aria-hidden="true"
-                  />
-                  {{ updateActionLabel }}
-               </button>
-            </div>
-            <div class="SettingsGroup-row">
-               <div class="SettingsGroup-labelWrapper">
-                  <span id="label-auto-updates" class="SettingsGroup-label">{{
-                     t('SettingsView', 'autoUpdatesLabel')
+               <div class="SettingsGroup-row">
+                  <span id="label-zero-byte" class="SettingsGroup-label">{{
+                     t('SettingsView', 'scanZeroByte')
                   }}</span>
-                  <span class="SettingsView-labelDesc">{{
-                     t('SettingsView', 'autoUpdatesDesc')
-                  }}</span>
+                  <button
+                     type="button"
+                     role="switch"
+                     class="SettingsToggle"
+                     :class="{ 'SettingsToggle--on': settings.showZeroByte }"
+                     :aria-checked="settings.showZeroByte"
+                     aria-labelledby="label-zero-byte"
+                     @click="toggleZeroByte"
+                  >
+                     <span class="SettingsToggle-knob" aria-hidden="true" />
+                  </button>
                </div>
-               <button
-                  type="button"
-                  role="switch"
-                  class="SettingsToggle"
-                  :class="{ 'SettingsToggle--on': settings.autoUpdates }"
-                  :aria-checked="settings.autoUpdates"
-                  aria-labelledby="label-auto-updates"
-                  @click="toggleAutoUpdates"
-               >
-                  <span class="SettingsToggle-knob" aria-hidden="true" />
-               </button>
-            </div>
-         </section>
+               <p class="SettingsView-resultsNotice">
+                  {{ t('SettingsView', 'resultsEffectiveNextScan') }}
+               </p>
+            </section>
+
+            <!-- FDA -->
+
+            <section class="SettingsGroup">
+               <div class="SettingsGroup-row">
+                  <span class="SettingsGroup-label">{{ t('SettingsView', 'fdaLabel') }}</span>
+                  <span
+                     class="SettingsView-fdaStatus"
+                     :class="
+                        isFdaGranted
+                           ? 'SettingsView-fdaStatus--ok'
+                           : 'SettingsView-fdaStatus--optional'
+                     "
+                  >
+                     <PhCheckCircle
+                        v-if="isFdaGranted"
+                        :size="13"
+                        weight="fill"
+                        aria-hidden="true"
+                     />
+                     <PhCircle v-else :size="13" weight="regular" aria-hidden="true" />
+                     {{
+                        isFdaGranted
+                           ? t('SettingsView', 'fdaGranted')
+                           : t('SettingsView', 'fdaMissing')
+                     }}
+                  </span>
+               </div>
+               <template v-if="!isFdaGranted">
+                  <p class="SettingsView-fdaDesc">
+                     {{ t('SettingsView', 'fdaDesc') }}
+                  </p>
+
+                  <div class="SettingsView-fdaControls">
+                     <button type="button" class="SettingsView-fdaBtn" @click="openSystemSettings">
+                        <PhGearSix :size="13" weight="fill" aria-hidden="true" />
+                        {{ t('SettingsView', 'fdaOpenSettings') }}
+                     </button>
+                  </div>
+               </template>
+            </section>
+
+            <!-- Software Update -->
+
+            <section class="SettingsGroup">
+               <div class="SettingsGroup-row SettingsGroup-row--canWrap">
+                  <div class="SettingsGroup-labelWrapper">
+                     <span class="SettingsGroup-label">{{ t('SettingsView', 'updateLabel') }}</span>
+                     <span class="SettingsView-labelDesc">{{
+                        updateReady
+                           ? t('SettingsView', 'updateReadyDesc')
+                           : availableVersion
+                             ? t('SettingsView', 'updateAvailable', { version: availableVersion })
+                             : t('SettingsView', 'updateUpToDate', { version: APP_VERSION })
+                     }}</span>
+                  </div>
+                  <button
+                     type="button"
+                     class="SettingsView-fdaBtn"
+                     :class="{ 'SettingsView-fdaBtn--accent': updateReady }"
+                     :disabled="isChecking || isDownloading"
+                     @click="emit('check-for-updates')"
+                  >
+                     <PhArrowClockwise
+                        v-if="!updateReady && !availableVersion"
+                        :size="13"
+                        weight="fill"
+                        aria-hidden="true"
+                        :class="{ 'SettingsView-spinning': isChecking || isDownloading }"
+                     />
+                     <PhArrowCircleUp
+                        v-else-if="updateReady || availableVersion"
+                        :size="13"
+                        weight="fill"
+                        aria-hidden="true"
+                     />
+                     {{ updateActionLabel }}
+                  </button>
+               </div>
+               <div class="SettingsGroup-row">
+                  <div class="SettingsGroup-labelWrapper">
+                     <span id="label-auto-updates" class="SettingsGroup-label">{{
+                        t('SettingsView', 'autoUpdatesLabel')
+                     }}</span>
+                     <span class="SettingsView-labelDesc">{{
+                        t('SettingsView', 'autoUpdatesDesc')
+                     }}</span>
+                  </div>
+                  <button
+                     type="button"
+                     role="switch"
+                     class="SettingsToggle"
+                     :class="{ 'SettingsToggle--on': settings.autoUpdates }"
+                     :aria-checked="settings.autoUpdates"
+                     aria-labelledby="label-auto-updates"
+                     @click="toggleAutoUpdates"
+                  >
+                     <span class="SettingsToggle-knob" aria-hidden="true" />
+                  </button>
+               </div>
+            </section>
+         </div>
       </div>
    </section>
 </template>
@@ -323,11 +330,23 @@ async function openSystemSettings() {
 <style scoped>
 .SettingsView-root {
    flex: 1;
+   display: flex;
+   flex-direction: column;
+   min-height: 0;
+   overflow: hidden;
+   padding: var(--spacing-md);
+   background: var(--color-bg);
+}
+
+.SettingsView-scroll {
+   flex: 1;
+   min-height: 0;
    overflow-x: hidden;
    overflow-y: auto;
    overflow-y: overlay;
-   padding: var(--spacing-md);
-   background: var(--color-bg);
+   width: calc(100% + var(--scrollbar-inline-gutter));
+   margin-inline-end: calc(-1 * var(--scrollbar-inline-gutter));
+   box-sizing: border-box;
 }
 
 .SettingsView-content {

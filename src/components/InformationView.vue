@@ -32,68 +32,78 @@ const props = defineProps<{
 
 <template>
    <section class="InformationView-root" data-testid="information-view" aria-label="Information">
-      <div class="InformationView-content">
-         <!-- App branding section -->
-         <section class="InformationView-branding">
-            <div class="InformationView-logoContainer">
-               <Logo class="InformationView-logo" />
-            </div>
-            <h2 class="InformationView-title" data-testid="information-title">{{ APP_NAME }}</h2>
+      <div class="InformationView-scroll">
+         <div class="InformationView-content">
+            <!-- App branding section -->
+            <section class="InformationView-branding">
+               <div class="InformationView-logoContainer">
+                  <Logo class="InformationView-logo" />
+               </div>
+               <h2 class="InformationView-title" data-testid="information-title">{{ APP_NAME }}</h2>
 
-            <p class="InformationView-description">
-               {{ t('InformationView', 'description') }}
-            </p>
-         </section>
+               <p class="InformationView-description">
+                  {{ t('InformationView', 'description') }}
+               </p>
+            </section>
 
-         <!-- System information section -->
-         <section class="SettingsGroup" v-if="props.systemInfo">
-            <div class="SettingsGroup-row" v-if="props.systemInfo.macos_version">
-               <span class="InformationView-detailLabel">{{
-                  t('InformationView', 'macosVersion')
-               }}</span>
-               <span class="InformationView-detailValue">{{ props.systemInfo.macos_version }}</span>
-            </div>
-            <div class="SettingsGroup-row" v-if="props.systemInfo.hardware_model">
-               <span class="InformationView-detailLabel">{{
-                  t('InformationView', 'hardwareModel')
-               }}</span>
-               <span class="InformationView-detailValue">{{
-                  props.systemInfo.hardware_model
-               }}</span>
-            </div>
-            <div class="SettingsGroup-row" v-if="props.systemInfo.cpu_info">
-               <span class="InformationView-detailLabel">{{ t('InformationView', 'cpu') }}</span>
-               <span class="InformationView-detailValue">{{ props.systemInfo.cpu_info }}</span>
-            </div>
-            <div class="SettingsGroup-row" v-if="props.systemInfo.memory_info">
-               <span class="InformationView-detailLabel">{{ t('InformationView', 'memory') }}</span>
-               <span class="InformationView-detailValue">{{ props.systemInfo.memory_info }}</span>
-            </div>
-            <div class="SettingsGroup-row" v-if="props.systemInfo.system_disk_name">
-               <span class="InformationView-detailLabel">{{
-                  t('InformationView', 'systemDisk')
-               }}</span>
-               <span class="InformationView-detailValue">{{
-                  props.systemInfo.system_disk_name
-               }}</span>
-            </div>
-            <div class="SettingsGroup-row" v-if="props.systemInfo.system_disk_size">
-               <span class="InformationView-detailLabel">{{
-                  t('InformationView', 'diskSize')
-               }}</span>
-               <span class="InformationView-detailValue">{{
-                  formatBytes(props.systemInfo.system_disk_size)
-               }}</span>
-            </div>
-            <div class="SettingsGroup-row" v-if="props.systemInfo.current_user">
-               <span class="InformationView-detailLabel">{{
-                  t('InformationView', 'currentUser')
-               }}</span>
-               <span class="InformationView-detailValue">{{ props.systemInfo.current_user }}</span>
-            </div>
-         </section>
+            <!-- System information section -->
+            <section class="SettingsGroup" v-if="props.systemInfo">
+               <div class="SettingsGroup-row" v-if="props.systemInfo.macos_version">
+                  <span class="InformationView-detailLabel">{{
+                     t('InformationView', 'macosVersion')
+                  }}</span>
+                  <span class="InformationView-detailValue">{{
+                     props.systemInfo.macos_version
+                  }}</span>
+               </div>
+               <div class="SettingsGroup-row" v-if="props.systemInfo.hardware_model">
+                  <span class="InformationView-detailLabel">{{
+                     t('InformationView', 'hardwareModel')
+                  }}</span>
+                  <span class="InformationView-detailValue">{{
+                     props.systemInfo.hardware_model
+                  }}</span>
+               </div>
+               <div class="SettingsGroup-row" v-if="props.systemInfo.cpu_info">
+                  <span class="InformationView-detailLabel">{{ t('InformationView', 'cpu') }}</span>
+                  <span class="InformationView-detailValue">{{ props.systemInfo.cpu_info }}</span>
+               </div>
+               <div class="SettingsGroup-row" v-if="props.systemInfo.memory_info">
+                  <span class="InformationView-detailLabel">{{
+                     t('InformationView', 'memory')
+                  }}</span>
+                  <span class="InformationView-detailValue">{{
+                     props.systemInfo.memory_info
+                  }}</span>
+               </div>
+               <div class="SettingsGroup-row" v-if="props.systemInfo.system_disk_name">
+                  <span class="InformationView-detailLabel">{{
+                     t('InformationView', 'systemDisk')
+                  }}</span>
+                  <span class="InformationView-detailValue">{{
+                     props.systemInfo.system_disk_name
+                  }}</span>
+               </div>
+               <div class="SettingsGroup-row" v-if="props.systemInfo.system_disk_size">
+                  <span class="InformationView-detailLabel">{{
+                     t('InformationView', 'diskSize')
+                  }}</span>
+                  <span class="InformationView-detailValue">{{
+                     formatBytes(props.systemInfo.system_disk_size)
+                  }}</span>
+               </div>
+               <div class="SettingsGroup-row" v-if="props.systemInfo.current_user">
+                  <span class="InformationView-detailLabel">{{
+                     t('InformationView', 'currentUser')
+                  }}</span>
+                  <span class="InformationView-detailValue">{{
+                     props.systemInfo.current_user
+                  }}</span>
+               </div>
+            </section>
 
-         <InformationFooter />
+            <InformationFooter />
+         </div>
       </div>
    </section>
 </template>
@@ -101,11 +111,23 @@ const props = defineProps<{
 <style scoped>
 .InformationView-root {
    flex: 1;
+   display: flex;
+   flex-direction: column;
+   min-height: 0;
+   overflow: hidden;
+   padding: var(--spacing-lg) var(--spacing-md);
+   background: var(--color-bg);
+}
+
+.InformationView-scroll {
+   flex: 1;
+   min-height: 0;
    overflow-x: hidden;
    overflow-y: auto;
    overflow-y: overlay;
-   padding: var(--spacing-lg) var(--spacing-md);
-   background: var(--color-bg);
+   width: calc(100% + var(--scrollbar-inline-gutter));
+   margin-inline-end: calc(-1 * var(--scrollbar-inline-gutter));
+   box-sizing: border-box;
 }
 
 .InformationView-content {

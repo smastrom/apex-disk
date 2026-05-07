@@ -68,7 +68,7 @@ setupFocusRing()
 
       <div class="App-main" role="main">
          <div class="App-mainContent">
-            <Transition name="app-slide">
+            <Transition name="app-slide" mode="out-in">
                <KeepAlive>
                   <ScanView
                      v-if="activeView === 'scan'"
@@ -77,32 +77,30 @@ setupFocusRing()
                      :diskUsage="diskUsage"
                   />
 
-                  <div v-else-if="activeView === 'settings'" key="settings" class="App-overlay">
-                     <SettingsView
-                        :isFdaGranted="isFdaGranted"
-                        :isChecking="isChecking"
-                        :isDownloading="isDownloading"
-                        :availableVersion="availableVersion"
-                        :updateReady="updateReady"
-                        @check-for-updates="onCheckForUpdates"
-                     />
-                  </div>
+                  <SettingsView
+                     v-else-if="activeView === 'settings'"
+                     key="settings"
+                     :isFdaGranted="isFdaGranted"
+                     :isChecking="isChecking"
+                     :isDownloading="isDownloading"
+                     :availableVersion="availableVersion"
+                     :updateReady="updateReady"
+                     @check-for-updates="onCheckForUpdates"
+                  />
 
-                  <div
+                  <InformationView
                      v-else-if="activeView === 'information'"
                      key="information"
-                     class="App-overlay"
-                  >
-                     <InformationView :systemInfo="systemInfo" />
-                  </div>
+                     :systemInfo="systemInfo"
+                  />
                </KeepAlive>
             </Transition>
          </div>
       </div>
 
-      <AppViewAnnouncer :activeView="activeView" />
-
       <AppFooter :activeView="activeView" @select-view="setActiveView" />
+
+      <AppViewAnnouncer :activeView="activeView" />
    </div>
 </template>
 
@@ -128,14 +126,5 @@ setupFocusRing()
    min-height: 0;
    display: flex;
    flex-direction: column;
-}
-
-.App-overlay {
-   position: absolute;
-   inset: 0;
-   display: flex;
-   flex-direction: column;
-   background: var(--color-bg);
-   z-index: 1;
 }
 </style>

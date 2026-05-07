@@ -84,7 +84,8 @@
    --color-row-selected-hover: rgba(255, 255, 255, 0.055);
    --color-row-press: rgba(255, 255, 255, 0.12);
 
-   /* Overlay scrollbar thumb */
+   /* Overlay scrollbar thumb (width matches ::-webkit-scrollbar in global.css) */
+   --scrollbar-inline-gutter: 10px;
    --color-scrollbar: rgba(255, 255, 255, 0.18);
    --color-scrollbar-hover: rgba(255, 255, 255, 0.36);
 
@@ -119,7 +120,7 @@
    --header-height: 50px;
    --footer-height: 64px;
    --results-footer-height: 88px;
-   --content-max-width: 600px;
+   --content-max-width: 425px;
 
    --cta-btn-height: 54px;
    --cta-btn-font-size: var(--font-size-lg);
