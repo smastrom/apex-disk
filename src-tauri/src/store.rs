@@ -210,8 +210,19 @@ pub fn get_setting(app: AppHandle, key: String) -> Result<Option<serde_json::Val
 }
 
 /// Resets settings to defaults. Only available in e2e builds.
+///
+/// After persisting the defaults, emits `settings:reset` so the frontend
+/// store can refresh its in-memory ref without re-fetching or replaying
+/// UI clicks. Without this the Vue `settings` ref (loaded once at startup)
+/// would drift from the backend after a reset.
 #[cfg(feature = "e2e")]
 #[tauri::command]
 pub fn reset_e2e_state(app: AppHandle) -> Result<(), String> {
-    set_settings_with_handle(&app, get_default_settings())
+    use tauri::Emitter;
+
+    let defaults = get_default_settings();
+    set_settings_with_handle(&app, defaults.clone())?;
+    app.emit("settings:reset", defaults)
+        .map_err(|e| e.to_string())?;
+    Ok(())
 }

@@ -4,6 +4,7 @@
 import { THEME_COLORS, ROOT_THEME } from '@/lib/constants'
 import { log } from '@/lib/log'
 import { invoke } from '@tauri-apps/api/core'
+import { listen } from '@tauri-apps/api/event'
 import { ref, type Ref } from 'vue'
 
 import type { AppSettings, ThemeColor, Language } from '@/types/settings'
@@ -33,6 +34,15 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
       settingsData.themeColor = ROOT_THEME
    }
    const settings = ref<AppSettings>(settingsData)
+
+   // Backend-driven resets (e.g. e2e `reset_e2e_state`) bypass the UI, so the
+   // local ref would otherwise drift. The listener keeps it in sync.
+   listen<AppSettings>('settings:reset', (event) => {
+      const next = event.payload
+      if (!THEME_COLORS.includes(next.themeColor)) next.themeColor = ROOT_THEME
+      settings.value = next
+      log('settings', 'Settings: reset from backend')
+   })
 
    async function saveSettings() {
       await invoke('set_settings', { settings: settings.value })
