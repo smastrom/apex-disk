@@ -16,21 +16,11 @@ Example:
 import ScanResultsListItem from './ScanResultsListItem.vue'
 import ScanListNav from './ScanListNav.vue'
 
-import {
-   ref,
-   reactive,
-   watch,
-   watchEffect,
-   shallowRef,
-   computed,
-   nextTick,
-   useTemplateRef,
-} from 'vue'
+import { ref, reactive, watch, watchEffect, shallowRef, computed, useTemplateRef } from 'vue'
 
 import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'
 import { useTranslations } from '@/lib/use-translations'
-import { useViewTransition } from '@/lib/use-view-transition'
 
 import type { TrashListItem, FolderInfo } from '@/types/structs'
 
@@ -45,7 +35,6 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useTranslations()
-const { withTransition } = useViewTransition()
 
 interface NavEntry {
    items: FolderInfo[]
@@ -140,16 +129,16 @@ const isFileListTruncated = computed(
 
 const parentRef = useTemplateRef<HTMLElement>('parentRef')
 
-/** Resets scroll position to top when navigating into a different directory. */
-watch(
-   () => current.value.path,
-   () => {
-      nextTick(() => {
-         parentRef.value?.scrollTo(0, 0)
-      })
-   },
-   { flush: 'post' }
-)
+/**
+ * Resets scroll to top after the leaving list has finished its transition.
+ * Wired to the `<Transition>` `@after-leave` hook below — running it on
+ * `current.path` change directly would scroll the leaving element while it's
+ * still mid-slide (visible jump), since `mode="out-in"` keeps it in the DOM
+ * for the duration of the leave.
+ */
+function onAfterListLeave() {
+   parentRef.value?.scrollTo(0, 0)
+}
 
 /**
  * Walks up the directory hierarchy via string slicing to check if any
@@ -394,51 +383,29 @@ function resetAll() {
 
 defineExpose({ setSelectedItems, resetAll })
 
-const listWrapRef = useTemplateRef<HTMLElement>('listWrapRef')
-
-/**
- * View transition name helpers. Names are applied just before a transition
- * and removed after, so they don't interfere with other transitions on the page.
- */
-function enableListTransitionNames() {
-   listWrapRef.value?.style.setProperty('view-transition-name', 'list-view')
-}
-
-function clearListTransitionNames() {
-   listWrapRef.value?.style.removeProperty('view-transition-name')
-}
-
-/** Navigates into a folder's children with a forward view transition. */
-async function goInto(item: FolderInfo) {
+/** Navigates into a folder's children with a forward slide. */
+function goInto(item: FolderInfo) {
    if (item.is_file) return
    log('nav', `Results: into "${item.name}" (${item.children.length} children)`)
 
    document.documentElement.style.setProperty('--nav-direction', '1')
-   enableListTransitionNames()
-   await withTransition(async () => {
-      backStack.value = [...backStack.value, { ...current.value }]
-      forwardStack.value = []
-      current.value = { items: item.children, label: item.name, path: item.path }
-   })
-   clearListTransitionNames()
+   backStack.value = [...backStack.value, { ...current.value }]
+   forwardStack.value = []
+   current.value = { items: item.children, label: item.name, path: item.path }
 }
 
-/** Navigates to the previous directory with a backward view transition. */
-async function goBack() {
+/** Navigates to the previous directory with a backward slide. */
+function goBack() {
    if (backStack.value.length === 0) return
    log('nav', `Results: back to "${backStack.value[backStack.value.length - 1].label || '~'}"`)
 
    document.documentElement.style.setProperty('--nav-direction', '-1')
-   enableListTransitionNames()
-   await withTransition(async () => {
-      forwardStack.value = [...forwardStack.value, { ...current.value }]
-      current.value = backStack.value.pop()!
-   })
-   clearListTransitionNames()
+   forwardStack.value = [...forwardStack.value, { ...current.value }]
+   current.value = backStack.value.pop()!
 }
 
-/** Re-enters a previously visited directory with a forward view transition. */
-async function goForward() {
+/** Re-enters a previously visited directory with a forward slide. */
+function goForward() {
    if (forwardStack.value.length === 0) return
    log(
       'nav',
@@ -446,12 +413,8 @@ async function goForward() {
    )
 
    document.documentElement.style.setProperty('--nav-direction', '1')
-   enableListTransitionNames()
-   await withTransition(async () => {
-      backStack.value = [...backStack.value, { ...current.value }]
-      current.value = forwardStack.value.pop()!
-   })
-   clearListTransitionNames()
+   backStack.value = [...backStack.value, { ...current.value }]
+   current.value = forwardStack.value.pop()!
 }
 
 function onReviewClick() {
@@ -478,34 +441,42 @@ function onCancel() {
          @reset="clearSelectionFromNav"
          @cancel="onCancel"
       />
-      <div ref="listWrapRef" class="ScanResultsList-listWrap">
+      <div class="ScanResultsList-listWrap">
          <div ref="parentRef" class="ScanResultsList-list ScanResultsList-listScroll">
-            <div class="ScanResultsList-listInner">
-               <div
-                  v-for="item in displayedItems"
-                  :key="item.path"
-                  class="ScanResultsList-listItem"
-               >
-                  <ScanResultsListItem
-                     :item="item"
-                     :isSelected="isSelectedForUI(item.path)"
-                     :isSomeSelected="someSelectedPaths.has(item.path)"
-                     :isSelectable="
-                        !item.is_protected && !item.is_fda_required
-                           ? true
-                           : someSelectedPaths.has(item.path)
-                             ? 'deselect-only'
-                             : false
-                     "
-                     :formatBytes="formatBytes"
-                     @select="() => toggleSelect(item)"
-                     @navigate="() => goInto(item)"
-                  />
+            <Transition name="list-slide" mode="out-in" @after-leave="onAfterListLeave">
+               <div :key="current.path" class="ScanResultsList-listInner">
+                  <div
+                     v-for="item in displayedItems"
+                     :key="item.path"
+                     class="ScanResultsList-listItem"
+                     v-memo="[
+                        item.path,
+                        isSelectedForUI(item.path),
+                        someSelectedPaths.has(item.path),
+                     ]"
+                  >
+                     <ScanResultsListItem
+                        :item="item"
+                        :isSelected="isSelectedForUI(item.path)"
+                        :isSomeSelected="someSelectedPaths.has(item.path)"
+                        :isSelectable="
+                           !item.is_protected && !item.is_fda_required
+                              ? true
+                              : someSelectedPaths.has(item.path)
+                                ? 'deselect-only'
+                                : false
+                        "
+                        :formatBytes="formatBytes"
+                        @select="() => toggleSelect(item)"
+                        @navigate="() => goInto(item)"
+                     />
+                  </div>
+                  <p v-if="isFileListTruncated" class="ScanResultsList-truncated">
+                     {{ t('ScanResultsList', 'truncated') }}
+                  </p>
                </div>
-            </div>
-            <p v-if="isFileListTruncated" class="ScanResultsList-truncated">
-               {{ t('ScanResultsList', 'truncated') }}
-            </p>
+               <!--     </KeepAlive> -->
+            </Transition>
          </div>
       </div>
 
@@ -606,7 +577,6 @@ function onCancel() {
    border-top: 1px solid var(--color-bg);
    background: var(--color-bg-elevated);
    box-shadow: 0 -2px 16px var(--color-bg);
-   view-transition-name: scan-list-footer;
 }
 
 .ScanResultsList-moveToTrashBtn {

@@ -28,88 +28,56 @@
    opacity: 0;
 }
 
-/* ── View Transitions API — folder list (ScanResultsList) ──────────── */
+/* ── Vue <Transition> — folder list slide (ScanResultsList) ────────── */
 
-@supports (view-transition-name: none) {
-   ::view-transition-old(list-view) {
-      animation: 320ms var(--ease-apple) both vt-slide-out;
-   }
-
-   ::view-transition-new(list-view) {
-      animation: 320ms var(--ease-apple) both vt-slide-in;
-   }
-
-   @keyframes vt-slide-out {
-      to {
-         opacity: 0;
-         transform: translateX(calc(-40px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
-      }
-   }
-
-   @keyframes vt-slide-in {
-      from {
-         opacity: 0;
-         transform: translateX(calc(40px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
-      }
-   }
-
-   @media (prefers-reduced-motion: reduce) {
-      ::view-transition-old(list-view) {
-         animation-name: vt-fade-out;
-      }
-
-      ::view-transition-new(list-view) {
-         animation-name: vt-fade-in;
-      }
-   }
+.list-slide-enter-active,
+.list-slide-leave-active {
+   transition:
+      opacity 160ms var(--ease-apple),
+      transform 160ms var(--ease-apple);
 }
 
-/* ── Reduced-motion fade-only keyframes ────────────────────────────── */
-
-@keyframes vt-fade-out {
-   to {
-      opacity: 0;
-   }
+.list-slide-leave-to {
+   opacity: 0;
+   transform: translateX(calc(-10px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
 }
 
-@keyframes vt-fade-in {
-   from {
-      opacity: 0;
-   }
+.list-slide-enter-from {
+   opacity: 0;
+   transform: translateX(calc(10px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
 }
 
-/* ── View Transitions API — app views (App.vue tabs) ───────────────── */
+/* ── Vue <Transition> — app view slide (App.vue tabs) ──────────────── */
 
-@supports (view-transition-name: none) {
-   ::view-transition-old(app-view) {
-      animation: 260ms var(--ease-apple) both vt-slide-out-app;
+.app-slide-enter-active,
+.app-slide-leave-active {
+   transition:
+      opacity 260ms var(--ease-apple),
+      transform 260ms var(--ease-apple);
+}
+
+.app-slide-leave-to {
+   opacity: 0;
+   transform: translateX(calc(-20px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
+}
+
+.app-slide-enter-from {
+   opacity: 0;
+   transform: translateX(calc(20px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
+}
+
+@media (prefers-reduced-motion: reduce) {
+   .list-slide-enter-active,
+   .list-slide-leave-active,
+   .app-slide-enter-active,
+   .app-slide-leave-active {
+      transition: opacity 200ms var(--ease-out);
    }
 
-   ::view-transition-new(app-view) {
-      animation: 260ms var(--ease-apple) both vt-slide-in-app;
-   }
-
-   @keyframes vt-slide-out-app {
-      to {
-         opacity: 0;
-         transform: translateX(calc(-20px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
-      }
-   }
-
-   @keyframes vt-slide-in-app {
-      from {
-         transform: translateX(calc(20px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
-         opacity: 0;
-      }
-   }
-
-   @media (prefers-reduced-motion: reduce) {
-      ::view-transition-old(app-view) {
-         animation-name: vt-fade-out;
-      }
-
-      ::view-transition-new(app-view) {
-         animation-name: vt-fade-in;
-      }
+   .list-slide-leave-to,
+   .list-slide-enter-from,
+   .app-slide-leave-to,
+   .app-slide-enter-from {
+      transform: none;
    }
 }

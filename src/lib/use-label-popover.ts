@@ -12,7 +12,7 @@ const VIEWPORT_PADDING = 16
 export function useLabelPopover(
    triggerRef: Ref<HTMLElement | null>,
    popoverRef: Ref<HTMLElement | null>,
-   options: { placement?: Placement; offset?: number } = {}
+   options: { placement?: Placement; offset?: number; alwaysShow?: boolean } = {}
 ) {
    const isOpen = ref(false)
 
@@ -22,10 +22,13 @@ export function useLabelPopover(
 
    const placement = options.placement ?? 'top'
    const offsetPx = options.offset ?? 8
+   const alwaysShow = options.alwaysShow ?? false
 
-   function isTruncated(): boolean {
+   function shouldShow(): boolean {
       const el = triggerRef.value
-      return !!el && el.scrollWidth > el.clientWidth
+      if (!el) return false
+      if (alwaysShow) return true
+      return el.scrollWidth > el.clientWidth
    }
 
    async function position() {
@@ -101,7 +104,7 @@ export function useLabelPopover(
    }
 
    function onPointerEnter() {
-      if (!isTruncated()) return
+      if (!shouldShow()) return
 
       if (leaveTimer) {
          clearTimeout(leaveTimer)

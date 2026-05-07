@@ -39,11 +39,29 @@ p,
 span:not(:empty),
 a:not(:empty),
 button:not(:empty),
-[popover] {
+.Popover {
    user-select: text;
    -webkit-user-select: text;
    -moz-user-select: text;
    -ms-user-select: text;
+}
+
+/*
+ * Suppress the UA focus outline unconditionally. The custom box-shadow ring
+ * below is then drawn only when focus came from the keyboard (the
+ * `setupFocusRing()` JS hook in `use-focus-ring.ts` toggles the
+ * `html.focus-ring-keyboard` class).
+ *
+ * Why not `:focus-visible`? Safari 13/14 don't implement its UA heuristics
+ * the way Safari 17+ does — on older macOS we'd see the native outline on
+ * mouse clicks. The JS-driven class works uniformly on Safari 13+.
+ */
+button:focus,
+a:focus,
+select:focus,
+input:focus,
+[tabindex='0']:focus {
+   outline: none;
 }
 
 html.focus-ring-keyboard button:focus,
@@ -51,7 +69,6 @@ html.focus-ring-keyboard a:focus,
 html.focus-ring-keyboard select:focus,
 html.focus-ring-keyboard input:focus,
 html.focus-ring-keyboard [tabindex='0']:focus {
-   outline: none;
    box-shadow:
       0 0 0 var(--focus-ring-offset) var(--color-bg),
       0 0 0 calc(var(--focus-ring-offset) + 2px) var(--color-accent-glow);

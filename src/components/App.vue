@@ -20,7 +20,7 @@ import ScanView from './ScanView.vue'
 import SettingsView from './SettingsView.vue'
 import InformationView from './InformationView.vue'
 
-import { useTemplateRef, watch } from 'vue'
+import { watch } from 'vue'
 import { useAppSettings } from '@/stores/app-settings'
 import { useAppViews } from '@/lib/use-app-views'
 import { useAppUpdate } from '@/lib/use-app-update'
@@ -38,7 +38,6 @@ import '@/assets/css/classes.css'
 import '@/assets/css/animations.css'
 import '@/assets/css/rtl.css'
 
-const mainContentRef = useTemplateRef<HTMLElement>('mainContentRef')
 const settingsStore = useAppSettings()
 
 watch(
@@ -51,7 +50,7 @@ watch(
    (lang) => applyDirection(lang)
 )
 
-const { activeView, setActiveView } = useAppViews(mainContentRef)
+const { activeView, setActiveView } = useAppViews()
 const { isChecking, isDownloading, availableVersion, updateReady, onCheckForUpdates } =
    useAppUpdate({ autoUpdates: settingsStore.settings.value.autoUpdates })
 
@@ -68,29 +67,36 @@ setupFocusRing()
       <AppHeader />
 
       <div class="App-main" role="main">
-         <div ref="mainContentRef" class="App-mainContent">
-            <KeepAlive>
-               <ScanView
-                  v-if="activeView === 'scan'"
-                  :appActiveView="activeView"
-                  :diskUsage="diskUsage"
-               />
-
-               <div v-else-if="activeView === 'settings'" class="App-overlay">
-                  <SettingsView
-                     :isFdaGranted="isFdaGranted"
-                     :isChecking="isChecking"
-                     :isDownloading="isDownloading"
-                     :availableVersion="availableVersion"
-                     :updateReady="updateReady"
-                     @check-for-updates="onCheckForUpdates"
+         <div class="App-mainContent">
+            <Transition name="app-slide">
+               <KeepAlive>
+                  <ScanView
+                     v-if="activeView === 'scan'"
+                     key="scan"
+                     :appActiveView="activeView"
+                     :diskUsage="diskUsage"
                   />
-               </div>
 
-               <div v-else-if="activeView === 'information'" class="App-overlay">
-                  <InformationView :systemInfo="systemInfo" />
-               </div>
-            </KeepAlive>
+                  <div v-else-if="activeView === 'settings'" key="settings" class="App-overlay">
+                     <SettingsView
+                        :isFdaGranted="isFdaGranted"
+                        :isChecking="isChecking"
+                        :isDownloading="isDownloading"
+                        :availableVersion="availableVersion"
+                        :updateReady="updateReady"
+                        @check-for-updates="onCheckForUpdates"
+                     />
+                  </div>
+
+                  <div
+                     v-else-if="activeView === 'information'"
+                     key="information"
+                     class="App-overlay"
+                  >
+                     <InformationView :systemInfo="systemInfo" />
+                  </div>
+               </KeepAlive>
+            </Transition>
          </div>
       </div>
 

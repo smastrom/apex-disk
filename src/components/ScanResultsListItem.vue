@@ -109,73 +109,13 @@ const checkboxPopoverRef = useTemplateRef<HTMLElement>('checkboxPopoverRef')
 
 const { t } = useTranslations()
 const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRef)
+const { onPointerEnter: onCheckboxPointerEnter, onPointerLeave: onCheckboxPointerLeave } =
+   useLabelPopover(checkboxTriggerRef, checkboxPopoverRef, {
+      placement: 'top-start',
+      alwaysShow: true,
+   })
 const store = useAppSettings()
 const currentLanguage = store.settings.value.language
-
-const showCheckboxTooltip = ref(false)
-let checkboxTimer: ReturnType<typeof setTimeout> | null = null
-
-function onCheckboxPointerEnter() {
-   if (checkboxTimer) clearTimeout(checkboxTimer)
-   checkboxTimer = setTimeout(() => {
-      showCheckboxTooltip.value = true
-
-      const trigger = checkboxTriggerRef.value
-      const popover = checkboxPopoverRef.value
-      if (trigger && popover) {
-         const rect = trigger.getBoundingClientRect()
-         const EDGE_MARGIN = 16
-
-         popover.style.left = `${rect.left}px`
-         popover.style.top = `${rect.top - 4}px`
-         popover.style.maxWidth = `${window.innerWidth - EDGE_MARGIN * 2}px`
-
-         const popoverRect = popover.getBoundingClientRect()
-         const maxLeft = window.innerWidth - EDGE_MARGIN - popoverRect.width
-         popover.style.left = `${Math.max(EDGE_MARGIN, Math.min(rect.left, maxLeft))}px`
-      }
-
-      popover?.showPopover()
-      addCheckboxScrollListener()
-   }, 400)
-}
-
-function addCheckboxScrollListener() {
-   const trigger = checkboxTriggerRef.value
-   if (!trigger) return
-
-   let ancestor: HTMLElement | null = trigger.parentElement
-   while (ancestor) {
-      const { overflow, overflowY } = getComputedStyle(ancestor)
-      if (/auto|scroll/.test(overflow + overflowY)) break
-      ancestor = ancestor.parentElement
-   }
-   const target = ancestor ?? document
-
-   target.addEventListener('scroll', dismissCheckboxTooltip, { passive: true, once: true })
-}
-
-function onCheckboxPointerLeave() {
-   if (checkboxTimer) {
-      clearTimeout(checkboxTimer)
-      checkboxTimer = null
-   }
-   if (showCheckboxTooltip.value) {
-      showCheckboxTooltip.value = false
-      checkboxPopoverRef.value?.hidePopover()
-   }
-}
-
-function dismissCheckboxTooltip() {
-   if (checkboxTimer) {
-      clearTimeout(checkboxTimer)
-      checkboxTimer = null
-   }
-   if (showCheckboxTooltip.value) {
-      showCheckboxTooltip.value = false
-      checkboxPopoverRef.value?.hidePopover()
-   }
-}
 </script>
 
 <template>
@@ -279,8 +219,8 @@ function dismissCheckboxTooltip() {
       <div
          v-if="!isSelectable"
          ref="checkboxPopoverRef"
-         popover="manual"
-         class="ScanResultsListItem-checkboxPopover"
+         class="Popover ScanResultsListItem-checkboxPopover"
+         role="tooltip"
       >
          {{
             item.is_fda_required
@@ -425,46 +365,12 @@ function dismissCheckboxTooltip() {
 }
 
 /* ── Checkbox tooltip popover ── */
+/* Inherits the shared .Popover styles in classes.css; only the explanatory
+ * checkbox tooltip needs a wider max-width since it's a sentence, not a label. */
 
 .ScanResultsListItem-checkboxPopover {
-   position: fixed;
-   margin: 0;
-   padding: var(--spacing-sm) var(--spacing-md);
    max-width: 280px;
-   border: 1px solid var(--color-chrome-border);
-   border-radius: var(--radius-sm);
-   background: var(--color-chrome);
-   -webkit-backdrop-filter: saturate(180%) blur(30px);
-   backdrop-filter: saturate(180%) blur(30px);
-   color: var(--color-text);
-   font-size: var(--font-size-sm);
-   font-weight: 500;
-   box-shadow: var(--shadow-md);
-   transform: translateY(-100%);
-   pointer-events: auto;
-   opacity: 0;
-   filter: blur(4px);
-   transition:
-      opacity 0.2s var(--ease-apple-out),
-      filter 0.2s var(--ease-apple-out);
-}
-
-.ScanResultsListItem-checkboxPopover:popover-open {
-   opacity: 1;
-   filter: blur(0);
-}
-
-@starting-style {
-   .ScanResultsListItem-checkboxPopover:popover-open {
-      opacity: 0;
-      filter: blur(4px);
-   }
-}
-
-@media (prefers-reduced-motion: reduce) {
-   .ScanResultsListItem-checkboxPopover {
-      transition: none;
-      filter: none;
-   }
+   padding: var(--spacing-sm) var(--spacing-md);
+   word-break: normal;
 }
 </style>
