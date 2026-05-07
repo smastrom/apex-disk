@@ -14,8 +14,17 @@ Use this when source changes were committed directly (not through `/sync`), so t
 
 4. **Docs sweep** — open **every** file under `docs/` plus `AGENTS.md`. For each, decide whether it still matches the current source. Fix anything stale: outdated paths, renamed symbols, removed flags, changed commands, wrong version numbers, obsolete instructions. Don't rewrite prose that's still accurate.
 
-5. **Commit** — if any docs changed, stage and commit them as one commit (or split if the drift covers unrelated areas). Subject in the imperative, ≤70 chars; body only when the _why_ isn't obvious; include the agent `Co-Authored-By` trailer. Never skip hooks. If no docs changed, say so and stop — don't create an empty commit.
+5. **Commit** — if any docs changed, stage and commit them as one commit (or split if the drift covers unrelated areas). Subject in the imperative, ≤70 chars; body only when the _why_ isn't obvious; include the agent `Co-Authored-By` trailer. Never skip hooks. If no docs changed, skip this step (don't create an empty commit) but still run step 6.
 
-6. **Push** — `git push`. If the branch has no upstream, `git push -u origin <branch>`.
+6. **Verify** — the whole point of `/force-sync` is to recover from commits that bypassed `/sync`'s checks, so always run the test suite on `HEAD` (even if no docs drifted — the source commits in the window may themselves be broken):
+   - Always: `pnpm headers:check` and `pnpm fmt:check`.
+   - If any commit in the window touched TypeScript or Vue (`src/**/*.ts`, `*.vue`): `pnpm typecheck` (= `vue-tsc --noEmit`).
+   - If any commit in the window touched Rust (`src-tauri/**`): `pnpm test:unit`.
+   - If any commit in the window touched frontend (`src/**`), Rust (`src-tauri/**`), or e2e (`e2e/**`): `pnpm test:e2e`.
+   - If every commit in the window is docs-only, the suite can be skipped.
+
+   If anything fails, stop and surface the failures. Do **not** push. Failures predate this `/force-sync` run, so fix forward (a new commit) — do not amend or revert the source commits behind your back, and never bypass with `--no-verify` / `--force`.
+
+7. **Push** — `git push`. If the branch has no upstream, `git push -u origin <branch>`. Skip if step 5 produced no commit and `HEAD` is already at `origin`.
 
 Do **not** bump version fields, edit `RELEASES.md` or `RELEASES_BETA.md`, or trigger the Release/Beta workflows — those belong to `/release` and `/beta-notes`. Do **not** rewrite or amend the source commits that caused the drift; only add follow-up doc commits.

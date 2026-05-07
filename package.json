@@ -52,7 +52,8 @@
       "tauri:dev": "tauri dev --config src-tauri/tauri.dev.conf.json",
       "tauri:icons": "tauri icon ./src-tauri/icons/app-icon.png && cd ./src-tauri/icons && rm -rf android && rm -rf ios",
       "test:e2e": "wdio run e2e/wdio.conf.ts",
-      "test:unit": "cargo test --manifest-path src-tauri/Cargo.toml -- --test-threads=1"
+      "test:unit": "cargo test --manifest-path src-tauri/Cargo.toml -- --test-threads=1",
+      "typecheck": "vue-tsc --noEmit"
    },
    "dependencies": {
       "@floating-ui/dom": "^1.7.6",

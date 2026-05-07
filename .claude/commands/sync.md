@@ -8,9 +8,20 @@ Create logical commits for all uncommitted work since the latest commit, then pu
 
 4. **Docs sweep** — for each group, open **every** file under `docs/` plus `AGENTS.md` and decide whether any of them no longer match the change (per the AGENTS.md pre-commit rule). Update any that don't — stage the doc edits alongside the commit whose change they describe, not in a separate commit.
 
-5. **Commit** — one commit per group. Follow the repo convention: imperative action-title subject line (≤70 chars), blank line, then a concise bulleted or prose body only when the _why_ isn't obvious from the subject. Include the agent `Co-Authored-By` trailer. Never skip hooks.
+5. **Typecheck before commit** — committed code must be type-clean. Before staging each group that touches TypeScript or Vue (`*.ts`, `*.tsx`, `*.vue`), run `pnpm typecheck` (= `vue-tsc --noEmit`) on the working tree and fix every error. No `// @ts-ignore` or `as any` to silence the checker — diagnose and resolve. Skip this step only for groups that touch no `.ts` / `.tsx` / `.vue` files (e.g. pure docs, pure Rust, pure CSS).
 
-6. **Push** — `git push`. If the branch has no upstream, `git push -u origin <branch>`.
+6. **Commit** — one commit per group. Follow the repo convention: imperative action-title subject line (≤70 chars), blank line, then a concise bulleted or prose body only when the _why_ isn't obvious from the subject. Include the agent `Co-Authored-By` trailer. Never skip hooks.
+
+7. **Verify** — before pushing, run the relevant test suite on `HEAD` so red code never lands on `origin`. Run only the suites that match what changed across the commits in this sync (tests of pure-docs commits would just burn time):
+   - Always: `pnpm headers:check` and `pnpm fmt:check`.
+   - If any commit touched TypeScript or Vue (`src/**/*.ts`, `*.vue`): `pnpm typecheck` again on `HEAD` (belt-and-suspenders — catches drift introduced by hook reformatting between groups).
+   - If any commit touched Rust (`src-tauri/**`): `pnpm test:unit`.
+   - If any commit touched frontend (`src/**`), Rust (`src-tauri/**`), or e2e (`e2e/**`): `pnpm test:e2e`.
+   - Skip the whole step if every commit in this sync is docs-only (changes confined to `docs/`, root `*.md`, or comments).
+
+   If anything fails, stop and surface the failures. Do **not** push. The user fixes forward (a follow-up commit) or asks for a revert — never bypass with `--no-verify` / `--force`.
+
+8. **Push** — `git push`. If the branch has no upstream, `git push -u origin <branch>`.
 
 Do **not** bump version fields, edit `RELEASES.md` or `RELEASES_BETA.md`, or trigger the Release/Beta workflows — those belong to `/release` and `/beta-notes`.
 

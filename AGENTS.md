@@ -121,11 +121,19 @@ src-tauri/
 
 ## Testing rules
 
-When touching Rust code or `src-tauri/`:
+| Suite | Command | When to run |
+|-------|---------|-------------|
+| Vue + TS typecheck | `pnpm typecheck` (= `vue-tsc --noEmit`) | Before each commit that touches `*.ts` / `*.tsx` / `*.vue`. Committed code must be type-clean — no `// @ts-ignore` or `as any` to silence the checker. |
+| Rust unit/integration | `pnpm test:unit` (or `cd src-tauri && cargo test -- --test-threads=1`) | Any change to Rust (`src-tauri/**`). |
+| End-to-end (WebdriverIO + debug Tauri build) | `pnpm test:e2e` | Any change to user-visible behavior — frontend (`src/**`), Rust (`src-tauri/**`), or e2e specs themselves (`e2e/**`). |
+| Format / headers | `pnpm fmt:check` and `pnpm headers:check` | Always. |
 
-1. Run `pnpm test:unit` (or `cd src-tauri && cargo test`).
-2. If tests fail: fix the test if your change is correct and the test is outdated; add tests if none exist for the changed code.
+Rules:
+
+1. **`/sync` and `/force-sync` run the relevant suites before pushing.** They never push red code and never bypass with `--no-verify` / `--force`. If a suite fails, the agent stops, surfaces the failure, and the human (or a follow-up agent invocation) fixes forward — no amending or reverting the underlying source commits behind the user's back.
+2. If tests fail because the change is correct and the test is outdated, fix the test. If no test exists for the changed behavior and the change is non-trivial, add one — but only when asked, per "What not to do" below.
 3. Tests use temp dirs, never the real user home.
+4. `pnpm test:e2e` rebuilds the debug Tauri binary on first run; subsequent runs are faster but still measured in minutes. Don't skip it on the assumption that "frontend-only" changes can't break e2e — they routinely do (selectors, transitions, focus handling, scroll behavior).
 
 ## What not to do
 
