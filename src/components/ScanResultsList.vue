@@ -475,7 +475,6 @@ function onCancel() {
                      {{ t('ScanResultsList', 'truncated') }}
                   </p>
                </div>
-               <!--     </KeepAlive> -->
             </Transition>
          </div>
       </div>

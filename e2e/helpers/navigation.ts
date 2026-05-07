@@ -51,6 +51,30 @@ export const sel = {
 // Wait helpers
 // ---------------------------------------------------------------------------
 
+/**
+ * Poll until no Vue <Transition> is mid-flight anywhere on the page.
+ *
+ * Vue applies `*-enter-active` / `*-leave-active` classes only while a
+ * transition is running, so absence of both = nothing animating right now.
+ * Cheaper and more accurate than fixed `browser.pause()` constants.
+ */
+export async function waitForListSlideSettled(): Promise<void> {
+   await browser.waitUntil(
+      async () =>
+         !(await browser.execute(
+            () =>
+               !!document.querySelector(
+                  '.list-slide-enter-active, .list-slide-leave-active, .app-slide-enter-active, .app-slide-leave-active'
+               )
+         )),
+      {
+         timeout: ELEMENT_TIMEOUT,
+         interval: 50,
+         timeoutMsg: 'transitions did not settle within timeout',
+      }
+   )
+}
+
 /** Wait for the app to be ready (header visible). */
 export async function waitForAppReady() {
    const header = $(sel.appHeader)
@@ -87,7 +111,12 @@ export async function scanAndWaitForResults() {
 // Row lookup
 // ---------------------------------------------------------------------------
 
-/** Find a result row (folder or file) by its display name. Returns null if not found. */
+/**
+ * Single-shot lookup: returns the row if it's in the DOM right now, else null.
+ * Use this for negative assertions ("row should not be present"). For positive
+ * lookups during/after navigation, prefer `requireRowByName` so the helper
+ * polls past any in-flight Vue <Transition> on the list slide.
+ */
 export async function getRowByName(name: string): Promise<WebdriverIO.Element | null> {
    const rows = await $$(`${sel.rowFolder}, ${sel.rowFile}`)
    for (const row of rows) {
@@ -97,11 +126,25 @@ export async function getRowByName(name: string): Promise<WebdriverIO.Element | 
    return null
 }
 
-/** Find a result row by name, throws if not found. */
+/**
+ * Polls for a result row until it appears (Cypress-style retry). Tolerates
+ * the `<Transition mode="out-in">` window in `ScanResultsList` where the
+ * leaving list is unmounted and the entering list hasn't yet mounted.
+ */
 export async function requireRowByName(name: string): Promise<WebdriverIO.Element> {
-   const row = await getRowByName(name)
-   if (!row) throw new Error(`Row "${name}" not found in results`)
-   return row
+   let row: WebdriverIO.Element | null = null
+   await browser.waitUntil(
+      async () => {
+         row = await getRowByName(name)
+         return row !== null
+      },
+      {
+         timeout: ELEMENT_TIMEOUT,
+         interval: 100,
+         timeoutMsg: `Row "${name}" not found in results`,
+      }
+   )
+   return row!
 }
 
 /** Get the checkbox button inside a result row. */
@@ -255,14 +298,20 @@ export async function setTrashMode(mode: 'success' | 'zero' | 'error') {
 // Assertion helpers for missing/present rows
 // ---------------------------------------------------------------------------
 
-/** Assert a row with the given name exists in the current view. */
+/** Assert a row with the given name exists in the current view (polls). */
 export async function assertRowExists(name: string) {
-   const row = await getRowByName(name)
-   expect(row).not.toBeNull()
+   await requireRowByName(name)
 }
 
-/** Assert a row with the given name does NOT exist in the current view. */
+/**
+ * Assert a row with the given name does NOT exist in the current view.
+ *
+ * Negative assertions are inherently racy with Vue <Transition>: a row might
+ * be transiently in the DOM during the leaving list's slide-out. Wait for the
+ * list slide to settle before checking, so we measure the steady state.
+ */
 export async function assertRowNotExists(name: string) {
+   await waitForListSlideSettled()
    const row = await getRowByName(name)
    expect(row).toBeNull()
 }
