@@ -128,8 +128,13 @@ export async function getRowByName(name: string): Promise<WebdriverIO.Element | 
 
 /**
  * Polls for a result row until it appears (Cypress-style retry). Tolerates
- * the `<Transition mode="out-in">` window in `ScanResultsList` where the
+ * the gap inside `<Transition mode="out-in">` on the list slide where the
  * leaving list is unmounted and the entering list hasn't yet mounted.
+ *
+ * Note: the navigation helpers (`navigateIntoFolder`, `navigateBack`,
+ * `navigateForward`, `navigateBackToRoot`) are responsible for waiting until
+ * the slide has settled before this is called — otherwise this can lock onto
+ * a row from the leaving list and click on an about-to-detach node.
  */
 export async function requireRowByName(name: string): Promise<WebdriverIO.Element> {
    let row: WebdriverIO.Element | null = null
@@ -162,21 +167,21 @@ export async function navigateIntoFolder(name: string) {
    // Click the row itself, not the checkbox. The checkbox has @click.stop,
    // so clicking it selects rather than navigates.
    await row.click()
-   await browser.pause(TRANSITION_SETTLE_MS)
+   await waitForListSlideSettled()
 }
 
 /** Click the back navigation button and wait for the transition to settle. */
 export async function navigateBack() {
    const btn = $(sel.navBack)
    await btn.click()
-   await browser.pause(TRANSITION_SETTLE_MS)
+   await waitForListSlideSettled()
 }
 
 /** Click the forward navigation button and wait for the transition to settle. */
 export async function navigateForward() {
    const btn = $(sel.navForward)
    await btn.click()
-   await browser.pause(TRANSITION_SETTLE_MS)
+   await waitForListSlideSettled()
 }
 
 // ---------------------------------------------------------------------------
@@ -250,7 +255,13 @@ export async function isReviewButtonDisabled(): Promise<boolean> {
  * await an async Tauri `invoke` over the chromedriver session.
  */
 
-/** Reset app settings to defaults via the e2e Tauri command. */
+/**
+ * Reset app settings to defaults via the e2e Tauri command. The Rust side
+ * emits `settings:reset` after writing, which the frontend store listens for
+ * and uses to refresh its in-memory ref — so the UI is in sync without
+ * having to replay toggle clicks (which used to fire app-slide transitions
+ * and was a source of flake).
+ */
 export async function resetE2eState() {
    const err = await browser.executeAsync<string | null, []>((done: any) => {
       ;(window as any).__TAURI_INTERNALS__
@@ -259,28 +270,6 @@ export async function resetE2eState() {
          .catch((e: unknown) => done(String(e && (e as Error).message ? (e as Error).message : e)))
    })
    if (err) throw new Error(`reset_e2e_state failed: ${err}`)
-
-   // The Vue settings ref is loaded once at startup and doesn't re-read after
-   // a Rust-side reset, so any scan filter that's currently "on" in the UI
-   // would still bias the next scan. Normalize the UI to match the store
-   // defaults by flipping any lingering "on" toggle back to "off".
-   await normalizeScanFilterToggles()
-}
-
-async function normalizeScanFilterToggles() {
-   await goToSettingsView()
-   const selectors = [
-      sel.settingsToggleHiddenFiles,
-      sel.settingsToggleUnder1Kb,
-      sel.settingsToggleZeroByte,
-   ]
-   for (const selector of selectors) {
-      const on = await getToggleState(selector)
-      if (on) {
-         await $(selector).click()
-         await browser.pause(80)
-      }
-   }
 }
 
 /** Set the trash mock mode ('success' | 'zero' | 'error'). */
@@ -348,7 +337,7 @@ export async function navigateBackToRoot() {
       const disabled = await back.getAttribute('disabled')
       if (disabled !== null) return
       await back.click()
-      await browser.pause(TRANSITION_SETTLE_MS)
+      await waitForListSlideSettled()
    }
 }
 
@@ -386,7 +375,7 @@ export async function clickReviewSelection() {
 /** Click the Scan footer tab and wait for the scan view to be ready. */
 export async function goToScanView() {
    await $(sel.footerScan).click()
-   await browser.pause(TRANSITION_SETTLE_MS)
+   await waitForListSlideSettled()
 }
 
 /** Click the Settings footer tab and wait for the settings view. */
@@ -394,6 +383,7 @@ export async function goToSettingsView() {
    await $(sel.footerSettings).click()
    const view = $(sel.settingsView)
    await view.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
+   await waitForListSlideSettled()
 }
 
 // ---------------------------------------------------------------------------
