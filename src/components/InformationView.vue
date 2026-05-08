@@ -115,7 +115,6 @@ const props = defineProps<{
    flex-direction: column;
    min-height: 0;
    overflow: hidden;
-   padding: var(--spacing-lg) var(--spacing-md);
    background: var(--color-bg);
 }
 
@@ -125,14 +124,14 @@ const props = defineProps<{
    overflow-x: hidden;
    overflow-y: auto;
    overflow-y: overlay;
-   width: calc(100% + var(--scrollbar-inline-gutter));
-   margin-inline-end: calc(-1 * var(--scrollbar-inline-gutter));
-   box-sizing: border-box;
 }
 
 .InformationView-content {
    max-width: var(--content-max-width);
    margin: 0 auto;
+   padding-block: var(--spacing-lg);
+   padding-inline-start: var(--spacing-md);
+   padding-inline-end: calc(var(--spacing-md) - var(--scrollbar-inline-gutter));
 }
 
 .InformationView-branding {

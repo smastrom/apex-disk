@@ -86,6 +86,7 @@
 
    /* Overlay scrollbar thumb (width matches ::-webkit-scrollbar in global.css) */
    --scrollbar-inline-gutter: 10px;
+   --scrollbar-padding-inline: calc(var(--spacing-md) - var(--scrollbar-inline-gutter));
    --color-scrollbar: rgba(255, 255, 255, 0.18);
    --color-scrollbar-hover: rgba(255, 255, 255, 0.36);
 

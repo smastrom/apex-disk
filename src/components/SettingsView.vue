@@ -334,7 +334,6 @@ async function openSystemSettings() {
    flex-direction: column;
    min-height: 0;
    overflow: hidden;
-   padding: var(--spacing-md);
    background: var(--color-bg);
 }
 
@@ -344,14 +343,14 @@ async function openSystemSettings() {
    overflow-x: hidden;
    overflow-y: auto;
    overflow-y: overlay;
-   width: calc(100% + var(--scrollbar-inline-gutter));
-   margin-inline-end: calc(-1 * var(--scrollbar-inline-gutter));
-   box-sizing: border-box;
 }
 
 .SettingsView-content {
    max-width: var(--content-max-width);
    margin: 0 auto;
+   padding-block: var(--spacing-md);
+   padding-inline-start: var(--spacing-md);
+   padding-inline-end: calc(var(--spacing-md) - var(--scrollbar-inline-gutter));
 }
 
 .SettingsView-selectWrap {

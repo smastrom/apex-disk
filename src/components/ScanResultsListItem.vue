@@ -239,7 +239,8 @@ const currentLanguage = store.settings.value.language
    padding: var(--spacing-xs) var(--spacing-sm);
    height: 64px;
    min-height: 64px;
-   margin: calc(var(--spacing-sm) / 2) var(--spacing-sm);
+   margin-block: calc(var(--spacing-sm) / 2);
+   margin-inline-start: var(--scrollbar-inline-gutter);
    border-radius: var(--radius-md);
    box-sizing: border-box;
    background: var(--color-row-idle);
