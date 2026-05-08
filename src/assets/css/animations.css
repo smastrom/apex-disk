@@ -33,8 +33,8 @@
 .list-slide-enter-active,
 .list-slide-leave-active {
    transition:
-      opacity 160ms var(--ease-apple),
-      transform 160ms var(--ease-apple);
+      opacity 120ms var(--ease-apple),
+      transform 120ms var(--ease-apple);
 }
 
 .list-slide-leave-to {
@@ -52,8 +52,8 @@
 .app-slide-enter-active,
 .app-slide-leave-active {
    transition:
-      opacity 160ms var(--ease-apple),
-      transform 160ms var(--ease-apple);
+      opacity 120ms var(--ease-apple),
+      transform 120ms var(--ease-apple);
 }
 
 .app-slide-leave-to {
