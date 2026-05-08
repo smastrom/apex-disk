@@ -243,14 +243,14 @@ const currentLanguage = store.settings.value.language
    margin-inline-start: var(--scrollbar-inline-gutter);
    border-radius: var(--radius-md);
    box-sizing: border-box;
-   background: var(--color-row-idle);
+   background-color: var(--color-row-idle);
    transition:
-      background 0.18s var(--ease-apple-out),
+      background-color 0.18s var(--ease-apple-out),
       transform 0.12s var(--ease-apple-out),
       box-shadow 0.2s var(--ease-apple-out);
 
    &:hover {
-      background: var(--color-row-hover);
+      background-color: var(--color-row-hover);
    }
 }
 
@@ -259,10 +259,10 @@ const currentLanguage = store.settings.value.language
 }
 
 .ScanResultsListItem-root--selected {
-   background: var(--color-row-selected);
+   background-color: var(--color-row-selected);
 
    &:hover {
-      background: var(--color-row-selected-hover);
+      background-color: var(--color-row-selected-hover);
    }
 }
 
@@ -271,7 +271,7 @@ const currentLanguage = store.settings.value.language
  * macOS versions; the previous :has()-based rule required Safari 15.4+. */
 .ScanResultsListItem-root--folder.ScanResultsListItem-root--pressing {
    transform: scale(0.992);
-   background: var(--color-row-press);
+   background-color: var(--color-row-press);
 }
 
 @media (prefers-reduced-motion: reduce) {
