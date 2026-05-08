@@ -121,7 +121,7 @@ const { onPointerEnter: onPathPointerEnter, onPointerLeave: onPathPointerLeave }
    display: flex;
    align-items: center;
    gap: var(--spacing-xs);
-   padding: var(--spacing-xs) var(--spacing-sm);
+   padding: var(--spacing-sm) var(--spacing-md);
    min-height: 48px;
    cursor: pointer;
    transition: background 0.2s var(--ease-standard);
