@@ -53,8 +53,8 @@ edit it for implementation reasons. The `/sync` sweep still covers it.
 
 | Command                | Purpose                                                                              |
 | ---------------------- | ------------------------------------------------------------------------------------ |
-| `/sync`                | Group uncommitted work into logical commits, sweep all `.md`, run tests, push.       |
-| `/force-sync`          | Reconcile `.md` against commits that bypassed `/sync`, then commit drift.            |
+| `/sync`                | Group uncommitted work into logical commits, sweep `.md` + `.coderabbit.yaml`, run tests, push. |
+| `/force-sync`          | Reconcile `.md` + `.coderabbit.yaml` against commits that bypassed `/sync`, then commit drift.  |
 | `/compatibility-check` | Full compatibility verification against macOS 10.15 / Safari 13 / MSRV.              |
 | `/release`             | Prepare a stable release — auto path: bump versions, generate notes from git log.    |
 | `/release-from-notes`  | Prepare a stable release — curated path: verify hand-written notes exist, bump only. |

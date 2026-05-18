@@ -15,12 +15,12 @@ refused with a message pointing here. The marker is gitignored. To bypass
 intentionally for a one-off (e.g. a typo fix), ask the user — they can
 `touch .claude/.sync-active`, run the command, then `rm` it.
 
-## 1. Sweep every `.md` in the repo
+## 1. Sweep every doc in the repo
 
 Run `/sync` (or `/force-sync` if recent commits bypassed the docs sweep).
-The sweep must analyze **every** `.md` file in the repository for update
-eligibility and update any whose contents no longer match the change.
-Coverage includes:
+The sweep must analyze **every** `.md` file in the repository plus
+`.coderabbit.yaml` for update eligibility and update any whose contents no
+longer match the change. Coverage includes:
 
 - `reference/*.md`: agent-facing deep specs (how the code works)
 - `marketing/*.md`: outcome-facing content (FAQ, descriptions). Only touch
@@ -32,6 +32,10 @@ Coverage includes:
   `/release` and `/beta-notes`; do not edit by hand here)
 - `.claude/rules/*.md`: workflow / convention changes
 - `.claude/commands/*.md`: slash command behavior changes
+- `.coderabbit.yaml`: CodeRabbit `path_instructions` encode current code
+  conventions (Composition API, scoped styles + tokens, store schema,
+  translation coverage, e2e fixtures, capability surface, workflow
+  expectations). Drift here turns into noisy or wrong PR review comments.
 - `LICENSE.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`: rarely change, but verify
 
 Never commit code that contradicts any of these files.
