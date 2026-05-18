@@ -12,6 +12,10 @@
    --color-accent-hover: #9b85f8;
    --color-accent-alt: #b9a4f8;
    --color-accent-alt-glow: rgba(185, 164, 248, 0.45);
+   --color-scan-busy: #f5b647;
+   --color-scan-busy-glow: rgba(245, 182, 71, 0.45);
+   --color-scan-ready: #34c759;
+   --color-scan-ready-glow: rgba(52, 199, 89, 0.45);
    --color-text: #f5f5f7;
    --color-text-muted: #a8a6ab;
    --color-text-dim: #7a787e;
@@ -144,6 +148,10 @@
    --color-accent-glow: rgba(255, 107, 74, 0.45);
    --color-accent-bg: rgba(143, 68, 54, 0.16);
    --color-accent-bg-hover: rgba(143, 68, 54, 0.08);
+   --color-scan-busy: #ffd166;
+   --color-scan-busy-glow: rgba(255, 209, 102, 0.45);
+   --color-scan-ready: #2ecc71;
+   --color-scan-ready-glow: rgba(46, 204, 113, 0.45);
 
    --btn-gradient-0: #ff6b4a;
    --btn-gradient-50: #f55a38;
@@ -168,6 +176,10 @@
    --color-accent-hover: #44b5ba;
    --color-accent-alt: #7ccdd1;
    --color-accent-alt-glow: rgba(124, 205, 209, 0.38);
+   --color-scan-busy: #f0b958;
+   --color-scan-busy-glow: rgba(240, 185, 88, 0.4);
+   --color-scan-ready: #4ec27d;
+   --color-scan-ready-glow: rgba(78, 194, 125, 0.4);
    --color-text: #f5f5f7;
    --color-text-muted: #9ca0a6;
    --color-text-dim: #6e7379;
@@ -204,6 +216,10 @@
    --color-accent-hover: #409cff;
    --color-accent-alt: #6db8ff;
    --color-accent-alt-glow: rgba(109, 184, 255, 0.35);
+   --color-scan-busy: #ffd60a;
+   --color-scan-busy-glow: rgba(255, 214, 10, 0.4);
+   --color-scan-ready: #30d158;
+   --color-scan-ready-glow: rgba(48, 209, 88, 0.4);
    --color-text: #f5f5f7;
    --color-text-muted: #98989d;
    --color-text-dim: #6e6e73;
@@ -261,6 +277,10 @@
    --color-accent-hover: #0071e3;
    --color-accent-alt: #66aeff;
    --color-accent-alt-glow: rgba(102, 174, 255, 0.25);
+   --color-scan-busy: #ffb800;
+   --color-scan-busy-glow: rgba(255, 184, 0, 0.3);
+   --color-scan-ready: #28a745;
+   --color-scan-ready-glow: rgba(40, 167, 69, 0.25);
    --color-text: #1d1d1f;
    --color-text-muted: #86868b;
    --color-text-dim: #aeaeb2;
@@ -293,6 +313,10 @@
    --color-accent-hover: #8d99ae;
    --color-accent-alt: #a8b3c8;
    --color-accent-alt-glow: rgba(168, 179, 200, 0.35);
+   --color-scan-busy: #d1a546;
+   --color-scan-busy-glow: rgba(209, 165, 70, 0.35);
+   --color-scan-ready: #6db481;
+   --color-scan-ready-glow: rgba(109, 180, 129, 0.35);
    --color-text: #e1e4ea;
    --color-text-muted: #76839b;
    --color-text-dim: #505a6b;
@@ -326,6 +350,10 @@
    --color-accent-hover: hsl(145, 72%, 57%);
    --color-accent-alt: hsl(145, 52%, 72%);
    --color-accent-alt-glow: hsla(145, 52%, 72%, 0.35);
+   --color-scan-busy: hsl(45, 85%, 58%);
+   --color-scan-busy-glow: hsla(45, 85%, 58%, 0.4);
+   --color-scan-ready: hsl(140, 70%, 62%);
+   --color-scan-ready-glow: hsla(140, 70%, 62%, 0.4);
    --color-text: hsl(150, 14%, 84%);
    --color-text-muted: hsl(150, 12%, 55%);
    --color-text-dim: hsl(150, 8%, 40%);

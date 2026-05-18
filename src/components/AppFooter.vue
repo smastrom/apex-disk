@@ -4,12 +4,12 @@
 <!--
 AppFooter
 
-Purpose: Bottom navigation bar with Scan, Settings, Information buttons. Mobile-app style footer. Shows an accent-colored dot on the Scan icon when a scan is running but the user is viewing Settings or Information.
+Purpose: Bottom navigation bar with Scan, Settings, Information buttons. Mobile-app style footer. Shows a yellow dot on the Scan icon while a scan is running and the user is on Settings or Information, then a green dot once the scan completes until the user returns to Scan.
 
-Props: activeView (string?), isScanning (boolean?), emit: select-view
+Props: activeView (string?), isScanning (boolean?), hasPendingScanResults (boolean?), emit: select-view
 
 Example:
- <AppFooter :activeView="activeView" :isScanning="isScanning" @select-view="onSelect" />
+ <AppFooter :activeView="activeView" :isScanning="isScanning" :hasPendingScanResults="hasPendingScanResults" @select-view="onSelect" />
 -->
 
 <script setup lang="ts">
@@ -21,6 +21,7 @@ import { useTranslations } from '@/lib/use-translations'
 const props = defineProps<{
    activeView?: string
    isScanning?: boolean
+   hasPendingScanResults?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -29,7 +30,10 @@ const emit = defineEmits<{
 
 const { t } = useTranslations()
 
-const showScanDot = computed(() => Boolean(props.isScanning) && props.activeView !== 'scan')
+const showScanBusyDot = computed(() => Boolean(props.isScanning) && props.activeView !== 'scan')
+const showScanReadyDot = computed(
+   () => !props.isScanning && Boolean(props.hasPendingScanResults) && props.activeView !== 'scan'
+)
 </script>
 
 <template>
@@ -44,10 +48,11 @@ const showScanDot = computed(() => Boolean(props.isScanning) && props.activeView
          <span class="AppFooter-iconWrap">
             <PhMagnifyingGlass :size="24" weight="regular" aria-hidden="true" />
             <span
-               v-if="showScanDot"
+               v-if="showScanBusyDot || showScanReadyDot"
                class="AppFooter-scanDot"
+               :class="showScanBusyDot ? 'AppFooter-scanDot--busy' : 'AppFooter-scanDot--ready'"
                data-testid="footer-scan-dot"
-               :aria-label="t('AppFooter', 'scanInProgress')"
+               :aria-label="t('AppFooter', showScanBusyDot ? 'scanInProgress' : 'scanComplete')"
                role="status"
             />
          </span>
@@ -159,9 +164,17 @@ const showScanDot = computed(() => Boolean(props.isScanning) && props.activeView
    width: 8px;
    height: 8px;
    border-radius: 50%;
-   background: var(--color-accent-alt);
-   box-shadow: 0 0 6px var(--color-accent-alt-glow);
+}
+
+.AppFooter-scanDot--busy {
+   background: var(--color-scan-busy);
+   box-shadow: 0 0 6px var(--color-scan-busy-glow);
    animation: AppFooter-scanDotPulse 1.6s var(--ease-apple-out) infinite;
+}
+
+.AppFooter-scanDot--ready {
+   background: var(--color-scan-ready);
+   box-shadow: 0 0 6px var(--color-scan-ready-glow);
 }
 
 @keyframes AppFooter-scanDotPulse {

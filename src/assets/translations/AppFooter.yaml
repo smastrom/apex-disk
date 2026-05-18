@@ -48,3 +48,15 @@ scanInProgress:
    zh: 正在扫描
    ja: スキャン中
    ar: المسح قيد التقدم
+
+scanComplete:
+   en: Scan complete
+   it: Scansione completata
+   es: Escaneo completado
+   fr: Analyse terminée
+   pt: Análise concluída
+   de: Scan abgeschlossen
+   ru: Сканирование завершено
+   zh: 扫描完成
+   ja: スキャン完了
+   ar: اكتمل المسح

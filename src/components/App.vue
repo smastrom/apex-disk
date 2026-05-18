@@ -20,7 +20,7 @@ import ScanView from './ScanView.vue'
 import SettingsView from './SettingsView.vue'
 import InformationView from './InformationView.vue'
 
-import { watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useAppSettings } from '@/stores/app-settings'
 import { useAppViews } from '@/lib/use-app-views'
 import { useAppUpdate } from '@/lib/use-app-update'
@@ -60,6 +60,18 @@ const { isChecking, isDownloading, availableVersion, updateReady, onCheckForUpda
 
 const { folders, isScanning, progress, elapsedSeconds, loadFolders, onAbort, onCancel } =
    useScanner()
+
+const hasPendingScanResults = ref(false)
+
+watch(isScanning, (current, prev) => {
+   if (prev && !current && folders.value.length > 0 && activeView.value !== 'scan') {
+      hasPendingScanResults.value = true
+   }
+})
+
+watch(activeView, (view) => {
+   if (view === 'scan') hasPendingScanResults.value = false
+})
 
 const { systemInfo } = await useSystemInfo()
 const { isFdaGranted } = await useFullDiskAccess()
@@ -111,7 +123,12 @@ setupFocusRing()
          </div>
       </div>
 
-      <AppFooter :activeView="activeView" :isScanning="isScanning" @select-view="setActiveView" />
+      <AppFooter
+         :activeView="activeView"
+         :isScanning="isScanning"
+         :hasPendingScanResults="hasPendingScanResults"
+         @select-view="setActiveView"
+      />
 
       <AppViewAnnouncer :activeView="activeView" />
    </div>
