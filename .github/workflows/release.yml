@@ -159,6 +159,23 @@ jobs:
                 exit 1
               fi
 
+         - name: Rename per-arch update bundles for distinct GH Release upload
+           run: |
+              # Both per-arch builds produce target/.../bundle/macos/ApexDisk.app.tar.gz
+              # with the same basename. softprops/action-gh-release silently
+              # overwrites on filename collision, so we rename each tarball
+              # + signature to embed the arch + version before upload. Matches
+              # the DMG naming convention (_aarch64 / _x64).
+              VERSION="${TAG#v}"
+              AARCH64_BUNDLE="src-tauri/target/aarch64-apple-darwin/release/bundle/macos"
+              X86_64_BUNDLE="src-tauri/target/x86_64-apple-darwin/release/bundle/macos"
+
+              mv "$AARCH64_BUNDLE/ApexDisk.app.tar.gz"     "$AARCH64_BUNDLE/ApexDisk_${VERSION}_aarch64.app.tar.gz"
+              mv "$AARCH64_BUNDLE/ApexDisk.app.tar.gz.sig" "$AARCH64_BUNDLE/ApexDisk_${VERSION}_aarch64.app.tar.gz.sig"
+
+              mv "$X86_64_BUNDLE/ApexDisk.app.tar.gz"     "$X86_64_BUNDLE/ApexDisk_${VERSION}_x64.app.tar.gz"
+              mv "$X86_64_BUNDLE/ApexDisk.app.tar.gz.sig" "$X86_64_BUNDLE/ApexDisk_${VERSION}_x64.app.tar.gz.sig"
+
          - name: Generate updater latest.json
            run: |
               # Per-arch update artifacts: the updater plugin matches the
