@@ -4,6 +4,23 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 
 ---
 
+## v0.0.16
+
+### Improvements
+
+- Ship per-architecture installers and updates: dedicated Apple Silicon (`aarch64`) and Intel (`x86_64`) DMGs alongside the existing universal one — each per-arch DMG is roughly 50% smaller than the universal. The in-app updater fetches only the slice matching the running Mac, so updates also halve in size. Existing universal-binary installs migrate to a per-arch binary automatically on next update.
+- Re-export `apex-disk-hero.png` at a smaller file size.
+
+### Bug Fixes
+
+- Rename per-architecture update bundles to architecture-qualified filenames before upload so the in-app updater's signature verification succeeds on both Apple Silicon and Intel.
+
+### Chores
+
+- Reorganize agent-facing documentation into a dedicated `reference/` directory and `.claude/rules/` always-loaded routing, with a repo-wide `.md` sweep + file-top comment check inside `/sync` and `/force-sync`. Move outcome-facing content (FAQ) into `marketing/`. Add `CLAUDE.md` as a one-line `@AGENTS.md` import.
+- Split `/release` into auto (generates notes from git log) and curated (`/release-from-notes`, trusts hand-written notes) paths so existing release notes can't be accidentally overwritten.
+- Expand `/compatibility-check`'s Web API audit to ~20 newer-Safari patterns (`view-transition`, `:has()`, `@container`, `structuredClone`, `Promise.any`, …) and wire it into the command checklist — was previously skipped entirely.
+
 ## v0.0.15
 
 ### Improvements

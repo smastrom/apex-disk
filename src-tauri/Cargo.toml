@@ -1,6 +1,6 @@
 [package]
 name = "apex-disk"
-version = "0.0.15"
+version = "0.0.16"
 description = "macOS tool to easily identify and get rid of big, unused files and folders in seconds."
 authors = ["Simone Mastromattei <smastrom@proton.me>"]
 edition = "2021"
