@@ -49,7 +49,7 @@ import { useTranslations } from '@/lib/use-translations'
 
 const { t } = useTranslations()
 
-t('scan-launch', 'scan_again')                    // → "Scan again" / current lang
+t('scan-launch', 'scan_again') // → "Scan again" / current lang
 t('settings-view', 'theme_label', { name: 'Sky' }) // with vars
 ```
 
@@ -82,8 +82,8 @@ welcome_paragraph:
    en: >-
       ApexDisk scans your home folder and shows you
       what's taking up space.
-   zh: ApexDisk 会扫描你的主目录，告诉你什么文件占用了空间。  # one line, no folding
-   ja: ApexDisk はホームフォルダをスキャンし、容量を占有しているものを表示します。  # one line, no folding
+   zh: ApexDisk 会扫描你的主目录，告诉你什么文件占用了空间。 # one line, no folding
+   ja: ApexDisk はホームフォルダをスキャンし、容量を占有しているものを表示します。 # one line, no folding
 ```
 
 If a CJK value truly is too long to fit, accept the long line — do not break it with `>-`.
@@ -103,12 +103,12 @@ If a CJK value truly is too long to fit, accept the long line — do not break i
 
 ## Module index
 
-| Location                            | What                                                            |
-| ----------------------------------- | --------------------------------------------------------------- |
-| `src/assets/translations/*.yaml`    | Per-module key-first translation files                          |
-| `src/assets/translations/index.ts`  | Factory: combines all module files                              |
-| `src/lib/use-translations.ts`       | `useTranslations()` composable + `t(module, key, vars?)` API    |
-| `vite.config.ts`                    | `@rollup/plugin-yaml` registration                               |
-| `src-tauri/src/locale.rs`           | macOS `AppleLanguages` detection, system language resolution    |
-| `src-tauri/src/menu_translations.rs` | Native menu labels per language (separate from webview YAML)    |
-| `src/assets/css/rtl.css`            | Right-to-left layout overrides for Arabic                       |
+| Location                             | What                                                         |
+| ------------------------------------ | ------------------------------------------------------------ |
+| `src/assets/translations/*.yaml`     | Per-module key-first translation files                       |
+| `src/assets/translations/index.ts`   | Factory: combines all module files                           |
+| `src/lib/use-translations.ts`        | `useTranslations()` composable + `t(module, key, vars?)` API |
+| `vite.config.ts`                     | `@rollup/plugin-yaml` registration                           |
+| `src-tauri/src/locale.rs`            | macOS `AppleLanguages` detection, system language resolution |
+| `src-tauri/src/menu_translations.rs` | Native menu labels per language (separate from webview YAML) |
+| `src/assets/css/rtl.css`             | Right-to-left layout overrides for Arabic                    |

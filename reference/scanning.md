@@ -106,18 +106,18 @@ Each `NavEntry` is `{ items: FolderInfo[], label: string, path: string }`. Drill
 
 ## Module index
 
-| Side    | File                                       | Responsibility                                         |
-| ------- | ------------------------------------------ | ------------------------------------------------------ |
-| Rust    | `src-tauri/src/scan.rs`                    | Walker, FolderInfo, progress throttling, cancel flag   |
-| Rust    | `src-tauri/src/trash.rs`                   | `trash_paths`, filter_items, e2e dry-run mode          |
-| Rust    | `src-tauri/src/safe_folders.rs`            | Protected + skipped lists (consumed by scan AND trash) |
-| Vue     | `src/lib/use-scanner.ts`                   | Scan lifecycle, progress listener, generation counter  |
-| Vue     | `src/components/ScanLaunch.vue`            | Entry point UI                                         |
-| Vue     | `src/components/ScanResultsList.vue`       | Tree render, back/forward stacks, selection map        |
-| Vue     | `src/components/ScanResultsListItem.vue`   | Row, selection circle, press state                     |
-| Vue     | `src/components/ScanTrashList.vue`         | Review selected items before trash                     |
-| Vue     | `src/components/ScanTrashConfirmation.vue` | Post-delete summary, "Scan again"                      |
-| Types   | `src/types/structs.ts`                     | `FolderInfo`, `ScanProgress`, `TrashListItem`          |
-| Tests   | `src-tauri/tests/scan_test.rs`             | Walker + filter behavior                               |
-| Tests   | `src-tauri/tests/trash_test.rs`            | Trash + filter_items                                   |
-| Tests   | `src-tauri/tests/safe_folders_test.rs`     | Protected/skipped list correctness                     |
+| Side  | File                                       | Responsibility                                         |
+| ----- | ------------------------------------------ | ------------------------------------------------------ |
+| Rust  | `src-tauri/src/scan.rs`                    | Walker, FolderInfo, progress throttling, cancel flag   |
+| Rust  | `src-tauri/src/trash.rs`                   | `trash_paths`, filter_items, e2e dry-run mode          |
+| Rust  | `src-tauri/src/safe_folders.rs`            | Protected + skipped lists (consumed by scan AND trash) |
+| Vue   | `src/lib/use-scanner.ts`                   | Scan lifecycle, progress listener, generation counter  |
+| Vue   | `src/components/ScanLaunch.vue`            | Entry point UI                                         |
+| Vue   | `src/components/ScanResultsList.vue`       | Tree render, back/forward stacks, selection map        |
+| Vue   | `src/components/ScanResultsListItem.vue`   | Row, selection circle, press state                     |
+| Vue   | `src/components/ScanTrashList.vue`         | Review selected items before trash                     |
+| Vue   | `src/components/ScanTrashConfirmation.vue` | Post-delete summary, "Scan again"                      |
+| Types | `src/types/structs.ts`                     | `FolderInfo`, `ScanProgress`, `TrashListItem`          |
+| Tests | `src-tauri/tests/scan_test.rs`             | Walker + filter behavior                               |
+| Tests | `src-tauri/tests/trash_test.rs`            | Trash + filter_items                                   |
+| Tests | `src-tauri/tests/safe_folders_test.rs`     | Protected/skipped list correctness                     |

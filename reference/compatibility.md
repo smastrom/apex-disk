@@ -4,13 +4,13 @@ The supported target and how to verify it. ApexDisk runs portable Vue + JS imple
 
 ## Targets
 
-| Layer                       | Min target                               | Notes                                          |
-| --------------------------- | ---------------------------------------- | ---------------------------------------------- |
-| **Architecture**            | Intel x86_64 + Apple Silicon aarch64     | Universal binary, no Rosetta 2 required.       |
-| **Rust / Native APIs**      | macOS 10.13+ APIs only                   | Safely within the 10.15 minimum.               |
-| **CSS**                     | Safari 13                                | Transpiled by lightningcss in `vite.config.ts`. |
-| **JavaScript**              | Safari 13                                | Transpiled by Vite (`build.target: 'safari13'`). |
-| **Tauri 2 WKWebView**       | macOS 10.15                              | Hard requirement from Tauri 2 itself.          |
+| Layer                  | Min target                           | Notes                                            |
+| ---------------------- | ------------------------------------ | ------------------------------------------------ |
+| **Architecture**       | Intel x86_64 + Apple Silicon aarch64 | Universal binary, no Rosetta 2 required.         |
+| **Rust / Native APIs** | macOS 10.13+ APIs only               | Safely within the 10.15 minimum.                 |
+| **CSS**                | Safari 13                            | Transpiled by lightningcss in `vite.config.ts`.  |
+| **JavaScript**         | Safari 13                            | Transpiled by Vite (`build.target: 'safari13'`). |
+| **Tauri 2 WKWebView**  | macOS 10.15                          | Hard requirement from Tauri 2 itself.            |
 
 Minimum supported macOS: **10.15 Catalina** (Safari 13.0 / WebKit 605.1.15). The minimum is set by `minimumSystemVersion` in `src-tauri/tauri.conf.json`.
 
@@ -32,12 +32,12 @@ Minimum supported macOS: **10.15 Catalina** (Safari 13.0 / WebKit 605.1.15). The
 
 These CSS features render the visual upgrade on newer Safari and degrade silently on older ones — no broken behavior:
 
-| Feature                          | Min Safari | Fallback                                                        |
-| -------------------------------- | ---------- | --------------------------------------------------------------- |
-| `overflow: overlay`              | 14.0       | Falls back to the `overflow: auto` declared on the line above.  |
-| CSS Nesting                      | 17.2       | Transpiled by lightningcss.                                     |
-| Cascade Layers (`@layer`)        | 15.4       | Flattened by lightningcss.                                      |
-| `inset` shorthand                | 14.5       | Expanded by lightningcss.                                       |
+| Feature                   | Min Safari | Fallback                                                       |
+| ------------------------- | ---------- | -------------------------------------------------------------- |
+| `overflow: overlay`       | 14.0       | Falls back to the `overflow: auto` declared on the line above. |
+| CSS Nesting               | 17.2       | Transpiled by lightningcss.                                    |
+| Cascade Layers (`@layer`) | 15.4       | Flattened by lightningcss.                                     |
+| `inset` shorthand         | 14.5       | Expanded by lightningcss.                                      |
 
 ## How to verify (re-run when changing deps or APIs)
 
@@ -132,14 +132,14 @@ Tauri 2 on macOS uses WKWebView (system WebKit, tied to macOS version) and requi
 
 ## macOS ↔ Safari version reference
 
-| macOS    | Codename  | Ships with Safari | Max Safari (with updates) |
-| -------- | --------- | ----------------- | ------------------------- |
-| 10.15    | Catalina  | 13.0              | 15.6.1                    |
-| 11       | Big Sur   | 14.0              | 16.6.1                    |
-| 12       | Monterey  | 15.0              | 17.6.1                    |
-| 13       | Ventura   | 16.0              | 18.x                      |
-| 14       | Sonoma    | 17.0              | 18.x                      |
-| 15       | Sequoia   | 18.0              | current                   |
+| macOS | Codename | Ships with Safari | Max Safari (with updates) |
+| ----- | -------- | ----------------- | ------------------------- |
+| 10.15 | Catalina | 13.0              | 15.6.1                    |
+| 11    | Big Sur  | 14.0              | 16.6.1                    |
+| 12    | Monterey | 15.0              | 17.6.1                    |
+| 13    | Ventura  | 16.0              | 18.x                      |
+| 14    | Sonoma   | 17.0              | 18.x                      |
+| 15    | Sequoia  | 18.0              | current                   |
 
 ## Validation history
 

@@ -7,12 +7,11 @@ Create logical commits for all uncommitted work since the latest commit, then pu
 3. **Group** — split the work into logically-cohesive commits: one intent per commit. Don't mix unrelated changes. If a single file spans multiple intents, stage it in pieces (edit the file down to one intent, commit, restore the rest).
 
 4. **Docs + file-top comment sweep** — for each group:
-
    - **Repo-wide `.md` sweep.** Open **every** `.md` file in the repo and decide whether any no longer match the change. This includes `reference/*.md`, `marketing/*.md`, `AGENTS.md`, `CLAUDE.md`, `README.md`, `.claude/rules/*.md`, and `.claude/commands/*.md`. `marketing/` is outcome-facing — only touch it when user-visible outcomes change, not for internal refactors. Skip `RELEASES.md` / `RELEASES_BETA.md` (owned by `/release` and `/beta-notes`) and the immutable surface (`LICENSE.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`) unless the change directly affects them.
    - **File-top comment sweep.** For every modified `.vue` and `.rs` file in the group, re-read its leading comment block and verify it still matches the current implementation. Agents routinely forget this. Check:
-     - **`.vue`** — the `<!-- ComponentName ... -->` block after the SPDX header. Verify **Purpose**, **Props**, and **Example** still describe the component as it now is (props renamed, emits added, behavior shifted, etc.).
-     - **`.rs`** — the `//!` module doc comment at the top of the file. Verify it still describes the module's responsibility and any externally-visible behavior (channel names, command names, emitted events).
-     - **`.ts`** — only if the file has a JSDoc/`/** */` header (e.g. `src/lib/log.ts`); follow the same rule.
+      - **`.vue`** — the `<!-- ComponentName ... -->` block after the SPDX header. Verify **Purpose**, **Props**, and **Example** still describe the component as it now is (props renamed, emits added, behavior shifted, etc.).
+      - **`.rs`** — the `//!` module doc comment at the top of the file. Verify it still describes the module's responsibility and any externally-visible behavior (channel names, command names, emitted events).
+      - **`.ts`** — only if the file has a JSDoc/`/** */` header (e.g. `src/lib/log.ts`); follow the same rule.
    - Update anything that drifted. Stage the doc/comment edits alongside the commit whose change they describe, not in a separate commit.
 
 5. **Typecheck before commit** — committed code must be type-clean. Before staging each group that touches TypeScript or Vue (`*.ts`, `*.tsx`, `*.vue`), run `pnpm typecheck` (= `vue-tsc --noEmit`) on the working tree and fix every error. No `// @ts-ignore` or `as any` to silence the checker — diagnose and resolve. Skip this step only for groups that touch no `.ts` / `.tsx` / `.vue` files (e.g. pure docs, pure Rust, pure CSS).

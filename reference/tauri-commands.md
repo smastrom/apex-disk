@@ -32,16 +32,16 @@ Currently the only event is `folder-scan-progress` (see [`scanning.md`](scanning
 
 All commands registered in `src-tauri/src/lib.rs`, grouped by area:
 
-| Area              | Commands                                                                                                                          |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| **Disk / scan**   | `get_disk_usage`, `get_user_folders`, `cancel_scan`                                                                               |
-| **Trash**         | `trash_paths` (+ `set_e2e_trash_mode` under `e2e`)                                                                                |
-| **Permissions**   | `check_full_disk_access`                                                                                                          |
-| **Native dialog** | `show_message_dialog`, `show_ask_dialog`                                                                                          |
-| **Locale + menu** | `set_app_locale`, `get_system_language`, `resolve_app_language`, `set_menu_language`                                              |
-| **Settings**      | `get_settings`, `set_settings`, `get_setting`, `update_setting` (+ `reset_e2e_state` under `e2e`)                                 |
-| **System**        | `get_system_info`                                                                                                                 |
-| **Logging**       | `is_debug_mode`, `log_message`, `log_error_message`                                                                               |
+| Area              | Commands                                                                                                                               |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **Disk / scan**   | `get_disk_usage`, `get_user_folders`, `cancel_scan`                                                                                    |
+| **Trash**         | `trash_paths` (+ `set_e2e_trash_mode` under `e2e`)                                                                                     |
+| **Permissions**   | `check_full_disk_access`                                                                                                               |
+| **Native dialog** | `show_message_dialog`, `show_ask_dialog`                                                                                               |
+| **Locale + menu** | `set_app_locale`, `get_system_language`, `resolve_app_language`, `set_menu_language`                                                   |
+| **Settings**      | `get_settings`, `set_settings`, `get_setting`, `update_setting` (+ `reset_e2e_state` under `e2e`)                                      |
+| **System**        | `get_system_info`                                                                                                                      |
+| **Logging**       | `is_debug_mode`, `log_message`, `log_error_message`                                                                                    |
 | **Updater**       | `check_for_updates_silent`, `check_for_updates_dialog`, `download_update`, `restart_app`, `set_update_menu_ready`, `reset_update_menu` |
 
 ## Registration in `lib.rs`
@@ -95,17 +95,17 @@ Side-effects of specific setting changes:
 
 ## Module index
 
-| File                                 | Role                                                                                  |
-| ------------------------------------ | ------------------------------------------------------------------------------------- |
-| `src-tauri/src/lib.rs`               | Plugin install, command registration (default + e2e blocks), setup hook               |
-| `src-tauri/src/store.rs`             | Settings store, defaults, STORE_LOCK, merge-on-read                                   |
-| `src-tauri/src/locale.rs`            | `AppleLanguages` detection, system language resolution                                |
-| `src-tauri/src/menu.rs`              | Native menu build + rebuild                                                           |
-| `src-tauri/src/menu_translations.rs` | `labels_for(lang)` — strings for every menu item, including updater states            |
-| `src-tauri/src/native_dialog.rs`     | `show_message_dialog`, `show_ask_dialog` — NSAlert wrappers                            |
-| `src-tauri/src/permissions.rs`       | `check_full_disk_access` — runtime macOS-version-aware FDA probe                      |
-| `src-tauri/src/system_info.rs`       | `get_system_info` — OS version, arch, memory                                          |
-| `src-tauri/src/disk.rs`              | `get_disk_usage` — total/free/used for home volume                                    |
-| `src/stores/app-settings.ts`         | Frontend reactive mirror of the settings store                                        |
-| `src/types/structs.ts`               | Boundary types mirroring Rust structs (snake_case fields)                             |
-| `src-tauri/tests/store_test.rs`      | Store concurrency, default merging, key validation                                    |
+| File                                 | Role                                                                       |
+| ------------------------------------ | -------------------------------------------------------------------------- |
+| `src-tauri/src/lib.rs`               | Plugin install, command registration (default + e2e blocks), setup hook    |
+| `src-tauri/src/store.rs`             | Settings store, defaults, STORE_LOCK, merge-on-read                        |
+| `src-tauri/src/locale.rs`            | `AppleLanguages` detection, system language resolution                     |
+| `src-tauri/src/menu.rs`              | Native menu build + rebuild                                                |
+| `src-tauri/src/menu_translations.rs` | `labels_for(lang)` — strings for every menu item, including updater states |
+| `src-tauri/src/native_dialog.rs`     | `show_message_dialog`, `show_ask_dialog` — NSAlert wrappers                |
+| `src-tauri/src/permissions.rs`       | `check_full_disk_access` — runtime macOS-version-aware FDA probe           |
+| `src-tauri/src/system_info.rs`       | `get_system_info` — OS version, arch, memory                               |
+| `src-tauri/src/disk.rs`              | `get_disk_usage` — total/free/used for home volume                         |
+| `src/stores/app-settings.ts`         | Frontend reactive mirror of the settings store                             |
+| `src/types/structs.ts`               | Boundary types mirroring Rust structs (snake_case fields)                  |
+| `src-tauri/tests/store_test.rs`      | Store concurrency, default merging, key validation                         |

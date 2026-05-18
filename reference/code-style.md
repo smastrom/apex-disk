@@ -20,19 +20,19 @@ Oxfmt sorts imports automatically. Groups (in this order, each separated by a bl
 
 1. **components** — `*.vue` files
 2. **builtin** — Node built-ins
-3. **vue** — `vue`, `vue/`*
+3. **vue** — `vue`, `vue/`\*
 4. **external** — npm packages
-5. **internal** — `@/`*, `~/*`
+5. **internal** — `@/`_, `~/_`
 6. **subpath** — relative parent paths
-7. **constants** — anything matching `**/constants`*
+7. **constants** — anything matching `**/constants`\*
 8. **type** — `import type` statements
 9. **json** — `*.json` imports
-10. **style** — CSS imports
-11. **side_effect_style** — bare CSS imports
-12. **side_effect** — bare imports
-13. **unknown** — fallback
+10.   **style** — CSS imports
+11.   **side_effect_style** — bare CSS imports
+12.   **side_effect** — bare imports
+13.   **unknown** — fallback
 
-Internal pattern: `@/`* and `~/*`. Example layout (from `src/lib/use-scanner.ts`):
+Internal pattern: `@/`_ and `~/_`. Example layout (from `src/lib/use-scanner.ts`):
 
 ```ts
 import { formatBytes } from '@/lib/format'
@@ -121,21 +121,21 @@ const { t } = useTranslations()
 
 ### Style
 
-- `**<style scoped>` always.** Component CSS is local.
+- `**<style scoped>` always.\*\* Component CSS is local.
 - **Class format:** `ComponentName-element`, matching the filename. E.g. `.ScanResultsListItem-root`, `.ScanResultsListItem-check`, `.ScanResultsListItem-info`.
 - **No top-level chained selectors.** Each top-level rule is one flat selector — write `.ScanResultsListItem-root--selected { … }` as its own rule, not nested under `.ScanResultsListItem-root`.
 - **BEM modifiers** use the full class name with `--`: `.ScanResultsListItem-root--selected`, never `&--selected`. The modifier is a separate top-level rule.
 - **Use `&` only for pseudo-selectors and states** inside an existing selector: `&:hover`, `&:focus`, `&[disabled]`.
 - **Media queries:**
-  - Component-local responsive tweaks: nest the `@media` inside the selector.
-  - Cross-cutting overrides like `@media (prefers-reduced-motion: reduce)`: keep at the top level with the relevant selectors inside (matches how `ScanResultsListItem.vue` handles reduced motion).
+   - Component-local responsive tweaks: nest the `@media` inside the selector.
+   - Cross-cutting overrides like `@media (prefers-reduced-motion: reduce)`: keep at the top level with the relevant selectors inside (matches how `ScanResultsListItem.vue` handles reduced motion).
 - **Blank line between rule blocks** at the top level.
 - **No hardcoded values** for color, spacing, font sizes, or border radii — use CSS variables from `src/assets/css/theme.css` (see `[themes.md](themes.md)`). Examples: `var(--color-bg)`, `var(--spacing-md)`, `var(--font-size-xl)`, `var(--touch-height-default)`.
 
 ## TypeScript
 
 - **Blank line between groups of different statement types** (`const`, `let`, expressions, `return`).
-- `**if` bodies:** braces required unless condition + statement fit on one line. One-line form is fine: `if (cond) return`.
+- `**if` bodies:\*\* braces required unless condition + statement fit on one line. One-line form is fine: `if (cond) return`.
 - **Prefer `!value`** over `value === false`.
 - **No `as any`, no `// @ts-ignore`** to silence the checker. Code must be type-clean (`pnpm typecheck`).
 - **Boundary objects use `snake_case`** (Tauri/Rust IPC). Frontend-only objects use `camelCase`. See `[architecture.md](architecture.md)` — boundary conventions.
@@ -143,8 +143,8 @@ const { t } = useTranslations()
 
 ## File naming
 
-- `**.vue`:** PascalCase — `ScanResultsList.vue`, `AppHeader.vue`.
-- `**.ts`:** kebab-case — `use-scanner.ts`, `format.ts`, `app-settings.ts`. Exception: component-coupled `.ts` files keep PascalCase to match their `.vue` sibling — e.g. `ScanResultsListItem.ts`.
+- `**.vue`:\*\* PascalCase — `ScanResultsList.vue`, `AppHeader.vue`.
+- `**.ts`:\*\* kebab-case — `use-scanner.ts`, `format.ts`, `app-settings.ts`. Exception: component-coupled `.ts` files keep PascalCase to match their `.vue` sibling — e.g. `ScanResultsListItem.ts`.
 - **YAML translation files:** kebab-case matching the component — `scan-results-list.yaml`.
 
 ## Comments
@@ -169,7 +169,7 @@ const { t } = useTranslations()
 - Scripts live in `scripts/` as `.ts` files with the SPDX header and run via `bun run scripts/<name>.ts`, wrapped behind a `pnpm <name>` alias.
 - **YAML parsing:** use the built-in `Bun.YAML.parse` — no extra package.
 - **If a script needs to emit `.d.ts`**, use **tsdown**, not `tsc`/`dts-bundle-generator`.
-- Vite bundling runs on Rolldown (Rollup-plugin-compatible) — reach for `@rollup/plugin-`* before writing custom transforms.
+- Vite bundling runs on Rolldown (Rollup-plugin-compatible) — reach for `@rollup/plugin-`\* before writing custom transforms.
 
 ## Commits
 
@@ -186,4 +186,3 @@ const { t } = useTranslations()
 - Do not propose launching dev servers (it's always running).
 - Do not use `provide` / `inject` for settings — use `useAppSettings()`.
 - Do not use Options API or plain `<script>`.
-

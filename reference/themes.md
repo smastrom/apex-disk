@@ -58,11 +58,11 @@ Not a theme, but lives in adjacent CSS: `src/lib/use-reduced-motion.ts` plus `@m
 
 ## Module index
 
-| Location                            | What                                                              |
-| ----------------------------------- | ----------------------------------------------------------------- |
-| `src/assets/css/theme.css`          | All CSS variables: `:root` (cross-theme) + `[data-theme]` blocks  |
-| `src/stores/app-settings.ts`        | `setTheme` — persists + writes `data-theme` on `<html>`           |
-| `src/components/SettingsView.vue`   | Theme picker UI                                                   |
-| `src-tauri/src/constants.rs`        | `DEFAULT_THEME` — initial value on first launch                   |
-| `src/assets/css/animations.css`     | Animation declarations + `prefers-reduced-motion` overrides       |
-| `src/lib/use-reduced-motion.ts`     | Reactive `prefers-reduced-motion` query                           |
+| Location                          | What                                                             |
+| --------------------------------- | ---------------------------------------------------------------- |
+| `src/assets/css/theme.css`        | All CSS variables: `:root` (cross-theme) + `[data-theme]` blocks |
+| `src/stores/app-settings.ts`      | `setTheme` — persists + writes `data-theme` on `<html>`          |
+| `src/components/SettingsView.vue` | Theme picker UI                                                  |
+| `src-tauri/src/constants.rs`      | `DEFAULT_THEME` — initial value on first launch                  |
+| `src/assets/css/animations.css`   | Animation declarations + `prefers-reduced-motion` overrides      |
+| `src/lib/use-reduced-motion.ts`   | Reactive `prefers-reduced-motion` query                          |

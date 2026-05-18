@@ -13,13 +13,12 @@ Use this when source changes were committed directly (not through `/sync`), so t
 3. **Survey the changes in the window** — `git diff <range>` and read the touched source files at their current state. Focus on behavior, flags, file paths, commands, and public APIs — the kinds of things docs reference. Ignore pure refactors that don't change externally-observable behavior.
 
 4. **Docs + file-top comment sweep** —
-
    - **Repo-wide `.md` sweep.** Open **every** `.md` file in the repo. This includes `reference/*.md`, `marketing/*.md`, `AGENTS.md`, `CLAUDE.md`, `README.md`, `.claude/rules/*.md`, and `.claude/commands/*.md`. `marketing/` is outcome-facing — only touch it when user-visible outcomes changed in the window, not for internal refactors. Skip `RELEASES.md` / `RELEASES_BETA.md` (owned by `/release` and `/beta-notes`) and the immutable surface (`LICENSE.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`) unless the change directly affects them. For each, decide whether it still matches the current source. Fix anything stale: outdated paths, renamed symbols, removed flags, changed commands, wrong version numbers, obsolete instructions. Don't rewrite prose that's still accurate.
    - **File-top comment sweep.** For every `.vue` and `.rs` file touched in the window's commits, re-read its leading comment block against the current implementation. Check:
-     - **`.vue`** — the `<!-- ComponentName ... -->` block (Purpose / Props / Example).
-     - **`.rs`** — the `//!` module doc at the top of the file.
-     - **`.ts`** — only if the file has a JSDoc/`/** */` header (e.g. `src/lib/log.ts`).
-     Fix any drift in the same recovery commit.
+      - **`.vue`** — the `<!-- ComponentName ... -->` block (Purpose / Props / Example).
+      - **`.rs`** — the `//!` module doc at the top of the file.
+      - **`.ts`** — only if the file has a JSDoc/`/** */` header (e.g. `src/lib/log.ts`).
+        Fix any drift in the same recovery commit.
 
 5. **Commit** — if any docs changed, stage and commit them as one commit (or split if the drift covers unrelated areas). Subject in the imperative, ≤70 chars; body only when the _why_ isn't obvious; include the agent `Co-Authored-By` trailer. Never skip hooks. If no docs changed, skip this step (don't create an empty commit) but still run step 6.
 

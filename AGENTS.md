@@ -22,19 +22,19 @@ ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for 
 file; the `pre-commit-protocol` rule guarantees a docs sweep before any
 commit.
 
-| File                              | Covers                                                                                   |
-| --------------------------------- | ---------------------------------------------------------------------------------------- |
-| `reference/architecture.md`       | Frontend/backend split, what each side owns, boundary conventions, build/testing.        |
-| `reference/scanning.md`           | Scan + trash flow, `FolderInfo`, progress events, cancellation, selection model.         |
-| `reference/tauri-commands.md`     | IPC channels, command surface, `lib.rs` registration, settings store, locale + menu.    |
-| `reference/translations.md`       | Per-component YAML, 10 languages, `useTranslations()`, CJK folding rules.                |
-| `reference/themes.md`             | CSS variables, `data-theme` switching, 8 themes, adding a new theme.                     |
-| `reference/code-style.md`         | Oxfmt, import sorting, Vue/CSS/TS conventions, file naming, license headers, comments.   |
-| `reference/testing.md`            | Suites, when to run, Rust integration patterns, E2E + `e2e` cargo feature, what not to add. |
-| `reference/compatibility.md`      | macOS / Safari / architecture targets, progressive enhancement matrix, oxfmt fallbacks.  |
-| `reference/logging.md`            | `[apex:…]` diagnostic scheme, Vue categories, Rust trace channels, `APEX_DISK_DEBUG`.   |
-| `reference/releases.md`           | How to cut stable and Beta builds, version fields, changelog conventions, workflows.     |
-| `reference/updates.md`            | In-app updater (auto/manual), endpoint, signing, dialogs.                                |
+| File                          | Covers                                                                                      |
+| ----------------------------- | ------------------------------------------------------------------------------------------- |
+| `reference/architecture.md`   | Frontend/backend split, what each side owns, boundary conventions, build/testing.           |
+| `reference/scanning.md`       | Scan + trash flow, `FolderInfo`, progress events, cancellation, selection model.            |
+| `reference/tauri-commands.md` | IPC channels, command surface, `lib.rs` registration, settings store, locale + menu.        |
+| `reference/translations.md`   | Per-component YAML, 10 languages, `useTranslations()`, CJK folding rules.                   |
+| `reference/themes.md`         | CSS variables, `data-theme` switching, 8 themes, adding a new theme.                        |
+| `reference/code-style.md`     | Oxfmt, import sorting, Vue/CSS/TS conventions, file naming, license headers, comments.      |
+| `reference/testing.md`        | Suites, when to run, Rust integration patterns, E2E + `e2e` cargo feature, what not to add. |
+| `reference/compatibility.md`  | macOS / Safari / architecture targets, progressive enhancement matrix, oxfmt fallbacks.     |
+| `reference/logging.md`        | `[apex:…]` diagnostic scheme, Vue categories, Rust trace channels, `APEX_DISK_DEBUG`.       |
+| `reference/releases.md`       | How to cut stable and Beta builds, version fields, changelog conventions, workflows.        |
+| `reference/updates.md`        | In-app updater (auto/manual), endpoint, signing, dialogs.                                   |
 
 Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`,
 `CODE_OF_CONDUCT.md`, `SECURITY.md`, `README.md` stay at the repo root —
@@ -50,13 +50,13 @@ edit it for implementation reasons. The `/sync` sweep still covers it.
 
 ## Slash commands (`.claude/commands/`)
 
-| Command                  | Purpose                                                                                |
-| ------------------------ | -------------------------------------------------------------------------------------- |
-| `/sync`                  | Group uncommitted work into logical commits, sweep all `.md`, run tests, push.        |
-| `/force-sync`            | Reconcile `.md` against commits that bypassed `/sync`, then commit drift.              |
-| `/compatibility-check`   | Full compatibility verification against macOS 10.15 / Safari 13 / MSRV.               |
-| `/release`               | Prepare a stable release: bump version in 3 files, prepend section to `RELEASES.md`.  |
-| `/beta-notes`            | Add a dated section to `RELEASES_BETA.md` for the Beta workflow's pre-release body.   |
+| Command                | Purpose                                                                              |
+| ---------------------- | ------------------------------------------------------------------------------------ |
+| `/sync`                | Group uncommitted work into logical commits, sweep all `.md`, run tests, push.       |
+| `/force-sync`          | Reconcile `.md` against commits that bypassed `/sync`, then commit drift.            |
+| `/compatibility-check` | Full compatibility verification against macOS 10.15 / Safari 13 / MSRV.              |
+| `/release`             | Prepare a stable release: bump version in 3 files, prepend section to `RELEASES.md`. |
+| `/beta-notes`          | Add a dated section to `RELEASES_BETA.md` for the Beta workflow's pre-release body.  |
 
 ## Testing
 
