@@ -15,7 +15,14 @@ So `../RELEASES_BETA.md` is **not** a duplicate of `../RELEASES.md`: it does not
 
 ## Stable release
 
-Use the `/release` slash command or follow these steps by hand:
+Two paths, pick whichever fits how you wrote the notes:
+
+- **Lazy** — `/release <version>`: the agent generates the `## v<version>` block from `git log` since the previous tag, bumps the 3 version files, and commits. Use this when you haven't written anything yet.
+- **Curated** — `/release-from-notes <version>`: verifies you've already prepended the `## v<version>` section to `RELEASES.md` by hand (rejects loudly if not), then bumps the 3 version files and commits without touching the notes.
+
+Both paths produce the same `Release v<version>` commit. Neither pushes or triggers CI — that's a separate manual step.
+
+Or follow these steps by hand:
 
 1. Pick a semver (no `v` prefix), e.g. `0.0.13`. Update it in all three files (they must match exactly):
    - `package.json` → `"version"`

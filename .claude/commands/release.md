@@ -1,6 +1,10 @@
 Prepare a new release for ApexDisk version `$ARGUMENTS` (semver **without** the `v` prefix, e.g. `0.0.11` — the changelog heading is `## v0.0.11` and the git tag becomes `v0.0.11`).
 
+Use this command when **you haven't written the release notes yet** — the agent generates them from `git log`. If you've already prepended the `## v$ARGUMENTS` block to `RELEASES.md` by hand, run `/release-from-notes $ARGUMENTS` instead.
+
 Walk through each step to prepare the release:
+
+0. **Reject if notes are already there** — read `RELEASES.md` and look at the first `## vX.Y.Z` heading. If it equals `## v$ARGUMENTS`, **stop immediately**: do not overwrite or duplicate the existing notes. Tell the user to run `/release-from-notes $ARGUMENTS` instead. (If the first heading is a _different_ version, that's fine — it's the previous release, and the new `## v$ARGUMENTS` section will go above it.)
 
 1. **Bump version** — Update the version string to `$ARGUMENTS` in all three files (they must match exactly):
    - `package.json` → `"version"`
