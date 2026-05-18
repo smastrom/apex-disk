@@ -6,7 +6,6 @@ ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for 
 
 ## Stack
 
-
 | Layer           | Tech                                                           |
 | --------------- | -------------------------------------------------------------- |
 | Backend         | Rust, Tauri 2, objc2 (Foundation/AppKit bindings)              |
@@ -16,14 +15,12 @@ ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for 
 | Formatting      | Oxfmt (import sorting, code formatting)                        |
 | Package manager | pnpm                                                           |
 
-
 ## Agent-facing reference (`reference/`)
 
 `reference/` holds deep specs that agents read on demand. The
 `reference-loader` rule in `.claude/rules/` maps operations to the right
 file; the `pre-commit-protocol` rule guarantees a docs sweep before any
 commit.
-
 
 | File                          | Covers                                                                                      |
 | ----------------------------- | ------------------------------------------------------------------------------------------- |
@@ -40,7 +37,6 @@ commit.
 | `reference/updates.md`        | In-app updater (auto/manual), endpoint, signing, dialogs.                                   |
 | `reference/voice.md`          | Tone and prose rules for user-facing docs (README, RELEASES, marketing, comments, copy).    |
 
-
 Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`,
 `CODE_OF_CONDUCT.md`, `SECURITY.md`, `README.md` stay at the repo root —
 they are user-/CI-facing, not agent instructions.
@@ -55,7 +51,6 @@ edit it for implementation reasons. The `/sync` sweep still covers it.
 
 ## Slash commands (`.claude/commands/`)
 
-
 | Command                | Purpose                                                                              |
 | ---------------------- | ------------------------------------------------------------------------------------ |
 | `/sync`                | Group uncommitted work into logical commits, sweep all `.md`, run tests, push.       |
@@ -64,7 +59,6 @@ edit it for implementation reasons. The `/sync` sweep still covers it.
 | `/release`             | Prepare a stable release — auto path: bump versions, generate notes from git log.    |
 | `/release-from-notes`  | Prepare a stable release — curated path: verify hand-written notes exist, bump only. |
 | `/beta-notes`          | Add a dated section to `RELEASES_BETA.md` for the Beta workflow's pre-release body.  |
-
 
 ## Testing
 
@@ -81,14 +75,14 @@ or `/force-sync`. Details in `.claude/rules/pre-commit-protocol.md`.
 
 ## `.claude/` layout
 
-| Path                       | Status                  | Purpose                                                |
-| -------------------------- | ----------------------- | ------------------------------------------------------ |
-| `.claude/commands/*.md`    | committed               | Slash commands (`/sync`, `/release`, …).               |
-| `.claude/rules/*.md`       | committed               | Always-loaded routing + protocol rules.                |
-| `.claude/hooks/*.sh`       | committed               | Hook scripts referenced by `settings.json`.            |
-| `.claude/settings.json`    | committed               | Shared hooks + repo-relevant permissions.              |
-| `.claude/settings.local.json` | gitignored           | Personal overrides (paths, one-off allowlist entries). |
-| `.claude/.sync-active`     | gitignored, ephemeral   | Marker created by `/sync` to open the pre-commit gate. |
+| Path                          | Status                | Purpose                                                |
+| ----------------------------- | --------------------- | ------------------------------------------------------ |
+| `.claude/commands/*.md`       | committed             | Slash commands (`/sync`, `/release`, …).               |
+| `.claude/rules/*.md`          | committed             | Always-loaded routing + protocol rules.                |
+| `.claude/hooks/*.sh`          | committed             | Hook scripts referenced by `settings.json`.            |
+| `.claude/settings.json`       | committed             | Shared hooks + repo-relevant permissions.              |
+| `.claude/settings.local.json` | gitignored            | Personal overrides (paths, one-off allowlist entries). |
+| `.claude/.sync-active`        | gitignored, ephemeral | Marker created by `/sync` to open the pre-commit gate. |
 
 ## Key directories
 
@@ -123,11 +117,11 @@ like that file. Full guide and worked examples in
 Quick rules:
 
 1. **Second person** ("you", "your Mac"), never "the user". Applies to
-  `README.md`, `marketing/`, and in-app strings. Does **not** apply to code
-  comments (they address the next maintainer) or `RELEASES*.md` (technical
-  changelogs use past-tense action verbs: "Fixed…", "Added…", "Improved…").
+   `README.md`, `marketing/`, and in-app strings. Does **not** apply to code
+   comments (they address the next maintainer) or `RELEASES*.md` (technical
+   changelogs use past-tense action verbs: "Fixed…", "Added…", "Improved…").
 2. **Plain English, no marketing jargon.** Avoid "leverage", "unleash",
-  "powerful", "seamless", "blazing-fast", "simply", "just".
+   "powerful", "seamless", "blazing-fast", "simply", "just".
 3. **Honest. State limits plainly.** No overselling.
 4. **Short paragraphs.** One to three sentences. Contractions are fine.
 5. **Action-first verbs in instructions.** "Download…", "Drag…", "Grant…".
@@ -151,11 +145,11 @@ Allowed:
 Not allowed (interrupt in a flowing sentence):
 
 - ~~"ApexDisk is built with Rust — a fast systems language — and runs natively."~~
-→ "ApexDisk is built with Rust, a fast systems language, and runs natively."
+  → "ApexDisk is built with Rust, a fast systems language, and runs natively."
 - ~~"Scanning is fast — even on huge folders."~~
-→ "Scanning is fast, even on huge folders."
+  → "Scanning is fast, even on huge folders."
 - ~~"We only ever replace the whole array — never mutate in place."~~
-→ "We only ever replace the whole array, never mutate in place."
+  → "We only ever replace the whole array, never mutate in place."
 
 The test: if the words around the dash form a flowing sentence and the dash
 is interrupting it to add a side note, it's an interrupt and must go.
@@ -186,5 +180,4 @@ agent-facing and exempt.
 - Do not use provide/inject for settings.
 - Do not use Options API or plain `<script>`.
 - Do not use em dashes as parenthetical interrupts in user-facing prose, and
-do not use en dashes anywhere (see Prose style above).
-
+  do not use en dashes anywhere (see Prose style above).

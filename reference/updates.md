@@ -6,10 +6,10 @@ In-app update behavior for **stable** builds (the [tauri-plugin-updater](https:/
 
 Two independent toggles in Settings control update behavior:
 
-| Setting                          | Persisted key        | What it does                                                                                              |
-| -------------------------------- | -------------------- | --------------------------------------------------------------------------------------------------------- |
-| Automatically check for updates  | `autoCheckUpdates`   | On app start, silently asks the GitHub endpoint whether a newer version exists. **No download.**          |
-| Automatically install updates    | `autoInstallUpdates` | When a check finds an update, silently downloads + stages it so the next launch picks it up. Requires checking. |
+| Setting                         | Persisted key        | What it does                                                                                                    |
+| ------------------------------- | -------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Automatically check for updates | `autoCheckUpdates`   | On app start, silently asks the GitHub endpoint whether a newer version exists. **No download.**                |
+| Automatically install updates   | `autoInstallUpdates` | When a check finds an update, silently downloads + stages it so the next launch picks it up. Requires checking. |
 
 **Cascade rule** — enabling install forces checking on; disabling checking forces install off. The store enforces this in `setAutoCheckUpdates` / `setAutoInstallUpdates` (in `src/stores/app-settings.ts`) so callers don't need to coordinate. The UI also grays out the install toggle when checking is off.
 
@@ -19,12 +19,12 @@ Two independent toggles in Settings control update behavior:
 
 What the user sees in each combination, including the silent-check outcome and what the manual "update" button / menu item does.
 
-| Auto-check | Auto-install | App start                                          | Settings row when update found                                                                                | Manual button label                                              | Menu item                                                            |
-| ---------- | ------------ | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------- |
-| OFF        | OFF          | Nothing                                            | (never reached automatically — user clicks button to trigger)                                                 | "Check for Updates" → native dialog flow                          | "Check for Updates…" → native dialog flow                            |
-| ON         | OFF          | Silent check, **no download**                      | Description: *"Update vX.Y.Z available"*. **No "Install and relaunch"** — nothing is staged.                  | "Update to vX.Y.Z" → native dialog flow (check + download + restart prompt) | "Update to vX.Y.Z" → same dialog flow                                |
-| ON         | ON           | Silent check + silent background download         | Description: *"Update vX.Y.Z ready"*. Accent button.                                                          | "Install and Relaunch" → calls `restart_app` directly             | "Restart to Update (vX.Y.Z)" → calls `restart_app` directly         |
-| OFF        | ON           | (impossible — cascade rule forces this state to OFF/OFF or ON/ON)                                                                                                                                                                                          |
+| Auto-check | Auto-install | App start                                                         | Settings row when update found                                                               | Manual button label                                                         | Menu item                                                   |
+| ---------- | ------------ | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| OFF        | OFF          | Nothing                                                           | (never reached automatically — user clicks button to trigger)                                | "Check for Updates" → native dialog flow                                    | "Check for Updates…" → native dialog flow                   |
+| ON         | OFF          | Silent check, **no download**                                     | Description: _"Update vX.Y.Z available"_. **No "Install and relaunch"** — nothing is staged. | "Update to vX.Y.Z" → native dialog flow (check + download + restart prompt) | "Update to vX.Y.Z" → same dialog flow                       |
+| ON         | ON           | Silent check + silent background download                         | Description: _"Update vX.Y.Z ready"_. Accent button.                                         | "Install and Relaunch" → calls `restart_app` directly                       | "Restart to Update (vX.Y.Z)" → calls `restart_app` directly |
+| OFF        | ON           | (impossible — cascade rule forces this state to OFF/OFF or ON/ON) |
 
 **"Install and Relaunch" is only visible when an update is already staged on disk.** That requires either `autoInstallUpdates: true` (silent staging) or a completed manual dialog flow. With check-ON + install-OFF, the button instead reads "Update to vX.Y.Z" and clicking it starts the download flow on demand.
 
@@ -111,16 +111,16 @@ To test the full update experience (check → download → "Restart to Update"):
 
 ## File Overview
 
-| File                                 | Role                                                                                                                                                                |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src-tauri/src/updater.rs`           | Rust module: silent check, native dialog flow, menu text updates, `autoCheckUpdates` / `autoInstallUpdates` setting readers                                          |
-| `src-tauri/src/store.rs`             | Persisted settings + `migrate_legacy_keys` (translates the old `autoUpdates` key into the new pair on first run)                                                    |
-| `src/lib/use-app-update.ts`          | Vue composable: reactive state (checking → downloading → ready), orchestrates silent check, conditional silent download, and manual dialog/restart routing          |
-| `src/components/SettingsView.vue`    | UI: update description + action button, both auto-check and auto-install toggles (cascade + gray-out)                                                               |
-| `src-tauri/src/menu_translations.rs` | Menu label translations including "Checking for Updates…", "Downloading Update…", "Update to", "Restart to Update"                                                  |
-| `src-tauri/tauri.conf.json`          | Updater config: endpoint URL, public key, `createUpdaterArtifacts`                                                                       |
-| `src-tauri/tauri.beta.conf.json`     | Merge config for the Beta-channel DMG: bundle id / product name, `createUpdaterArtifacts: false`                                         |
-| `src-tauri/Entitlements.plist`       | macOS entitlement: `com.apple.security.network.client` for downloads                                                                     |
-| `.github/workflows/release.yml`      | CI: builds, signs artifacts, generates `latest.json`, uploads to release                                                                 |
-| `.github/workflows/beta.yml`         | CI: `workflow_dispatch` only — unit tests, Beta DMG, **pre-release** (`beta-<run_id>`) + artifact                                        |
-| `../RELEASES_BETA.md`                | Optional Beta QA notes; pre-release body + artifact; first `##` section in job summary; not used for semver                              |
+| File                                 | Role                                                                                                                                                       |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src-tauri/src/updater.rs`           | Rust module: silent check, native dialog flow, menu text updates, `autoCheckUpdates` / `autoInstallUpdates` setting readers                                |
+| `src-tauri/src/store.rs`             | Persisted settings + `migrate_legacy_keys` (translates the old `autoUpdates` key into the new pair on first run)                                           |
+| `src/lib/use-app-update.ts`          | Vue composable: reactive state (checking → downloading → ready), orchestrates silent check, conditional silent download, and manual dialog/restart routing |
+| `src/components/SettingsView.vue`    | UI: update description + action button, both auto-check and auto-install toggles (cascade + gray-out)                                                      |
+| `src-tauri/src/menu_translations.rs` | Menu label translations including "Checking for Updates…", "Downloading Update…", "Update to", "Restart to Update"                                         |
+| `src-tauri/tauri.conf.json`          | Updater config: endpoint URL, public key, `createUpdaterArtifacts`                                                                                         |
+| `src-tauri/tauri.beta.conf.json`     | Merge config for the Beta-channel DMG: bundle id / product name, `createUpdaterArtifacts: false`                                                           |
+| `src-tauri/Entitlements.plist`       | macOS entitlement: `com.apple.security.network.client` for downloads                                                                                       |
+| `.github/workflows/release.yml`      | CI: builds, signs artifacts, generates `latest.json`, uploads to release                                                                                   |
+| `.github/workflows/beta.yml`         | CI: `workflow_dispatch` only — unit tests, Beta DMG, **pre-release** (`beta-<run_id>`) + artifact                                                          |
+| `../RELEASES_BETA.md`                | Optional Beta QA notes; pre-release body + artifact; first `##` section in job summary; not used for semver                                                |
