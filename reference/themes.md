@@ -32,7 +32,7 @@ Every themed value is a CSS variable. Components **must not hardcode colors, spa
 - **Color** — `--color-bg`, `--color-text`, `--color-accent`, `--color-chrome`, `--color-chrome-border`, `--color-accent-glow`, …
 - **Spacing** — `--spacing-xs/sm/md/lg`
 - **Font size** — `--font-size-xs/sm/md/lg/xl`
-- **Border radius** — `--radius-sm/md/lg`
+- **Border radius** — `--radius-sm/md/lg/xl/max` (`max` is a pill / fully-rounded shape)
 - **Touch height** — `--touch-height-sm/default/lg`
 - **Effects** — `--glow-text`, `--shadow-card`
 

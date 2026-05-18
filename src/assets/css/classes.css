@@ -178,7 +178,7 @@
 .GradientButton {
    --font-weight: 600;
    --line-height: 21px;
-   --radius: var(--radius-md);
+   --radius: var(--radius-max);
    --shine-top-width: 96px;
    --shine-top-height: 6px;
    --shine-top-blur: 6px;
