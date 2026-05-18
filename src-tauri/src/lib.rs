@@ -57,6 +57,10 @@ pub struct FolderInfo {
     pub is_protected: bool,
     pub is_fda_required: bool,
     pub last_modified: Option<i64>,
+    /// True when the directory had more files than `scan::MAX_FILES_PER_DIR`
+    /// and at least one was dropped from `children`. Folders are never dropped,
+    /// so this only ever reflects the file cap. Always false for files.
+    pub truncated: bool,
 }
 
 pub fn run() {
@@ -132,6 +136,7 @@ pub fn run() {
                     updater::download_update,
                     updater::restart_app,
                     updater::set_update_menu_ready,
+                    updater::set_update_menu_available,
                     updater::reset_update_menu
                 ]
             }
@@ -164,6 +169,7 @@ pub fn run() {
                     updater::download_update,
                     updater::restart_app,
                     updater::set_update_menu_ready,
+                    updater::set_update_menu_available,
                     updater::reset_update_menu
                 ]
             }

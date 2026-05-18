@@ -32,8 +32,9 @@ use crate::ScanOptions;
 
 /// Max file entries kept per directory. We still count ALL file sizes for
 /// accuracy, but only retain the N largest as tree entries to avoid millions
-/// of allocations and a massive IPC payload.
-const MAX_FILES_PER_DIR: usize = 100;
+/// of allocations and a massive IPC payload. The frontend caps rendered rows
+/// at the same number per view; see [`reference/scanning.md`].
+pub const MAX_FILES_PER_DIR: usize = 300;
 
 /// Minimum interval between progress events emitted during recursive scanning.
 const PROGRESS_THROTTLE_MS: u64 = 150;
@@ -190,6 +191,7 @@ fn build_folder_tree(
             is_protected: false,
             is_fda_required: false,
             last_modified: None,
+            truncated: false,
         };
     }
 
@@ -225,6 +227,7 @@ fn build_folder_tree(
                 is_protected,
                 is_fda_required,
                 last_modified,
+                truncated: false,
             };
         }
     };
@@ -234,6 +237,10 @@ fn build_folder_tree(
     let mut top_files: BinaryHeap<Reverse<(u64, String, Option<i64>)>> = BinaryHeap::new();
     let mut dir_paths: Vec<std::path::PathBuf> = Vec::new();
     let mut file_size = 0u64;
+    // Set to true if at least one file is dropped because the directory has
+    // more than MAX_FILES_PER_DIR files. Surfaced to the UI so it can show
+    // a "list truncated" notice. Folders are never dropped here.
+    let mut truncated = false;
 
     for (i, entry) in entries.filter_map(|e| e.ok()).enumerate() {
         // Periodic cancellation check inside large directories
@@ -248,6 +255,7 @@ fn build_folder_tree(
                 is_protected: false,
                 is_fda_required: false,
                 last_modified: None,
+                truncated: false,
             };
         }
 
@@ -283,10 +291,13 @@ fn build_folder_tree(
 
             if top_files.len() < MAX_FILES_PER_DIR {
                 top_files.push(Reverse((size, name, last_modified)));
-            } else if let Some(&Reverse((smallest, _, _))) = top_files.peek() {
-                if size > smallest {
-                    top_files.pop();
-                    top_files.push(Reverse((size, name, last_modified)));
+            } else {
+                truncated = true;
+                if let Some(&Reverse((smallest, _, _))) = top_files.peek() {
+                    if size > smallest {
+                        top_files.pop();
+                        top_files.push(Reverse((size, name, last_modified)));
+                    }
                 }
             }
         } else if ft.is_dir() {
@@ -348,6 +359,7 @@ fn build_folder_tree(
                 // Only directories can have container-manager xattrs.
                 is_fda_required: false,
                 last_modified,
+                truncated: false,
             }
         })
         .collect();
@@ -390,6 +402,7 @@ fn build_folder_tree(
         is_protected: is_root_protected,
         is_fda_required: is_root_fda_required,
         last_modified: most_recent_modified,
+        truncated,
     }
 }
 

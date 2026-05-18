@@ -36,10 +36,18 @@ const emit = defineEmits<{
 
 const { t } = useTranslations()
 
+/** Max rows rendered per view. Matches Rust's `scan::MAX_FILES_PER_DIR` so the
+ * frontend bound on DOM size and Rust's bound on file payload stay in sync.
+ * The Rust cap drops only files; this cap drops the smallest entries of any
+ * type. See reference/scanning.md. */
+const MAX_DISPLAYED_ITEMS = 300
+
 interface NavEntry {
    items: FolderInfo[]
    label: string
    path: string
+   /** True when this view's underlying folder had files dropped by the Rust cap. */
+   truncated: boolean
 }
 
 /**
@@ -48,7 +56,7 @@ interface NavEntry {
  */
 const backStack = shallowRef<NavEntry[]>([])
 const forwardStack = shallowRef<NavEntry[]>([])
-const current = shallowRef<NavEntry>({ items: [], label: '', path: '' })
+const current = shallowRef<NavEntry>({ items: [], label: '', path: '', truncated: false })
 const homePath = ref('')
 
 /**
@@ -86,11 +94,11 @@ watch(
 
          const rootPath = parentDir(folders[0].path)
          homePath.value = rootPath
-         current.value = { items: folders, label: '', path: rootPath }
+         current.value = { items: folders, label: '', path: rootPath, truncated: false }
       } else {
          backStack.value = []
          forwardStack.value = []
-         current.value = { items: [], label: '', path: '' }
+         current.value = { items: [], label: '', path: '', truncated: false }
          homePath.value = ''
          selectedMap.clear()
       }
@@ -119,12 +127,15 @@ const displayPath = computed(() => {
    return path
 })
 
-/** Visible items for the current directory (filtering is done at scan time in Rust). */
-const displayedItems = computed(() => current.value.items)
+/** Rows actually rendered. Slicing to MAX_DISPLAYED_ITEMS keeps DOM size bounded
+ * without virtualization; entries are pre-sorted by size desc in Rust, so the
+ * dropped tail is always the smallest items. */
+const displayedItems = computed(() => current.value.items.slice(0, MAX_DISPLAYED_ITEMS))
 
-/** True when Rust's MAX_FILES_PER_DIR cap (100) was likely hit for this directory. */
-const isFileListTruncated = computed(
-   () => current.value.items.filter((i) => i.is_file).length >= 100
+/** True when either Rust dropped files (truncated flag) or the frontend slice
+ * hid additional entries. Either way the notice shown is the same. */
+const isListTruncated = computed(
+   () => current.value.truncated || current.value.items.length > MAX_DISPLAYED_ITEMS
 )
 
 const parentRef = useTemplateRef<HTMLElement>('parentRef')
@@ -355,6 +366,7 @@ function setSelectedItems(items: TrashListItem[]) {
          is_protected: false,
          is_fda_required: false,
          children: [],
+         truncated: false,
       })
    }
 }
@@ -377,7 +389,12 @@ function resetAll() {
    forwardStack.value = []
 
    if (homePath.value && props.folders.length > 0) {
-      current.value = { items: props.folders, label: '', path: homePath.value }
+      current.value = {
+         items: props.folders,
+         label: '',
+         path: homePath.value,
+         truncated: false,
+      }
    }
 }
 
@@ -391,7 +408,12 @@ function goInto(item: FolderInfo) {
    document.documentElement.style.setProperty('--nav-direction', '1')
    backStack.value = [...backStack.value, { ...current.value }]
    forwardStack.value = []
-   current.value = { items: item.children, label: item.name, path: item.path }
+   current.value = {
+      items: item.children,
+      label: item.name,
+      path: item.path,
+      truncated: item.truncated,
+   }
 }
 
 /** Navigates to the previous directory with a backward slide. */
@@ -471,7 +493,11 @@ function onCancel() {
                         @navigate="() => goInto(item)"
                      />
                   </div>
-                  <p v-if="isFileListTruncated" class="ScanResultsList-truncated">
+                  <p
+                     v-if="isListTruncated"
+                     class="ScanResultsList-truncated"
+                     data-testid="results-truncated"
+                  >
                      {{ t('ScanResultsList', 'truncated') }}
                   </p>
                </div>

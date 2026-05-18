@@ -12,6 +12,9 @@ export interface FolderInfo {
    is_protected: boolean
    is_fda_required: boolean
    last_modified?: number
+   /** True when Rust dropped at least one file from this folder because it exceeded
+    * the per-folder file cap. Always false for files. */
+   truncated: boolean
 }
 
 /** Single item in the trash review list (flattened from selection). */
