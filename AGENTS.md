@@ -51,14 +51,14 @@ edit it for implementation reasons. The `/sync` sweep still covers it.
 
 ## Slash commands (`.claude/commands/`)
 
-| Command                | Purpose                                                                              |
-| ---------------------- | ------------------------------------------------------------------------------------ |
+| Command                | Purpose                                                                                         |
+| ---------------------- | ----------------------------------------------------------------------------------------------- |
 | `/sync`                | Group uncommitted work into logical commits, sweep `.md` + `.coderabbit.yaml`, run tests, push. |
 | `/force-sync`          | Reconcile `.md` + `.coderabbit.yaml` against commits that bypassed `/sync`, then commit drift.  |
-| `/compatibility-check` | Full compatibility verification against macOS 10.15 / Safari 13 / MSRV.              |
-| `/release`             | Prepare a stable release — auto path: bump versions, generate notes from git log.    |
-| `/release-from-notes`  | Prepare a stable release — curated path: verify hand-written notes exist, bump only. |
-| `/beta-notes`          | Add a dated section to `RELEASES_BETA.md` for the Beta workflow's pre-release body.  |
+| `/compatibility-check` | Full compatibility verification against macOS 10.15 / Safari 13 / MSRV.                         |
+| `/release`             | Prepare a stable release — auto path: bump versions, generate notes from git log.               |
+| `/release-from-notes`  | Prepare a stable release — curated path: verify hand-written notes exist, bump only.            |
+| `/beta-notes`          | Add a dated section to `RELEASES_BETA.md` for the Beta workflow's pre-release body.             |
 
 ## Testing
 
