@@ -6,7 +6,7 @@
    "tabWidth": 3,
    "trailingComma": "es5",
    "useTabs": false,
-   "ignorePatterns": [".vscode/**", "node_modules/**", "dist/**", "target/**"],
+   "ignorePatterns": ["node_modules/**", "dist/**", "target/**"],
    "sortPackageJson": {
       "sortScripts": true,
    },
