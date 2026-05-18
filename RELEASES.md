@@ -4,9 +4,7 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 
 ---
 
-## v0.0.15-rc.1
-
-Test pre-release for the per-architecture CI workflow. Marked as a GitHub pre-release so stable users on `v0.0.14` are not auto-updated to it.
+## v0.0.15
 
 ### Improvements
 
