@@ -4,13 +4,13 @@ The supported target and how to verify it. ApexDisk runs portable Vue + JS imple
 
 ## Targets
 
-| Layer                  | Min target                           | Notes                                            |
-| ---------------------- | ------------------------------------ | ------------------------------------------------ |
-| **Architecture**       | Intel x86_64 + Apple Silicon aarch64 | Universal binary, no Rosetta 2 required.         |
-| **Rust / Native APIs** | macOS 10.13+ APIs only               | Safely within the 10.15 minimum.                 |
-| **CSS**                | Safari 13                            | Transpiled by lightningcss in `vite.config.ts`.  |
-| **JavaScript**         | Safari 13                            | Transpiled by Vite (`build.target: 'safari13'`). |
-| **Tauri 2 WKWebView**  | macOS 10.15                          | Hard requirement from Tauri 2 itself.            |
+| Layer                  | Min target                           | Notes                                                               |
+| ---------------------- | ------------------------------------ | ------------------------------------------------------------------- |
+| **Architecture**       | Intel x86_64 + Apple Silicon aarch64 | Three DMGs (universal + aarch64 + x86_64). Updater serves per-arch. |
+| **Rust / Native APIs** | macOS 10.13+ APIs only               | Safely within the 10.15 minimum.                                    |
+| **CSS**                | Safari 13                            | Transpiled by lightningcss in `vite.config.ts`.                     |
+| **JavaScript**         | Safari 13                            | Transpiled by Vite (`build.target: 'safari13'`).                    |
+| **Tauri 2 WKWebView**  | macOS 10.15                          | Hard requirement from Tauri 2 itself.                               |
 
 Minimum supported macOS: **10.15 Catalina** (Safari 13.0 / WebKit 605.1.15). The minimum is set by `minimumSystemVersion` in `src-tauri/tauri.conf.json`.
 
@@ -43,13 +43,13 @@ These CSS features render the visual upgrade on newer Safari and degrade silentl
 
 Each step is a single shell check. Run them after bumping deps, adding a new JS / CSS / macOS API, or touching `vite.config.ts` / `tauri.conf.json`.
 
-### 1. Architecture (universal binary)
+### 1. Architecture (universal + per-arch DMGs)
 
 ```bash
-grep 'universal-apple-darwin\|targets:.*aarch64\|targets:.*x86_64' .github/workflows/release.yml
+grep 'apple-darwin' .github/workflows/release.yml
 ```
 
-Expected: Rust toolchain installs both `aarch64-apple-darwin,x86_64-apple-darwin`; build uses `--target universal-apple-darwin`; upload from `target/universal-apple-darwin/release/bundle/`.
+Expected: Rust toolchain installs both `aarch64-apple-darwin,x86_64-apple-darwin`. Three build steps run sequentially — `--target universal-apple-darwin`, `--target aarch64-apple-darwin`, `--target x86_64-apple-darwin`. Release uploads DMGs from all three `target/*-apple-darwin/release/bundle/dmg/` directories, plus per-arch `.tar.gz` + `.tar.gz.sig` from `target/{aarch64,x86_64}-apple-darwin/release/bundle/macos/`. No universal update bundle is uploaded — it would be wasted bandwidth since the updater fetches per-arch slices.
 
 ```bash
 # Should return 0 — no arch-gated code in app source:

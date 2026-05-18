@@ -32,9 +32,9 @@ Or follow these steps by hand:
 3. Commit and push to `main`.
 4. Go to **Actions → Release → Run workflow**, leave "Mark as pre-release" **unchecked**.
 5. CI builds, signs, notarizes, tags `v0.0.13`, and creates a GitHub Release with:
-   - `.dmg` — the installer for new users
-   - `.tar.gz` + `.tar.gz.sig` — the signed update bundle
-   - `latest.json` — the update manifest pointing to the `.tar.gz`
+   - **Three `.dmg` installers** — `ApexDisk_X.Y.Z_universal.dmg` (fallback for users who don't know their architecture), `ApexDisk_X.Y.Z_aarch64.dmg` (Apple Silicon, ~50% smaller), `ApexDisk_X.Y.Z_x64.dmg` (Intel, ~50% smaller).
+   - **Two `.tar.gz` + `.tar.gz.sig` pairs** — per-architecture signed update bundles consumed by the in-app updater. No universal update bundle (it would be wasted bandwidth — see `updates.md`).
+   - **`latest.json`** — the update manifest. `platforms.darwin-aarch64` and `platforms.darwin-x86_64` each point at their own per-arch `.tar.gz`, so updates download only the slice the running machine needs.
 
 Users on older stable versions pick it up on next app start (auto-updates ON) or when they check manually.
 

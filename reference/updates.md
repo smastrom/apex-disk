@@ -60,6 +60,14 @@ Button / Menu click (both modes)
        └─ Update found → download → "Restart now?" dialog
 ```
 
+## Update artifact shape (per-architecture)
+
+The Release workflow produces **two** `.tar.gz` update bundles — one for Apple Silicon (`aarch64`), one for Intel (`x86_64`) — each with its own `.tar.gz.sig` signature. `latest.json` lists both under `platforms.darwin-aarch64` and `platforms.darwin-x86_64`. The Tauri updater plugin reads the entry that matches the running machine and downloads only that slice, so an Apple Silicon Mac never pulls the Intel binary and vice versa.
+
+Existing users running an older universal-binary install transition to a per-arch binary automatically on their next update — the plugin doesn't care that the previous install was universal; it just replaces it with the correct slice.
+
+The universal DMG is install-only — no universal `.tar.gz` is uploaded. Universal-binary installs that haven't updated yet still receive updates correctly (the plugin uses the running arch, not the installed binary's arch).
+
 ## Signing Keys
 
 Updates are signed with a keypair generated via `pnpm tauri signer generate`. The **public key** is embedded in `tauri.conf.json` under `plugins.updater.pubkey`. The **private key** and its **password** are stored as GitHub secrets:
@@ -67,7 +75,7 @@ Updates are signed with a keypair generated via `pnpm tauri signer generate`. Th
 - `TAURI_SIGNING_PRIVATE_KEY` — the base64-encoded private key
 - `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` — the password for the private key
 
-The **Release** workflow uses these to sign the `.tar.gz` update artifact. The app verifies the signature against the embedded public key before applying any update.
+The **Release** workflow uses these to sign each per-arch `.tar.gz` update artifact. The app verifies the signature against the embedded public key before applying any update.
 
 ## Why stable users don't receive pre-releases
 
