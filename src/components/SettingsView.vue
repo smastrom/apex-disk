@@ -4,7 +4,7 @@
 <!--
 SettingsView
 
-Purpose: Settings screen with Language, Theme, Delete behavior (permanent delete), Scan Settings (hidden files, 0 B, under 1 KB), and Permissions. macOS-style grouped list.
+Purpose: Settings screen with Language, Theme, Delete behavior (permanent delete), Scan Settings (hidden files, 0 B, under 1 KB), Permissions (FDA), and Software Update (manual check + auto-check / auto-install toggles). macOS-style grouped list.
 
 Props: isFdaGranted (boolean), isChecking (boolean), availableVersion (string | null)
 

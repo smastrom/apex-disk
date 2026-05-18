@@ -44,7 +44,9 @@ ApexDisk is built with Rust and uses a multi-core parallel I/O engine that distr
 
 No. Scanning your Mac user folder, building the disk tree, and moving files to Trash all happen locally, and your data never leaves your machine.
 
-ApexDisk doesn't auto-check or auto-install updates: it only reaches the GitHub server when you explicitly decide to check for a new release, which is why firewall tools like Lulu or Little Snitch may show a permission prompt the first time you do. You can safely deny it and every feature of the disk tree viewer will keep working.
+By default, ApexDisk doesn't auto-check or auto-install updates, so it only reaches the GitHub server when you explicitly check for a new release. That's why firewall tools like Lulu or Little Snitch may show a permission prompt the first time you do. You can safely deny it and every feature of the disk tree viewer will keep working.
+
+You can opt in to auto-check or auto-install in Settings if you'd rather the app handle updates for you.
 
 # Does ApexDisk require Full Disk Access?
 
