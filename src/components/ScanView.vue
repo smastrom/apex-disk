@@ -20,7 +20,7 @@ import ScanResultsList from './ScanResultsList.vue'
 import ScanProgress from './ScanProgress.vue'
 import ScanLaunch from './ScanLaunch.vue'
 
-import { ref, watch, onDeactivated, useTemplateRef, toRef } from 'vue'
+import { nextTick, onActivated, onDeactivated, ref, toRef, useTemplateRef, watch } from 'vue'
 
 import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'
@@ -96,12 +96,22 @@ watch(
    }
 )
 
+/** Skip the inner fade across KeepAlive reactivation so SCANNING -> RESULTS doesn't flash. */
+const suppressInnerTransition = ref(false)
+
 onDeactivated(() => {
-   // If switching app view from this component and we're in TrashResults page
    if (activeView.value === ActiveView.TRASH_COMPLETE) {
       activeView.value = ActiveView.LAUNCH
       onCancel()
    }
+
+   suppressInnerTransition.value = true
+})
+
+onActivated(() => {
+   nextTick(() => {
+      suppressInnerTransition.value = false
+   })
 })
 
 function onSelectedSizeUpdate(value: number) {
@@ -153,7 +163,7 @@ function onRestart() {
    <section class="ScanView-root" aria-label="Scan">
       <ScanViewHeader :usage="diskUsage" :selectedSize="selectedSize" />
 
-      <Transition name="fade" mode="out-in">
+      <Transition :name="suppressInnerTransition ? 'no-fade' : 'fade'" mode="out-in">
          <KeepAlive>
             <ScanLaunch
                v-if="activeView === ActiveView.LAUNCH"
