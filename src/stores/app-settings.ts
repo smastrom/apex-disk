@@ -17,7 +17,8 @@ export interface AppSettingsStore {
    setShowHiddenFiles: (value: boolean) => Promise<void>
    setShowUnder1Kb: (value: boolean) => Promise<void>
    setShowZeroByte: (value: boolean) => Promise<void>
-   setAutoUpdates: (value: boolean) => Promise<void>
+   setAutoCheckUpdates: (value: boolean) => Promise<void>
+   setAutoInstallUpdates: (value: boolean) => Promise<void>
 }
 
 let globalStore: AppSettingsStore | null = null
@@ -80,9 +81,20 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
          log('settings', `Settings: showZeroByte ${!value} → ${value}`)
          await saveSettings()
       },
-      setAutoUpdates: async (value) => {
-         settings.value = { ...settings.value, autoUpdates: value }
-         log('settings', `Settings: autoUpdates ${!value} → ${value}`)
+      setAutoCheckUpdates: async (value) => {
+         // Cascade: turning checking off also turns installing off (can't install without checking).
+         const next = { ...settings.value, autoCheckUpdates: value }
+         if (!value && next.autoInstallUpdates) next.autoInstallUpdates = false
+         settings.value = next
+         log('settings', `Settings: autoCheckUpdates ${!value} → ${value}`)
+         await saveSettings()
+      },
+      setAutoInstallUpdates: async (value) => {
+         // Cascade: turning installing on forces checking on (install implies check).
+         const next = { ...settings.value, autoInstallUpdates: value }
+         if (value && !next.autoCheckUpdates) next.autoCheckUpdates = true
+         settings.value = next
+         log('settings', `Settings: autoInstallUpdates ${!value} → ${value}`)
          await saveSettings()
       },
    }

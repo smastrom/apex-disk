@@ -181,13 +181,20 @@ fn get_current_language(app: &tauri::AppHandle) -> String {
         .unwrap_or_else(|| constants::DEFAULT_LANGUAGE.to_string())
 }
 
-/// Reads the autoUpdates setting from the store (defaults to false).
-fn get_auto_updates(app: &tauri::AppHandle) -> bool {
-    store::get_setting_with_handle(app, "autoUpdates".to_string())
+/// Reads a boolean settings key, defaulting to false on miss.
+fn get_bool_setting(app: &tauri::AppHandle, key: &str) -> bool {
+    store::get_setting_with_handle(app, key.to_string())
         .ok()
         .flatten()
         .and_then(|v| v.as_bool())
         .unwrap_or(false)
+}
+
+/// Reads the autoInstallUpdates setting (silent download after check).
+/// Used to decide whether `download_update` should also flip the menu item
+/// text to "Restart to Update", which only makes sense for the silent path.
+fn get_auto_install_updates(app: &tauri::AppHandle) -> bool {
+    get_bool_setting(app, "autoInstallUpdates")
 }
 
 /// Updates the "Check for Updates" menu item text and enabled state.
@@ -234,6 +241,18 @@ fn update_menu_text_to_downloading(app: &tauri::AppHandle) {
     set_update_menu_item(app, menu_labels.downloading_update, false);
 }
 
+/// Sets the menu item text to "Update to vX.Y.Z" — used when a silent check
+/// finds an available update but auto-install is off (so nothing was staged).
+fn update_menu_text_to_available(app: &tauri::AppHandle, version: &str) {
+    let lang = get_current_language(app);
+    let menu_labels = crate::menu_translations::labels_for(&lang);
+    set_update_menu_item(
+        app,
+        &format!("{} v{}", menu_labels.update_to_version, version),
+        true,
+    );
+}
+
 // ── Frontend commands ───────────────────────────────────────────────────────
 
 /// Silent update check — returns the available version string or `null`.
@@ -274,8 +293,9 @@ pub async fn download_update(app: tauri::AppHandle) -> Result<String, String> {
         .lock()
         .unwrap_or_else(|e| e.into_inner()) = Some(version.clone());
 
-    // Only update menu item text when auto-updates is enabled
-    if get_auto_updates(&app) {
+    // Only update menu item text when auto-install is enabled — the menu
+    // reflecting "Restart to Update" implies the app staged the update silently.
+    if get_auto_install_updates(&app) {
         update_menu_text_to_restart(&app, &version);
     }
 
@@ -293,6 +313,15 @@ pub fn restart_app(app: tauri::AppHandle) {
 #[tauri::command]
 pub fn set_update_menu_ready(app: tauri::AppHandle, version: String) -> Result<(), String> {
     update_menu_text_to_restart(&app, &version);
+    Ok(())
+}
+
+/// Updates the menu item text to "Update to vX.Y.Z".
+/// Called from the frontend after a silent check finds an available update
+/// but auto-install is off (so the update isn't staged yet).
+#[tauri::command]
+pub fn set_update_menu_available(app: tauri::AppHandle, version: String) -> Result<(), String> {
+    update_menu_text_to_available(&app, &version);
     Ok(())
 }
 
@@ -425,28 +454,25 @@ pub async fn check_for_updates_dialog(app: tauri::AppHandle) -> Result<(), Strin
 
 /// Spawns the menu-initiated update flow from a sync context.
 ///
-/// - Auto-updates ON + update staged → restart immediately.
-/// - Auto-updates ON + no staged update → run dialog flow with menu text updates.
-/// - Auto-updates OFF → always run dialog flow (no menu text updates, no auto-restart).
+/// - Update already staged (any source) → restart immediately.
+/// - Otherwise → run dialog flow with menu text updates (the menu is the
+///   entrypoint, so it reflects checking/downloading/restart state).
 pub fn check_for_updates_from_menu(app: &tauri::AppHandle) {
-    let auto_updates = get_auto_updates(app);
+    // If update is already downloaded, restart immediately.
+    let state = app.state::<UpdateState>();
+    let staged = state
+        .ready_version
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .is_some();
 
-    if auto_updates {
-        // If update is already downloaded, restart immediately
-        let state = app.state::<UpdateState>();
-        if state
-            .ready_version
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .is_some()
-        {
-            app.restart();
-        }
+    if staged {
+        app.restart();
     }
 
     let handle = app.clone();
     tauri::async_runtime::spawn(async move {
-        if let Err(e) = run_dialog_update_flow(handle, auto_updates).await {
+        if let Err(e) = run_dialog_update_flow(handle, true).await {
             log_update(&format!("Menu: update flow error: {e}"));
         }
     });

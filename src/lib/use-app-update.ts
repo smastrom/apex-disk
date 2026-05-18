@@ -6,19 +6,29 @@ import { ref } from 'vue'
 
 import { log } from './log'
 
-export function useAppUpdate(options: { autoUpdates: boolean }) {
-   const { autoUpdates } = options
+export interface UseAppUpdateOptions {
+   /** Silently check for updates on app start. Required for autoInstallUpdates. */
+   autoCheckUpdates: boolean
+   /** Silently download + stage updates after a successful check. Implies autoCheckUpdates. */
+   autoInstallUpdates: boolean
+}
+
+export function useAppUpdate(options: UseAppUpdateOptions) {
+   const { autoCheckUpdates, autoInstallUpdates } = options
+
    const isChecking = ref(false)
    const isDownloading = ref(false)
    const availableVersion = ref<string | null>(null)
    const updateReady = ref(false)
 
-   /** Silent check + auto-download on startup. Only runs when autoUpdates is enabled. */
+   /** Silent check on startup. Runs when autoCheckUpdates is enabled. */
    async function checkSilently() {
       if (import.meta.env.DEV) return
-      if (!autoUpdates) return
+      if (!autoCheckUpdates) return
       if (isChecking.value) return
+
       log('app', 'Updates: silent check…')
+
       try {
          isChecking.value = true
          availableVersion.value = await invoke<string | null>('check_for_updates_silent')
@@ -33,9 +43,17 @@ export function useAppUpdate(options: { autoUpdates: boolean }) {
          isChecking.value = false
       }
 
-      // Auto-download if an update was found
-      if (availableVersion.value) {
+      if (!availableVersion.value) return
+
+      if (autoInstallUpdates) {
          await downloadSilently()
+      } else {
+         // Check-only mode: surface availability in the menu without downloading.
+         try {
+            await invoke('set_update_menu_available', { version: availableVersion.value })
+         } catch (error) {
+            log('app', `Updates: menu update failed: ${error}`)
+         }
       }
    }
 
@@ -56,15 +74,28 @@ export function useAppUpdate(options: { autoUpdates: boolean }) {
    }
 
    /**
-    * Handles the "Check for Updates" button click.
-    * Always triggers the native dialog flow (check → download → restart prompt).
-    * Same behavior as the menu item click.
+    * Handles the Settings update button click.
+    *
+    * - Update already staged → restart immediately (skip the redundant dialog flow).
+    * - Otherwise → run the native dialog flow (check → download → restart prompt).
+    *   `isChecking` is held for the duration so the button shows a spinner; the Rust
+    *   side emits no progress events, so the check + download phases are one state.
     */
    async function onCheckForUpdates() {
-      await invoke('check_for_updates_dialog')
+      if (updateReady.value) {
+         await invoke('restart_app')
+         return
+      }
+      try {
+         isChecking.value = true
+         await invoke('check_for_updates_dialog')
+      } catch (error) {
+         log('app', `Updates: dialog flow failed: ${error}`)
+      } finally {
+         isChecking.value = false
+      }
    }
 
-   // Auto-check on app start (production only, auto-updates only)
    checkSilently()
 
    return { isChecking, isDownloading, availableVersion, updateReady, onCheckForUpdates }

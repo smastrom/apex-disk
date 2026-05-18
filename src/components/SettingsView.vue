@@ -79,7 +79,9 @@ const updateActionLabel = computed(() => {
    if (props.isChecking) return t('SettingsView', 'updateChecking')
    if (props.isDownloading) return t('SettingsView', 'updateDownloading')
    if (props.updateReady) return t('SettingsView', 'updateRestartButton')
-   if (props.availableVersion) return t('SettingsView', 'updateInstallButton')
+   if (props.availableVersion) {
+      return t('SettingsView', 'updateAvailableButton', { version: props.availableVersion })
+   }
 
    return t('SettingsView', 'updateCheckButton')
 })
@@ -96,8 +98,13 @@ function toggleZeroByte() {
    store.setShowZeroByte(!settings.value.showZeroByte)
 }
 
-function toggleAutoUpdates() {
-   store.setAutoUpdates(!settings.value.autoUpdates)
+function toggleAutoCheckUpdates() {
+   store.setAutoCheckUpdates(!settings.value.autoCheckUpdates)
+}
+
+function toggleAutoInstallUpdates() {
+   if (!settings.value.autoCheckUpdates) return // Disabled when checking is off (cascade rule).
+   store.setAutoInstallUpdates(!settings.value.autoInstallUpdates)
 }
 
 async function openSystemSettings() {
@@ -302,21 +309,48 @@ async function openSystemSettings() {
                </div>
                <div class="SettingsGroup-row">
                   <div class="SettingsGroup-labelWrapper">
-                     <span id="label-auto-updates" class="SettingsGroup-label">{{
-                        t('SettingsView', 'autoUpdatesLabel')
+                     <span id="label-auto-check-updates" class="SettingsGroup-label">{{
+                        t('SettingsView', 'autoCheckUpdatesLabel')
                      }}</span>
                      <span class="SettingsView-labelDesc">{{
-                        t('SettingsView', 'autoUpdatesDesc')
+                        t('SettingsView', 'autoCheckUpdatesDesc')
                      }}</span>
                   </div>
                   <button
                      type="button"
                      role="switch"
                      class="SettingsToggle"
-                     :class="{ 'SettingsToggle--on': settings.autoUpdates }"
-                     :aria-checked="settings.autoUpdates"
-                     aria-labelledby="label-auto-updates"
-                     @click="toggleAutoUpdates"
+                     :class="{ 'SettingsToggle--on': settings.autoCheckUpdates }"
+                     :aria-checked="settings.autoCheckUpdates"
+                     aria-labelledby="label-auto-check-updates"
+                     @click="toggleAutoCheckUpdates"
+                  >
+                     <span class="SettingsToggle-knob" aria-hidden="true" />
+                  </button>
+               </div>
+               <div class="SettingsGroup-row">
+                  <div class="SettingsGroup-labelWrapper">
+                     <span id="label-auto-install-updates" class="SettingsGroup-label">{{
+                        t('SettingsView', 'autoInstallUpdatesLabel')
+                     }}</span>
+                     <span class="SettingsView-labelDesc">{{
+                        t('SettingsView', 'autoInstallUpdatesDesc')
+                     }}</span>
+                  </div>
+                  <button
+                     type="button"
+                     role="switch"
+                     class="SettingsToggle"
+                     :class="{
+                        'SettingsToggle--on':
+                           settings.autoCheckUpdates && settings.autoInstallUpdates,
+                        'SettingsToggle--disabled': !settings.autoCheckUpdates,
+                     }"
+                     :aria-checked="settings.autoCheckUpdates && settings.autoInstallUpdates"
+                     :aria-disabled="!settings.autoCheckUpdates"
+                     :disabled="!settings.autoCheckUpdates"
+                     aria-labelledby="label-auto-install-updates"
+                     @click="toggleAutoInstallUpdates"
                   >
                      <span class="SettingsToggle-knob" aria-hidden="true" />
                   </button>

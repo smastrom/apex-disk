@@ -463,17 +463,17 @@ updateCheckButton:
    ja: 更新を確認
    ar: تحقق من التحديثات
 
-updateInstallButton:
-   en: Install and Relaunch
-   it: Installa e riavvia
-   es: Instalar y reiniciar
-   fr: Installer et redémarrer
-   pt: Instalar e reiniciar
-   de: Installieren und neu starten
-   ru: Установить и перезапустить
-   zh: 安装并重启
-   ja: インストールして再起動
-   ar: تثبيت وإعادة التشغيل
+updateAvailableButton:
+   en: Update to v{version}
+   it: Aggiorna a v{version}
+   es: Actualizar a v{version}
+   fr: Mettre à jour vers v{version}
+   pt: Atualizar para v{version}
+   de: Aktualisieren auf v{version}
+   ru: Обновить до v{version}
+   zh: 更新到 v{version}
+   ja: v{version} にアップデート
+   ar: تحديث إلى v{version}
 
 updateRestartButton:
    en: Restart to Update
@@ -499,19 +499,43 @@ updateReadyDesc:
    ja: アップデートがダウンロードされ、インストールの準備ができました
    ar: تم تنزيل التحديث وهو جاهز للتثبيت
 
-autoUpdatesLabel:
-   en: Automatic Updates
-   it: Aggiornamenti automatici
-   es: Actualizaciones automáticas
-   fr: Mises à jour automatiques
-   pt: Atualizações automáticas
-   de: Automatische Updates
-   ru: Автоматические обновления
-   zh: 自动更新
-   ja: 自動アップデート
-   ar: التحديثات التلقائية
+autoCheckUpdatesLabel:
+   en: Automatically check for updates
+   it: Controlla aggiornamenti automaticamente
+   es: Buscar actualizaciones automáticamente
+   fr: Vérifier automatiquement les mises à jour
+   pt: Verificar atualizações automaticamente
+   de: Automatisch nach Updates suchen
+   ru: Автоматически проверять обновления
+   zh: 自动检查更新
+   ja: 自動的に更新を確認
+   ar: التحقق من التحديثات تلقائيًا
 
-autoUpdatesDesc:
+autoCheckUpdatesDesc:
+   en: Look for new versions on app start
+   it: Cerca nuove versioni all'avvio
+   es: Comprueba nuevas versiones al iniciar
+   fr: Recherche les nouvelles versions au démarrage
+   pt: Procura novas versões ao iniciar
+   de: Sucht beim Start nach neuen Versionen
+   ru: Ищет новые версии при запуске
+   zh: 启动时查找新版本
+   ja: 起動時に新しいバージョンを確認
+   ar: يبحث عن إصدارات جديدة عند بدء التشغيل
+
+autoInstallUpdatesLabel:
+   en: Automatically install updates
+   it: Installa aggiornamenti automaticamente
+   es: Instalar actualizaciones automáticamente
+   fr: Installer automatiquement les mises à jour
+   pt: Instalar atualizações automaticamente
+   de: Updates automatisch installieren
+   ru: Автоматически устанавливать обновления
+   zh: 自动安装更新
+   ja: 自動的に更新をインストール
+   ar: تثبيت التحديثات تلقائيًا
+
+autoInstallUpdatesDesc:
    en: Applied on next app start
    it: Applicato al prossimo avvio
    es: Se aplica en el próximo inicio
