@@ -37,8 +37,16 @@ commit.
 | `reference/updates.md`            | In-app updater (auto/manual), endpoint, signing, dialogs.                                |
 
 Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`,
-`CODE_OF_CONDUCT.md`, `SECURITY.md`, `README.md`, `FAQs.md` stay at the repo
-root — they are user-/CI-facing, not agent instructions.
+`CODE_OF_CONDUCT.md`, `SECURITY.md`, `README.md` stay at the repo root —
+they are user-/CI-facing, not agent instructions.
+
+## Outcome-facing content (`marketing/`)
+
+`marketing/` holds content describing the product to users — FAQs, feature
+descriptions, marketing copy. Unlike `reference/` (how the code works), this
+is about what the user gets. Agents update it only when outcomes change
+(new feature shipped, behavior reframed, FAQ becomes stale); they do not
+edit it for implementation reasons. The `/sync` sweep still covers it.
 
 ## Slash commands (`.claude/commands/`)
 

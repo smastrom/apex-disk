@@ -12,10 +12,12 @@ The sweep must analyze **every** `.md` file in the repository for update
 eligibility and update any whose contents no longer match the change.
 Coverage includes:
 
-- `reference/*.md` — agent-facing deep specs
+- `reference/*.md` — agent-facing deep specs (how the code works)
+- `marketing/*.md` — outcome-facing content (FAQ, descriptions). Only touch
+  when user-visible outcomes change, not for internal refactors.
 - `AGENTS.md` — scope + pointers
 - `CLAUDE.md` — Claude entrypoint
-- `README.md`, `FAQs.md` — user-facing surface
+- `README.md` — user-facing surface
 - `RELEASES.md`, `RELEASES_BETA.md` — only when cutting releases (handled by
   `/release` and `/beta-notes`; do not edit by hand here)
 - `.claude/rules/*.md` — workflow / convention changes
