@@ -79,6 +79,11 @@ The project does **not** embed build metadata (e.g. `0.0.13+beta.abc1234`) — a
 
 Both files are **newest-first**. Always prepend new sections at the top, directly below the `---` rule.
 
+**Bullet bodies follow [`voice.md`](voice.md).** The `**Section** — gloss`
+pattern below is the allowed em-dash use (label separator in a list). Inside
+each bullet body, do **not** use em dashes as parenthetical interrupts; rewrite
+with a comma, parentheses, period, or colon.
+
 - `../RELEASES.md`: `## vX.Y.Z` heading summarizing changes since the previous tag (`git log <prev-tag>..HEAD`), with bullets grouped under these `###` subheadings in this order:
    - **New Features** — user-visible additions.
    - **Improvements** — enhancements to existing behavior, UX polish, perf wins, refactors with observable effects.

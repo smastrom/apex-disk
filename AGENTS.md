@@ -6,6 +6,7 @@ ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for 
 
 ## Stack
 
+
 | Layer           | Tech                                                           |
 | --------------- | -------------------------------------------------------------- |
 | Backend         | Rust, Tauri 2, objc2 (Foundation/AppKit bindings)              |
@@ -15,12 +16,14 @@ ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for 
 | Formatting      | Oxfmt (import sorting, code formatting)                        |
 | Package manager | pnpm                                                           |
 
+
 ## Agent-facing reference (`reference/`)
 
 `reference/` holds deep specs that agents read on demand. The
 `reference-loader` rule in `.claude/rules/` maps operations to the right
 file; the `pre-commit-protocol` rule guarantees a docs sweep before any
 commit.
+
 
 | File                          | Covers                                                                                      |
 | ----------------------------- | ------------------------------------------------------------------------------------------- |
@@ -35,6 +38,8 @@ commit.
 | `reference/logging.md`        | `[apex:…]` diagnostic scheme, Vue categories, Rust trace channels, `APEX_DISK_DEBUG`.       |
 | `reference/releases.md`       | How to cut stable and Beta builds, version fields, changelog conventions, workflows.        |
 | `reference/updates.md`        | In-app updater (auto/manual), endpoint, signing, dialogs.                                   |
+| `reference/voice.md`          | Tone and prose rules for user-facing docs (README, RELEASES, marketing, comments, copy).    |
+
 
 Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`,
 `CODE_OF_CONDUCT.md`, `SECURITY.md`, `README.md` stay at the repo root —
@@ -50,6 +55,7 @@ edit it for implementation reasons. The `/sync` sweep still covers it.
 
 ## Slash commands (`.claude/commands/`)
 
+
 | Command                | Purpose                                                                              |
 | ---------------------- | ------------------------------------------------------------------------------------ |
 | `/sync`                | Group uncommitted work into logical commits, sweep all `.md`, run tests, push.       |
@@ -58,6 +64,7 @@ edit it for implementation reasons. The `/sync` sweep still covers it.
 | `/release`             | Prepare a stable release — auto path: bump versions, generate notes from git log.    |
 | `/release-from-notes`  | Prepare a stable release — curated path: verify hand-written notes exist, bump only. |
 | `/beta-notes`          | Add a dated section to `RELEASES_BETA.md` for the Beta workflow's pre-release body.  |
+
 
 ## Testing
 
@@ -89,6 +96,71 @@ reference/           # Agent-facing reference (see table above)
   commands/          # Slash commands
 ```
 
+## Voice for user-facing docs
+
+Canonical example: `[marketing/faq.md](marketing/faq.md)`. Every user-facing
+surface (`README.md`, `RELEASES.md`, `RELEASES_BETA.md`, anything under
+`marketing/`, in-app strings, release-note bullets, error copy) should sound
+like that file. Full guide and worked examples in
+`[reference/voice.md](reference/voice.md)`.
+
+Quick rules:
+
+1. **Second person** ("you", "your Mac"), never "the user". Applies to
+  `README.md`, `marketing/`, and in-app strings. Does **not** apply to code
+  comments (they address the next maintainer) or `RELEASES*.md` (technical
+  changelogs use past-tense action verbs: "Fixed…", "Added…", "Improved…").
+2. **Plain English, no marketing jargon.** Avoid "leverage", "unleash",
+  "powerful", "seamless", "blazing-fast", "simply", "just".
+3. **Honest. State limits plainly.** No overselling.
+4. **Short paragraphs.** One to three sentences. Contractions are fine.
+5. **Action-first verbs in instructions.** "Download…", "Drag…", "Grant…".
+
+## Prose style: em and en dashes
+
+**Em dashes (`—`) are allowed as label separators**, where the dash sits
+between a short label and its description. This applies broadly: bullets,
+list items, table headings, CSS / Rust / TS section-header comments,
+file-title comments, complexity annotations — any `[label] — [description]`
+construct. They are **never** used as parenthetical interrupts in running
+prose.
+
+Allowed:
+
+- `**Fast** — scans hundreds of thousands of files in seconds.`
+- `**New Features** — user-visible additions.`
+- `/* Theme: macOS Dark — Apple's system dark appearance */`
+- `/// Silent update check — returns the available version string or null.`
+
+Not allowed (interrupt in a flowing sentence):
+
+- ~~"ApexDisk is built with Rust — a fast systems language — and runs natively."~~
+→ "ApexDisk is built with Rust, a fast systems language, and runs natively."
+- ~~"Scanning is fast — even on huge folders."~~
+→ "Scanning is fast, even on huge folders."
+- ~~"We only ever replace the whole array — never mutate in place."~~
+→ "We only ever replace the whole array, never mutate in place."
+
+The test: if the words around the dash form a flowing sentence and the dash
+is interrupting it to add a side note, it's an interrupt and must go.
+
+**Log strings:** even when they look like `[category] — [data]`, remove the
+dash. The existing convention is `"Scan: complete 5 folders"`, not
+`"Scan: complete — 5 folders"`.
+
+**En dashes (`–`) are not used anywhere in this project.** Use an em dash (when
+the label-separator rule allows it) or a hyphen.
+
+**Hyphens (`-`)** in compound words (`agent-facing`, `user-visible`,
+`open-source`) are normal and unrelated.
+
+**Scope:** the prose rules apply to every file outside `.claude/` and
+`reference/`: `README.md`, `RELEASES.md`, `RELEASES_BETA.md`, `SECURITY.md`,
+`CODE_OF_CONDUCT.md`, `LICENSE.md`, `marketing/*.md`, code comments (`.ts`,
+`.tsx`, `.vue`, `.rs`, `.sh`, CSS), commit messages, PR descriptions, and any
+user-visible string. Files under `.claude/` and `reference/` are
+agent-facing and exempt.
+
 ## What not to do
 
 - Do not install npm packages unless asked.
@@ -97,3 +169,6 @@ reference/           # Agent-facing reference (see table above)
 - Do not propose launching dev servers (it's always running).
 - Do not use provide/inject for settings.
 - Do not use Options API or plain `<script>`.
+- Do not use em dashes as parenthetical interrupts in user-facing prose, and
+do not use en dashes anywhere (see Prose style above).
+

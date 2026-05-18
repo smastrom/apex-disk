@@ -20,6 +20,7 @@ in the same change.
 | Adding a Tauri command, event, or settings field               | `reference/tauri-commands.md` |
 | Writing or editing a Vue component, `.ts` file, or CSS         | `reference/code-style.md`     |
 | Running tests, adding a test, debugging an e2e or unit failure | `reference/testing.md`        |
+| Writing user-facing prose: README, RELEASES, marketing, copy   | `reference/voice.md`          |
 
 If a task spans multiple operations (e.g. a new Tauri command that needs a
 translation key), read every applicable file.

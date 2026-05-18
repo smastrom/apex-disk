@@ -150,11 +150,12 @@ const { t } = useTranslations()
 ## Comments
 
 - **Default to no comments.** Code must be readable and clean; comments support code, they do not drive it.
-- **Only add a comment when the WHY is non-obvious** — workaround, subtle invariant, surprising behavior, version constraint.
+- **Only add a comment when the WHY is non-obvious** (workaround, subtle invariant, surprising behavior, version constraint).
 - **Do not restate what well-named code already says.** E.g. don't write `// Walk up to find the nearest scrollable ancestor` above an obvious loop.
-- **Do not write library-introduction or rationale chatter** — `// Positioning via @floating-ui/dom` is what the import line says.
+- **Do not write library-introduction or rationale chatter.** `// Positioning via @floating-ui/dom` is what the import line says.
 - **No commented-out code.** Delete it.
 - **If a function needs a paragraph to explain it**, prefer renaming or splitting it instead.
+- **No em dashes (`—`) as parenthetical interrupts in comments, and no en dashes (`–`) at all.** Comments are user-facing prose: follow [`voice.md`](voice.md). Em dashes are only acceptable as label separators in a bulleted comment list, which is rare; almost always rewrite with a comma, parentheses, period, or colon.
 
 ## Rust
 
