@@ -11,6 +11,9 @@ mod support;
 use apex_disk_lib::scan;
 use apex_disk_lib::ScanOptions;
 
+use std::fs;
+use std::io::Write;
+
 use support::{create_test_home, create_test_home_with_system_files};
 
 /// Scan succeeds and every top-level folder has the shape the frontend expects:
@@ -442,6 +445,119 @@ fn scan_folder_size_equals_sum_of_children() {
             );
         }
     }
+}
+
+/// When a folder has more files than `MAX_FILES_PER_DIR`, the scan must:
+/// (a) retain exactly the cap as file children, (b) set `truncated = true` on the
+/// folder so the UI can show the "list truncated" notice. Subfolders are never
+/// dropped, so the flag reflects only the file cap.
+#[test]
+fn scan_truncated_flag_true_when_file_cap_exceeded() {
+    let home_dir = create_test_home();
+    let home = home_dir.path();
+
+    // Create a Projects/Bulk dir with one more file than the cap. Each file is
+    // ≥ 1 KB so it passes default filters in the assert step.
+    let bulk = home.join("Projects/Bulk");
+    fs::create_dir(&bulk).expect("create Bulk");
+    let over_cap = scan::MAX_FILES_PER_DIR + 1;
+    for i in 0..over_cap {
+        let mut f = fs::File::create(bulk.join(format!("file_{:04}.bin", i))).expect("create file");
+        f.write_all(&vec![0u8; 1024]).expect("write");
+    }
+
+    let options = ScanOptions::default();
+    let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
+
+    let projects = result
+        .iter()
+        .find(|f| f.name == "Projects")
+        .expect("Projects exists");
+    let bulk_node = projects
+        .children
+        .iter()
+        .find(|c| c.name == "Bulk")
+        .expect("Bulk child exists");
+
+    assert!(
+        bulk_node.truncated,
+        "Bulk had {} files (cap {}); truncated should be true",
+        over_cap,
+        scan::MAX_FILES_PER_DIR
+    );
+    let file_children = bulk_node.children.iter().filter(|c| c.is_file).count();
+    assert_eq!(
+        file_children,
+        scan::MAX_FILES_PER_DIR,
+        "should retain exactly MAX_FILES_PER_DIR files"
+    );
+}
+
+/// Folders with fewer files than the cap must not set `truncated`. The flag is
+/// the UI's contract that "you are not seeing everything"; spurious true values
+/// would mislead users.
+#[test]
+fn scan_truncated_flag_false_when_under_cap() {
+    let home_dir = create_test_home();
+    let home = home_dir.path();
+    let options = ScanOptions {
+        show_hidden_files: true,
+        show_under_1kb: true,
+        show_zero_byte: true,
+    };
+
+    let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
+    for folder in &result {
+        assert!(
+            !folder.truncated,
+            "{} has few files; truncated should be false",
+            folder.name
+        );
+        for child in &folder.children {
+            assert!(
+                !child.truncated,
+                "{}/{} has few files; truncated should be false",
+                folder.name, child.name
+            );
+        }
+    }
+}
+
+/// Adding folders never trips the truncated flag. Only the file cap drops entries.
+#[test]
+fn scan_truncated_flag_ignores_subfolder_count() {
+    let home_dir = create_test_home();
+    let home = home_dir.path();
+
+    // 400 subfolders under Projects/ManyDirs (well past MAX_FILES_PER_DIR).
+    // Each contains one ≥ 1 KB file so it survives default filters.
+    let many = home.join("Projects/ManyDirs");
+    fs::create_dir(&many).expect("create ManyDirs");
+    for i in 0..400 {
+        let sub = many.join(format!("d_{:04}", i));
+        fs::create_dir(&sub).expect("create sub");
+        let mut f = fs::File::create(sub.join("file.bin")).expect("create file");
+        f.write_all(&vec![0u8; 1024]).expect("write");
+    }
+
+    let options = ScanOptions::default();
+    let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
+
+    let projects = result
+        .iter()
+        .find(|f| f.name == "Projects")
+        .expect("Projects exists");
+    let many_node = projects
+        .children
+        .iter()
+        .find(|c| c.name == "ManyDirs")
+        .expect("ManyDirs child exists");
+
+    assert!(
+        !many_node.truncated,
+        "400 subfolders, 0 files at top: truncated should be false"
+    );
+    assert_eq!(many_node.children.len(), 400, "all subfolders retained");
 }
 
 /// Files within a folder must have is_file set to true; dirs with children must not.

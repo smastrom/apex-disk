@@ -19,6 +19,8 @@ import {
    assertCheckboxDisabled,
    assertRowExists,
    assertRowNotExists,
+   navigateIntoFolder,
+   navigateBack,
 } from '../helpers/navigation'
 
 describe('Scan flow', () => {
@@ -113,6 +115,25 @@ describe('Scan flow', () => {
       const backBtn = $(sel.navBack)
       await backBtn.click()
       await browser.pause(400)
+   })
+
+   it('does not show the truncated notice for folders under the file cap', async () => {
+      // MyData has only a handful of files; the Rust file cap is nowhere near hit.
+      await navigateIntoFolder('MyData')
+      const notice = $(sel.resultsTruncated)
+      await expect(notice).not.toBeDisplayed()
+      await navigateBack()
+   })
+
+   it('shows the truncated notice when navigating into a folder past the file cap', async () => {
+      // Projects/Bulk in the fixture has MAX_FILES_PER_DIR + 1 files, so Rust
+      // sets `truncated=true` and the UI renders the notice at the end of the list.
+      await navigateIntoFolder('Projects')
+      await navigateIntoFolder('Bulk')
+      const notice = $(sel.resultsTruncated)
+      await expect(notice).toBeDisplayed()
+      await navigateBack()
+      await navigateBack()
    })
 
    it('can abort scan and return to launch screen', async () => {

@@ -38,6 +38,10 @@ pub fn test_home_path() -> PathBuf {
 /// **Nested structure for selection/explode tests:**
 /// - `MyData/SubFolder/` — alpha.txt, beta.txt, Deep/gamma.txt
 /// - `Projects/src/` — main.rs
+///
+/// **Truncation test:**
+/// - `Projects/Bulk/` — `MAX_FILES_PER_DIR + 1` files of 1024 B each, so the
+///   scan returns `truncated=true` and the UI shows the truncation notice.
 fn create_test_home() -> tempfile::TempDir {
     let dir = tempfile::tempdir().expect("temp dir");
     let path = dir.path();
@@ -97,6 +101,16 @@ fn create_test_home() -> tempfile::TempDir {
     // Nested subfolder in Projects
     fs::create_dir(path.join("Projects/src")).expect("Projects/src");
     write_file(path.join("Projects/src/main.rs"), 1024);
+
+    // Bulk: 301 files of 1024 bytes each. Crosses `scan::MAX_FILES_PER_DIR`
+    // so the scan returns truncated=true; the truncation-notice spec relies
+    // on this. Each file is ≥ 1 KB so it survives the default filters.
+    let bulk = path.join("Projects/Bulk");
+    fs::create_dir(&bulk).expect("Projects/Bulk");
+    let over_cap = crate::scan::MAX_FILES_PER_DIR + 1;
+    for i in 0..over_cap {
+        write_file(bulk.join(format!("file_{:04}.bin", i)), 1024);
+    }
 
     dir
 }

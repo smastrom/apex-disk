@@ -35,6 +35,7 @@ export const sel = {
    rowFolder: '[data-testid="results-row-folder"]',
    rowFile: '[data-testid="results-row-file"]',
    rowCheckbox: '[data-testid="results-row-checkbox"]',
+   resultsTruncated: '[data-testid="results-truncated"]',
    trashList: '[data-testid="trash-list"]',
    trashRow: '[data-testid="trash-list-row"]',
    trashRowCheckbox: '[data-testid="trash-list-row-checkbox"]',
