@@ -59,7 +59,7 @@
    margin-right: -0.5rem;
 }
 
-/* ── View Transitions: reverse slide direction for RTL ─────────────── */
+/* ── Transitions: reverse slide direction for RTL ─────────────── */
 /* --rtl-flip is multiplied into animation keyframes (set in animations.css).
    LTR = 1 (default), RTL = -1 so slides go the expected physical direction. */
 
