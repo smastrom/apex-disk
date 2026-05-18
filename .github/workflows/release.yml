@@ -181,7 +181,7 @@ jobs:
               # Per-arch update artifacts: the updater plugin matches the
               # running architecture against `platforms.darwin-aarch64` /
               # `platforms.darwin-x86_64`, so each entry points at its own
-              # slice. Universal DMG is install-only — no updater artifact.
+              # slice. Universal DMG is install-only; no updater artifact.
               VERSION="${TAG#v}"
 
               AARCH64_BUNDLE="src-tauri/target/aarch64-apple-darwin/release/bundle/macos"

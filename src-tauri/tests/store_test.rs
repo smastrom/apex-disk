@@ -12,7 +12,7 @@ use std::sync::Mutex;
 
 use tauri_plugin_store::StoreExt;
 
-/// Serialize store tests — the mock Tauri runtime shares a single backing store.
+/// Serialize store tests: the mock Tauri runtime shares a single backing store.
 static STORE_LOCK: Mutex<()> = Mutex::new(());
 
 /// Builds a mock Tauri app with the store plugin enabled.

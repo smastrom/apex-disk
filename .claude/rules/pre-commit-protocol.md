@@ -3,7 +3,7 @@ description: Mandatory steps before committing or releasing
 ---
 
 Before running `git commit` or pushing, complete the following. Do not skip
-any step — these commands automate work that is otherwise easy to forget.
+any step: these commands automate work that is otherwise easy to forget.
 
 ## 1. Sweep every `.md` in the repo
 
@@ -12,17 +12,17 @@ The sweep must analyze **every** `.md` file in the repository for update
 eligibility and update any whose contents no longer match the change.
 Coverage includes:
 
-- `reference/*.md` — agent-facing deep specs (how the code works)
-- `marketing/*.md` — outcome-facing content (FAQ, descriptions). Only touch
+- `reference/*.md`: agent-facing deep specs (how the code works)
+- `marketing/*.md`: outcome-facing content (FAQ, descriptions). Only touch
   when user-visible outcomes change, not for internal refactors.
-- `AGENTS.md` — scope + pointers
-- `CLAUDE.md` — Claude entrypoint
-- `README.md` — user-facing surface
-- `RELEASES.md`, `RELEASES_BETA.md` — only when cutting releases (handled by
+- `AGENTS.md`: scope + pointers
+- `CLAUDE.md`: Claude entrypoint
+- `README.md`: user-facing surface
+- `RELEASES.md`, `RELEASES_BETA.md`: only when cutting releases (handled by
   `/release` and `/beta-notes`; do not edit by hand here)
-- `.claude/rules/*.md` — workflow / convention changes
-- `.claude/commands/*.md` — slash command behavior changes
-- `LICENSE.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md` — rarely change, but verify
+- `.claude/rules/*.md`: workflow / convention changes
+- `.claude/commands/*.md`: slash command behavior changes
+- `LICENSE.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`: rarely change, but verify
 
 Never commit code that contradicts any of these files.
 
@@ -43,6 +43,6 @@ When preparing a beta build, run `/beta-notes` to add the dated entry to
 
 - These rules supplement, not replace, the test gates inside `/sync` and
   `/force-sync` (typecheck, unit tests, e2e). Those still run.
-- If you believe a step should be skipped, **stop and ask the user first**
-  — do not silently skip and commit.
+- If you believe a step should be skipped, **stop and ask the user first**.
+  Do not silently skip and commit.
 - Never use `--no-verify` or `--force` to bypass hooks.

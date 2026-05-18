@@ -40,7 +40,7 @@ pub fn is_full_disk_access_granted() -> bool {
     let major = macos_major_version().unwrap_or(0);
 
     // Monterey (12) and later: com.apple.stocks container is TCC-protected.
-    // Catalina–Big Sur: Safari directory is TCC-protected.
+    // Catalina to Big Sur: Safari directory is TCC-protected.
     let probe_dir = if major >= 12 {
         home.join("Library/Containers/com.apple.stocks")
     } else {

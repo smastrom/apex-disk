@@ -374,7 +374,7 @@ fn scan_show_hidden_files_false_filters_hidden() {
         );
     }
 
-    // Check inside MyData — .hidden should not appear
+    // Check inside MyData: .hidden should not appear
     if let Some(mydata) = result.iter().find(|f| f.name == "MyData") {
         for child in &mydata.children {
             assert!(

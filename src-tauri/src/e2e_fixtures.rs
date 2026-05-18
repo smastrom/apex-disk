@@ -80,7 +80,7 @@ fn create_test_home() -> tempfile::TempDir {
 
     // Nested subdirectory for explode/indeterminate tests.
     // Siblings are ≥ 1 KB so they remain visible under the default `showUnder1Kb=false`
-    // filter — the multi-level explode test pins these siblings at each intermediate
+    // filter. The multi-level explode test pins these siblings at each intermediate
     // level and needs to see them in the scan results.
     fs::create_dir(path.join("MyData/SubFolder")).expect("MyData/SubFolder");
     write_file(path.join("MyData/SubFolder/alpha.txt"), 1024);

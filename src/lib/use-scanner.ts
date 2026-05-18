@@ -28,7 +28,7 @@ export function useScanner() {
    /**
     * Generation counter that invalidates in-flight scans. Bumped on every new scan
     * (`loadFolders`) and on abort (`onAbort`). Each async callback compares the
-    * captured `gen` snapshot against the current value — if they diverge, the
+    * captured `gen` snapshot against the current value; if they diverge, the
     * callback was spawned by a stale scan and is silently discarded. This avoids
     * race conditions when the user re-scans or aborts while a scan is still running.
     */
@@ -94,7 +94,7 @@ export function useScanner() {
             const totalSize = formatBytes(progress.value.scanned_size_total)
             log(
                'scan',
-               `Scan: complete — ${result.length} folders, ${totalSize}, ${elapsedSeconds.value}s`
+               `Scan: complete ${result.length} folders, ${totalSize}, ${elapsedSeconds.value}s`
             )
             folders.value = result
          }

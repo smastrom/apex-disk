@@ -3,9 +3,9 @@
 
 //! Native application menu bar (App, Window, Help submenus).
 //!
-//! All labels — native items included (About, Services, Hide, Show All, Quit,
-//! Minimize, Close Window) and custom items (Check for Updates, Release Notes,
-//! License) — are pulled from `menu_translations::labels_for(lang)` so the
+//! All labels (native items included: About, Services, Hide, Show All, Quit,
+//! Minimize, Close Window, plus custom items: Check for Updates, Release Notes,
+//! License) are pulled from `menu_translations::labels_for(lang)` so the
 //! menu bar follows the app language rather than the macOS system language.
 //!
 //! `set_menu_language` is called by `locale::set_app_locale` whenever the

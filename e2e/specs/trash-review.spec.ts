@@ -128,7 +128,7 @@ describe('Trash review flow', () => {
 
          const rows = await getTrashRows()
          if (rows.length < 2) {
-            // Not enough rows for a meaningful test — skip cleanly.
+            // Not enough rows for a meaningful test, skip cleanly.
             return
          }
          await toggleTrashRow(rows[0])

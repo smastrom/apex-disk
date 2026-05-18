@@ -135,7 +135,7 @@ fdaMissing:
 
 fdaDesc:
    en: >-
-      Optional. The app works without it — scans may ask for access to specific
+      Optional. The app works without it; scans may ask for access to specific
       folders as needed. Grant it to avoid repeated prompts and access special
       folders: add this app in System Settings, then quit and reopen.
    it: >-
@@ -149,29 +149,29 @@ fdaDesc:
       a carpetas especiales: añade la app en Ajustes del Sistema, cierra y vuelve
       a abrirla.
    fr: >-
-      Optionnel. L’app fonctionne sans — les scans peuvent demander l’accès à
+      Optionnel. L’app fonctionne sans : les scans peuvent demander l’accès à
       certains dossiers au besoin. L’accorder évite les demandes répétées et
       permet d’accéder aux dossiers spéciaux : ajoutez l’app dans Réglages
       Système, puis quittez et rouvrez-la.
    pt: >-
-      Opcional. A app funciona sem ele — a análise pode pedir acesso a pastas
+      Opcional. A app funciona sem ele; a análise pode pedir acesso a pastas
       específicas quando necessário. Conceder evita pedidos repetidos e permite
       aceder a pastas especiais: adicione a app em Definições do Sistema, feche
       e reabra.
    de: >-
-      Optional. Die App funktioniert auch ohne — Scans können bei Bedarf Zugriff
+      Optional. Die App funktioniert auch ohne; Scans können bei Bedarf Zugriff
       auf bestimmte Ordner anfragen. Erteilen Sie ihn, um wiederholte Abfragen
       zu vermeiden und auf spezielle Ordner zuzugreifen: App in den
       Systemeinstellungen hinzufügen, beenden und neu starten.
    ru: >-
-      Необязательно. Приложение работает и без него — при сканировании может
+      Необязательно. Приложение работает и без него; при сканировании может
       запрашиваться доступ к отдельным папкам. Включите, чтобы не видеть
       повторных запросов и получить доступ к специальным папкам: добавьте
       приложение в «Системные настройки», закройте и снова откройте его.
    zh: 可选。不授予也可使用，扫描时会按需请求访问特定文件夹。授予后可避免重复提示并访问特殊文件夹：在「系统设置」中添加此应用，退出并重新打开即可。
    ja: 任意です。なくてもアプリは動作し、スキャン時にフォルダごとにアクセスを求めます。許可すると繰り返しの確認を避け、特殊なフォルダにもアクセスできます：システム設定でこのアプリを追加し、終了してから再起動してください。
    ar: >-
-      اختياري. التطبيق يعمل بدونه — قد يطلب المسح الوصول إلى مجلدات معينة عند
+      اختياري. التطبيق يعمل بدونه؛ قد يطلب المسح الوصول إلى مجلدات معينة عند
       الحاجة. منحه يتجنب الطلبات المتكررة ويتيح الوصول إلى مجلدات خاصة: أضف
       التطبيق في إعدادات النظام، ثم أغلق وأعد فتحه.
 

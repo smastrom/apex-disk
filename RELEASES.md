@@ -8,7 +8,7 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 
 ### Improvements
 
-- Ship per-architecture installers and updates: dedicated Apple Silicon (`aarch64`) and Intel (`x86_64`) DMGs alongside the existing universal one — each per-arch DMG is roughly 50% smaller than the universal. The in-app updater fetches only the slice matching the running Mac, so updates also halve in size. Existing universal-binary installs migrate to a per-arch binary automatically on next update.
+- Ship per-architecture installers and updates: dedicated Apple Silicon (`aarch64`) and Intel (`x86_64`) DMGs alongside the existing universal one. Each per-arch DMG is roughly 50% smaller than the universal. The in-app updater fetches only the slice matching the running Mac, so updates also halve in size. Existing universal-binary installs migrate to a per-arch binary automatically on next update.
 - Re-export `apex-disk-hero.png` at a smaller file size.
 
 ### Bug Fixes
@@ -19,20 +19,20 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 
 - Reorganize agent-facing documentation into a dedicated `reference/` directory and `.claude/rules/` always-loaded routing, with a repo-wide `.md` sweep + file-top comment check inside `/sync` and `/force-sync`. Move outcome-facing content (FAQ) into `marketing/`. Add `CLAUDE.md` as a one-line `@AGENTS.md` import.
 - Split `/release` into auto (generates notes from git log) and curated (`/release-from-notes`, trusts hand-written notes) paths so existing release notes can't be accidentally overwritten.
-- Expand `/compatibility-check`'s Web API audit to ~20 newer-Safari patterns (`view-transition`, `:has()`, `@container`, `structuredClone`, `Promise.any`, …) and wire it into the command checklist — was previously skipped entirely.
+- Expand `/compatibility-check`'s Web API audit to ~20 newer-Safari patterns (`view-transition`, `:has()`, `@container`, `structuredClone`, `Promise.any`, …) and wire it into the command checklist; was previously skipped entirely.
 
 ## v0.0.15
 
 ### Improvements
 
-- Ship per-architecture installers and updates: dedicated Apple Silicon (`aarch64`) and Intel (`x86_64`) DMGs alongside the existing universal one — each per-arch DMG is roughly 50% smaller than the universal. The in-app updater fetches only the slice matching the running Mac, so updates also halve in size. Existing universal-binary installs migrate to a per-arch binary automatically on next update.
+- Ship per-architecture installers and updates: dedicated Apple Silicon (`aarch64`) and Intel (`x86_64`) DMGs alongside the existing universal one. Each per-arch DMG is roughly 50% smaller than the universal. The in-app updater fetches only the slice matching the running Mac, so updates also halve in size. Existing universal-binary installs migrate to a per-arch binary automatically on next update.
 - Re-export `apex-disk-hero.png` at a smaller file size.
 
 ### Chores
 
 - Reorganize agent-facing documentation into a dedicated `reference/` directory and `.claude/rules/` always-loaded routing, with a repo-wide `.md` sweep + file-top comment check inside `/sync` and `/force-sync`. Move outcome-facing content (FAQ) into `marketing/`. Add `CLAUDE.md` as a one-line `@AGENTS.md` import. No user-visible effect.
 - Split `/release` into auto (generates notes from git log) and curated (`/release-from-notes`, trusts hand-written notes) paths so existing release notes can't be accidentally overwritten.
-- Expand `/compatibility-check`'s Web API audit to ~20 newer-Safari patterns (`view-transition`, `:has()`, `@container`, `structuredClone`, `Promise.any`, …) and wire it into the command checklist — was previously skipped entirely.
+- Expand `/compatibility-check`'s Web API audit to ~20 newer-Safari patterns (`view-transition`, `:has()`, `@container`, `structuredClone`, `Promise.any`, …) and wire it into the command checklist; was previously skipped entirely.
 
 ## v0.0.14
 
@@ -40,7 +40,7 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 
 - Implement the macOS 11 UI normalization plan: replace the View Transitions API, the native Popover API, and reliance on `:focus-visible` UA heuristics with portable Vue `<Transition>` + `@floating-ui/dom` + JS-driven focus tracking, so folder/tab slide animations, the disabled-checkbox explainer tooltip, and the keyboard-only focus ring all work uniformly on every supported Safari (≥ 13) instead of just Safari 17/18+.
 - Style scrollbars via custom `::-webkit-scrollbar` rules (transparent thumb that fades in on hover and brightens on direct thumb hover), bypassing the OS _Show scroll bars_ preference for a consistent look on macOS 11+.
-- Drop runtime `color-mix()` in favor of `background + opacity` composition so the scan-progress bar's secondary segment renders correctly on Safari 13–16.1 as well.
+- Drop runtime `color-mix()` in favor of `background + opacity` composition so the scan-progress bar's secondary segment renders correctly on Safari 13 to 16.1 as well.
 - Adjust the default window size to 425×785.
 
 ### Chores

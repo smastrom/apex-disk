@@ -39,13 +39,13 @@ export async function useDiskUsage(): Promise<UseDiskUsageReturn> {
 
          log(
             'disk',
-            `Disk: usage — ${u.volume_name} total=${formatBytes(u.total)} free=${formatBytes(u.free)} used=${formatBytes(used)} user=${u.user_name}`,
+            `Disk: usage ${u.volume_name} total=${formatBytes(u.total)} free=${formatBytes(u.free)} used=${formatBytes(used)} user=${u.user_name}`,
             { home_path: u.home_path }
          )
       } catch (err) {
          console.error('Failed to get disk usage:', err)
          const msg = err instanceof Error ? err.message : String(err)
-         log('disk', `Disk: fetch failed — ${msg}`)
+         log('disk', `Disk: fetch failed ${msg}`)
       }
    }
 

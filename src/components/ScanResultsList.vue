@@ -44,7 +44,7 @@ interface NavEntry {
 
 /**
  * Browser-style navigation stacks. shallowRef avoids deep reactivity on the
- * NavEntry arrays — we only ever replace the whole array, never mutate in place.
+ * NavEntry arrays; we only ever replace the whole array, never mutate in place.
  */
 const backStack = shallowRef<NavEntry[]>([])
 const forwardStack = shallowRef<NavEntry[]>([])
@@ -74,7 +74,7 @@ function parentDir(path: string): string {
 /**
  * Resets navigation and sets the root view when scan results arrive.
  * `{ immediate: true }` so the initial prop value is handled synchronously
- * during setup — no extra render cycle needed.
+ * during setup, with no extra render cycle needed.
  */
 watch(
    () => props.folders,
@@ -131,7 +131,7 @@ const parentRef = useTemplateRef<HTMLElement>('parentRef')
 
 /**
  * Resets scroll to top after the leaving list has finished its transition.
- * Wired to the `<Transition>` `@after-leave` hook below — running it on
+ * Wired to the `<Transition>` `@after-leave` hook below. Running it on
  * `current.path` change directly would scroll the leaving element while it's
  * still mid-slide (visible jump), since `mode="out-in"` keeps it in the DOM
  * for the duration of the leave.
@@ -180,7 +180,7 @@ function isSelectedForUI(path: string): boolean {
 
 /**
  * Pre-computed set of folder paths that have at least one selected descendant
- * but are not themselves selected — i.e. folders in "indeterminate" state.
+ * but are not themselves selected (folders in "indeterminate" state).
  *
  * Rebuilt automatically on every selectedMap mutation via watchEffect.
  * Cost: O(entries × depth) per mutation. The template then does O(1) Set.has()
@@ -308,7 +308,7 @@ function toggleSelect(item: FolderInfo) {
       deselectDescendants(item.path)
       log(
          'file',
-         `Results: deselect descendants under ${kind} "${item.name}" — ${selectionTotalsLabel()}`
+         `Results: deselect descendants under ${kind} "${item.name}" ${selectionTotalsLabel()}`
       )
       return
    }
@@ -319,20 +319,20 @@ function toggleSelect(item: FolderInfo) {
 
    if (selectedMap.has(item.path)) {
       selectedMap.delete(item.path)
-      log('file', `Results: deselect ${kind} "${item.name}" — ${selectionTotalsLabel()}`)
+      log('file', `Results: deselect ${kind} "${item.name}" ${selectionTotalsLabel()}`)
    } else {
       const ancestor = findSelectedAncestor(item.path)
       if (ancestor) {
          explodeAncestorExcluding(ancestor, item.path)
          log(
             'file',
-            `Results: explode ancestor (exclude ${kind} "${item.name}") — ${selectionTotalsLabel()}`
+            `Results: explode ancestor (exclude ${kind} "${item.name}") ${selectionTotalsLabel()}`
          )
       } else {
          selectedMap.set(item.path, item)
          log(
             'file',
-            `Results: select ${kind} "${item.name}" (${formatBytes(item.size)}) — ${selectionTotalsLabel()}`
+            `Results: select ${kind} "${item.name}" (${formatBytes(item.size)}) ${selectionTotalsLabel()}`
          )
       }
    }
@@ -362,7 +362,7 @@ function setSelectedItems(items: TrashListItem[]) {
 /** Clears selection from the nav reset control (selection only; no navigation). */
 function clearSelectionFromNav() {
    if (selectedMap.size > 0) {
-      log('file', `Results: reset selection — was ${selectionTotalsLabel()}`)
+      log('file', `Results: reset selection, was ${selectionTotalsLabel()}`)
    }
    selectedMap.clear()
 }
@@ -370,7 +370,7 @@ function clearSelectionFromNav() {
 /** Clears all selections and navigates back to root. */
 function resetAll() {
    if (selectedMap.size > 0) {
-      log('file', `Results: reset all — was ${selectionTotalsLabel()}`)
+      log('file', `Results: reset all, was ${selectionTotalsLabel()}`)
    }
    selectedMap.clear()
    backStack.value = []

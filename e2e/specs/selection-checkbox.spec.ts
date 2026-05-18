@@ -92,7 +92,7 @@ describe('Selection model', () => {
 
          expect(await isReviewButtonDisabled()).toBe(false)
          // Should show a count greater than one now. We don't assert exact
-         // localized text — just that both selections contribute to size.
+         // localized text, just that both selections contribute to size.
          const text = await getReviewButtonText()
          expect(text.length).toBeGreaterThan(0)
       })
@@ -282,7 +282,7 @@ describe('Selection model', () => {
          try {
             await checkbox.click()
          } catch {
-            // disabled button may throw — either way state is unchanged
+            // disabled button may throw; either way state is unchanged
          }
 
          const after = await requireRowByName('Documents')

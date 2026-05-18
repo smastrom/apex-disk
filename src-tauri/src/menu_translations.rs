@@ -3,9 +3,9 @@
 
 //! Menu label translations for the supported app languages.
 //!
-//! Covers every menu item ApexDisk builds — native (About, Services, Hide,
+//! Covers every menu item ApexDisk builds: native (About, Services, Hide,
 //! Show All, Quit, Minimize, Close Window), custom (Check for Updates,
-//! Release Notes, License), and submenu titles (Window, Help) — so the menu
+//! Release Notes, License), and submenu titles (Window, Help), so the menu
 //! bar tracks the app language instead of the macOS system language.
 //!
 //! Keep the language list in sync with `APP_LANGUAGES` in

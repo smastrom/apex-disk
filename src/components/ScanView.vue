@@ -50,13 +50,13 @@ watch(
    [() => isScanning.value, () => folders.value.length],
    ([isScanning, folderCount]) => {
       if (isScanning) {
-         log('view', 'Scan: view — scanning')
+         log('view', 'Scan: view scanning')
          activeView.value = ActiveView.SCANNING
       } else if (folderCount === 0) {
-         log('view', 'Scan: view — launch')
+         log('view', 'Scan: view launch')
          activeView.value = ActiveView.LAUNCH
       } else {
-         log('view', 'Scan: view — results')
+         log('view', 'Scan: view results')
          activeView.value = ActiveView.RESULTS
       }
    },
@@ -102,7 +102,7 @@ function onSelectedSizeUpdate(value: number) {
 }
 
 function onReview(items: TrashListItem[]) {
-   log('view', `Scan: view — trash review (${items.length} items)`)
+   log('view', `Scan: view trash review (${items.length} items)`)
    deleteItems.value = items
    activeView.value = ActiveView.TRASH
 }
@@ -131,7 +131,7 @@ watch(resultsListRef, (ref) => {
 })
 
 function onTrashComplete(summary: { count: number; size: number }) {
-   log('trash', `Trash: complete — ${summary.count} item(s), ${formatBytes(summary.size)}`)
+   log('trash', `Trash: complete ${summary.count} item(s), ${formatBytes(summary.size)}`)
    deletedSummary.value = summary
    activeView.value = ActiveView.TRASH_COMPLETE
 }

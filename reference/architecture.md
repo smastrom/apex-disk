@@ -23,7 +23,7 @@ ApexDisk is a **macOS-only Tauri 2 desktop app**. Two processes, one bundle:
 └───────────────────────────────────────────────────────────────┘
 ```
 
-The boundary is the only real design axis in this codebase: every feature has a **Rust side** (anything touching the OS, the filesystem, or persistent state) and a **webview side** (anything you can see or click). Everything else — themes, animations, translations — is pure frontend with Rust as a passive store.
+The boundary is the only real design axis in this codebase: every feature has a **Rust side** (anything touching the OS, the filesystem, or persistent state) and a **webview side** (anything you can see or click). Everything else (themes, animations, translations) is pure frontend with Rust as a passive store.
 
 Subsystem deep-dives live in their own files: [`scanning.md`](scanning.md) (scan + trash flow), [`tauri-commands.md`](tauri-commands.md) (IPC channels, command surface, settings store), [`translations.md`](translations.md), [`themes.md`](themes.md). See also [`updates.md`](updates.md), [`releases.md`](releases.md), [`logging.md`](logging.md), [`compatibility.md`](compatibility.md).
 
@@ -85,16 +85,16 @@ Full channel semantics, the complete command surface, registration patterns in `
 A handful of rules that make the IPC hop easy to reason about:
 
 - **Names cross the wire unchanged.** Rust structs serialize field names as-is; the frontend consumes them verbatim. That means **Tauri-boundary objects use `snake_case`** even in TypeScript (e.g. `folder_info.is_protected`), while **frontend-only objects use `camelCase`**. Types for boundary shapes live in `src/types/` and mirror the Rust structs.
-- **Do not reimplement Rust logic in Vue.** The "is this path protected?" / "how big is this folder?" / "is FDA granted?" questions belong to Rust — even when the answer is cached in a ref.
+- **Do not reimplement Rust logic in Vue.** The "is this path protected?" / "how big is this folder?" / "is FDA granted?" questions belong to Rust, even when the answer is cached in a ref.
 - **Commands are total.** A command either resolves with data or rejects with an error string; no partial states on the wire. Progress-style feedback goes on events, not on the invoke promise.
 - **Cancellation is cooperative.** `cancel_scan` flips an atomic flag; `scan.rs` checks it inside the walk and exits early. The frontend `useScanner` also carries a `scanGeneration` counter so stale event payloads (from a scan the user already cancelled) are dropped in the webview.
-- **macOS-only.** There's no Windows/Linux branching in either side — see [`compatibility.md`](compatibility.md). objc2 AppKit/Foundation bindings are used freely in Rust.
+- **macOS-only.** There's no Windows/Linux branching in either side; see [`compatibility.md`](compatibility.md). objc2 AppKit/Foundation bindings are used freely in Rust.
 
 ## Build + testing boundary
 
 - **Frontend build:** `pnpm build` → `vue-tsc --noEmit && vite build`. Vite pipes CSS through **lightningcss** with a Safari 13 target so modern CSS downlevels to flat syntax (matches the declared minimum macOS; see [`compatibility.md`](compatibility.md)).
 - **App build:** `pnpm tauri:build` bundles Rust + Vite output into a universal-binary `.app` / `.dmg`. `pnpm tauri:build:beta` layers `tauri.beta.conf.json` as a merge config (different bundle id / product name, `createUpdaterArtifacts: false`).
-- **Unit / integration tests:** `pnpm test:unit` runs `cargo test` inside `src-tauri/` with `--test-threads=1` (serial — some tests mutate process-global state). Integration tests live in `src-tauri/tests/` (`scan_test.rs`, `trash_test.rs`, `store_test.rs`, `safe_folders_test.rs`, etc.); shared helpers in `tests/support/mod.rs`.
+- **Unit / integration tests:** `pnpm test:unit` runs `cargo test` inside `src-tauri/` with `--test-threads=1` (serial; some tests mutate process-global state). Integration tests live in `src-tauri/tests/` (`scan_test.rs`, `trash_test.rs`, `store_test.rs`, `safe_folders_test.rs`, etc.); shared helpers in `tests/support/mod.rs`.
 - **E2E:** `pnpm test:e2e` drives the app with WebdriverIO against a build with the `e2e` cargo feature enabled (which exposes `tauri_plugin_webdriver` and the `set_e2e_trash_mode` / `reset_e2e_state` commands). Specs in `e2e/specs/`.
 
 Release workflow and Beta channel: see [`releases.md`](releases.md).

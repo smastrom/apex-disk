@@ -121,7 +121,7 @@ describe('Scan flow', () => {
       await footerScan.click()
       await browser.pause(300)
 
-      // We need to go back to launch — check if we're on results or launch
+      // We need to go back to launch. Check if we're on results or launch
       // If results are showing from previous test, we need to go to settings and back
       // to trigger a fresh state. Actually, let's just check if scan launch is available.
       // Since we already completed a scan, we're on results. Navigate to settings then back.
@@ -139,7 +139,7 @@ describe('Scan flow', () => {
       const isResultsDisplayed = await results.isDisplayed()
 
       if (isResultsDisplayed) {
-         // Results are cached — this test verifies the scan view persists
+         // Results are cached; this test verifies the scan view persists
          await expect(results).toBeDisplayed()
       } else {
          // If we're on the launch screen, that works too

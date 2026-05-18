@@ -2,13 +2,13 @@
 
 ## Context
 
-ApexDisk is a Tauri v2 macOS disk analyzer (Vue 3 + Rust). The existing e2e suite only covers footer navigation. We need comprehensive e2e tests for the core flows: scanning, checkbox selection (complex 4-state model with parent/child relationships), trash review (including error/0KB case), and settings. The main challenge is **determinism** — the app scans the real home directory, which varies per machine and CI runner.
+ApexDisk is a Tauri v2 macOS disk analyzer (Vue 3 + Rust). The existing e2e suite only covers footer navigation. We need comprehensive e2e tests for the core flows: scanning, checkbox selection (complex 4-state model with parent/child relationships), trash review (including error/0KB case), and settings. The main challenge is **determinism**: the app scans the real home directory, which varies per machine and CI runner.
 
 ---
 
 ## Strategy: Rust-Side Mock via the Existing `e2e` Feature Flag
 
-Mock at the Rust layer (combined into the existing `e2e` flag) so the full IPC serialization path (Rust → serde → Tauri IPC → TypeScript) is exercised. The existing `create_test_home()` fixture from `src-tauri/tests/support/mod.rs` already builds a realistic temp directory — we **enhance and reuse** it at runtime. Every e2e build uses fixture data.
+Mock at the Rust layer (combined into the existing `e2e` flag) so the full IPC serialization path (Rust → serde → Tauri IPC → TypeScript) is exercised. The existing `create_test_home()` fixture from `src-tauri/tests/support/mod.rs` already builds a realistic temp directory, which we **enhance and reuse** at runtime. Every e2e build uses fixture data.
 
 ### Why not frontend mocking?
 
@@ -120,25 +120,25 @@ let user_dir = dirs::home_dir().ok_or("Unable to determine user directory")?;
 
 | Path                              | Type   | Size   | Properties          |
 | --------------------------------- | ------ | ------ | ------------------- |
-| **MyData/**                       | folder | —      | Normal, selectable  |
+| **MyData/**                       | folder | -      | Normal, selectable  |
 | `MyData/big.txt`                  | file   | 2048 B | Normal, ≥ 1KB       |
 | `MyData/small.txt`                | file   | 100 B  | < 1KB               |
 | `MyData/empty.txt`                | file   | 0 B    | Zero-byte           |
 | `MyData/.hidden`                  | file   | 50 B   | Hidden              |
-| **MyData/SubFolder/**             | folder | —      | Nested, selectable  |
+| **MyData/SubFolder/**             | folder | -      | Nested, selectable  |
 | `MyData/SubFolder/alpha.txt`      | file   | 1024 B | Normal              |
 | `MyData/SubFolder/beta.txt`       | file   | 512 B  | Normal              |
-| **MyData/SubFolder/Deep/**        | folder | —      | 3rd level nesting   |
+| **MyData/SubFolder/Deep/**        | folder | -      | 3rd level nesting   |
 | `MyData/SubFolder/Deep/gamma.txt` | file   | 256 B  | Normal              |
-| **Documents/**                    | folder | —      | Protected           |
+| **Documents/**                    | folder | -      | Protected           |
 | `Documents/report.txt`            | file   | 2048 B | In protected folder |
 | `Documents/note.txt`              | file   | 500 B  | < 1KB, in protected |
-| **Projects/**                     | folder | —      | Normal, selectable  |
+| **Projects/**                     | folder | -      | Normal, selectable  |
 | `Projects/app`                    | file   | 5120 B | Normal              |
-| **Projects/src/**                 | folder | —      | Nested subfolder    |
+| **Projects/src/**                 | folder | -      | Nested subfolder    |
 | `Projects/src/main.rs`            | file   | 1024 B | Normal              |
-| `.ssh`                            | folder | —      | Skipped (invisible) |
-| `.Trash`                          | folder | —      | Skipped (invisible) |
+| `.ssh`                            | folder | -      | Skipped (invisible) |
+| `.Trash`                          | folder | -      | Skipped (invisible) |
 
 ---
 
@@ -241,7 +241,7 @@ it('explode at nested level selects siblings at every intermediate level')
   - Assert "beta.txt" IS selected (sibling at SubFolder level)
   - Assert "Deep" folder IS selected (sibling at SubFolder level)
   - Navigate back to MyData level
-  - Assert "big.txt" IS selected (sibling at MyData level — explode selected siblings here too)
+  - Assert "big.txt" IS selected (sibling at MyData level; explode selected siblings here too)
   - Assert "small.txt" IS selected
   - Assert "SubFolder" shows INDETERMINATE (has selected children but not itself)
 
@@ -429,7 +429,7 @@ it('clicking Scan Again returns to scan launch')
 
 ```
 it('when trash returns count=0, shows error state with alert icon')
-  — This test requires launching app with E2E_TRASH_RESULT=zero
+  - This test requires launching app with E2E_TRASH_RESULT=zero
   - Select MyData → Review → wait → click confirm-trash
   - Assert confirmation screen renders with:
     - AnimatedAlertCircle (error icon, class "iconError")
@@ -486,7 +486,7 @@ it('combined: hidden + under1Kb shows all files')
   - Assert big.txt, small.txt, .hidden all present
 ```
 
-### Suite 5: `app-navigation.spec.ts` (existing — keep as-is)
+### Suite 5: `app-navigation.spec.ts` (existing, keep as-is)
 
 ---
 
@@ -542,18 +542,18 @@ async function isReviewButtonDisabled(): Promise<boolean>
 ### Clicking checkbox vs row
 
 - Clicking the row navigates into a folder; clicking `[data-testid="results-row-checkbox"]` selects
-- The checkbox has `@click.stop` so events don't propagate — WebDriverIO must target the checkbox specifically
+- The checkbox has `@click.stop` so events don't propagate; WebDriverIO must target the checkbox specifically
 - Files don't navigate on row click (only folders), but checkbox click still selects
 
 ### View transitions
 
-- App uses Vue `<Transition>` and `view-transition-name` — elements may briefly leave the DOM
+- App uses Vue `<Transition>` and `view-transition-name`, so elements may briefly leave the DOM
 - Always `waitForDisplayed` before interacting
 - Add small `browser.pause(300)` after navigation to let transitions settle
 
 ### Row identification
 
-- Rows don't embed item name in `data-testid` — must iterate `$$('[data-testid="results-row-folder"], [data-testid="results-row-file"]')` and match by text content
+- Rows don't embed item name in `data-testid`; must iterate `$$('[data-testid="results-row-folder"], [data-testid="results-row-file"]')` and match by text content
 - Consider adding `data-name` attributes in a future pass for easier targeting
 
 ### Settings reset
@@ -583,7 +583,7 @@ async function isReviewButtonDisabled(): Promise<boolean>
 2. `scan-flow.spec.ts` + helpers
 3. Validate the approach works locally and in CI
 
-**Follow-up PRs:** 4. `selection-checkbox.spec.ts` (most complex suite — all 2a through 2g sections) 5. `trash-review.spec.ts` (including 0KB error case) 6. `settings-flow.spec.ts`
+**Follow-up PRs:** 4. `selection-checkbox.spec.ts` (most complex suite, all 2a through 2g sections) 5. `trash-review.spec.ts` (including 0KB error case) 6. `settings-flow.spec.ts`
 
 ## Verification
 

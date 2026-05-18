@@ -152,7 +152,7 @@ export async function getRowByName(name: string): Promise<WebdriverIO.Element | 
  *
  * Note: the navigation helpers (`navigateIntoFolder`, `navigateBack`,
  * `navigateForward`, `navigateBackToRoot`) are responsible for waiting until
- * the slide has settled before this is called — otherwise this can lock onto
+ * the slide has settled before this is called; otherwise this can lock onto
  * a row from the leaving list and click on an about-to-detach node.
  */
 export async function requireRowByName(name: string): Promise<WebdriverIO.Element> {
@@ -277,7 +277,7 @@ export async function isReviewButtonDisabled(): Promise<boolean> {
 /**
  * Reset app settings to defaults via the e2e Tauri command. The Rust side
  * emits `settings:reset` after writing, which the frontend store listens for
- * and uses to refresh its in-memory ref — so the UI is in sync without
+ * and uses to refresh its in-memory ref, so the UI is in sync without
  * having to replay toggle clicks (which used to fire app-slide transitions
  * and was a source of flake).
  */
@@ -529,7 +529,7 @@ export async function resetAndScan() {
       return
    }
 
-   // Otherwise we're on the launch screen — start a new scan.
+   // Otherwise we're on the launch screen, so start a new scan.
    const launch = $(sel.scanLaunch)
    const onLaunch = await launch.isDisplayed().catch(() => false)
    if (onLaunch) {

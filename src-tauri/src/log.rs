@@ -46,7 +46,7 @@ pub(crate) fn format_diag_utc_time() -> String {
 }
 
 /// Entry-point traces for IPC handlers. **Debug builds** (`tauri dev`) or
-/// **`APEX_DISK_DEBUG=1`** release — same rule as updater diagnostics.
+/// **`APEX_DISK_DEBUG=1`** release: same rule as updater diagnostics.
 pub(crate) fn dev_rust_trace(channel: &str, message: &str) {
     if !cfg!(debug_assertions) && !is_apex_disk_debug() {
         return;

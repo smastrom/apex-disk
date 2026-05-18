@@ -1,7 +1,7 @@
 //! Tests for `system_info::get_system_info`.
 //!
 //! Runs the actual command against the host system (which is always macOS for
-//! ApexDisk). Asserts that every field in `SystemInfo` is populated — either
+//! ApexDisk). Asserts that every field in `SystemInfo` is populated, either
 //! with a real value from the underlying `sw_vers`/`system_profiler`/`sysctl`
 //! call, or with the literal string `"Unknown"` when a lookup fails. Also
 //! verifies that repeated calls return consistent results.

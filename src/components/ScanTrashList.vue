@@ -55,7 +55,7 @@ const { t } = useTranslations()
 /**
  * Safety countdown: the trash button stays disabled for TRASH_COUNTDOWN_MS
  * after the view becomes active. Prevents accidental taps when the user just
- * navigated in. A plain `let` timer ID is fine — it's never read reactively.
+ * navigated in. A plain `let` timer ID is fine; it's never read reactively.
  */
 const countdownRemaining = ref(0)
 let countdownInterval: ReturnType<typeof setInterval> | null = null
@@ -107,7 +107,7 @@ onUnmounted(stopCountdown)
 
 /**
  * Cleanup when component becomes inactive (KeepAlive scenario).
- * Only reset transient UI states — checkedMapRef is intentionally preserved
+ * Only reset transient UI states. checkedMapRef is intentionally preserved
  * so selections survive AppView switches. It is cleared on abort or after
  * a successful trash (via parent handling of 'cancel' / 'complete' events).
  */
@@ -202,7 +202,7 @@ function toggle(path: string) {
 
    log(
       'trash',
-      `Trash: ${action} ${kind} "${item.name}" (${formatBytes(item.size)}) — ${checkedTotalsLabel()}`
+      `Trash: ${action} ${kind} "${item.name}" (${formatBytes(item.size)}) ${checkedTotalsLabel()}`
    )
 }
 
@@ -247,7 +247,7 @@ async function onTrashClick() {
    )
 
    await new Promise((r) => setTimeout(r, TRASH_POST_TRASH_SLEEP_MS))
-   // Keep isDeleting=true visually — the parent will tear down this component
+   // Keep isDeleting=true visually. The parent will tear down this component
    // after handling `complete`. Resetting here would flash the ready state.
    emit('complete', summary)
 }

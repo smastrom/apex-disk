@@ -28,7 +28,7 @@ export function useAppUpdate(options: { autoUpdates: boolean }) {
             log('app', 'Updates: none available')
          }
       } catch (error) {
-         log('app', `Updates: silent check failed — ${error}`)
+         log('app', `Updates: silent check failed: ${error}`)
       } finally {
          isChecking.value = false
       }
@@ -49,7 +49,7 @@ export function useAppUpdate(options: { autoUpdates: boolean }) {
          updateReady.value = true
          log('app', `Updates: v${version} downloaded, ready to install`)
       } catch (error) {
-         log('app', `Updates: download failed — ${error}`)
+         log('app', `Updates: download failed: ${error}`)
       } finally {
          isDownloading.value = false
       }

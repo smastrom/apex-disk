@@ -9,7 +9,7 @@
  *
  * Uses `reset_e2e_state` to restore defaults between tests and `rescanFresh`
  * to re-run the scan after toggling a filter (settings only take effect on
- * the next scan, by design — surfaced via the "effective next scan" notice).
+ * the next scan, by design, and surfaced via the "effective next scan" notice).
  */
 
 import {
@@ -75,7 +75,7 @@ describe('Settings flow', () => {
 
       it('on (with under 1 KB also on, since .hidden is 50 B): .hidden appears', async () => {
          await goToSettingsView()
-         // .hidden is 50 B, so the under-1 KB cutoff also hides it — both
+         // .hidden is 50 B, so the under-1 KB cutoff also hides it; both
          // toggles must be on for the file to show.
          await clickToggle(sel.settingsToggleHiddenFiles)
          await clickToggle(sel.settingsToggleUnder1Kb)

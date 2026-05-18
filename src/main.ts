@@ -24,7 +24,7 @@ import AppShell from './components/AppShell.vue'
 
       if (systemInfo.value) {
          const { macos_version, cpu_info } = systemInfo.value
-         log('app', `App: v${APP_VERSION} — macOS ${macos_version}, ${cpu_info}`)
+         log('app', `App: v${APP_VERSION}, macOS ${macos_version}, ${cpu_info}`)
       } else {
          log('app', `App: v${APP_VERSION}`)
       }

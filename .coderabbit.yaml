@@ -43,7 +43,7 @@ reviews:
            - Filesystem operations: never follow symlinks outside intended
              scope; respect macOS SIP/protected paths and Full Disk Access
              requirements. The `safe_folders` module enforces destructive-
-             operation guardrails — changes there need extra scrutiny.
+             operation guardrails; changes there need extra scrutiny.
            - Tauri command surface (`#[tauri::command]`): validate all
              frontend-supplied inputs at the boundary, never trust paths.
            - Concurrency: scan uses rayon; check for data races, unbounded
@@ -53,7 +53,7 @@ reviews:
       - path: 'src-tauri/tests/**'
         instructions: |
            Rust integration tests. Use real tempdirs (the `tempfile` crate)
-           rather than mocking the filesystem — prod divergence on mocked
+           rather than mocking the filesystem. Prod divergence on mocked
            fs has bitten this project before. Tests must be deterministic
            and single-threaded-safe (suite runs with --test-threads=1).
       - path: 'src/components/**'
@@ -63,25 +63,25 @@ reviews:
            - Scoped styles; consume design tokens from
              `src/assets/css/theme.css` rather than hard-coded colors.
            - Accent / hue colors, element placement, and text copy are
-             considered stable — flag changes to any of them.
+             considered stable; flag changes to any of them.
            - Accessibility: aria labels, focus management, reduced-motion
              handling (`@media (prefers-reduced-motion)` is respected
              across the codebase).
       - path: 'src/stores/**'
         instructions: |
            App-settings store is persisted via tauri-plugin-store. Any
-           schema change needs a migration path — existing users' stored
+           schema change needs a migration path; existing users' stored
            settings must keep working after upgrade.
       - path: 'src/lib/**'
         instructions: |
            Frontend utilities and composables. `use-*.ts` files are Vue
-           composables — verify correct reactivity (refs vs. plain values),
+           composables: verify correct reactivity (refs vs. plain values),
            cleanup on unmount, and that any Tauri invoke calls handle
            rejection.
       - path: 'src/assets/translations/**'
         instructions: |
            Translation files. When keys are added in one language, all
-           supported languages must be updated — missing keys fall back
+           supported languages must be updated; missing keys fall back
            silently and are hard to catch.
       - path: 'src/assets/css/**'
         instructions: |
@@ -93,7 +93,7 @@ reviews:
            WebdriverIO end-to-end tests against a built Tauri binary.
            Use the real backend (tests enable the `e2e` cargo feature
            which wires `tauri-plugin-webdriver` and real tempdir
-           fixtures) — do not mock commands.
+           fixtures). Do not mock commands.
       - path: 'src-tauri/tauri.conf.json'
         instructions: |
            Changing window flags, bundle identifier, updater endpoint,
@@ -103,7 +103,7 @@ reviews:
         instructions: |
            Tauri v2 capability files grant the frontend access to
            commands and plugins. Widen permissions only with explicit
-           justification — this is the app's security boundary.
+           justification; this is the app's security boundary.
       - path: '.github/workflows/**'
         instructions: |
            Release (`release.yml`) and beta (`beta.yml`) workflows
@@ -142,7 +142,7 @@ code_generation:
            instructions: |
               Rust integration tests live here. Use the `tempfile` crate
               for real on-disk fixtures (no fs mocks). Keep tests
-              single-threaded-safe — the suite is invoked with
+              single-threaded-safe. The suite is invoked with
               `cargo test -- --test-threads=1`.
          - path: 'e2e/**'
            instructions: |

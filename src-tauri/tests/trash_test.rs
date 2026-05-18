@@ -206,7 +206,7 @@ fn trash_paths_sync_does_not_remove_protected() {
     );
 }
 
-/// An empty items list must return empty (files, dirs) — no panic.
+/// An empty items list must return empty (files, dirs) without panicking.
 #[test]
 fn filter_items_empty_list() {
     let home_dir = create_test_home();

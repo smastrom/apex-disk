@@ -53,7 +53,7 @@ button:not(:empty),
  * `html.focus-ring-keyboard` class).
  *
  * Why not `:focus-visible`? Safari 13/14 don't implement its UA heuristics
- * the way Safari 17+ does — on older macOS we'd see the native outline on
+ * the way Safari 17+ does, so on older macOS we'd see the native outline on
  * mouse clicks. The JS-driven class works uniformly on Safari 13+.
  */
 button:focus,

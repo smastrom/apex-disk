@@ -41,7 +41,7 @@ function onScanAgain() {
    const s = props.deletedSummary
 
    if (s && s.count > 0) {
-      log('trash', `Trash: scan again — last delete ${s.count} item(s), ${formatBytes(s.size)}`)
+      log('trash', `Trash: scan again, last delete ${s.count} item(s), ${formatBytes(s.size)}`)
    } else {
       log('trash', 'Trash: scan again')
    }

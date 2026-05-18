@@ -4,7 +4,7 @@
 
 **Please do not open public GitHub issues for security-sensitive bugs.**
 
-If you believe you've found a vulnerability in ApexDisk — anything that could compromise user data, bypass macOS sandboxing or entitlements, escalate privileges, abuse the in-app updater, or tamper with signed builds — email:
+If you believe you've found a vulnerability in ApexDisk (anything that could compromise user data, bypass macOS sandboxing or entitlements, escalate privileges, abuse the in-app updater, or tamper with signed builds), email:
 
 **smastrom@proton.me**
 
@@ -39,7 +39,7 @@ In scope:
 
 Out of scope:
 
-- Vulnerabilities in third-party dependencies already tracked upstream (please report those to the respective project — you can still notify me so I can pin/patch)
+- Vulnerabilities in third-party dependencies already tracked upstream (please report those to the respective project; you can still notify me so I can pin/patch)
 - Social-engineering of the maintainer or release infrastructure
 - Issues that require a pre-compromised macOS account
 

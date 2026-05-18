@@ -12,8 +12,8 @@
 //!
 //! On macOS, when the app has Full Disk Access (FDA), all `read_dir` / file
 //! access here succeed for Desktop, Documents, Music, Library, etc. without
-//! any per-folder permission prompts. No special code path is needed — the
-//! same I/O is used; the OS grants access process-wide when FDA is granted.
+//! any per-folder permission prompts. No special code path is needed; the
+//! same I/O is used and the OS grants access process-wide when FDA is granted.
 
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
@@ -45,7 +45,7 @@ static SCAN_CANCELLED: AtomicBool = AtomicBool::new(false);
 static SCAN_RUNNING: AtomicBool = AtomicBool::new(false);
 
 /// Number of add_size calls between time checks. Avoids a SystemTime::now()
-/// syscall on every single directory — at ~150ms throttle and typical I/O
+/// syscall on every single directory. At ~150ms throttle and typical I/O
 /// rates, checking every 512 calls is still well within the emission window.
 const EMIT_CHECK_INTERVAL: u64 = 512;
 
@@ -107,7 +107,7 @@ impl LiveScanState {
             log::dev_rust_trace(
                 "scan",
                 &format!(
-                    "Scan: live — {} (top-level {}/{}) scanned_total={} completed_top={}",
+                    "Scan: live {} (top-level {}/{}) scanned_total={} completed_top={}",
                     scan_path_for_log(folder_path, home),
                     current_top,
                     self.total,
@@ -314,7 +314,7 @@ fn build_folder_tree(
     file_entries.reverse();
 
     // Calculate the most recent last_modified date from non-system files.
-    // Only the top N largest files are retained — small files (which include system files
+    // Only the top N largest files are retained. Small files (which include system files
     // like .DS_Store) are intentionally excluded so they don't alter the folder's date.
     let mut most_recent_modified: Option<i64> = None;
     for (fname, _, file_last_modified) in &file_entries {
@@ -499,7 +499,7 @@ pub fn get_user_folders_sync_with_progress(
             log::dev_rust_trace(
                 "scan",
                 &format!(
-                    "Scan: top-level done — {} size={} progress {}/{} scanned_total={} completed_top={}",
+                    "Scan: top-level done {} size={} progress {}/{} scanned_total={} completed_top={}",
                     scan_path_for_log(&path, &user_dir),
                     log::format_bytes_si(info.size),
                     cur,
@@ -534,7 +534,7 @@ pub fn get_user_folders_sync_with_progress(
 }
 
 /// Tauri command: runs the folder scan on a blocking task and emits progress events.
-/// Only one scan can run at a time — concurrent calls return an error.
+/// Only one scan can run at a time; concurrent calls return an error.
 #[tauri::command]
 pub async fn get_user_folders(
     app: tauri::AppHandle,

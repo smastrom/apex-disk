@@ -46,7 +46,7 @@ function serializeDetail(detail: unknown): string {
  *
  * - Dev builds (`import.meta.env.DEV`): always enabled (authoring / local QA).
  * - Prod builds: enabled only when the user launches with `APEX_DISK_DEBUG=1`
- *   (checked via Rust). Intended for **bug reports**—capture Terminal output and
+ *   (checked via Rust). Intended for **bug reports**: capture Terminal output and
  *   attach to an issue; not for everyday use.
  */
 export async function initLog(): Promise<void> {

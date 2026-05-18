@@ -1,7 +1,7 @@
 # Builds a signed, notarized **ApexDisk Beta** DMG. Trigger: **workflow_dispatch only** (never on push).
 # Publishes a GitHub **pre-release** (tag `beta-<run_id>`) with the DMG + RELEASES_BETA.md so testers
 # can install from the Releases page. Also uploads a workflow artifact. No latest.json / updater channel.
-# Version is whatever is on the branch you choose when clicking "Run workflow"—see reference/updates.md.
+# Version is whatever is on the branch you choose when clicking "Run workflow". See reference/updates.md.
 
 name: Beta
 
@@ -81,7 +81,7 @@ jobs:
               if awk '/^## /{if(h){exit} h=1} h' RELEASES_BETA.md | grep -q .; then
                 awk '/^## /{if(h){exit} h=1} h' RELEASES_BETA.md >> "$GITHUB_STEP_SUMMARY"
               else
-                echo "_No \`##\` section yet—edit RELEASES_BETA.md before the run if you want dated notes here._" >> "$GITHUB_STEP_SUMMARY"
+                echo "_No \`##\` section yet. Edit RELEASES_BETA.md before the run if you want dated notes here._" >> "$GITHUB_STEP_SUMMARY"
               fi
 
          - name: Prepare pre-release notes

@@ -86,7 +86,7 @@ fn non_english_languages_differ_from_english() {
 
         assert!(
             any_different,
-            "{lang} labels are identical to English — translations may be missing"
+            "{lang} labels are identical to English; translations may be missing"
         );
     }
 }
