@@ -2,7 +2,7 @@
 <!-- Copyright (C) 2026 Simone Mastromattei -->
 
 <template>
-   <div class="loading-spinner" role="status" aria-label="Loading">
+   <div class="AppLoadingScreen-root" role="status" aria-label="Loading">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
          <circle cx="12" cy="12" r="9.5" fill="none" stroke-width="3" stroke-linecap="round" />
       </svg>
@@ -10,25 +10,25 @@
 </template>
 
 <style scoped>
-.loading-spinner {
+.AppLoadingScreen-root {
    position: fixed;
    inset: 0;
    display: flex;
    align-items: center;
    justify-content: center;
    background: #1a1a1a;
-}
 
-.loading-spinner svg {
-   width: 40px;
-   height: 40px;
-   stroke: #888;
-   transform-origin: center;
-   animation: spinner-rotate 2s linear infinite;
-}
+   & svg {
+      width: 40px;
+      height: 40px;
+      stroke: #888;
+      transform-origin: center;
+      animation: spinner-rotate 2s linear infinite;
+   }
 
-.loading-spinner circle {
-   animation: spinner-dash 1.5s ease-in-out infinite;
+   & circle {
+      animation: spinner-dash 1.5s ease-in-out infinite;
+   }
 }
 
 @keyframes spinner-rotate {
@@ -54,13 +54,15 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-   .loading-spinner svg {
+   .AppLoadingScreen-root svg {
       animation-name: spinner-pulse;
    }
-   .loading-spinner circle {
+
+   .AppLoadingScreen-root circle {
       animation: none;
       stroke-dasharray: 42 150;
    }
+
    @keyframes spinner-pulse {
       0%,
       100% {
