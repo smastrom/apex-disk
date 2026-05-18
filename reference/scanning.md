@@ -29,12 +29,27 @@ scan.rs::get_user_folders                  src-tauri/src/scan.rs
 `scan.rs` builds a `FolderInfo` tree rooted at `$HOME`. Each node carries:
 
 - `name`, `path`, `size`
-- `is_file`, `is_protected`, `is_skipped`
+- `is_file`, `is_protected`, `is_fda_required`
+- `last_modified`
+- `truncated` (see [Per-folder file cap](#per-folder-file-cap) below)
 - nested children (for directories)
 
 The **`is_protected` flag is filled server-side** — the UI must not re-evaluate "is this path protected?" because that knowledge belongs to `safe_folders.rs` (single source of truth, also consumed by `trash.rs`).
 
 Fields cross the wire `snake_case` (see [`architecture.md`](architecture.md) — boundary conventions). The matching TypeScript type lives in `src/types/structs.ts`.
+
+### Per-folder file cap
+
+`scan::MAX_FILES_PER_DIR` (currently **300**) bounds the number of file entries retained per directory. The walker keeps the **N largest by size** via a min-heap and counts every other file's size into the folder total — so sizes stay accurate even when entries are dropped.
+
+The constant has a UI-visible contract:
+
+- The cap applies to **files only**. Subfolders are always retained.
+- When at least one file is dropped, the folder's `truncated` field is set to `true`. The frontend reads this to show a notice at the end of the list.
+- The frontend caps **rendered rows per view** at the same number (`MAX_DISPLAYED_ITEMS` in `ScanResultsList.vue`). This bounds DOM size without a row virtualizer; the dropped tail is always the smallest entries because children arrive sorted by size desc. When the frontend slice fires (items > cap), the notice also shows.
+- Either trigger uses the same copy (`ScanResultsList.yaml` → `truncated`). The user doesn't need to distinguish between "Rust dropped files" and "UI hid small entries"; either way they're not seeing everything.
+
+**If you bump the cap, change both sides together** — the Rust constant and the frontend `MAX_DISPLAYED_ITEMS`. They have to stay in sync, otherwise the notice copy ("Only the N largest entries are shown") lies in one direction.
 
 ### Progress events: `folder-scan-progress`
 
