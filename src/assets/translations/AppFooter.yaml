@@ -36,3 +36,15 @@ information:
    zh: 信息
    ja: 情報
    ar: المعلومات
+
+scanInProgress:
+   en: Scan in progress
+   it: Scansione in corso
+   es: Escaneo en curso
+   fr: Analyse en cours
+   pt: Análise em andamento
+   de: Scan läuft
+   ru: Сканирование выполняется
+   zh: 正在扫描
+   ja: スキャン中
+   ar: المسح قيد التقدم

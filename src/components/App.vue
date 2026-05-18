@@ -30,6 +30,7 @@ import { disableNativeContextMenu } from '@/lib/use-context-menu'
 import { applyTheme, applyDirection } from '@/lib/dom'
 import { setupFocusRing } from '@/lib/use-focus-ring'
 import { useDiskUsage } from '@/lib/use-disk-usage'
+import { useScanner } from '@/lib/use-scanner'
 
 import '@/assets/css/theme.css'
 import '@/assets/css/global.css'
@@ -57,6 +58,9 @@ const { isChecking, isDownloading, availableVersion, updateReady, onCheckForUpda
       autoInstallUpdates: settingsStore.settings.value.autoInstallUpdates,
    })
 
+const { folders, isScanning, progress, elapsedSeconds, loadFolders, onAbort, onCancel } =
+   useScanner()
+
 const { systemInfo } = await useSystemInfo()
 const { isFdaGranted } = await useFullDiskAccess()
 const { diskUsage } = await useDiskUsage()
@@ -76,8 +80,14 @@ setupFocusRing()
                   <ScanView
                      v-if="activeView === 'scan'"
                      key="scan"
-                     :appActiveView="activeView"
                      :diskUsage="diskUsage"
+                     :folders="folders"
+                     :isScanning="isScanning"
+                     :progress="progress"
+                     :elapsedSeconds="elapsedSeconds"
+                     :loadFolders="loadFolders"
+                     :onAbort="onAbort"
+                     :onCancel="onCancel"
                   />
 
                   <SettingsView
@@ -101,7 +111,7 @@ setupFocusRing()
          </div>
       </div>
 
-      <AppFooter :activeView="activeView" @select-view="setActiveView" />
+      <AppFooter :activeView="activeView" :isScanning="isScanning" @select-view="setActiveView" />
 
       <AppViewAnnouncer :activeView="activeView" />
    </div>

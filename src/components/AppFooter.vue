@@ -4,21 +4,23 @@
 <!--
 AppFooter
 
-Purpose: Bottom navigation bar with Scan, Settings, Information buttons. Mobile-app style footer.
+Purpose: Bottom navigation bar with Scan, Settings, Information buttons. Mobile-app style footer. Shows an accent-colored dot on the Scan icon when a scan is running but the user is viewing Settings or Information.
 
-Props: activeView (string?), emit: select-view
+Props: activeView (string?), isScanning (boolean?), emit: select-view
 
 Example:
- <AppFooter :activeView="activeView" @select-view="onSelect" />
+ <AppFooter :activeView="activeView" :isScanning="isScanning" @select-view="onSelect" />
 -->
 
 <script setup lang="ts">
 import { PhMagnifyingGlass, PhGear, PhInfo } from '@phosphor-icons/vue'
 
+import { computed } from 'vue'
 import { useTranslations } from '@/lib/use-translations'
 
-defineProps<{
+const props = defineProps<{
    activeView?: string
+   isScanning?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -26,6 +28,8 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useTranslations()
+
+const showScanDot = computed(() => Boolean(props.isScanning) && props.activeView !== 'scan')
 </script>
 
 <template>
@@ -37,7 +41,16 @@ const { t } = useTranslations()
          data-testid="footer-scan"
          @click="emit('select-view', 'scan')"
       >
-         <PhMagnifyingGlass :size="24" weight="regular" aria-hidden="true" />
+         <span class="AppFooter-iconWrap">
+            <PhMagnifyingGlass :size="24" weight="regular" aria-hidden="true" />
+            <span
+               v-if="showScanDot"
+               class="AppFooter-scanDot"
+               data-testid="footer-scan-dot"
+               :aria-label="t('AppFooter', 'scanInProgress')"
+               role="status"
+            />
+         </span>
          <span>{{ t('AppFooter', 'scan') }}</span>
       </button>
       <button
@@ -47,7 +60,9 @@ const { t } = useTranslations()
          data-testid="footer-settings"
          @click="emit('select-view', 'settings')"
       >
-         <PhGear :size="24" weight="regular" aria-hidden="true" />
+         <span class="AppFooter-iconWrap">
+            <PhGear :size="24" weight="regular" aria-hidden="true" />
+         </span>
          <span>{{ t('AppFooter', 'settings') }}</span>
       </button>
       <button
@@ -57,7 +72,9 @@ const { t } = useTranslations()
          data-testid="footer-information"
          @click="emit('select-view', 'information')"
       >
-         <PhInfo :size="24" weight="regular" aria-hidden="true" />
+         <span class="AppFooter-iconWrap">
+            <PhInfo :size="24" weight="regular" aria-hidden="true" />
+         </span>
          <span>{{ t('AppFooter', 'information') }}</span>
       </button>
    </nav>
@@ -126,6 +143,36 @@ const { t } = useTranslations()
 
    span {
       text-shadow: 0 0 8px var(--color-accent-glow);
+   }
+}
+
+.AppFooter-iconWrap {
+   position: relative;
+   display: inline-flex;
+   line-height: 0;
+}
+
+.AppFooter-scanDot {
+   position: absolute;
+   top: -2px;
+   right: -2px;
+   width: 8px;
+   height: 8px;
+   border-radius: 50%;
+   background: var(--color-accent-alt);
+   box-shadow: 0 0 6px var(--color-accent-alt-glow);
+   animation: AppFooter-scanDotPulse 1.6s var(--ease-apple-out) infinite;
+}
+
+@keyframes AppFooter-scanDotPulse {
+   0%,
+   100% {
+      opacity: 1;
+      transform: scale(1);
+   }
+   50% {
+      opacity: 0.55;
+      transform: scale(0.85);
    }
 }
 </style>

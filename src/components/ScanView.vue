@@ -4,12 +4,12 @@
 <!--
 ScanView
 
-Purpose: Common scan shell. Always shows ScanViewHeader at top; body switches between ScanResults, ScanTrash, or ScanTrashConfirmation.
+Purpose: Common scan shell. Always shows ScanViewHeader at top; body switches between ScanResults, ScanTrash, or ScanTrashConfirmation. Scanner state is owned by App.vue (so it survives switches to Settings / Information) and passed in as props.
 
-Props: diskUsage (DiskUsage | null)
+Props: diskUsage (DiskUsage | null), folders (FolderInfo[]), isScanning (boolean), progress (ScanProgress), elapsedSeconds (number), loadFolders (() => void), onAbort (() => void), onCancel (() => void)
 
 Example:
- <ScanView :diskUsage="diskUsage" />
+ <ScanView :diskUsage="diskUsage" :folders="folders" :isScanning="isScanning" :progress="progress" :elapsedSeconds="elapsedSeconds" :loadFolders="loadFolders" :onAbort="onAbort" :onCancel="onCancel" />
 -->
 
 <script setup lang="ts">
@@ -20,21 +20,28 @@ import ScanResultsList from './ScanResultsList.vue'
 import ScanProgress from './ScanProgress.vue'
 import ScanLaunch from './ScanLaunch.vue'
 
-import { ref, watch, onDeactivated, useTemplateRef } from 'vue'
+import { ref, watch, onDeactivated, useTemplateRef, toRef } from 'vue'
 
 import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'
-import { useScanner } from '@/lib/use-scanner'
 
-import type { TrashListItem } from '@/types/structs'
+import type { FolderInfo, ScanProgress as ScanProgressData, TrashListItem } from '@/types/structs'
 import type { DiskUsage } from '@/types/disk'
 
-defineProps<{
+const props = defineProps<{
    diskUsage?: DiskUsage | null
+   folders: FolderInfo[]
+   isScanning: boolean
+   progress: ScanProgressData
+   elapsedSeconds: number
+   loadFolders: () => void
+   onAbort: () => void
+   onCancel: () => void
 }>()
 
-const { folders, isScanning, progress, elapsedSeconds, loadFolders, onAbort, onCancel } =
-   useScanner()
+const folders = toRef(props, 'folders')
+const isScanning = toRef(props, 'isScanning')
+const onCancel = () => props.onCancel()
 
 enum ActiveView {
    LAUNCH = 'launch',
