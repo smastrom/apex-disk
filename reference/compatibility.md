@@ -120,11 +120,45 @@ Other MSRVs in the tree: tokio (1.63), serde (1.31), rayon (1.59), nix (1.69), t
 
 ### 7. No opt-in to newer-only browser APIs
 
+The minimum is Safari 13. Any API, selector, or HTML attribute that requires Safari 14+ must be avoided, or its absence must be silently survivable on 13 (no broken layout, no JS errors). lightningcss handles modern CSS syntax (nesting, layers, `inset`, logical props) — the patterns below are the things it **cannot** transpile, mostly runtime APIs and selectors with no static replacement.
+
+| Pattern (grep)                                               | API / Feature                    | Min Safari  |
+| ------------------------------------------------------------ | -------------------------------- | ----------- |
+| `view-transition` / `startViewTransition`                    | View Transitions API             | 18          |
+| `popover=` / `:popover-open` / `showPopover` / `hidePopover` | Popover API                      | 17          |
+| `@starting-style`                                            | Animation entry/exit             | 17.5        |
+| `light-dark(`                                                | Color scheme function            | 17.5        |
+| `text-wrap:` (`balance` / `pretty`)                          | Typographic wrap                 | 17.4        |
+| `:user-invalid` / `:user-valid`                              | Form validation pseudos          | 16.5        |
+| `@container` / `container-type` / `cqw`, `cqh`, `cqi`, `cqb` | Container queries                | 16          |
+| `subgrid`                                                    | `grid-template-rows: subgrid`    | 16          |
+| `@property`                                                  | Typed custom properties          | 16.4        |
+| `:focus-visible`                                             | Weak heuristics pre-Safari 17    | 17 reliable |
+| `:has(`                                                      | Parent selector                  | 15.4        |
+| `accent-color:`                                              | Native control accent            | 15.4        |
+| `<dialog>` element                                           | Native modal                     | 15.4        |
+| `structuredClone(`                                           | Deep clone                       | 15.4        |
+| `Object.hasOwn(`                                             | Modern `hasOwnProperty`          | 15.4        |
+| `crypto.randomUUID`                                          | Secure UUID v4                   | 15.4        |
+| `requestIdleCallback`                                        | Idle callback                    | 15.4        |
+| `loading="lazy"` (on `<img>`)                                | Native lazy image                | 15.4        |
+| `aspect-ratio:`                                              | Shorthand for width/height ratio | 15          |
+| `Promise.any(`                                               | First-success of N promises      | 14          |
+
+Single combined check:
+
 ```bash
-grep -rn 'view-transition\|startViewTransition\|popover=\|:popover-open\|@starting-style\|showPopover\|hidePopover\|:focus-visible' src/ --include='*.ts' --include='*.vue' --include='*.css' --exclude-dir=dist
+grep -rEn '(view-transition|startViewTransition|popover=|:popover-open|showPopover|hidePopover|@starting-style|light-dark\(|text-wrap:[[:space:]]*(balance|pretty)|:user-(in)?valid|@container\b|container-type|\bcq[whib]\b|subgrid|@property\b|:focus-visible|:has\(|accent-color:|<dialog\b|structuredClone\(|Object\.hasOwn\(|crypto\.randomUUID|requestIdleCallback|loading="lazy"|aspect-ratio:|Promise\.any\()' src/ --include='*.ts' --include='*.vue' --include='*.css' --exclude-dir=dist
 ```
 
-Should return zero hits.
+Should return zero hits — except:
+
+- **Comments documenting why the project avoids an API.** These are educational and benign (e.g. `/* Why not :focus-visible? Safari 13/14 don't implement … */` in `src/assets/css/global.css`). Leave them.
+- **Legitimate progressive enhancement** with a working fallback documented under [Progressive-enhancement features](#progressive-enhancement-features-still-allowed) above. Leave the hit in place.
+
+Any other hit is a violation — rewrite the code on a portable mechanism.
+
+When a new API joins this list (Safari ships a new version, or a previously-rare API becomes tempting), add a row and extend the grep — keep both in lockstep.
 
 ### 8. Tauri 2 platform requirement
 
