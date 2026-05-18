@@ -33,7 +33,7 @@ Only the latest stable release receives security fixes. Beta builds are not cove
 In scope:
 
 - The ApexDisk application (Rust backend + webview frontend)
-- The in-app updater flow and update artifact signing (see `docs/UPDATES.md`)
+- The in-app updater flow and update artifact signing (see `reference/updates.md`)
 - Release artifacts published on GitHub Releases
 - Interaction with macOS Trash, protected folders, and Full Disk Access
 

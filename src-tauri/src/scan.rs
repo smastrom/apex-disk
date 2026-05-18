@@ -5,7 +5,7 @@
 //!
 //! With debug builds or `APEX_DISK_DEBUG`, [`crate::log::dev_rust_trace`] on channel **`scan`**
 //! logs the directory path being accumulated (throttled) and each completed top-level folder size.
-//! See **`docs/LOGGING.md`**.
+//! See **`reference/logging.md`**.
 //!
 //! Builds a FolderInfo tree for the user's home top-level directories,
 //! limiting retained file entries per directory to keep memory and IPC bounded.

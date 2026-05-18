@@ -35,6 +35,7 @@ lerna-debug.log*
 # AI agents
 .claude/*
 !.claude/commands/
+!.claude/rules/
 .cursor/
 .windsurf/
 .gemini/

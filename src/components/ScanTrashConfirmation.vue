@@ -4,7 +4,7 @@
 <!--
 ScanTrashConfirmation
 
-Purpose: Post-trash screen. Shows resume (items count, size freed) and Scan again button. When debug logging is on, **Scan again** uses category `trash` (see `docs/LOGGING.md`).
+Purpose: Post-trash screen. Shows resume (items count, size freed) and Scan again button. When debug logging is on, **Scan again** uses category `trash` (see `reference/logging.md`).
 
 Props: deletedSummary ({ count: number, size: number } | null)
 

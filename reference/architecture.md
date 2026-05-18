@@ -25,7 +25,7 @@ ApexDisk is a **macOS-only Tauri 2 desktop app**. Two processes, one bundle:
 
 The boundary is the only real design axis in this codebase: every feature has a **Rust side** (anything touching the OS, the filesystem, or persistent state) and a **webview side** (anything you can see or click). Everything else — themes, animations, translations — is pure frontend with Rust as a passive store.
 
-For related docs: see [`UPDATES.md`](UPDATES.md) (in-app updater behavior), [`RELEASES.md`](RELEASES.md) (how builds ship), [`LOGGING.md`](LOGGING.md) (diagnostics), [`COMPATIBILITY.md`](COMPATIBILITY.md) (macOS / Safari targets).
+Subsystem deep-dives live in their own files: [`scanning.md`](scanning.md) (scan + trash flow), [`tauri-commands.md`](tauri-commands.md) (IPC channels, command surface, settings store), [`translations.md`](translations.md), [`themes.md`](themes.md). See also [`updates.md`](updates.md), [`releases.md`](releases.md), [`logging.md`](logging.md), [`compatibility.md`](compatibility.md).
 
 ## What each side owns
 
@@ -74,47 +74,11 @@ Entry points: `main.rs` delegates to `lib.rs::run()`, which installs plugins (`t
 
 Three channels, all provided by Tauri:
 
-### 1. `invoke()` — request/response
+1. **`invoke()`** — Webview → Rust, returns a `Promise`. Used for everything transactional.
+2. **Events** — Rust → webview push, one direction, many subscribers. Used for streaming progress.
+3. **Persistent state** — `tauri_plugin_store` writes JSON to the app support directory. Both sides read; only Rust writes.
 
-Webview → Rust, returns a `Promise`. Used for everything transactional.
-
-```
-src/lib/use-scanner.ts
-   └─ await invoke('get_user_folders', { options })
-       └─ src-tauri/src/scan.rs::get_user_folders()
-```
-
-Commands are registered in `src-tauri/src/lib.rs` inside `tauri::generate_handler!`. Two handler blocks — one for the default build, one behind `#[cfg(feature = "e2e")]` that also exposes `trash::set_e2e_trash_mode` and `store::reset_e2e_state`. **Both blocks must be updated when adding a new command** (the macro can't expand a nested macro, hence the duplication — noted inline in `lib.rs`).
-
-Current command surface, grouped:
-
-- **Disk / scan** — `get_disk_usage`, `get_user_folders`, `cancel_scan`
-- **Trash** — `trash_paths` (+ `set_e2e_trash_mode` under `e2e`)
-- **Permissions** — `check_full_disk_access`
-- **Native dialogs** — `show_message_dialog`, `show_ask_dialog`
-- **Locale + menu** — `set_app_locale`, `get_system_language`, `resolve_app_language`, `set_menu_language`
-- **Settings store** — `get_settings`, `set_settings`, `get_setting`, `update_setting` (+ `reset_e2e_state` under `e2e`)
-- **System** — `get_system_info`
-- **Logging** — `is_debug_mode`, `log_message`, `log_error_message`
-- **Updater** — `check_for_updates_silent`, `check_for_updates_dialog`, `download_update`, `restart_app`, `set_update_menu_ready`, `reset_update_menu`
-
-### 2. Events — Rust → webview push
-
-One direction, many subscribers. Used when Rust needs to stream progress without blocking.
-
-Currently emitted:
-
-- **`folder-scan-progress`** — emitted from `scan.rs` during a walk. Payload shape is `ScanProgress { current, total, folder, size, scanned_size_total, completed_size }`. The scanner throttles emissions to ~150 ms via `LiveScanState::add_size_and_maybe_emit` so the IPC channel isn't flooded during deep walks. Consumer: `src/lib/use-scanner.ts`, which listens with `listen('folder-scan-progress', …)` and exposes a reactive progress ref.
-
-No other events today — trash and updater are fully request/response.
-
-### 3. Persistent state — the settings store
-
-`tauri_plugin_store` writes a JSON file inside the app support directory. Both sides read it, but **only Rust writes it**. The webview always mutates via `set_settings` / `update_setting`; `store.rs` takes an internal `STORE_LOCK` mutex so concurrent writes don't lose updates, and it re-merges defaults on every read so new fields added in a Rust upgrade don't fail deserialization.
-
-Adding a new setting is a one-line change: register the key and its default in `get_default_settings()` inside `store.rs`. `is_valid_setting_key()` accepts it automatically, and existing installs get the field backfilled on next `get_settings`.
-
-Frontend mirrors the store in a reactive module-level singleton: `src/stores/app-settings.ts` calls `initTauriAppSettings()` once from `main.ts`, then `useAppSettings()` returns refs. **No `provide` / `inject`** — an explicit init + assertion caught "used before ready" bugs early; we kept it.
+Full channel semantics, the complete command surface, registration patterns in `lib.rs`, and the settings flow live in [`tauri-commands.md`](tauri-commands.md).
 
 ## Boundary conventions
 
@@ -124,100 +88,16 @@ A handful of rules that make the IPC hop easy to reason about:
 - **Do not reimplement Rust logic in Vue.** The "is this path protected?" / "how big is this folder?" / "is FDA granted?" questions belong to Rust — even when the answer is cached in a ref.
 - **Commands are total.** A command either resolves with data or rejects with an error string; no partial states on the wire. Progress-style feedback goes on events, not on the invoke promise.
 - **Cancellation is cooperative.** `cancel_scan` flips an atomic flag; `scan.rs` checks it inside the walk and exits early. The frontend `useScanner` also carries a `scanGeneration` counter so stale event payloads (from a scan the user already cancelled) are dropped in the webview.
-- **macOS-only.** There's no Windows/Linux branching in either side — see [`COMPATIBILITY.md`](COMPATIBILITY.md). objc2 AppKit/Foundation bindings are used freely in Rust.
-
-## Feature walkthroughs (boundary view)
-
-### Scan
-
-```
-[click Scan]  ScanLaunch.vue
-     │
-     ▼
-useScanner()                         src/lib/use-scanner.ts
-  ├─ listen('folder-scan-progress')  ◀─┐
-  └─ invoke('get_user_folders', …)     │ progress events
-                                       │ (throttled ~150 ms)
-            ┌──────────────────────────┘
-            ▼
-scan.rs::get_user_folders                  src-tauri/src/scan.rs
-  ├─ rayon parallel walk of $HOME/*
-  ├─ safe_folders::is_path_protected / is_path_skipped
-  ├─ LiveScanState::add_size_and_maybe_emit  → emit
-  └─ returns FolderInfo tree
-            │
-            ▼
- ScanResultsList.vue — renders tree, manages back/forward stack
-```
-
-Cancellation: `cancel_scan` → atomic flag read by the walker → early return. The UI drops any in-flight progress via its generation counter.
-
-### Trash
-
-```
-[select rows → Trash → confirm]
-  ScanResultsList → ScanTrashList → ScanTrashConfirmation
-     │
-     ▼
- invoke('trash_paths', { items })
-     │
-     ▼
-trash.rs::trash_paths                       src-tauri/src/trash.rs
-  ├─ filter_items() — drops protected/skipped paths again
-  ├─ trash::delete() per survivor (macOS Trash, recoverable)
-  └─ returns TrashResult { count, size }
-     │
-     ▼
- UI shows summary; user can "Scan again" to re-read disk state
-```
-
-No frontend-side trash store: the selection list is rebuilt from the current scan tree on demand.
-
-### Settings
-
-```
-UI toggle (SettingsView.vue)
-     │
-     ▼
-useAppSettings().setFoo(value)              src/stores/app-settings.ts
-  ├─ updates reactive ref optimistically
-  └─ invoke('update_setting', { key, value })
-           │
-           ▼
-store.rs::update_setting                    src-tauri/src/store.rs
-  ├─ STORE_LOCK.lock()
-  ├─ read → merge defaults → mutate → write
-  └─ returns the full merged settings object
-```
-
-Theme changes additionally write `data-theme` on `document.documentElement`; language changes additionally invoke `set_menu_language` so the native menu rebuilds immediately.
-
-### Locale + menu
-
-`locale.rs` detects the user's preferred language at first run (macOS `AppleLanguages`). `menu.rs` builds the native menu once during setup and rebuilds it whenever the webview calls `set_menu_language`, pulling strings from `menu_translations.rs::labels_for(lang)`. The webview never constructs menu items.
-
-### Updater
-
-Boundary details live in [`UPDATES.md`](UPDATES.md). In terms of split:
-
-- Rust (`updater.rs`) owns the `tauri-plugin-updater` calls, signature verification, and menu-label state machine ("Checking…" / "Downloading…" / "Restart to Update").
-- Frontend (`src/lib/use-app-update.ts`) owns the silent-check-on-start gate (auto-updates only, skipped in dev), the reactive `updateReady` flag, and the Settings UI button.
-
-### Logging / diagnostics
-
-Walkthrough in [`LOGGING.md`](LOGGING.md). At the boundary:
-
-- `src/lib/log.ts` prints `[apex:vue:<channel>]` in the webview console and, when `APEX_DISK_DEBUG` is set, forwards lines to Rust via `log_message` so both sides land in the same stdout stream.
-- `log.rs::dev_rust_trace(channel, msg)` does the Rust-side equivalent with `[apex:rust:<channel>]`.
+- **macOS-only.** There's no Windows/Linux branching in either side — see [`compatibility.md`](compatibility.md). objc2 AppKit/Foundation bindings are used freely in Rust.
 
 ## Build + testing boundary
 
-- **Frontend build:** `pnpm build` → `vue-tsc --noEmit && vite build`. Vite pipes CSS through **lightningcss** with a Safari 13 target so modern CSS downlevels to flat syntax (matches the declared minimum macOS; see [`COMPATIBILITY.md`](COMPATIBILITY.md)).
+- **Frontend build:** `pnpm build` → `vue-tsc --noEmit && vite build`. Vite pipes CSS through **lightningcss** with a Safari 13 target so modern CSS downlevels to flat syntax (matches the declared minimum macOS; see [`compatibility.md`](compatibility.md)).
 - **App build:** `pnpm tauri:build` bundles Rust + Vite output into a universal-binary `.app` / `.dmg`. `pnpm tauri:build:beta` layers `tauri.beta.conf.json` as a merge config (different bundle id / product name, `createUpdaterArtifacts: false`).
 - **Unit / integration tests:** `pnpm test:unit` runs `cargo test` inside `src-tauri/` with `--test-threads=1` (serial — some tests mutate process-global state). Integration tests live in `src-tauri/tests/` (`scan_test.rs`, `trash_test.rs`, `store_test.rs`, `safe_folders_test.rs`, etc.); shared helpers in `tests/support/mod.rs`.
 - **E2E:** `pnpm test:e2e` drives the app with WebdriverIO against a build with the `e2e` cargo feature enabled (which exposes `tauri_plugin_webdriver` and the `set_e2e_trash_mode` / `reset_e2e_state` commands). Specs in `e2e/specs/`.
 
-Release workflow and Beta channel: see [`RELEASES.md`](RELEASES.md).
+Release workflow and Beta channel: see [`releases.md`](releases.md).
 
 ## Directory map
 
@@ -242,5 +122,5 @@ src-tauri/
   tauri.beta.conf.json         # Beta merge config
 
 e2e/                           # WebdriverIO specs + helpers
-docs/                          # Agent-facing docs (this file, COMPATIBILITY, LOGGING, UPDATES, RELEASES)
+reference/                     # Agent-facing reference files (this folder)
 ```

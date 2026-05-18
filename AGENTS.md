@@ -2,21 +2,7 @@
 
 ## Project
 
-ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for disk usage analysis and cleanup. Ships as a universal binary (Intel + Apple Silicon). Minimum macOS 10.15. Supported macOS/Safari/architecture ranges are documented in `docs/COMPATIBILITY.md` — keep new dependencies and syntax within that range.
-
-## Agent-facing docs (`docs/`)
-
-`docs/` holds reference material agents are expected to read and keep current:
-
-- **`docs/ARCHITECTURE.md`** — frontend/backend split: what each side owns, how they talk (commands/events/store), subsystem walkthroughs, directory map.
-- **`docs/COMPATIBILITY.md`** — macOS / Safari / architecture targets and per-feature progressive-enhancement matrix.
-- **`docs/LOGGING.md`** — unified Vue + Rust diagnostic scheme (`[apex:…]` prefixes, channels, `APEX_DISK_DEBUG`).
-- **`docs/RELEASES.md`** — how to cut stable and Beta builds: version fields, changelog conventions, workflows.
-- **`docs/UPDATES.md`** — in-app updater behavior (auto/manual, endpoint, signing, dialogs).
-
-**Before every commit, analyze every file in `docs/` for update eligibility and update any whose contents no longer match the change.** Do not skim for matches — open each file and check. Triggers include (non-exhaustive): bumping dependencies, touching `vite.config.ts` / Cargo deps, switching a UI feature to a different API (e.g. native Popover ↔ Floating UI), adding/changing a log category or Rust trace channel, changing the updater flow or menu items, adding a progressive-enhancement CSS feature, renaming modules or restructuring directories, moving responsibility across the Rust/webview boundary, adjusting the release or Beta workflows. If none of the docs need changes, that is fine — just confirm you looked at each one. Never commit code that contradicts `docs/`.
-
-Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `README.md`, `FAQs.md` stay at the repo root — they are user-/CI-facing, not agent instructions.
+ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for disk usage analysis and cleanup. Ships as a universal binary (Intel + Apple Silicon). Minimum macOS 10.15.
 
 ## Stack
 
@@ -29,78 +15,48 @@ Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`, `CODE_OF_CONDUCT.md`
 | Formatting      | Oxfmt (import sorting, code formatting)                        |
 | Package manager | pnpm                                                           |
 
-## Architecture
+## Agent-facing reference (`reference/`)
 
-- **Settings**: Rust-side persistence via `tauri_plugin_store`. Frontend store in `src/stores/app-settings.ts` — no provide/inject.
-- **Translations**: Per-component YAML files in `src/assets/translations/` (key-first: one entry per phrase with a language sub-key under `en, it, es, fr, pt, de, ru, zh, ja, ar`). Imported directly via `@rollup/plugin-yaml` registered in `vite.config.ts`. Composable: `useTranslations()` → `t(module, key, vars?)`. 10 languages. Long prose uses `>-` folded scalars; CJK (zh, ja) values must stay on one line — `>-` inserts a space at line joins and there are no inter-word spaces in CJK.
-- **Themes**: CSS variables in `src/assets/css/theme.css`. `data-theme` attribute on `<html>`. 8 themes.
-- **Scanning**: Rust (`src-tauri/src/scan.rs`) builds a `FolderInfo` tree, emits progress events. Frontend navigates the tree with browser-style back/forward stacks.
-- **Deletion**: Items moved to macOS Trash (recoverable). Protected/skipped folders filtered in Rust before trashing.
-- **Native menu**: Built in Rust, localized via `menu_translations.rs`, rebuilt on language change.
-- **Diagnostics**: Vue `log()` + Rust `dev_rust_trace` / updater lines — see **`docs/LOGGING.md`** (`APEX_DISK_DEBUG`, `[apex:…]` prefixes).
+`reference/` holds deep specs that agents read on demand. The
+`reference-loader` rule in `.claude/rules/` maps operations to the right
+file; the `pre-commit-protocol` rule guarantees a docs sweep before any
+commit.
 
-## Code conventions
+| File                              | Covers                                                                                   |
+| --------------------------------- | ---------------------------------------------------------------------------------------- |
+| `reference/architecture.md`       | Frontend/backend split, what each side owns, boundary conventions, build/testing.        |
+| `reference/scanning.md`           | Scan + trash flow, `FolderInfo`, progress events, cancellation, selection model.         |
+| `reference/tauri-commands.md`     | IPC channels, command surface, `lib.rs` registration, settings store, locale + menu.    |
+| `reference/translations.md`       | Per-component YAML, 10 languages, `useTranslations()`, CJK folding rules.                |
+| `reference/themes.md`             | CSS variables, `data-theme` switching, 8 themes, adding a new theme.                     |
+| `reference/code-style.md`         | Oxfmt, import sorting, Vue/CSS/TS conventions, file naming, license headers, comments.   |
+| `reference/testing.md`            | Suites, when to run, Rust integration patterns, E2E + `e2e` cargo feature, what not to add. |
+| `reference/compatibility.md`      | macOS / Safari / architecture targets, progressive enhancement matrix, oxfmt fallbacks.  |
+| `reference/logging.md`            | `[apex:…]` diagnostic scheme, Vue categories, Rust trace channels, `APEX_DISK_DEBUG`.   |
+| `reference/releases.md`           | How to cut stable and Beta builds, version fields, changelog conventions, workflows.     |
+| `reference/updates.md`            | In-app updater (auto/manual), endpoint, signing, dialogs.                                |
 
-### Comments
+Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`,
+`CODE_OF_CONDUCT.md`, `SECURITY.md`, `README.md`, `FAQs.md` stay at the repo
+root — they are user-/CI-facing, not agent instructions.
 
-- Default to no comments. Code must be readable and clean; comments support code, they do not drive it.
-- Only add a comment when the WHY is non-obvious (workaround, subtle invariant, surprising behavior, version constraint, etc.).
-- Do not restate what well-named code already says (e.g. `// Walk up to find the nearest scrollable ancestor` above an obvious loop).
-- Do not write library-introduction or rationale chatter (e.g. "Positioning via @floating-ui/dom" — the import says that).
-- No commented-out code. Delete it.
-- If a function needs a paragraph to explain it, prefer renaming or splitting it instead.
+## Slash commands (`.claude/commands/`)
 
-### File naming
+| Command                  | Purpose                                                                                |
+| ------------------------ | -------------------------------------------------------------------------------------- |
+| `/sync`                  | Group uncommitted work into logical commits, sweep all `.md`, run tests, push.        |
+| `/force-sync`            | Reconcile `.md` against commits that bypassed `/sync`, then commit drift.              |
+| `/compatibility-check`   | Full compatibility verification against macOS 10.15 / Safari 13 / MSRV.               |
+| `/release`               | Prepare a stable release: bump version in 3 files, prepend section to `RELEASES.md`.  |
+| `/beta-notes`            | Add a dated section to `RELEASES_BETA.md` for the Beta workflow's pre-release body.   |
 
-- `.vue`: PascalCase (`ScanResultsList.vue`)
-- `.ts`: kebab-case (`use-scanner.ts`), except component-coupled files (PascalCase, e.g. `ScanResultsListItem.ts`)
+## Testing
 
-### License headers
+Full suite matrix, commands, and conventions live in `reference/testing.md`. Key always-on rules:
 
-- Every first-party source file (`.ts`, `.tsx`, `.vue`, `.rs`, `.sh` under `src/`, `src-tauri/src/`, `e2e/`, `tests/`, `scripts/`) carries an SPDX + copyright header on the top two lines (comment syntax varies by language; shell scripts keep the shebang on line 1).
-- `pnpm headers` adds the header to any new file and is idempotent; it runs automatically as step 1 of `/sync` and `/force-sync`.
-- `pnpm headers:check` exits non-zero if any covered file is missing the header — suitable for CI.
-
-### Vue
-
-- Always `<script setup lang="ts">`. No Options API.
-- Script order: `defineProps` → `defineEmits` → blank line → all other logic.
-- Template refs: `useTemplateRef('name')`, not `ref<HTMLElement>(null)`.
-- Props: camelCase. Emits: kebab-case. Components: PascalCase tags.
-- Boolean props/vars must have a leading verb: `is*`, `has*`, `can*`.
-- SVG icons: always `aria-hidden="true"`.
-- Semantic HTML: use landmarks, correct heading hierarchy, lists. Use `aria-live="polite"` for dynamic status/navigation changes; `assertive` only for urgent messages.
-
-### CSS
-
-- Class format: `ComponentName-nestedElement` (matches filename).
-- Use CSS nesting with `&` for pseudo-selectors/states.
-- BEM modifiers: full class names at root (`ComponentName-element--modifier`), never `&--modifier`.
-- Media queries: nested inside the selector, never at root.
-
-### TypeScript
-
-- Blank line between groups of different statement types (`const`, `let`, expressions, `return`).
-- `if` bodies: braces required unless condition + statement fit on one line.
-- Prefer `!value` over `value === false`.
-- Tauri boundary objects: snake_case. Frontend-only objects: camelCase.
-
-### Rust
-
-- Import order: framework → std → 3rd-party → crate-internal. Blank line between groups.
-
-### Commits
-
-- No conventional commit prefixes. Use imperative verb + short description.
-- Co-authored-by trailer when commit is agent-made.
-
-### External scripts (codegen, build tooling, one-off utilities)
-
-- Run on **Bun** and use **Bun APIs** (`Bun.file`, `Bun.write`, `Bun.Glob`, `Bun.spawnSync`, `Bun.YAML.parse`, etc.). Do not use `tsx` / `ts-node` / plain `node`.
-- Scripts live in `scripts/` as `.ts` files with a `// SPDX…` header and run via `bun run scripts/<name>.ts` (wrap behind a `pnpm <name>` alias).
-- YAML parsing: use the built-in `Bun.YAML.parse` — no extra package.
-- If a script needs to emit `.d.ts` files, use **tsdown**, not `tsc`/`dts-bundle-generator`/etc.
-- Vite bundling runs on Rolldown, which is Rollup-plugin-compatible — reach for `@rollup/plugin-*` before writing custom transforms.
+1. `/sync` and `/force-sync` run the relevant suites before pushing. Never push red code, never bypass with `--no-verify` / `--force`. If a suite fails, stop and surface — fix forward in a follow-up commit.
+2. Tests use temp dirs, never the real user home.
+3. Do not add tests unless asked.
 
 ## Key directories
 
@@ -117,23 +73,12 @@ src-tauri/
   src/               # Rust backend modules
   tests/             # Rust integration tests
   tauri.conf.json    # Tauri config (bundle targets, min macOS version)
+
+reference/           # Agent-facing reference (see table above)
+.claude/
+  rules/             # Always-loaded routing + protocol rules
+  commands/          # Slash commands
 ```
-
-## Testing rules
-
-| Suite                                        | Command                                                                | When to run                                                                                                                                            |
-| -------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Vue + TS typecheck                           | `pnpm typecheck` (= `vue-tsc --noEmit`)                                | Before each commit that touches `*.ts` / `*.tsx` / `*.vue`. Committed code must be type-clean — no `// @ts-ignore` or `as any` to silence the checker. |
-| Rust unit/integration                        | `pnpm test:unit` (or `cd src-tauri && cargo test -- --test-threads=1`) | Any change to Rust (`src-tauri/**`).                                                                                                                   |
-| End-to-end (WebdriverIO + debug Tauri build) | `pnpm test:e2e`                                                        | Any change to user-visible behavior — frontend (`src/**`), Rust (`src-tauri/**`), or e2e specs themselves (`e2e/**`).                                  |
-| Format / headers                             | `pnpm fmt:check` and `pnpm headers:check`                              | Always.                                                                                                                                                |
-
-Rules:
-
-1. **`/sync` and `/force-sync` run the relevant suites before pushing.** They never push red code and never bypass with `--no-verify` / `--force`. If a suite fails, the agent stops, surfaces the failure, and the human (or a follow-up agent invocation) fixes forward — no amending or reverting the underlying source commits behind the user's back.
-2. If tests fail because the change is correct and the test is outdated, fix the test. If no test exists for the changed behavior and the change is non-trivial, add one — but only when asked, per "What not to do" below.
-3. Tests use temp dirs, never the real user home.
-4. `pnpm test:e2e` rebuilds the debug Tauri binary on first run; subsequent runs are faster but still measured in minutes. Don't skip it on the assumption that "frontend-only" changes can't break e2e — they routinely do (selectors, transitions, focus handling, scroll behavior).
 
 ## What not to do
 

@@ -20,7 +20,7 @@
 - [ ] `pnpm fmt:check` passes
 - [ ] `pnpm test:unit` passes (required for any Rust / `src-tauri/` change)
 - [ ] `pnpm test:e2e` passes if UI flows changed
-- [ ] `docs/` reviewed — updated any file whose contents no longer match this change, or confirmed none apply
+- [ ] `reference/` and root `.md` files reviewed — updated any whose contents no longer match this change, or confirmed none apply
 - [ ] Commits follow the repo style: imperative subject, short body only when the _why_ isn't obvious, `Co-Authored-By` trailer when a commit was made by an agent
 - [ ] No new platform-specific code for Windows/Linux (macOS-only project)
 
@@ -37,9 +37,9 @@
 <details>
 <summary>Using Claude Code? Helpful slash commands</summary>
 
-- **`/sync`** — groups your uncommitted work into logical commits, runs the `docs/` + `AGENTS.md` sweep, and pushes.
-- **`/force-sync`** — reconciles `docs/` and `AGENTS.md` against recent commits that bypassed the sweep.
-- **`/compatibility-check`** — verifies the change stays within the supported macOS / Safari / architecture targets declared in `docs/COMPATIBILITY.md`.
+- **`/sync`** — groups your uncommitted work into logical commits, runs the repo-wide `.md` sweep (`reference/`, `AGENTS.md`, `CLAUDE.md`, …), and pushes.
+- **`/force-sync`** — reconciles every `.md` file against recent commits that bypassed the sweep.
+- **`/compatibility-check`** — verifies the change stays within the supported macOS / Safari / architecture targets declared in `reference/compatibility.md`.
 
 Release-channel commands (`/release`, `/beta-notes`) are maintainer-only — please don't run them in a PR.
 

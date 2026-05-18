@@ -6,7 +6,7 @@
  *
  * **Purpose:** Structured `[apex:vue:…]` lines for dev and bug reports (`APEX_DISK_DEBUG=1`), plus global handlers for uncaught web errors on stderr.
  *
- * **Docs:** Categories, Rust `[apex:rust:…]` channels, streams, and source index — **`docs/LOGGING.md`**.
+ * **Docs:** Categories, Rust `[apex:rust:…]` channels, streams, and source index — **`reference/logging.md`**.
  *
  * **Example:**
  *
