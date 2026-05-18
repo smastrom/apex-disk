@@ -23,6 +23,8 @@ Three test layers plus three static checks. The frontend has **no unit tests** �
 
 `/sync` and `/force-sync` run the relevant subset automatically. They never push red code and never bypass with `--no-verify` / `--force`.
 
+**Enforced from the repo.** A `PreToolUse` hook (`.claude/hooks/pre-commit-gate.sh`, wired in `.claude/settings.json`) blocks agent-initiated `git commit` and `git push` unless `.claude/.sync-active` is present. `/sync` and `/force-sync` create that marker at start and remove it at end, so they flow through; any other route to commit/push from an agent is refused. Your own commits from a terminal are unaffected. See `.claude/rules/pre-commit-protocol.md` for the rule and bypass instructions.
+
 **`pnpm test:e2e` is slow** — it rebuilds the debug Tauri binary on first run; subsequent runs are faster but still measured in minutes. Don't skip it on the assumption that "frontend-only" changes can't break e2e — they routinely do (selectors, transitions, focus handling, scroll behavior).
 
 ## Rust integration tests

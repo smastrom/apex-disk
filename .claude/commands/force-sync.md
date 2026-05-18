@@ -2,6 +2,8 @@ Reconcile every `.md` file in the repo against recent commits that bypassed the 
 
 Use this when source changes were committed directly (not through `/sync`), so the working tree is clean but docs may no longer match the code. Unlike `/sync`, there are no staged or unstaged edits to group — the recovery work is to detect stale docs and bring them back in line.
 
+0. **Open the gate** — `mkdir -p .claude && touch .claude/.sync-active`. The pre-commit hook in `.claude/hooks/pre-commit-gate.sh` blocks `git commit` and `git push` unless this marker is present. Clear it at the end (step 8). The marker is gitignored.
+
 1. **License headers** — run `pnpm headers` first. It adds the SPDX + copyright header to any new source file (`.ts`, `.tsx`, `.vue`, `.rs`, `.sh` under `src/`, `src-tauri/src/`, `e2e/`, `tests/`, `scripts/`) and is idempotent on files that already have one. If it modified anything, stage those changes into the docs-drift commit (or a separate commit if the touched files are unrelated to the docs work).
 
 2. **Find the window to re-check** — determine the range of commits that need re-verifying:
@@ -32,5 +34,7 @@ Use this when source changes were committed directly (not through `/sync`), so t
    If anything fails, stop and surface the failures. Do **not** push. Failures predate this `/force-sync` run, so fix forward (a new commit) — do not amend or revert the source commits behind your back, and never bypass with `--no-verify` / `--force`.
 
 7. **Push** — `git push`. If the branch has no upstream, `git push -u origin <branch>`. Skip if step 5 produced no commit and `HEAD` is already at `origin`.
+
+8. **Close the gate** — `rm -f .claude/.sync-active`. Run this on success **and** on any early-exit (failed gate, user abort, push refusal).
 
 Do **not** bump version fields, edit `RELEASES.md` or `RELEASES_BETA.md`, or trigger the Release/Beta workflows — those belong to `/release` and `/beta-notes`. Do **not** rewrite or amend the source commits that caused the drift; only add follow-up doc commits.

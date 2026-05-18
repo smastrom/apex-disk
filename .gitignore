@@ -36,6 +36,9 @@ lerna-debug.log*
 .claude/*
 !.claude/commands/
 !.claude/rules/
+!.claude/hooks/
+!.claude/settings.json
+.claude/.sync-active
 .cursor/
 .windsurf/
 .gemini/

@@ -1,5 +1,7 @@
 Create logical commits for all uncommitted work since the latest commit, then push to the remote.
 
+0. **Open the gate** — `mkdir -p .claude && touch .claude/.sync-active`. The pre-commit hook in `.claude/hooks/pre-commit-gate.sh` blocks `git commit` and `git push` unless this marker is present, so `/sync` must set it before its own git steps and clear it at the end (step 9). The marker is gitignored.
+
 1. **License headers** — run `pnpm headers` before anything else. It adds the SPDX + copyright header to any new source file (`.ts`, `.tsx`, `.vue`, `.rs`, `.sh` under `src/`, `src-tauri/src/`, `e2e/`, `tests/`, `scripts/`) and is idempotent on files that already have one. If it modified anything, those changes join whichever commit covers the files they touched.
 
 2. **Survey** — `git status`, `git diff`, `git diff --staged`, and `git log --oneline -10` (for the commit-message style). Read every modified and untracked file enough to understand what conceptually changed — not just which files moved.
@@ -28,6 +30,8 @@ Create logical commits for all uncommitted work since the latest commit, then pu
    If anything fails, stop and surface the failures. Do **not** push. The user fixes forward (a follow-up commit) or asks for a revert — never bypass with `--no-verify` / `--force`.
 
 8. **Push** — `git push`. If the branch has no upstream, `git push -u origin <branch>`.
+
+9. **Close the gate** — `rm -f .claude/.sync-active`. Run this on success **and** on any early-exit (failed gate, user abort, push refusal). The marker exists only for the duration of the `/sync` run.
 
 Do **not** bump version fields, edit `RELEASES.md` or `RELEASES_BETA.md`, or trigger the Release/Beta workflows — those belong to `/release` and `/beta-notes`.
 

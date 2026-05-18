@@ -74,6 +74,22 @@ Full suite matrix, commands, and conventions live in `reference/testing.md`. Key
 2. Tests use temp dirs, never the real user home.
 3. Do not add tests unless asked.
 
+The protocol is enforced from the repo by a `PreToolUse` hook in
+`.claude/hooks/pre-commit-gate.sh` (wired via `.claude/settings.json`),
+which refuses agent-initiated `git commit` / `git push` outside of `/sync`
+or `/force-sync`. Details in `.claude/rules/pre-commit-protocol.md`.
+
+## `.claude/` layout
+
+| Path                       | Status                  | Purpose                                                |
+| -------------------------- | ----------------------- | ------------------------------------------------------ |
+| `.claude/commands/*.md`    | committed               | Slash commands (`/sync`, `/release`, …).               |
+| `.claude/rules/*.md`       | committed               | Always-loaded routing + protocol rules.                |
+| `.claude/hooks/*.sh`       | committed               | Hook scripts referenced by `settings.json`.            |
+| `.claude/settings.json`    | committed               | Shared hooks + repo-relevant permissions.              |
+| `.claude/settings.local.json` | gitignored           | Personal overrides (paths, one-off allowlist entries). |
+| `.claude/.sync-active`     | gitignored, ephemeral   | Marker created by `/sync` to open the pre-commit gate. |
+
 ## Key directories
 
 ```

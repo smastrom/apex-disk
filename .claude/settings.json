@@ -1,0 +1,61 @@
+{
+   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+   "hooks": {
+      "PreToolUse": [
+         {
+            "matcher": "Bash",
+            "hooks": [
+               {
+                  "type": "command",
+                  "command": ".claude/hooks/pre-commit-gate.sh"
+               }
+            ]
+         }
+      ]
+   },
+   "permissions": {
+      "allow": [
+         "Bash(git add:*)",
+         "Bash(git commit:*)",
+         "Bash(git push:*)",
+         "Bash(git checkout:*)",
+         "Bash(git stash:*)",
+         "Bash(git reset:*)",
+         "Bash(git rm:*)",
+         "Bash(git reflog:*)",
+         "Bash(git gc:*)",
+         "Bash(git worktree *)",
+         "Bash(git update-ref:*)",
+
+         "Bash(pnpm install:*)",
+         "Bash(pnpm add:*)",
+         "Bash(pnpm rebuild:*)",
+         "Bash(pnpm typecheck *)",
+         "Bash(pnpm fmt:check)",
+         "Bash(pnpm fmt *)",
+         "Bash(pnpm test:unit)",
+         "Bash(pnpm test:e2e *)",
+         "Bash(pnpm test:e2e)",
+         "Bash(pnpm headers)",
+         "Bash(pnpm headers:check)",
+         "Bash(pnpm headers *)",
+         "Bash(pnpm tauri *)",
+         "Bash(pnpm translations *)",
+         "Bash(pnpm build:*)",
+         "Bash(npx vue-tsc --noEmit)",
+         "Bash(npx tsc:*)",
+
+         "Bash(cargo check:*)",
+         "Bash(cargo test:*)",
+         "Bash(cargo build:*)",
+         "Bash(cargo doc:*)",
+         "Bash(cargo update *)",
+         "Bash(cargo search *)",
+
+         "Bash(bun --version)",
+         "Bash(bun run *)",
+
+         "WebSearch"
+      ]
+   }
+}
