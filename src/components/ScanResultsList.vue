@@ -62,6 +62,7 @@ const backStack = shallowRef<NavEntry[]>([])
 const forwardStack = shallowRef<NavEntry[]>([])
 const current = shallowRef<NavEntry>({ items: [], label: '', path: '', truncated: false })
 const homePath = ref('')
+const isListSlideEnabled = ref(false)
 
 /**
  * Selection state: Map<path, FolderInfo>.
@@ -91,6 +92,8 @@ function parentDir(path: string): string {
 watch(
    () => props.folders,
    (folders) => {
+      isListSlideEnabled.value = false
+
       if (folders.length > 0) {
          backStack.value = []
          forwardStack.value = []
@@ -158,6 +161,8 @@ const parentRef = useTemplateRef<HTMLElement>('parentRef')
  */
 function onAfterListLeave() {
    parentRef.value?.scrollTo(0, 0)
+
+   isListSlideEnabled.value = false
 }
 
 /**
@@ -414,6 +419,7 @@ function resetAll() {
 
    backStack.value = []
    forwardStack.value = []
+   isListSlideEnabled.value = false
 
    if (homePath.value && props.folders.length > 0) {
       current.value = {
@@ -433,6 +439,8 @@ function goInto(item: FolderInfo) {
 
    log('nav', `Results: into "${item.name}" (${item.children.length} children)`)
 
+   isListSlideEnabled.value = true
+
    document.documentElement.style.setProperty('--nav-direction', '1')
 
    backStack.value = [...backStack.value, { ...current.value }]
@@ -451,6 +459,8 @@ function goBack() {
 
    log('nav', `Results: back to "${backStack.value[backStack.value.length - 1].label || '~'}"`)
 
+   isListSlideEnabled.value = true
+
    document.documentElement.style.setProperty('--nav-direction', '-1')
 
    forwardStack.value = [...forwardStack.value, { ...current.value }]
@@ -465,6 +475,8 @@ function goForward() {
       'nav',
       `Results: forward to "${forwardStack.value[forwardStack.value.length - 1].label || '~'}"`
    )
+
+   isListSlideEnabled.value = true
 
    document.documentElement.style.setProperty('--nav-direction', '1')
 
@@ -498,7 +510,12 @@ function onCancel() {
       />
       <div class="ScanResultsList-listWrap">
          <div ref="parentRef" class="ScanResultsList-list ScanResultsList-listScroll">
-            <Transition name="list-slide" mode="out-in" @after-leave="onAfterListLeave">
+            <Transition
+               name="list-slide"
+               mode="out-in"
+               :css="isListSlideEnabled"
+               @after-leave="onAfterListLeave"
+            >
                <div
                   :key="current.path"
                   class="ScanResultsList-listInner"
