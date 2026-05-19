@@ -1,51 +1,15 @@
 # Code Style
 
-The conventions actually used in the codebase. **Oxfmt is the formatting source of truth** for `.ts` / `.tsx` / `.vue` — when in doubt, run `pnpm fmt` and accept its output.
+The conventions actually used in the codebase. Two tools own the mechanical rules; don't hand-format or hand-reorder.
 
-## Formatting (Oxfmt)
+## Formatting, imports, blank lines
 
-Config: `.oxfmtrc.jsonc`. Key settings:
+- **Oxfmt** owns code formatting for `.ts` / `.tsx` / `.vue` / `.css` / `.json` / `.html` / `.md`. Config: `.oxfmtrc.jsonc`. Run `pnpm fmt` / `pnpm fmt:check`.
+- **Oxlint** owns import order and blank-line rules via the JS plugin in `oxlint-plugins.mjs`:
+   - `stylistic/sort-imports` (perfectionist) — group order: `vue-files → type → builtin → external → internal → constants → relative → side-effect → style`. Internal pattern: `^@/.+`. One blank line between groups.
+   - `stylistic/padding-line-between-statements` — blank line after the last import; blank lines around `block-like`, between `const`/`let` runs and expressions, before terminators.
 
-- **Indent:** 3 spaces, no tabs (`tabWidth: 3`, `useTabs: false`)
-- **Quotes:** single (`singleQuote: true`)
-- **Semicolons:** none (`semi: false`)
-- **Trailing commas:** ES5 (`trailingComma: "es5"`)
-- **Print width:** 100
-
-Run `pnpm fmt:check` to verify, `pnpm fmt` to apply.
-
-## Import sorting
-
-Oxfmt sorts imports automatically. Groups (in this order, each separated by a blank line):
-
-1. **components** — `*.vue` files
-2. **builtin** — Node built-ins
-3. **vue** — `vue`, `vue/`\*
-4. **external** — npm packages
-5. **internal** — `@/`_, `~/_`
-6. **subpath** — relative parent paths
-7. **constants** — anything matching `**/constants`\*
-8. **type** — `import type` statements
-9. **json** — `*.json` imports
-10.   **style** — CSS imports
-11.   **side_effect_style** — bare CSS imports
-12.   **side_effect** — bare imports
-13.   **unknown** — fallback
-
-Internal pattern: `@/`_ and `~/_`. Example layout (from `src/lib/use-scanner.ts`):
-
-```ts
-import { formatBytes } from '@/lib/format'
-import { log } from '@/lib/log'
-import { useAppSettings } from '@/stores/app-settings'
-import { invoke } from '@tauri-apps/api/core'
-import { listen } from '@tauri-apps/api/event'
-import { ref, shallowRef } from 'vue'
-
-import type { FolderInfo, ScanProgress } from '@/types/structs'
-```
-
-Don't manually reorder imports — let oxfmt own it.
+Config: `.oxlintrc.json`. Run `pnpm oxlint --fix`. With the project `.vscode/settings.json`, save triggers both (`source.fixAll.oxc: always` then format).
 
 ## License headers
 
@@ -67,6 +31,18 @@ TS / Rust:
 
 `pnpm headers` adds the header to any new file and is idempotent. `pnpm headers:check` exits non-zero if any covered file is missing the header — suitable for CI. Both `/sync` and `/force-sync` run `pnpm headers` as step 1.
 
+## TypeScript / Vue Script
+
+Applies to `.ts` files and the `<script setup>` block of `.vue` files.
+
+### Other rules
+
+- **`if` bodies:** braces required unless condition + statement fit on one line. One-line form is fine: `if (cond) return`.
+- **Prefer `!value`** over `value === false`.
+- **No `as any`, no `// @ts-ignore`** to silence the checker. Code must be type-clean (`pnpm typecheck`).
+- **Boundary objects use `snake_case`** (Tauri/Rust IPC). Frontend-only objects use `camelCase`. See `[architecture.md](architecture.md)` — boundary conventions.
+- **Types live in `src/types/`.** Boundary types mirror Rust structs exactly.
+
 ## Vue file shape
 
 ```vue
@@ -85,12 +61,11 @@ Example:
 -->
 
 <script setup lang="ts">
-// imports first (oxfmt orders them)
+import ...
 
 const props = defineProps<{ ... }>()
 const emit = defineEmits<{ ... }>()
 
-// everything else after a blank line
 const { t } = useTranslations()
 // ...
 </script>
@@ -131,15 +106,6 @@ const { t } = useTranslations()
    - Cross-cutting overrides like `@media (prefers-reduced-motion: reduce)`: keep at the top level with the relevant selectors inside (matches how `ScanResultsListItem.vue` handles reduced motion).
 - **Blank line between rule blocks** at the top level.
 - **No hardcoded values** for color, spacing, font sizes, or border radii — use CSS variables from `src/assets/css/theme.css` (see `[themes.md](themes.md)`). Examples: `var(--color-bg)`, `var(--spacing-md)`, `var(--font-size-xl)`, `var(--touch-height-default)`.
-
-## TypeScript
-
-- **Blank line between groups of different statement types** (`const`, `let`, expressions, `return`).
-- `**if` bodies:\*\* braces required unless condition + statement fit on one line. One-line form is fine: `if (cond) return`.
-- **Prefer `!value`** over `value === false`.
-- **No `as any`, no `// @ts-ignore`** to silence the checker. Code must be type-clean (`pnpm typecheck`).
-- **Boundary objects use `snake_case`** (Tauri/Rust IPC). Frontend-only objects use `camelCase`. See `[architecture.md](architecture.md)` — boundary conventions.
-- **Types live in `src/types/`.** Boundary types mirror Rust structs exactly.
 
 ## File naming
 

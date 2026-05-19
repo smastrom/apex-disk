@@ -10,34 +10,4 @@
    "sortPackageJson": {
       "sortScripts": true,
    },
-   "sortImports": {
-      "newlinesBetween": true,
-      "internalPattern": ["^@/.*", "^~/.*"],
-      "partitionByComment": true,
-      "customGroups": [
-         { "groupName": "components", "elementNamePattern": ["\\.vue$"] },
-         { "groupName": "vue", "elementNamePattern": ["^vue$", "^vue/.*"] },
-         {
-            "groupName": "constants",
-            "elementNamePattern": ["**/constants*"],
-            "selector": "internal",
-         },
-         { "groupName": "json", "elementNamePattern": ["\\.json$"] },
-      ],
-      "groups": [
-         "components",
-         "builtin",
-         "vue",
-         "external",
-         "internal",
-         "subpath",
-         "constants",
-         "type",
-         "json",
-         "style",
-         "side_effect_style",
-         "side_effect",
-         "unknown",
-      ],
-   },
 }
