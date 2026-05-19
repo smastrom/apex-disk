@@ -12,7 +12,14 @@ const VIEWPORT_PADDING = 16
 export function useLabelPopover(
    triggerRef: Ref<HTMLElement | null>,
    popoverRef: Ref<HTMLElement | null>,
-   options: { placement?: Placement; offset?: number; alwaysShow?: boolean } = {}
+   options: {
+      placement?: Placement
+      offset?: number
+      alwaysShow?: boolean
+      /** Element used to compute popover position; defaults to triggerRef. Split when the
+       * trigger's hit area is larger than the visual anchor (e.g. a row-tall checkbox button). */
+      anchorRef?: Ref<HTMLElement | null>
+   } = {}
 ) {
    const isOpen = ref(false)
 
@@ -23,6 +30,7 @@ export function useLabelPopover(
    const placement = options.placement ?? 'top'
    const offsetPx = options.offset ?? 8
    const alwaysShow = options.alwaysShow ?? false
+   const anchorRef = options.anchorRef ?? triggerRef
 
    function shouldShow(): boolean {
       const el = triggerRef.value
@@ -34,14 +42,14 @@ export function useLabelPopover(
    }
 
    async function position() {
-      const trigger = triggerRef.value
+      const anchor = anchorRef.value
       const popover = popoverRef.value
 
-      if (!trigger || !popover) return
+      if (!anchor || !popover) return
 
       popover.style.maxWidth = `${window.innerWidth - VIEWPORT_PADDING * 2}px`
 
-      const { x, y } = await computePosition(trigger, popover, {
+      const { x, y } = await computePosition(anchor, popover, {
          placement,
          middleware: [offset(offsetPx), flip(), shift({ padding: VIEWPORT_PADDING })],
       })

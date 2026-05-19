@@ -27,7 +27,7 @@ import SelectionIcon from '@/components/ui/SelectionIcon.vue'
 import type { FolderInfo } from '@/types/structs'
 
 import { PhCaretRight } from '@phosphor-icons/vue'
-import { ref, useTemplateRef, computed } from 'vue'
+import { ref, useTemplateRef, computed, type ComponentPublicInstance } from 'vue'
 
 import { formatDate } from '@/lib/format'
 import { useLabelPopover } from '@/lib/use-label-popover'
@@ -116,7 +116,11 @@ function onRootNavigateKey() {
 const triggerRef = useTemplateRef<HTMLElement>('triggerRef')
 const popoverRef = useTemplateRef<HTMLElement>('popoverRef')
 const checkboxTriggerRef = useTemplateRef<HTMLElement>('checkboxTriggerRef')
+const checkboxIconRef = useTemplateRef<ComponentPublicInstance>('checkboxIconRef')
 const checkboxPopoverRef = useTemplateRef<HTMLElement>('checkboxPopoverRef')
+
+/** Anchor the disabled-checkbox popover to the icon, not the row-tall button hit area. */
+const checkboxAnchorRef = computed(() => (checkboxIconRef.value?.$el as HTMLElement) ?? null)
 
 const { t } = useTranslations()
 const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRef)
@@ -124,6 +128,7 @@ const { onPointerEnter: onCheckboxPointerEnter, onPointerLeave: onCheckboxPointe
    useLabelPopover(checkboxTriggerRef, checkboxPopoverRef, {
       placement: 'top-start',
       alwaysShow: true,
+      anchorRef: checkboxAnchorRef,
    })
 const store = useAppSettings()
 const currentLanguage = store.settings.value.language
@@ -169,6 +174,7 @@ const currentLanguage = store.settings.value.language
          @pointerleave="isCheckDisabled && onCheckboxPointerLeave()"
       >
          <SelectionIcon
+            ref="checkboxIconRef"
             :state="selectionState"
             :size="22"
             :class="{
@@ -232,6 +238,8 @@ const currentLanguage = store.settings.value.language
          ref="checkboxPopoverRef"
          class="Popover ScanResultsListItem-checkboxPopover"
          role="tooltip"
+         @pointerenter="onCheckboxPointerEnter"
+         @pointerleave="onCheckboxPointerLeave"
       >
          {{
             item.is_fda_required
@@ -286,10 +294,8 @@ const currentLanguage = store.settings.value.language
 .ScanResultsListItem-root--folder.ScanResultsListItem-root--pressing {
    transform: scale(0.992);
    background-color: var(--color-row-press);
-}
 
-@media (prefers-reduced-motion: reduce) {
-   .ScanResultsListItem-root--folder.ScanResultsListItem-root--pressing {
+   @media (prefers-reduced-motion: reduce) {
       transform: none;
    }
 }
@@ -385,7 +391,7 @@ const currentLanguage = store.settings.value.language
 
 .ScanResultsListItem-checkboxPopover {
    max-width: 280px;
-   padding: var(--spacing-sm) var(--spacing-md);
+   padding: var(--spacing-md);
    word-break: normal;
 }
 </style>
