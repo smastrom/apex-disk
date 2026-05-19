@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Simone Mastromattei
 
-import AppShell from './components/AppShell.vue'
+import App from './components/App.vue'
 
 import { createApp } from 'vue'
 
@@ -35,7 +35,7 @@ void (async () => {
       log('app', `App: v${APP_VERSION}`)
    }
 
-   const app = createApp(AppShell)
+   const app = createApp(App)
 
    registerDiagnosticHandlers(app)
    app.mount('#app')

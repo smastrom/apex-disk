@@ -16,7 +16,7 @@ function onPointerDown() {
 /**
  * Shows a CSS focus ring only after keyboard navigation. Adds `focus-ring-keyboard` to
  * `<html>` on keydown and removes it on pointer down, so click-focused elements stay ring-free.
- * Call once in the root component (App.vue).
+ * Call once in the root layout component (AppLayout.vue).
  */
 export function setupFocusRing() {
    onMounted(() => {

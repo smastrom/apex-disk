@@ -4,7 +4,7 @@
 <!--
 ScanView
 
-Purpose: Common scan shell. Always shows ScanViewHeader at top; body switches between ScanResults, ScanTrash, or ScanTrashConfirmation. Scanner state is owned by App.vue (so it survives switches to Settings / Information) and passed in as props.
+Purpose: Common scan shell. Always shows ScanViewHeader at top; body switches between ScanResults, ScanTrash, or ScanTrashConfirmation. Scanner state is owned by AppLayout.vue (so it survives switches to Settings / Information) and passed in as props.
 
 Props: diskUsage (DiskUsage | null), folders (FolderInfo[]), isScanning (boolean), progress (ScanProgress), elapsedSeconds (number), loadFolders (() => void), onAbort (() => void), onCancel (() => void)
 
