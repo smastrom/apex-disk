@@ -97,7 +97,8 @@ block.
 ## Gotchas
 
 - Always wait for elements before clicking. Vue transitions and `KeepAlive`
-  can leave old elements mounted briefly.
+  can leave old elements mounted briefly. Outer view switches skip their
+  animation under WebDriver, but inner Scan transitions still run.
 - Click row checkboxes for selection. Clicking a folder row navigates into it.
 - Reset settings in tests that mutate them.
 - Keep fixture expectations in sync with `src-tauri/src/e2e_fixtures.rs`.

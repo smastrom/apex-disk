@@ -6,10 +6,10 @@ ScanView
 
 Purpose: Common scan shell. Always shows ScanViewHeader at top; body switches between ScanResults, ScanTrash, or ScanTrashConfirmation. Scanner state is owned by AppLayout.vue (so it survives switches to Settings / Information) and passed in as props.
 
-Props: diskUsage (DiskUsage | null), folders (FolderInfo[]), isScanning (boolean), progress (ScanProgress), elapsedSeconds (number), loadFolders (() => void), onAbort (() => void), onCancel (() => void)
+Props: isActive (boolean), diskUsage (DiskUsage | null), folders (FolderInfo[]), isScanning (boolean), progress (ScanProgress), elapsedSeconds (number), loadFolders (() => void), onAbort (() => void), onCancel (() => void)
 
 Example:
- <ScanView :diskUsage="diskUsage" :folders="folders" :isScanning="isScanning" :progress="progress" :elapsedSeconds="elapsedSeconds" :loadFolders="loadFolders" :onAbort="onAbort" :onCancel="onCancel" />
+ <ScanView :isActive="activeView === 'scan'" :diskUsage="diskUsage" :folders="folders" :isScanning="isScanning" :progress="progress" :elapsedSeconds="elapsedSeconds" :loadFolders="loadFolders" :onAbort="onAbort" :onCancel="onCancel" />
 -->
 
 <script setup lang="ts">
@@ -23,12 +23,13 @@ import ScanViewHeader from './ScanViewHeader.vue'
 import type { DiskUsage } from '@/types/disk'
 import type { FolderInfo, ScanProgress as ScanProgressData, TrashListItem } from '@/types/structs'
 
-import { nextTick, onActivated, onDeactivated, ref, toRef, useTemplateRef, watch } from 'vue'
+import { ref, toRef, useTemplateRef, watch } from 'vue'
 
 import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'
 
 const props = defineProps<{
+   isActive: boolean
    diskUsage?: DiskUsage | null
    folders: FolderInfo[]
    isScanning: boolean
@@ -52,25 +53,8 @@ enum ActiveView {
 }
 
 const activeView = ref<ActiveView>(ActiveView.LAUNCH)
-const isScanViewActivated = ref(true)
-const pendingActiveView = ref<ActiveView | null>(null)
 
-/**
- * Keeps the rendered body in sync with scanner state without patching the
- * cached subtree while KeepAlive has moved it out of the visible DOM.
- */
-function requestActiveView(nextView: ActiveView) {
-   if (!isScanViewActivated.value) {
-      pendingActiveView.value = nextView
-
-      return
-   }
-
-   applyActiveView(nextView)
-}
-
-/** Applies the requested scan body and logs the user-visible view state. */
-function applyActiveView(nextView: ActiveView) {
+function setBodyView(nextView: ActiveView) {
    if (nextView === activeView.value) return
 
    if (nextView === ActiveView.SCANNING) {
@@ -88,11 +72,11 @@ watch(
    [() => isScanning.value, () => folders.value.length],
    ([isScanning, folderCount]) => {
       if (isScanning) {
-         requestActiveView(ActiveView.SCANNING)
+         setBodyView(ActiveView.SCANNING)
       } else if (folderCount === 0) {
-         requestActiveView(ActiveView.LAUNCH)
+         setBodyView(ActiveView.LAUNCH)
       } else {
-         requestActiveView(ActiveView.RESULTS)
+         setBodyView(ActiveView.RESULTS)
       }
    },
    { immediate: true }
@@ -110,7 +94,7 @@ const pendingReset = ref(false)
 function resetInternalState() {
    selectedSize.value = 0
 
-   requestActiveView(ActiveView.LAUNCH)
+   setBodyView(ActiveView.LAUNCH)
 
    deleteItems.value = []
    deletedSummary.value = null
@@ -126,33 +110,17 @@ watch(
    }
 )
 
-/** Skip the inner fade across KeepAlive reactivation so SCANNING -> RESULTS doesn't flash. */
-const suppressInnerTransition = ref(false)
+/** Leaving Scan while the success screen is up resets the flow for next entry. */
+watch(
+   () => props.isActive,
+   (isActive, wasActive) => {
+      if (wasActive && !isActive && activeView.value === ActiveView.TRASH_COMPLETE) {
+         activeView.value = ActiveView.LAUNCH
 
-onDeactivated(() => {
-   isScanViewActivated.value = false
-   suppressInnerTransition.value = true
-
-   if (activeView.value === ActiveView.TRASH_COMPLETE) {
-      pendingActiveView.value = ActiveView.LAUNCH
-
-      onCancel()
+         onCancel()
+      }
    }
-})
-
-onActivated(() => {
-   isScanViewActivated.value = true
-
-   if (pendingActiveView.value) {
-      applyActiveView(pendingActiveView.value)
-
-      pendingActiveView.value = null
-   }
-
-   nextTick(() => {
-      suppressInnerTransition.value = false
-   })
-})
+)
 
 function onSelectedSizeUpdate(value: number) {
    selectedSize.value = value
@@ -208,7 +176,7 @@ function onRestart() {
    <section class="ScanView-root" aria-label="Scan">
       <ScanViewHeader :usage="diskUsage" :selectedSize="selectedSize" />
 
-      <Transition :name="suppressInnerTransition ? 'no-fade' : 'fade'" mode="out-in">
+      <Transition name="fade" mode="out-in">
          <KeepAlive>
             <ScanLaunch
                v-if="activeView === ActiveView.LAUNCH"

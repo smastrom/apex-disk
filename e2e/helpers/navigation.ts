@@ -62,21 +62,19 @@ export const sel = {
 // ---------------------------------------------------------------------------
 
 /**
- * Poll until no Vue <Transition> is mid-flight anywhere on the page.
+ * Poll until the inner list-slide Vue <Transition> is no longer mid-flight.
  *
  * Vue applies `*-enter-active` / `*-leave-active` classes only while a
  * transition is running, so absence of both = nothing animating right now.
- * Cheaper and more accurate than fixed `browser.pause()` constants.
+ * Outer view switches (scan ↔ settings ↔ information) are skipped under
+ * WebDriver by `useAppViews`, so they don't need polling here.
  */
 export async function waitForListSlideSettled(): Promise<void> {
    await browser
       .waitUntil(
          async () =>
             !(await browser.execute(
-               () =>
-                  !!document.querySelector(
-                     '.list-slide-enter-active, .list-slide-leave-active, .app-slide-enter-active, .app-slide-leave-active'
-                  )
+               () => !!document.querySelector('.list-slide-enter-active, .list-slide-leave-active')
             )),
          {
             timeout: ELEMENT_TIMEOUT,
@@ -383,7 +381,7 @@ export async function isReviewButtonDisabled(): Promise<boolean> {
  * Reset app settings to defaults via the e2e Tauri command. The Rust side
  * emits `settings:reset` after writing, which the frontend store listens for
  * and uses to refresh its in-memory ref, so the UI is in sync without
- * having to replay toggle clicks (which used to fire app-slide transitions
+ * having to replay toggle clicks (which used to fire view-slide transitions
  * and was a source of flake).
  */
 export async function resetE2eState() {
@@ -524,10 +522,9 @@ export async function clickReviewSelection() {
 // App view navigation
 // ---------------------------------------------------------------------------
 
-/** Click the Scan footer tab and wait for the scan view to be ready. */
+/** Click the Scan footer tab. Outer view switches snap instantly under WebDriver. */
 export async function goToScanView() {
    await $(sel.footerScan).click()
-   await waitForListSlideSettled()
 }
 
 /** Click the Settings footer tab and wait for the settings view. */
@@ -537,7 +534,6 @@ export async function goToSettingsView() {
    const view = $(sel.settingsView)
 
    await view.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
-   await waitForListSlideSettled()
 }
 
 // ---------------------------------------------------------------------------

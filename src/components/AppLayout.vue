@@ -31,7 +31,6 @@ import { useAppViews } from '@/lib/use-app-views'
 import { disableNativeContextMenu } from '@/lib/use-context-menu'
 import { setupFocusRing } from '@/lib/use-focus-ring'
 import { useScanner } from '@/lib/use-scanner'
-import { isWebDriverSession } from '@/lib/utils'
 import { useAppSettings } from '@/stores/app-settings'
 
 defineProps<{
@@ -65,7 +64,7 @@ const {
    onCancel,
 } = useScanner()
 
-const { activeView, setActiveView } = useAppViews({
+const { activeView, viewStates, setActiveView } = useAppViews({
    onEnter: {
       scan: markResultsSeen,
    },
@@ -94,39 +93,34 @@ setupFocusRing()
 
       <div class="App-main" role="main">
          <div class="App-mainContent">
-            <Transition name="app-slide" mode="out-in" :css="!isWebDriverSession">
-               <KeepAlive>
-                  <ScanView
-                     v-if="activeView === 'scan'"
-                     key="scan"
-                     :diskUsage="diskUsage"
-                     :folders="folders"
-                     :isScanning="isScanning"
-                     :progress="progress"
-                     :elapsedSeconds="elapsedSeconds"
-                     :loadFolders="loadFolders"
-                     :onAbort="onAbort"
-                     :onCancel="onCancel"
-                  />
+            <div class="App-view" :data-state="viewStates.scan">
+               <ScanView
+                  :isActive="activeView === 'scan'"
+                  :diskUsage="diskUsage"
+                  :folders="folders"
+                  :isScanning="isScanning"
+                  :progress="progress"
+                  :elapsedSeconds="elapsedSeconds"
+                  :loadFolders="loadFolders"
+                  :onAbort="onAbort"
+                  :onCancel="onCancel"
+               />
+            </div>
 
-                  <SettingsView
-                     v-else-if="activeView === 'settings'"
-                     key="settings"
-                     :isFdaGranted="isFdaGranted"
-                     :isChecking="isChecking"
-                     :isDownloading="isDownloading"
-                     :availableVersion="availableVersion"
-                     :updateReady="updateReady"
-                     @check-for-updates="onCheckForUpdates"
-                  />
+            <div class="App-view" :data-state="viewStates.settings">
+               <SettingsView
+                  :isFdaGranted="isFdaGranted"
+                  :isChecking="isChecking"
+                  :isDownloading="isDownloading"
+                  :availableVersion="availableVersion"
+                  :updateReady="updateReady"
+                  @check-for-updates="onCheckForUpdates"
+               />
+            </div>
 
-                  <InformationView
-                     v-else-if="activeView === 'information'"
-                     key="information"
-                     :systemInfo="systemInfo"
-                  />
-               </KeepAlive>
-            </Transition>
+            <div class="App-view" :data-state="viewStates.information">
+               <InformationView :systemInfo="systemInfo" />
+            </div>
          </div>
       </div>
 
@@ -159,8 +153,14 @@ setupFocusRing()
 }
 
 .App-mainContent {
+   position: relative;
    flex: 1;
    min-height: 0;
+}
+
+.App-view {
+   position: absolute;
+   inset: 0;
    display: flex;
    flex-direction: column;
 }

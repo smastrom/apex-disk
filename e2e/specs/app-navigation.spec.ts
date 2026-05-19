@@ -11,7 +11,6 @@ import {
    goToScanView,
    goToSettingsView,
    waitForAppReady,
-   waitForListSlideSettled,
    waitForScanLaunch,
 } from '../helpers/navigation'
 
@@ -81,7 +80,6 @@ describe('App navigation', () => {
       const informationBtn = $(sel.footerInformation)
 
       await informationBtn.click()
-      await waitForListSlideSettled()
       await expectInformationViewRendered()
       await expectInformationFooterRendered()
    })
@@ -101,7 +99,6 @@ describe('App navigation', () => {
       const informationBtn = $(sel.footerInformation)
 
       await informationBtn.click()
-      await waitForListSlideSettled()
       await expectInformationViewRendered()
 
       await goToScanView()

@@ -182,8 +182,8 @@ describe('Scan flow', () => {
       await footerSettings.click()
       await browser.pause(300)
 
-      // The scan results should still be cached (KeepAlive), but let's verify
-      // we can get back to scan view
+      // The scan view stays mounted (v-show); verify we can get back to it
+      // and the results are still there.
       await footerScan.click()
       await browser.pause(300)
 
@@ -192,7 +192,7 @@ describe('Scan flow', () => {
       const isResultsDisplayed = await results.isDisplayed()
 
       if (isResultsDisplayed) {
-         // Results are cached; this test verifies the scan view persists
+         // Scan view persists across tab switches; results stay in place.
          await expect(results).toBeDisplayed()
       } else {
          // If we're on the launch screen, that works too
