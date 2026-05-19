@@ -4,6 +4,38 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 
 ---
 
+## v0.0.18
+
+### Improvements
+
+#### Frontend
+
+- Animate the outer view switcher with a state-driven slide and keep both views mounted via `v-show` so the active view no longer tears down between transitions.
+- Defer the fresh-scan progress dot until the background scan actually completes, and harden the `KeepAlive` wrapper so cached views don't unmount mid-flight.
+- Give WebKit scrollbars a JS-owned visibility policy so fade-in and fade-out follow the active surface.
+
+#### Backend
+
+- Tighten Tauri sandboxing: enable a strict CSP in `tauri.conf.json`, drop unused Hardened Runtime entitlements (`allow-unsigned-executable-memory`, `disable-library-validation`), and remove the unused `opener:allow-open-path` capability.
+- Run native macOS dialogs through an async channel so a modal no longer pins an IPC worker for the lifetime of the prompt.
+- Trim hot-path allocations on every scan: ASCII fast path in safe-folder lookup, cached xattr attribute name, top-N heap key that never compares filenames, and a lazy-format helper for debug traces.
+- Route the disk-usage command through `tauri::async_runtime` instead of calling `tokio` directly, and trace `diskutil` failures.
+
+### Bug Fixes
+
+- Scan cancellation can no longer leave the app stuck. An RAII guard releases `SCAN_RUNNING` even on panic or join error, and each scan carries its own cancel token so a stale `cancel_scan` between scans is a no-op.
+- `set_settings` now whitelists keys, drops unknown ones, merges over the existing settings instead of replacing them, and runs under the same `STORE_LOCK` as `update_setting` so concurrent writes can't race.
+- The updater no longer fetches the feed twice before staging a download (so the staged version always matches the UI), beta and dev builds skip checks by bundle identifier so a release-mode beta can't advertise stable updates, and `restart_app` refuses to restart unless an update is actually staged.
+- Canonicalize the home directory before the trash safety filter, so items reached through a symlinked home are no longer silently dropped.
+- Switch `AppleLanguages` identifiers to BCP-47 tags (`it-IT`, `zh-Hans`, …) so macOS context menus localize consistently across versions.
+- The Full Disk Access probe now distinguishes `PermissionDenied` (truly missing) from `NotFound` (inconclusive), and falls back to a Safari probe when the primary probe path doesn't exist.
+
+### Chores
+
+- Drop the `nix`, `tauri-plugin-os`, `@tauri-apps/plugin-os`, and direct `open` dependencies; route external URL opening through `tauri-plugin-opener`'s Rust API. Bump `dirs` to 6 and `sys-locale` to 0.3 to collapse duplicate versions, move `tokio` to dev-dependencies, and pin `tauri-plugin-webdriver` to `=0.2.1`.
+- Sync the `reference/` docs (architecture, scanning, tauri-commands, updates, compatibility) with the new scan-cancel model, the tightened settings flow, the beta gating, the reduced entitlements, and the refreshed MSRV list.
+- Ignore `reference/temp/` for git and the formatter so working notes don't clutter the tree.
+
 ## v0.0.17
 
 ### New Features
