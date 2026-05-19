@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Simone Mastromattei
 
-import { APP_VERSION } from '@/lib/constants'
+import AppShell from './components/AppShell.vue'
+
+import { createApp } from 'vue'
+
 import { applyTheme, applyDirection } from '@/lib/dom'
 import { initLog, log, registerDiagnosticHandlers } from '@/lib/log'
 import { useSystemInfo } from '@/lib/use-system-info'
 import { initTauriAppSettings } from '@/stores/app-settings'
-import { createApp } from 'vue'
 
-import AppShell from './components/AppShell.vue'
+import { APP_VERSION } from '@/lib/constants'
 
-;(async () => {
+void (async () => {
    await initLog()
 
    const store = await initTauriAppSettings()
@@ -24,6 +26,7 @@ import AppShell from './components/AppShell.vue'
 
       if (systemInfo.value) {
          const { macos_version, cpu_info } = systemInfo.value
+
          log('app', `App: v${APP_VERSION}, macOS ${macos_version}, ${cpu_info}`)
       } else {
          log('app', `App: v${APP_VERSION}`)
