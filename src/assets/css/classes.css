@@ -41,19 +41,17 @@
    transition:
       opacity 0.2s var(--ease-apple-out),
       filter 0.2s var(--ease-apple-out);
+
+   @media (prefers-reduced-motion: reduce) {
+      transition: none;
+      filter: none;
+   }
 }
 
 .Popover.is-open {
    opacity: 1;
    filter: blur(0);
    pointer-events: auto;
-}
-
-@media (prefers-reduced-motion: reduce) {
-   .Popover {
-      transition: none;
-      filter: none;
-   }
 }
 
 /* macOS-style grouped list container */
@@ -134,10 +132,8 @@
       0 0.5px 0 rgba(0, 0, 0, 0.04),
       0 3px 8px rgba(0, 0, 0, 0.24),
       0 1px 2px rgba(0, 0, 0, 0.18);
-}
 
-@media (prefers-reduced-motion: reduce) {
-   .SettingsToggle-knob {
+   @media (prefers-reduced-motion: reduce) {
       transition-duration: 0.01ms;
    }
 }

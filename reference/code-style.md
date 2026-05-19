@@ -103,7 +103,7 @@ const { t } = useTranslations()
 - **Use `&` only for pseudo-selectors and states** inside an existing selector: `&:hover`, `&:focus`, `&[disabled]`.
 - **Media queries:**
    - Component-local responsive tweaks: nest the `@media` inside the selector.
-   - Cross-cutting overrides like `@media (prefers-reduced-motion: reduce)`: keep at the top level with the relevant selectors inside (matches how `ScanResultsListItem.vue` handles reduced motion).
+   - Cross-cutting overrides like `@media (prefers-reduced-motion: reduce)`: nest the `@media` inside each selector it overrides (matches how `ScanResultsListItem.vue` and `classes.css` handle reduced motion).
 - **Blank line between rule blocks** at the top level.
 - **No hardcoded values** for color, spacing, font sizes, or border radii — use CSS variables from `src/assets/css/theme.css` (see `[themes.md](themes.md)`). Examples: `var(--color-bg)`, `var(--spacing-md)`, `var(--font-size-xl)`, `var(--touch-height-default)`.
 
