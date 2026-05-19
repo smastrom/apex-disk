@@ -35,18 +35,18 @@ cleans it up on process exit or termination signals.
 The Rust `e2e_fixtures` module creates a temp home folder with predictable
 contents:
 
-| Path                              | Purpose                              |
-| --------------------------------- | ------------------------------------ |
-| `MyData/`                         | Normal selectable folder             |
-| `MyData/big.txt`                  | Normal file over 1 KB                |
-| `MyData/small.txt`                | Under-1 KB filter coverage           |
-| `MyData/empty.txt`                | Zero-byte filter coverage            |
-| `MyData/.hidden`                  | Hidden-file filter coverage          |
+| Path                              | Purpose                               |
+| --------------------------------- | ------------------------------------- |
+| `MyData/`                         | Normal selectable folder              |
+| `MyData/big.txt`                  | Normal file over 1 KB                 |
+| `MyData/small.txt`                | Under-1 KB filter coverage            |
+| `MyData/empty.txt`                | Zero-byte filter coverage             |
+| `MyData/.hidden`                  | Hidden-file filter coverage           |
 | `MyData/.DS_Store`                | `.DS_Store` dependent-toggle coverage |
-| `MyData/SubFolder/Deep/gamma.txt` | Nested selection propagation         |
-| `Documents/`                      | Protected folder                     |
-| `Projects/Bulk/`                  | Per-folder truncation notice         |
-| `.ssh`, `.Trash`                  | Skipped folders, absent from results |
+| `MyData/SubFolder/Deep/gamma.txt` | Nested selection propagation          |
+| `Documents/`                      | Protected folder                      |
+| `Projects/Bulk/`                  | Per-folder truncation notice          |
+| `.ssh`, `.Trash`                  | Skipped folders, absent from results  |
 
 Tests must use these fixtures rather than the real user home.
 
