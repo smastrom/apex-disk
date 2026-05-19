@@ -27,10 +27,9 @@ import SelectionIcon from '@/components/ui/SelectionIcon.vue'
 import type { FolderInfo } from '@/types/structs'
 
 import { PhCaretRight } from '@phosphor-icons/vue'
-import { ref, useTemplateRef, computed, type ComponentPublicInstance } from 'vue'
+import { ref, computed } from 'vue'
 
 import { formatDate } from '@/lib/format'
-import { useLabelPopover } from '@/lib/use-label-popover'
 import { useTranslations } from '@/lib/use-translations'
 import { useAppSettings } from '@/stores/app-settings'
 
@@ -55,6 +54,14 @@ const selectionState = computed(() => {
 })
 
 const isCheckDisabled = computed(() => !props.isSelectable)
+
+/** Tag the disabled checkbox so ScanResultsList's shared popover knows what
+ * text to show. Reads as `null` (attribute omitted) when not disabled. */
+const disabledTooltipKind = computed<'fda' | 'protected' | null>(() => {
+   if (!isCheckDisabled.value) return null
+
+   return props.item.is_fda_required ? 'fda' : 'protected'
+})
 
 /** Suppress click-to-navigate when the pointer drags far enough to read as a text selection. */
 const isPressing = ref(false)
@@ -113,23 +120,7 @@ function onRootNavigateKey() {
    emit('navigate')
 }
 
-const triggerRef = useTemplateRef<HTMLElement>('triggerRef')
-const popoverRef = useTemplateRef<HTMLElement>('popoverRef')
-const checkboxTriggerRef = useTemplateRef<HTMLElement>('checkboxTriggerRef')
-const checkboxIconRef = useTemplateRef<ComponentPublicInstance>('checkboxIconRef')
-const checkboxPopoverRef = useTemplateRef<HTMLElement>('checkboxPopoverRef')
-
-/** Anchor the disabled-checkbox popover to the icon, not the row-tall button hit area. */
-const checkboxAnchorRef = computed(() => (checkboxIconRef.value?.$el as HTMLElement) ?? null)
-
 const { t } = useTranslations()
-const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRef)
-const { onPointerEnter: onCheckboxPointerEnter, onPointerLeave: onCheckboxPointerLeave } =
-   useLabelPopover(checkboxTriggerRef, checkboxPopoverRef, {
-      placement: 'top-start',
-      alwaysShow: true,
-      anchorRef: checkboxAnchorRef,
-   })
 const store = useAppSettings()
 const currentLanguage = store.settings.value.language
 </script>
@@ -155,10 +146,10 @@ const currentLanguage = store.settings.value.language
       @keydown.space.prevent="onRootNavigateKey"
    >
       <button
-         ref="checkboxTriggerRef"
          type="button"
          class="ScanResultsListItem-check"
          data-testid="results-row-checkbox"
+         :data-disabled-tooltip="disabledTooltipKind"
          :class="{
             'ScanResultsListItem-check--selected': isSelected,
             'ScanResultsListItem-check--some-selected': !isSelected && isSomeSelected,
@@ -170,11 +161,8 @@ const currentLanguage = store.settings.value.language
          :aria-disabled="isCheckDisabled"
          @click.stop="!isCheckDisabled && emit('select')"
          @pointerdown.stop
-         @pointerenter="isCheckDisabled && onCheckboxPointerEnter()"
-         @pointerleave="isCheckDisabled && onCheckboxPointerLeave()"
       >
          <SelectionIcon
-            ref="checkboxIconRef"
             :state="selectionState"
             :size="22"
             :class="{
@@ -191,13 +179,7 @@ const currentLanguage = store.settings.value.language
          <ScanResultsListItemIconSwitch :item="item" :size="28" />
       </div>
       <div class="ScanResultsListItem-info">
-         <span
-            ref="triggerRef"
-            class="ScanResultsListItem-name"
-            @pointerenter="onPointerEnter"
-            @pointerleave="onPointerLeave"
-            >{{ item.name }}</span
-         >
+         <span class="ScanResultsListItem-name">{{ item.name }}</span>
          <span class="ScanResultsListItem-details">
             <span v-if="!item.is_file">
                {{
@@ -223,31 +205,6 @@ const currentLanguage = store.settings.value.language
          />
       </div>
    </div>
-   <Teleport to="body">
-      <div
-         ref="popoverRef"
-         class="Popover"
-         role="tooltip"
-         @pointerenter="onPointerEnter"
-         @pointerleave="onPointerLeave"
-      >
-         {{ item.name }}
-      </div>
-      <div
-         v-if="!isSelectable"
-         ref="checkboxPopoverRef"
-         class="Popover ScanResultsListItem-checkboxPopover"
-         role="tooltip"
-         @pointerenter="onCheckboxPointerEnter"
-         @pointerleave="onCheckboxPointerLeave"
-      >
-         {{
-            item.is_fda_required
-               ? t('ScanResultsListItem', 'fdaRequiredTooltip')
-               : t('ScanResultsListItem', 'protectedTooltip')
-         }}
-      </div>
-   </Teleport>
 </template>
 
 <style scoped>
@@ -385,14 +342,5 @@ const currentLanguage = store.settings.value.language
 
 .ScanResultsListItem-chevron {
    color: var(--color-text-dim);
-}
-
-/* ── Checkbox tooltip popover ── */
-/* Inherits the shared .Popover styles in classes.css; only the explanatory
- * checkbox tooltip needs a wider max-width since it's a sentence, not a label. */
-
-.ScanResultsListItem-checkboxPopover {
-   max-width: 280px;
-   word-break: normal;
 }
 </style>

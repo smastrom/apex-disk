@@ -28,10 +28,12 @@ import {
    useTemplateRef,
    nextTick,
    onMounted,
+   onUnmounted,
 } from 'vue'
 
 import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'
+import { useListRowPopovers } from '@/lib/use-list-row-popovers'
 import { useScrollbarVisibility } from '@/lib/use-scrollbar-visibility'
 import { useTranslations } from '@/lib/use-translations'
 import { isWebDriverSession } from '@/lib/utils'
@@ -53,6 +55,10 @@ const { t } = useTranslations()
  * The Rust cap drops only files; this cap drops the smallest entries of any
  * type. See reference/scanning.md. */
 const MAX_DISPLAYED_ITEMS = 300
+
+/** First-pass row count on navigation. The remainder (up to MAX_DISPLAYED_ITEMS)
+ * is mounted after the enter transition so the slide stays smooth on big lists. */
+const INITIAL_RENDER_COUNT = 50
 
 /** Window size is fixed, so > 6 rows always overflows and the overlay
  * scrollbar paints the right gutter; at or below we reserve it manually. */
@@ -151,10 +157,35 @@ const displayPath = computed(() => {
    return path
 })
 
-/** Rows actually rendered. Slicing to MAX_DISPLAYED_ITEMS keeps DOM size bounded
- * without virtualization; entries are pre-sorted by size desc in Rust, so the
- * dropped tail is always the smallest items. */
-const displayedItems = computed(() => current.value.items.slice(0, MAX_DISPLAYED_ITEMS))
+/** Two-phase render: starts at INITIAL_RENDER_COUNT on each navigation, then
+ * expands to MAX_DISPLAYED_ITEMS after the enter transition completes. */
+const renderedCount = ref(MAX_DISPLAYED_ITEMS)
+
+let expandTimer: ReturnType<typeof setTimeout> | null = null
+
+function cancelExpand() {
+   if (expandTimer !== null) {
+      clearTimeout(expandTimer)
+
+      expandTimer = null
+   }
+}
+
+function scheduleExpand() {
+   cancelExpand()
+
+   expandTimer = setTimeout(() => {
+      renderedCount.value = MAX_DISPLAYED_ITEMS
+
+      expandTimer = null
+   }, 0)
+}
+
+/** Rows actually rendered. Capped at MAX_DISPLAYED_ITEMS (DOM bound; entries
+ * arrive sorted by size desc in Rust, so the dropped tail is the smallest). */
+const displayedItems = computed(() =>
+   current.value.items.slice(0, Math.min(renderedCount.value, MAX_DISPLAYED_ITEMS))
+)
 
 /** True when either Rust dropped files (truncated flag) or the frontend slice
  * hid additional entries. Either way the notice shown is the same. */
@@ -163,9 +194,18 @@ const isListTruncated = computed(
 )
 
 const parentRef = useTemplateRef<HTMLElement>('parentRef')
+const namePopoverRef = useTemplateRef<HTMLElement>('namePopoverRef')
+const checkboxPopoverRef = useTemplateRef<HTMLElement>('checkboxPopoverRef')
 const isTopShadowShown = ref(false)
 
 useScrollbarVisibility(parentRef, 'scroll-and-hover')
+
+const popovers = useListRowPopovers(parentRef, namePopoverRef, checkboxPopoverRef, {
+   resolveCheckboxText: (kind) =>
+      kind === 'fda'
+         ? t('ScanResultsListItem', 'fdaRequiredTooltip')
+         : t('ScanResultsListItem', 'protectedTooltip'),
+})
 
 /**
  * Shows the top overlay only when the list has genuinely scrolled away from
@@ -203,16 +243,35 @@ function onAfterListLeave() {
    isListSlideEnabled.value = false
 }
 
+/** Phase 2 of the two-phase render: fires after the new list has finished
+ * entering, so the initial 50 rows have already been mounted + animated.
+ * Also fires for non-animated cases (webdriver, isListSlideEnabled=false). */
+function onAfterListEnter() {
+   scheduleExpand()
+}
+
 watch(
    () => current.value.path,
    async () => {
+      renderedCount.value = Math.min(INITIAL_RENDER_COUNT, current.value.items.length)
+
+      popovers.dismissAll()
+
       await nextTick()
       updateTopShadowVisibility()
-   }
+   },
+   { immediate: true }
 )
 
 onMounted(() => {
    updateTopShadowVisibility()
+   // Vue's <Transition> defaults to appear=false, so the very first mount of
+   // the inner list does not fire after-enter; expand manually here instead.
+   scheduleExpand()
+})
+
+onUnmounted(() => {
+   cancelExpand()
 })
 
 /**
@@ -572,6 +631,7 @@ function onCancel() {
                mode="out-in"
                :css="isListSlideEnabled && !isWebDriverSession"
                @after-leave="onAfterListLeave"
+               @after-enter="onAfterListEnter"
             >
                <div
                   :key="current.path"
@@ -643,6 +703,22 @@ function onCancel() {
          </button>
       </div>
    </div>
+   <Teleport to="body">
+      <div
+         ref="namePopoverRef"
+         class="Popover"
+         role="tooltip"
+         @pointerenter="popovers.onNamePopoverEnter"
+         @pointerleave="popovers.onNamePopoverLeave"
+      ></div>
+      <div
+         ref="checkboxPopoverRef"
+         class="Popover ScanResultsList-checkboxPopover"
+         role="tooltip"
+         @pointerenter="popovers.onCheckboxPopoverEnter"
+         @pointerleave="popovers.onCheckboxPopoverLeave"
+      ></div>
+   </Teleport>
 </template>
 
 <style scoped>
@@ -742,5 +818,11 @@ function onCancel() {
    & svg {
       filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.2));
    }
+}
+
+/* Inherits .Popover from classes.css; wider max-width because it's a sentence. */
+.ScanResultsList-checkboxPopover {
+   max-width: 280px;
+   word-break: normal;
 }
 </style>
