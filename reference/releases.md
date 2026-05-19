@@ -92,6 +92,10 @@ with a comma, parentheses, period, or colon.
 
    Omit any group that has no entries (no empty `###` headings). One bullet per change. Classify by the dominant effect of the commit, not the commit-message prefix. Older entries pre-date this convention and are not retroactively rewritten.
 
+   **Sort within every group from most to least significant.** Lead with changes that have the biggest user-visible footprint — a new default theme, a core scan behavior change, a settings split that reshapes a flow — and trail with small touches like footer labels, copy tweaks, single-toggle additions. Use UI prominence and breadth of impact as the heuristic: would a returning user notice this in the first minute (top) or only on a settings deep-dive (bottom)?
+
+   **Frontend / Backend split for Improvements and Bug Fixes — only when the group has more than 4 entries.** At 4 or fewer, list them flat under the `###` heading sorted by significance. At 5 or more, split into `#### Frontend` and `#### Backend` sub-blocks (omit either if empty), and apply the significance sort inside each sub-block. Frontend covers UI, themes, translations, components, settings surface; backend covers Rust, scanning, IPC, updater, build. New Features and Chores stay flat regardless of count.
+
 - `../RELEASES_BETA.md`: `## YYYY-MM-DD` (UTC) heading, a one-line summary, then bullets covering UI flows that changed, updater/menu/store touches, and macOS-version-sensitive behavior.
 
 Never edit older sections to retcon history.
