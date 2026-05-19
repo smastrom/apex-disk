@@ -87,6 +87,10 @@
    gap: 2px;
 }
 
+.SettingsGroup-labelWrapper--disabled {
+   opacity: 0.4;
+}
+
 .SettingsGroup-label {
    font-size: var(--font-size-lg);
    color: var(--color-text);

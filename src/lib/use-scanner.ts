@@ -45,6 +45,7 @@ export function useScanner() {
 
    function startElapsed() {
       stopElapsed()
+
       elapsedSeconds.value = 0
 
       if (elapsedInterval) return // Guard against multiple concurrent timers
@@ -57,6 +58,7 @@ export function useScanner() {
    function stopElapsed() {
       if (elapsedInterval) {
          clearInterval(elapsedInterval)
+
          elapsedInterval = null
       }
 
@@ -68,6 +70,7 @@ export function useScanner() {
 
       log('scan', 'Scan: started', {
          showHiddenFiles: settings.showHiddenFiles,
+         showDsStore: settings.showDsStore,
          showUnder1Kb: settings.showUnder1Kb,
          showZeroByte: settings.showZeroByte,
       })
@@ -82,6 +85,7 @@ export function useScanner() {
 
       isScanning.value = true
       progress.value = { ...INITIAL_PROGRESS }
+
       startElapsed()
 
       unlistenProgress = await listen<ScanProgress>('folder-scan-progress', (event) => {
@@ -91,6 +95,7 @@ export function useScanner() {
       try {
          const options = {
             show_hidden_files: settings.showHiddenFiles,
+            show_ds_store: settings.showDsStore,
             show_under_1kb: settings.showUnder1Kb,
             show_zero_byte: settings.showZeroByte,
          }
@@ -104,6 +109,7 @@ export function useScanner() {
                'scan',
                `Scan: complete ${result.length} folders, ${totalSize}, ${elapsedSeconds.value}s`
             )
+
             folders.value = result
          }
       } catch (error) {
@@ -113,6 +119,7 @@ export function useScanner() {
             unlistenProgress?.()
             unlistenProgress = null
             isScanning.value = false
+
             stopElapsed()
          }
       }
@@ -120,6 +127,7 @@ export function useScanner() {
 
    async function onAbort() {
       log('scan', 'Scan: aborted')
+
       scanGeneration.value += 1
       unlistenProgress?.()
       unlistenProgress = null
@@ -127,6 +135,7 @@ export function useScanner() {
       folders.value = []
       isScanning.value = false
       progress.value = { ...INITIAL_PROGRESS }
+
       stopElapsed()
 
       // Cancel any ongoing Rust scan to free memory

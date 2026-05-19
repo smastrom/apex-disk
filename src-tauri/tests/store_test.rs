@@ -118,6 +118,7 @@ fn set_and_get_settings_round_trip() {
         "language": "it",
         "themeColor": constants::DEFAULT_THEME,
         "showHiddenFiles": true,
+        "showDsStore": false,
         "showUnder1Kb": true,
         "showZeroByte": true,
         "autoCheckUpdates": false,

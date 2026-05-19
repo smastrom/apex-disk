@@ -141,7 +141,9 @@ fn sort_children(children: &mut [FolderInfo]) {
     children.sort_unstable_by(|a, b| b.size.cmp(&a.size).then_with(|| a.name.cmp(&b.name)));
 }
 
-/// Returns true if the file/folder is a macOS system file that shouldn't affect last_modified dates
+/// Returns true if the file/folder is a macOS system file that shouldn't affect last_modified
+/// dates. This holds even when `show_ds_store` is on: .DS_Store can be visible in the tree, but is
+/// never a candidate for the folder's most-recent-modified estimate.
 fn is_system_file(name: &str) -> bool {
     matches!(
         name,
@@ -255,6 +257,9 @@ fn build_folder_tree(
 
         let name = entry.file_name().to_string_lossy().into_owned();
         if !options.show_hidden_files && name.starts_with('.') {
+            continue;
+        }
+        if !options.show_ds_store && name == ".DS_Store" {
             continue;
         }
 

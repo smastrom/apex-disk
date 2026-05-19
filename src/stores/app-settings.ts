@@ -17,6 +17,7 @@ export interface AppSettingsStore {
    setLanguage: (lang: Language) => Promise<void>
    setThemeColor: (theme: ThemeColor) => Promise<void>
    setShowHiddenFiles: (value: boolean) => Promise<void>
+   setShowDsStore: (value: boolean) => Promise<void>
    setShowUnder1Kb: (value: boolean) => Promise<void>
    setShowZeroByte: (value: boolean) => Promise<void>
    setAutoCheckUpdates: (value: boolean) => Promise<void>
@@ -48,6 +49,7 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
       if (!THEME_COLORS.includes(next.themeColor)) next.themeColor = ROOT_THEME
 
       settings.value = next
+
       log('settings', 'Settings: reset from backend')
    })
 
@@ -62,6 +64,7 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
          const prev = settings.value.language
 
          settings.value = { ...settings.value, language: lang }
+
          log('settings', `Settings: language ${prev} → ${lang}`)
          await saveSettings()
          // Update macOS system locale (for context menus) and sync app menu language
@@ -71,21 +74,39 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
          const prev = settings.value.themeColor
 
          settings.value = { ...settings.value, themeColor: theme }
+
          log('settings', `themeColor: ${prev} → ${theme}`)
          await saveSettings()
       },
       setShowHiddenFiles: async (value) => {
-         settings.value = { ...settings.value, showHiddenFiles: value }
+         // Cascade: turning hidden files off also turns DS_Store off (DS_Store requires hidden files).
+         const next = { ...settings.value, showHiddenFiles: value }
+
+         if (!value && next.showDsStore) next.showDsStore = false
+
+         settings.value = next
+
          log('settings', `Settings: showHiddenFiles ${!value} → ${value}`)
+         await saveSettings()
+      },
+      setShowDsStore: async (value) => {
+         // Gated: only enables when showHiddenFiles is on.
+         if (value && !settings.value.showHiddenFiles) return
+
+         settings.value = { ...settings.value, showDsStore: value }
+
+         log('settings', `Settings: showDsStore ${!value} → ${value}`)
          await saveSettings()
       },
       setShowUnder1Kb: async (value) => {
          settings.value = { ...settings.value, showUnder1Kb: value }
+
          log('settings', `Settings: showUnder1Kb ${!value} → ${value}`)
          await saveSettings()
       },
       setShowZeroByte: async (value) => {
          settings.value = { ...settings.value, showZeroByte: value }
+
          log('settings', `Settings: showZeroByte ${!value} → ${value}`)
          await saveSettings()
       },
@@ -96,6 +117,7 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
          if (!value && next.autoInstallUpdates) next.autoInstallUpdates = false
 
          settings.value = next
+
          log('settings', `Settings: autoCheckUpdates ${!value} → ${value}`)
          await saveSettings()
       },
@@ -106,6 +128,7 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
          if (value && !next.autoCheckUpdates) next.autoCheckUpdates = true
 
          settings.value = next
+
          log('settings', `Settings: autoInstallUpdates ${!value} → ${value}`)
          await saveSettings()
       },

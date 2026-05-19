@@ -27,6 +27,7 @@ pub fn get_default_settings() -> serde_json::Value {
         "language": constants::DEFAULT_LANGUAGE,
         "themeColor": constants::DEFAULT_THEME,
         "showHiddenFiles": false,
+        "showDsStore": false,
         "showUnder1Kb": false,
         "showZeroByte": false,
         "autoCheckUpdates": false,

@@ -49,6 +49,30 @@ scanHiddenFiles:
    ja: 隠しファイルとフォルダをスキャン
    ar: مسح الملفات والمجلدات المخفية
 
+scanDsStore:
+   en: Scan .DS_Store files
+   it: Scansiona file .DS_Store
+   es: Escanear archivos .DS_Store
+   fr: Scanner les fichiers .DS_Store
+   pt: Escanear ficheiros .DS_Store
+   de: .DS_Store-Dateien scannen
+   ru: Сканировать файлы .DS_Store
+   zh: 扫描 .DS_Store 文件
+   ja: .DS_Store ファイルをスキャン
+   ar: مسح ملفات .DS_Store
+
+scanDsStoreDesc:
+   en: Folder modification dates always ignore .DS_Store
+   it: Le date di modifica delle cartelle ignorano sempre .DS_Store
+   es: Las fechas de modificación de las carpetas siempre ignoran .DS_Store
+   fr: Les dates de modification des dossiers ignorent toujours .DS_Store
+   pt: As datas de modificação das pastas ignoram sempre .DS_Store
+   de: Änderungsdaten von Ordnern ignorieren .DS_Store immer
+   ru: Даты изменения папок всегда игнорируют .DS_Store
+   zh: 文件夹修改日期始终忽略 .DS_Store
+   ja: フォルダの更新日は常に .DS_Store を無視します
+   ar: تواريخ تعديل المجلدات تتجاهل .DS_Store دائمًا
+
 scanUnder1Kb:
    en: Scan files and folders under 1 KB
    it: Scansiona file e cartelle sotto 1 KB

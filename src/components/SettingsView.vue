@@ -4,7 +4,7 @@
 <!--
 SettingsView
 
-Purpose: Settings screen with Language, Theme, Delete behavior (permanent delete), Scan Settings (hidden files, 0 B, under 1 KB), Permissions (FDA), and Software Update (manual check + auto-check / auto-install toggles). macOS-style grouped list.
+Purpose: Settings screen with Language, Theme, Delete behavior (permanent delete), Scan Settings (hidden files, .DS_Store, 0 B, under 1 KB), Permissions (FDA), and Software Update (manual check + auto-check / auto-install toggles). macOS-style grouped list.
 
 Props: isFdaGranted (boolean), isChecking (boolean), availableVersion (string | null)
 
@@ -88,6 +88,12 @@ const updateActionLabel = computed(() => {
 
 function toggleHiddenFiles() {
    store.setShowHiddenFiles(!settings.value.showHiddenFiles)
+}
+
+function toggleDsStore() {
+   if (!settings.value.showHiddenFiles) return // Disabled when hidden files is off (gating rule).
+
+   store.setShowDsStore(!settings.value.showDsStore)
 }
 
 function toggleUnder1Kb() {
@@ -189,6 +195,37 @@ async function openSystemSettings() {
                      :aria-checked="settings.showHiddenFiles"
                      aria-labelledby="label-hidden-files"
                      @click="toggleHiddenFiles"
+                  >
+                     <span class="SettingsToggle-knob" aria-hidden="true" />
+                  </button>
+               </div>
+               <div class="SettingsGroup-row">
+                  <div
+                     class="SettingsGroup-labelWrapper"
+                     :class="{
+                        'SettingsGroup-labelWrapper--disabled': !settings.showHiddenFiles,
+                     }"
+                  >
+                     <span id="label-ds-store" class="SettingsGroup-label">{{
+                        t('SettingsView', 'scanDsStore')
+                     }}</span>
+                     <span class="SettingsView-labelDesc">{{
+                        t('SettingsView', 'scanDsStoreDesc')
+                     }}</span>
+                  </div>
+                  <button
+                     type="button"
+                     role="switch"
+                     class="SettingsToggle"
+                     :class="{
+                        'SettingsToggle--on': settings.showHiddenFiles && settings.showDsStore,
+                        'SettingsToggle--disabled': !settings.showHiddenFiles,
+                     }"
+                     :aria-checked="settings.showHiddenFiles && settings.showDsStore"
+                     :aria-disabled="!settings.showHiddenFiles"
+                     :disabled="!settings.showHiddenFiles"
+                     aria-labelledby="label-ds-store"
+                     @click="toggleDsStore"
                   >
                      <span class="SettingsToggle-knob" aria-hidden="true" />
                   </button>
@@ -330,7 +367,12 @@ async function openSystemSettings() {
                   </button>
                </div>
                <div class="SettingsGroup-row">
-                  <div class="SettingsGroup-labelWrapper">
+                  <div
+                     class="SettingsGroup-labelWrapper"
+                     :class="{
+                        'SettingsGroup-labelWrapper--disabled': !settings.autoCheckUpdates,
+                     }"
+                  >
                      <span id="label-auto-install-updates" class="SettingsGroup-label">{{
                         t('SettingsView', 'autoInstallUpdatesLabel')
                      }}</span>

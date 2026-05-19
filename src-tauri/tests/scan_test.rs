@@ -20,8 +20,12 @@ use support::{create_test_home, create_test_home_with_system_files};
 fn scan_returns_folder_info_shape() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options =
-        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: true };
+    let options = ScanOptions {
+        show_hidden_files: true,
+        show_ds_store: false,
+        show_under_1kb: true,
+        show_zero_byte: true,
+    };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     assert!(!result.is_empty());
@@ -42,8 +46,12 @@ fn scan_returns_folder_info_shape() {
 fn scan_protected_roots_have_is_protected_true() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options =
-        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: true };
+    let options = ScanOptions {
+        show_hidden_files: true,
+        show_ds_store: false,
+        show_under_1kb: true,
+        show_zero_byte: true,
+    };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
 
@@ -73,8 +81,12 @@ fn scan_protected_roots_have_is_protected_true() {
 fn scan_skipped_dir_not_present() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options =
-        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: true };
+    let options = ScanOptions {
+        show_hidden_files: true,
+        show_ds_store: false,
+        show_under_1kb: true,
+        show_zero_byte: true,
+    };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     let names: std::collections::HashSet<_> = result.iter().map(|f| f.name.as_str()).collect();
@@ -89,8 +101,12 @@ fn scan_skipped_dir_not_present() {
 fn scan_library_children_exclude_skipped_keychains() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options =
-        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: true };
+    let options = ScanOptions {
+        show_hidden_files: true,
+        show_ds_store: false,
+        show_under_1kb: true,
+        show_zero_byte: true,
+    };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     let library = result.iter().find(|f| f.name == "Library").expect("Library exists in test home");
@@ -107,8 +123,12 @@ fn scan_library_children_exclude_skipped_keychains() {
 fn scan_show_under_1kb_false_filters_small() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options =
-        ScanOptions { show_hidden_files: true, show_under_1kb: false, show_zero_byte: true };
+    let options = ScanOptions {
+        show_hidden_files: true,
+        show_ds_store: false,
+        show_under_1kb: false,
+        show_zero_byte: true,
+    };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     let mydata = result.iter().find(|f| f.name == "MyData");
@@ -127,8 +147,12 @@ fn scan_show_under_1kb_false_filters_small() {
 fn scan_show_zero_byte_false_filters_zero() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options =
-        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: false };
+    let options = ScanOptions {
+        show_hidden_files: true,
+        show_ds_store: false,
+        show_under_1kb: true,
+        show_zero_byte: false,
+    };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     let mydata = result.iter().find(|f| f.name == "MyData");
@@ -267,6 +291,7 @@ fn scan_folder_last_modified_ignores_system_files() {
     let home = home_dir.path();
     let options = ScanOptions {
         show_hidden_files: true, // Ensure system files are included in scan
+        show_ds_store: true,     // .DS_Store must be visible for this test
         show_under_1kb: true,
         show_zero_byte: true,
     };
@@ -331,8 +356,12 @@ fn scan_folder_last_modified_ignores_system_files() {
 fn scan_show_hidden_files_false_filters_hidden() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options =
-        ScanOptions { show_hidden_files: false, show_under_1kb: true, show_zero_byte: true };
+    let options = ScanOptions {
+        show_hidden_files: false,
+        show_ds_store: false,
+        show_under_1kb: true,
+        show_zero_byte: true,
+    };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
 
@@ -363,8 +392,12 @@ fn scan_show_hidden_files_false_filters_hidden() {
 fn scan_permissive_options_includes_all() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options =
-        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: true };
+    let options = ScanOptions {
+        show_hidden_files: true,
+        show_ds_store: false,
+        show_under_1kb: true,
+        show_zero_byte: true,
+    };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     let names: std::collections::HashSet<_> = result.iter().map(|f| f.name.as_str()).collect();
@@ -386,8 +419,12 @@ fn scan_permissive_options_includes_all() {
 fn scan_folder_size_equals_sum_of_children() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options =
-        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: true };
+    let options = ScanOptions {
+        show_hidden_files: true,
+        show_ds_store: false,
+        show_under_1kb: true,
+        show_zero_byte: true,
+    };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
 
@@ -449,8 +486,12 @@ fn scan_truncated_flag_true_when_file_cap_exceeded() {
 fn scan_truncated_flag_false_when_under_cap() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options =
-        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: true };
+    let options = ScanOptions {
+        show_hidden_files: true,
+        show_ds_store: false,
+        show_under_1kb: true,
+        show_zero_byte: true,
+    };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     for folder in &result {
@@ -498,8 +539,12 @@ fn scan_truncated_flag_ignores_subfolder_count() {
 fn scan_is_file_flag_correct() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options =
-        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: true };
+    let options = ScanOptions {
+        show_hidden_files: true,
+        show_ds_store: false,
+        show_under_1kb: true,
+        show_zero_byte: true,
+    };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
 

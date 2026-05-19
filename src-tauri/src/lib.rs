@@ -30,6 +30,10 @@ pub const APP_LANGUAGE_INITIALIZED_KEY: &str = "appLanguageInitialized";
 pub struct ScanOptions {
     #[serde(default)]
     pub show_hidden_files: bool,
+    /// Include `.DS_Store` entries in scan results. Always excluded from
+    /// `last_modified` calculations regardless (see `scan::is_system_file`).
+    #[serde(default)]
+    pub show_ds_store: bool,
     #[serde(default)]
     pub show_under_1kb: bool,
     #[serde(default)]
@@ -38,7 +42,12 @@ pub struct ScanOptions {
 
 impl Default for ScanOptions {
     fn default() -> Self {
-        Self { show_hidden_files: false, show_under_1kb: false, show_zero_byte: false }
+        Self {
+            show_hidden_files: false,
+            show_ds_store: false,
+            show_under_1kb: false,
+            show_zero_byte: false,
+        }
     }
 }
 

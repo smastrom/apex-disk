@@ -12,6 +12,7 @@ export interface AppSettings {
    language: Language
    themeColor: ThemeColor
    showHiddenFiles: boolean
+   showDsStore: boolean
    showUnder1Kb: boolean
    showZeroByte: boolean
    autoCheckUpdates: boolean
