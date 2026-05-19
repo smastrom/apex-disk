@@ -19,6 +19,36 @@ function getAppPath(): string {
    return path.join(base, name)
 }
 
+function getPnpmCommand(): { command: string; args: string[] } {
+   const npmExecPath = process.env.npm_execpath
+
+   if (npmExecPath) {
+      return { command: process.execPath, args: [npmExecPath] }
+   }
+
+   return { command: 'pnpm', args: [] }
+}
+
+function runE2eBuild(): void {
+   const pnpm = getPnpmCommand()
+   const buildResult = spawnSync(
+      pnpm.command,
+      [...pnpm.args, 'tauri', 'build', '--debug', '--no-bundle', '--', '--features', 'e2e'],
+      {
+         cwd: rootDir,
+         stdio: 'inherit',
+      }
+   )
+
+   if (buildResult.error) {
+      throw buildResult.error
+   }
+
+   if (buildResult.status !== 0) {
+      throw new Error(`E2E: tauri build failed with exit code ${buildResult.status}`)
+   }
+}
+
 export const config = {
    hostname: '127.0.0.1',
    port: 4445,
@@ -38,13 +68,16 @@ export const config = {
       timeout: 60000,
    },
    onPrepare() {
-      spawnSync('pnpm', ['tauri', 'build', '--debug', '--no-bundle', '--', '--features', 'e2e'], {
-         cwd: rootDir,
-         stdio: 'inherit',
-         shell: true,
-      })
+      try {
+         runE2eBuild()
+      } catch (err) {
+         console.error(err)
+         process.exit(1)
+      }
    },
    beforeSession() {
+      exitClean = false
+
       const appPath = getAppPath()
 
       appProcess = spawn(appPath, [], {
@@ -96,18 +129,19 @@ function closeApp(): void {
 }
 
 function onShutdown(fn: () => void): void {
-   const cleanup = () => {
-      try {
-         fn()
-      } finally {
-         process.exit()
-      }
-   }
-
-   process.on('exit', cleanup)
-   process.on('SIGINT', cleanup)
-   process.on('SIGTERM', cleanup)
-   process.on('SIGHUP', cleanup)
+   process.once('exit', fn)
+   process.once('SIGINT', () => {
+      fn()
+      process.exit(130)
+   })
+   process.once('SIGTERM', () => {
+      fn()
+      process.exit(143)
+   })
+   process.once('SIGHUP', () => {
+      fn()
+      process.exit(129)
+   })
 }
 
 onShutdown(closeApp)

@@ -73,6 +73,7 @@ const forwardStack = shallowRef<NavEntry[]>([])
 const current = shallowRef<NavEntry>({ items: [], label: '', path: '', truncated: false })
 const homePath = ref('')
 const isListSlideEnabled = ref(false)
+const isWebDriverSession = typeof navigator !== 'undefined' && navigator.webdriver === true
 
 /**
  * Selection state: Map<path, FolderInfo>.
@@ -566,7 +567,7 @@ function onCancel() {
             <Transition
                name="list-slide"
                mode="out-in"
-               :css="isListSlideEnabled"
+               :css="isListSlideEnabled && !isWebDriverSession"
                @after-leave="onAfterListLeave"
             >
                <div

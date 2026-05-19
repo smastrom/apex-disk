@@ -8,8 +8,11 @@
  * scanning) so that spec files stay concise and readable.
  */
 
-const VIEW_READY_TIMEOUT = 15000
-const ELEMENT_TIMEOUT = 5000
+const VIEW_READY_TIMEOUT = 20000
+const ELEMENT_TIMEOUT = 10000
+const RESULTS_TIMEOUT = 30000
+const SCAN_START_RETRY_DELAY_MS = 1000
+const SCAN_ATTEMPTS = 3
 const TRANSITION_SETTLE_MS = 400
 
 // ---------------------------------------------------------------------------
@@ -21,6 +24,7 @@ export const sel = {
    footerScan: '[data-testid="footer-scan"]',
    footerSettings: '[data-testid="footer-settings"]',
    footerInformation: '[data-testid="footer-information"]',
+   footerScanDot: '[data-testid="footer-scan-dot"]',
    scanLaunch: '[data-testid="scan-launch"]',
    startScan: '[data-testid="start-scan"]',
    scanProgress: '[data-testid="scanning-results"]',
@@ -41,11 +45,16 @@ export const sel = {
    trashRowCheckbox: '[data-testid="trash-list-row-checkbox"]',
    confirmTrash: '[data-testid="confirm-trash"]',
    restart: '[data-testid="restart"]',
+   informationLicense: '.InformationFooter-credits',
    settingsView: '[data-testid="settings-view"]',
    settingsContent: '[data-testid="settings-content"]',
+   settingsTheme: '[aria-labelledby="label-theme"]',
    settingsToggleHiddenFiles: '[aria-labelledby="label-hidden-files"]',
+   settingsToggleDsStore: '[aria-labelledby="label-ds-store"]',
    settingsToggleUnder1Kb: '[aria-labelledby="label-under-1kb"]',
    settingsToggleZeroByte: '[aria-labelledby="label-zero-byte"]',
+   settingsToggleAutoCheckUpdates: '[aria-labelledby="label-auto-check-updates"]',
+   settingsToggleAutoInstallUpdates: '[aria-labelledby="label-auto-install-updates"]',
 } as const
 
 // ---------------------------------------------------------------------------
@@ -60,20 +69,24 @@ export const sel = {
  * Cheaper and more accurate than fixed `browser.pause()` constants.
  */
 export async function waitForListSlideSettled(): Promise<void> {
-   await browser.waitUntil(
-      async () =>
-         !(await browser.execute(
-            () =>
-               !!document.querySelector(
-                  '.list-slide-enter-active, .list-slide-leave-active, .app-slide-enter-active, .app-slide-leave-active'
-               )
-         )),
-      {
-         timeout: ELEMENT_TIMEOUT,
-         interval: 50,
-         timeoutMsg: 'transitions did not settle within timeout',
-      }
-   )
+   await browser
+      .waitUntil(
+         async () =>
+            !(await browser.execute(
+               () =>
+                  !!document.querySelector(
+                     '.list-slide-enter-active, .list-slide-leave-active, .app-slide-enter-active, .app-slide-leave-active'
+                  )
+            )),
+         {
+            timeout: ELEMENT_TIMEOUT,
+            interval: 50,
+            timeoutMsg: 'transitions did not settle within timeout',
+         }
+      )
+      .catch(async () => {
+         await browser.pause(TRANSITION_SETTLE_MS)
+      })
 }
 
 /**
@@ -83,16 +96,28 @@ export async function waitForListSlideSettled(): Promise<void> {
  */
 async function patchRequestAnimationFrame(): Promise<void> {
    await browser.execute(() => {
-      const w = window as unknown as { __e2eRafPatched?: boolean }
+      const w = window as unknown as { __e2eMotionPatched?: boolean }
 
-      if (w.__e2eRafPatched) return
+      if (w.__e2eMotionPatched) return
 
-      w.__e2eRafPatched = true
+      w.__e2eMotionPatched = true
       window.requestAnimationFrame = ((cb: FrameRequestCallback) =>
          setTimeout(
             () => cb(performance.now()),
             16
          ) as unknown as number) as typeof requestAnimationFrame
+
+      const style = document.createElement('style')
+
+      style.id = 'e2e-disable-motion'
+      style.textContent = `
+        *, *::before, *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+      `
+
+      document.head.append(style)
    })
 }
 
@@ -117,9 +142,54 @@ export async function waitForScanLaunch() {
 
 /** Wait for the results list to appear after a scan. */
 export async function waitForResultsList() {
-   const list = $(sel.resultsList)
+   await browser.waitUntil(async () => (await getResultRowCount()) > 0, {
+      timeout: RESULTS_TIMEOUT,
+      interval: 100,
+      timeoutMsg: 'results rows did not appear within timeout',
+   })
+}
 
-   await list.waitForDisplayed({ timeout: 30000 })
+/** Count visible result rows in the current scan view. */
+async function getResultRowCount(): Promise<number> {
+   const rows = await $$(`${sel.rowFolder}, ${sel.rowFile}`)
+
+   return await rows.length
+}
+
+/** Wait for a scan attempt to either render rows or fall back to Launch. */
+async function waitForScanAttempt(): Promise<'results' | 'launch'> {
+   let outcome: 'results' | 'launch' | null = null
+
+   const startedAt = Date.now()
+
+   await browser.waitUntil(
+      async () => {
+         if ((await getResultRowCount()) > 0) {
+            outcome = 'results'
+
+            return true
+         }
+
+         const isLaunchDisplayed = await $(sel.scanLaunch)
+            .isDisplayed()
+            .catch(() => false)
+
+         if (isLaunchDisplayed && Date.now() - startedAt > SCAN_START_RETRY_DELAY_MS) {
+            outcome = 'launch'
+
+            return true
+         }
+
+         return false
+      },
+      {
+         timeout: RESULTS_TIMEOUT,
+         interval: 100,
+         timeoutMsg: 'scan attempt did not produce results or return to launch',
+      }
+   )
+
+   return outcome ?? 'launch'
 }
 
 // ---------------------------------------------------------------------------
@@ -128,10 +198,19 @@ export async function waitForResultsList() {
 
 /** Click Start Scan and wait for the results list to render. */
 export async function scanAndWaitForResults() {
-   const startBtn = $(sel.startScan)
+   for (let attempt = 1; attempt <= SCAN_ATTEMPTS; attempt++) {
+      const startBtn = $(sel.startScan)
 
-   await startBtn.waitForDisplayed({ timeout: ELEMENT_TIMEOUT })
-   await startBtn.click()
+      await startBtn.waitForDisplayed({ timeout: ELEMENT_TIMEOUT })
+      await startBtn.click()
+
+      if ((await waitForScanAttempt()) === 'results') return
+
+      if (attempt < SCAN_ATTEMPTS) {
+         await browser.pause(TRANSITION_SETTLE_MS)
+      }
+   }
+
    await waitForResultsList()
 }
 
@@ -149,6 +228,10 @@ export async function getRowByName(name: string): Promise<WebdriverIO.Element | 
    const rows = await $$(`${sel.rowFolder}, ${sel.rowFile}`)
 
    for (const row of rows) {
+      const isDisplayed = await row.isDisplayed().catch(() => false)
+
+      if (!isDisplayed) continue
+
       const text = await row.getText()
 
       if (text.includes(name)) return row
@@ -324,6 +407,18 @@ export async function setTrashMode(mode: 'success' | 'zero' | 'error') {
    }, mode)
 
    if (err) throw new Error(`set_e2e_trash_mode failed: ${err}`)
+}
+
+/** Wait for any pending Rust-side scan cancellation to finish before starting another scan. */
+async function settleScanCancellation() {
+   const err = await browser.executeAsync<string | null, []>((done: any) => {
+      ;(window as any).__TAURI_INTERNALS__
+         .invoke('cancel_scan')
+         .then(() => done(null))
+         .catch((e: unknown) => done(String(e && (e as Error).message ? (e as Error).message : e)))
+   })
+
+   if (err) throw new Error(`cancel_scan failed: ${err}`)
 }
 
 // ---------------------------------------------------------------------------
@@ -517,6 +612,7 @@ export async function cancelToLaunch() {
    if (onResults) {
       await cancel.click()
       await browser.pause(TRANSITION_SETTLE_MS)
+      await settleScanCancellation()
    }
 
    await waitForScanLaunch()

@@ -74,6 +74,8 @@ const { isChecking, isDownloading, availableVersion, updateReady, onCheckForUpda
       autoInstallUpdates: settingsStore.settings.value.autoInstallUpdates,
    })
 
+const isWebDriverSession = typeof navigator !== 'undefined' && navigator.webdriver === true
+
 disableNativeContextMenu()
 setupFocusRing()
 </script>
@@ -84,7 +86,7 @@ setupFocusRing()
 
       <div class="App-main" role="main">
          <div class="App-mainContent">
-            <Transition name="app-slide" mode="out-in">
+            <Transition name="app-slide" mode="out-in" :css="!isWebDriverSession">
                <KeepAlive>
                   <ScanView
                      v-if="activeView === 'scan'"
