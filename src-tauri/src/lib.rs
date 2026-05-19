@@ -70,7 +70,6 @@ pub struct FolderInfo {
 
 pub fn run() {
     let builder = tauri::Builder::default()
-        .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_updater::Builder::new().build());
@@ -90,13 +89,14 @@ pub fn run() {
             locale::resolve_app_language(app.handle().clone())?;
 
             app.on_menu_event(|app, event| {
+                use tauri_plugin_opener::OpenerExt;
                 let id = event.id().as_ref();
                 if id == constants::CHECK_FOR_UPDATES_MENU_ID {
                     updater::check_for_updates_from_menu(app);
                 } else if id == constants::RELEASE_NOTES_MENU_ID {
-                    let _ = open::that(constants::RELEASE_NOTES_URL);
+                    let _ = app.opener().open_url(constants::RELEASE_NOTES_URL, None::<&str>);
                 } else if id == constants::LICENSE_MENU_ID {
-                    let _ = open::that(constants::LICENSE_URL);
+                    let _ = app.opener().open_url(constants::LICENSE_URL, None::<&str>);
                 } else if id == "minimize" {
                     if let Some(window) = app.webview_windows().values().next() {
                         let _ = window.minimize();

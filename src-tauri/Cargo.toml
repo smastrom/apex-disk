@@ -28,13 +28,9 @@ tauri = { version = "2", features = ["image-png"] }
 tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-tauri-plugin-os = "2"
 tauri-plugin-store = "2"
 tauri-plugin-updater = "2"
-tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
-dirs = "5.0"
-nix = { version = "0.29", features = ["fs"] }
-open = "5"
+dirs = "6"
 rayon = "1.10"
 trash = "5"
 libc = "0.2"
@@ -50,9 +46,14 @@ objc2-foundation = { version = "0.3", features = [
    "NSValue",
 ] }
 objc2-app-kit = { version = "0.3", features = ["NSAlert", "NSImage", "NSButton"] }
-tauri-plugin-webdriver = { version = "0.2", optional = true }
+# Pinned to an exact patch because this is a pre-1.0 community plugin and we
+# rebuild from the lockfile in CI; let dependabot bump explicitly.
+tauri-plugin-webdriver = { version = "=0.2.1", optional = true }
+# Optional vs dev-dependency: the optional entry below is wired into the `e2e`
+# feature so release-mode e2e builds can spin up the fake home directory;
+# the dev-dependency entry powers the standard `cargo test` integration suite.
 tempfile = { version = "3", optional = true }
-sys-locale = "0.1"
+sys-locale = "0.3"
 
 [features]
 default = []
@@ -61,3 +62,4 @@ e2e = ["tauri-plugin-webdriver", "dep:tempfile"]
 [dev-dependencies]
 tauri = { version = "2", features = ["test"] }
 tempfile = "3"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
