@@ -4,6 +4,19 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 
 ---
 
+## v0.0.20
+
+### Improvements
+
+- Cut the hold when navigating into large folders. The results list now mounts the first 50 rows immediately and fills in the remainder after the enter transition completes, and a single shared name + disabled-checkbox popover per list replaces the per-row tooltips that previously cost hundreds of teleports on a 300-row view.
+- Tune the app view transition: use the outbound easing, widen the slide distance, and align shell timing with the sequenced transition.
+- Make the scan launch recommendation less personal and align the multi-setting notice grammar across languages.
+
+### Chores
+
+- Refresh Vite, Tauri CLI, Node types, Vue plugin, and Bun patch versions.
+- Drop the SPDX license headers from translation YAML files; the headers script no longer touches `.yaml` sources.
+
 ## v0.0.19
 
 ### Improvements
