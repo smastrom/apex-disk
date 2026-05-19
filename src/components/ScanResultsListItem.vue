@@ -356,6 +356,8 @@ const currentLanguage = store.settings.value.language
 }
 
 .ScanResultsListItem-name {
+   align-self: flex-start;
+   max-width: 100%;
    font-size: var(--font-size-lg);
    font-weight: 500;
    color: var(--color-text);
