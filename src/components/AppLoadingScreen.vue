@@ -16,12 +16,12 @@
    display: flex;
    align-items: center;
    justify-content: center;
-   background: #1a1a1a;
+   background: var(--color-bg);
 
    & svg {
       width: 40px;
       height: 40px;
-      stroke: #888;
+      stroke: var(--color-text-muted);
       transform-origin: center;
       animation: spinner-rotate 2s linear infinite;
 
