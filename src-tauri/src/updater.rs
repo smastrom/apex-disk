@@ -38,15 +38,21 @@ fn log_update(message: &str) {
 
 // ── Shared state ────────────────────────────────────────────────────────────
 
-/// Tracks whether an update has been downloaded and is ready to install.
-/// Managed as Tauri state so both commands and the menu event handler can read it.
+/// Tracks whether an update has been downloaded and is ready to install,
+/// plus the most recently checked Update so callers can avoid a second
+/// network round-trip (and avoid showing the user a different version
+/// from the one the UI displayed).
 pub struct UpdateState {
     pub ready_version: Mutex<Option<String>>,
+    /// Most recently checked Update, populated by every successful check.
+    /// `download_update` consumes this to avoid re-checking the feed; cleared
+    /// after the download completes so the next check fetches fresh data.
+    pub last_checked: Mutex<Option<tauri_plugin_updater::Update>>,
 }
 
 impl Default for UpdateState {
     fn default() -> Self {
-        Self { ready_version: Mutex::new(None) }
+        Self { ready_version: Mutex::new(None), last_checked: Mutex::new(None) }
     }
 }
 
@@ -165,6 +171,20 @@ fn dialog_labels_for(lang: &str) -> UpdateDialogLabels {
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
+/// Stable bundle identifier matched against `app.config().identifier` to decide
+/// whether updater checks should run. Beta and dev builds use other identifiers
+/// (declared in their respective `tauri.*.conf.json`) and never hit the
+/// stable updater feed.
+const STABLE_BUNDLE_IDENTIFIER: &str = "com.smastrom.apex-disk";
+
+/// Returns true when this build should consult the configured updater feed.
+/// Beta and dev builds inherit the stable feed via Tauri config merging; we
+/// guard at runtime by checking the bundle identifier so a release-mode beta
+/// never advertises stable updates to its users.
+fn is_updater_enabled(app: &tauri::AppHandle) -> bool {
+    app.config().identifier == STABLE_BUNDLE_IDENTIFIER
+}
+
 /// Builds an updater instance from the app handle.
 fn build_updater(app: &tauri::AppHandle) -> Result<tauri_plugin_updater::Updater, String> {
     app.updater_builder().build().map_err(|e| e.to_string())
@@ -247,22 +267,52 @@ fn update_menu_text_to_available(app: &tauri::AppHandle, version: &str) {
 
 /// Silent update check — returns the available version string or `null`.
 /// Used by the frontend on app start and for the inline SettingsView status.
-/// Does not show any dialogs.
+/// Does not show any dialogs. Beta/dev builds short-circuit to `None`.
 #[tauri::command]
 pub async fn check_for_updates_silent(app: tauri::AppHandle) -> Result<Option<String>, String> {
+    if !is_updater_enabled(&app) {
+        return Ok(None);
+    }
+
     let update = build_updater(&app)?.check().await.map_err(|e| e.to_string())?;
+
+    // Cache the result so the subsequent `download_update` call doesn't have
+    // to hit the network again and risk staging a different version than the UI displayed.
+    {
+        let state = app.state::<UpdateState>();
+        *state.last_checked.lock().unwrap_or_else(|e| e.into_inner()) = update.clone();
+    }
 
     Ok(update.map(|u| u.version))
 }
 
 /// Downloads and stages the update silently (no dialogs).
+/// Consumes the cached Update from the most recent check; only re-checks
+/// if the cache is empty (so `download_update` and `check_for_updates_silent`
+/// never disagree on which version is staged).
 /// After success, marks the update as ready in shared state and updates the
 /// menu item text to "Restart to Update (vX.Y.Z)".
 #[tauri::command]
 pub async fn download_update(app: tauri::AppHandle) -> Result<String, String> {
-    let update = build_updater(&app)?.check().await.map_err(|e| e.to_string())?;
+    if !is_updater_enabled(&app) {
+        return Err("Updates are disabled for this build".to_string());
+    }
 
-    let update = update.ok_or_else(|| "No update available".to_string())?;
+    let update = {
+        let state = app.state::<UpdateState>();
+        let mut slot = state.last_checked.lock().unwrap_or_else(|e| e.into_inner());
+        slot.take()
+    };
+
+    let update = match update {
+        Some(u) => u,
+        None => build_updater(&app)?
+            .check()
+            .await
+            .map_err(|e| e.to_string())?
+            .ok_or_else(|| "No update available".to_string())?,
+    };
+
     let version = update.version.clone();
 
     update.download_and_install(|_chunk, _total| {}, || {}).await.map_err(|e| e.to_string())?;
@@ -280,10 +330,17 @@ pub async fn download_update(app: tauri::AppHandle) -> Result<String, String> {
     Ok(version)
 }
 
-/// Restarts the app to apply the staged update.
+/// Restarts the app to apply the staged update. Refuses to restart unless
+/// an update is actually staged — historically this command was wired only
+/// to the post-download UI, so calling it without a staged update is a bug.
 #[tauri::command]
-pub fn restart_app(app: tauri::AppHandle) {
-    app.restart();
+pub fn restart_app(app: tauri::AppHandle) -> Result<(), String> {
+    let state = app.state::<UpdateState>();
+    let staged = state.ready_version.lock().unwrap_or_else(|e| e.into_inner()).is_some();
+    if !staged {
+        return Err("No update is staged".to_string());
+    }
+    app.restart()
 }
 
 /// Updates the menu item text to "Restart to Update (vX.Y.Z)".
@@ -346,7 +403,8 @@ async fn run_dialog_update_flow(app: tauri::AppHandle, update_menu: bool) -> Res
                 body,
                 labels.ok_button.to_string(),
                 None,
-            )?;
+            )
+            .await?;
             return Ok(());
         },
         Ok(u) => u,
@@ -366,7 +424,8 @@ async fn run_dialog_update_flow(app: tauri::AppHandle, update_menu: bool) -> Res
                 body,
                 labels.ok_button.to_string(),
                 None,
-            )?;
+            )
+            .await?;
             return Ok(());
         },
     };
@@ -400,7 +459,8 @@ async fn run_dialog_update_flow(app: tauri::AppHandle, update_menu: bool) -> Res
         labels.ready_body.to_string(),
         labels.restart_button.to_string(),
         Some(labels.later_button.to_string()),
-    )?;
+    )
+    .await?;
 
     if confirmed {
         app.restart();
@@ -413,21 +473,28 @@ async fn run_dialog_update_flow(app: tauri::AppHandle, update_menu: bool) -> Res
 /// Used by the Settings button when auto-updates is disabled.
 #[tauri::command]
 pub async fn check_for_updates_dialog(app: tauri::AppHandle) -> Result<(), String> {
+    if !is_updater_enabled(&app) {
+        return Ok(());
+    }
     run_dialog_update_flow(app, false).await
 }
 
 /// Spawns the menu-initiated update flow from a sync context.
 ///
-/// - Update already staged (any source) → restart immediately.
+/// - Update already staged (any source) → restart immediately and stop.
+/// - Beta/dev builds → no-op (no updater feed bound to this identifier).
 /// - Otherwise → run dialog flow with menu text updates (the menu is the entrypoint, so it reflects
 ///   checking/downloading/restart state).
 pub fn check_for_updates_from_menu(app: &tauri::AppHandle) {
-    // If update is already downloaded, restart immediately.
     let state = app.state::<UpdateState>();
     let staged = state.ready_version.lock().unwrap_or_else(|e| e.into_inner()).is_some();
 
     if staged {
         app.restart();
+    }
+
+    if !is_updater_enabled(app) {
+        return;
     }
 
     let handle = app.clone();
