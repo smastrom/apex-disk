@@ -32,7 +32,8 @@ body {
 .Popover,
 .InformationView-detailLabel,
 .InformationView-detailValue,
-.ScanResultsListItem-name {
+.ScanResultsListItem-name,
+.ScanListNav-pathText {
    user-select: text;
    -webkit-user-select: text;
    -moz-user-select: text;
