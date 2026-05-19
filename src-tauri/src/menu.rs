@@ -43,7 +43,7 @@ pub fn build_app_menu(
         Some(AboutMetadata {
             name: Some(constants::APP_NAME.to_string()),
             version: Some(env!("CARGO_PKG_VERSION").into()),
-            copyright: Some("GNU General Public License v3.0".into()),
+            copyright: Some(constants::APP_LICENSE_ABOUT.into()),
             credits: Some(constants::APP_CREDITS.into()),
             website: Some(constants::RELEASE_NOTES_URL.to_string()),
             website_label: Some(labels.website_label.to_string()),

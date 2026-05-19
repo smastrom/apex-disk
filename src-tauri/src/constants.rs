@@ -7,6 +7,13 @@
 pub const APP_NAME: &str = "ApexDisk";
 pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const APP_CREDITS: &str = "Simone Mastromattei (smastrom)";
+
+/// Short license label for the Information footer.
+pub const APP_LICENSE: &str = "GPL-3.0";
+
+/// License line in the macOS About dialog.
+pub const APP_LICENSE_ABOUT: &str = "GNU General Public License v3.0";
+
 pub const RELEASE_YEAR: &str = "2026";
 
 /// URL opened when the user chooses "Read release notes" from the Help menu.

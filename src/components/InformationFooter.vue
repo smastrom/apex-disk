@@ -20,6 +20,7 @@ import { useTranslations } from '@/lib/use-translations'
 
 import {
    APP_CREDITS,
+   APP_LICENSE,
    APP_NAME,
    APP_VERSION,
    DONATE_URL,
@@ -89,6 +90,8 @@ async function openWebsite() {
       </div>
       <p class="InformationFooter-line InformationFooter-credits">
          © {{ formatYearRange(RELEASE_YEAR, new Date().getFullYear()) }} {{ APP_CREDITS }}
+         <span class="InformationFooter-sep" aria-hidden="true">·</span>
+         {{ APP_LICENSE }}
       </p>
    </footer>
 </template>
@@ -120,7 +123,7 @@ async function openWebsite() {
 
 .InformationFooter-credits {
    margin-top: var(--spacing-xxs);
-   font-size: var(--font-size-sm);
+   font-size: var(--font-size-xs);
 }
 
 .InformationFooter-links {
@@ -129,7 +132,7 @@ async function openWebsite() {
    justify-content: center;
    gap: var(--spacing-xs);
    margin-top: var(--spacing-xs);
-   margin-bottom: var(--spacing-lg);
+   margin-bottom: var(--spacing-xl);
    flex-wrap: wrap;
    padding: 0 var(--spacing-xl);
 }

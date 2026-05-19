@@ -132,6 +132,7 @@
    --cta-btn-font-size: var(--font-size-lg);
 
    /* Typography */
+   --font-size-xs: 0.725rem;
    --font-size-sm: 0.75rem; /* 12px */
    --font-size-base: 0.8125rem; /* 13px */
    --font-size-lg: 0.9375rem; /* 15px */

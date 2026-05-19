@@ -55,6 +55,10 @@ export const DEV_USER_FOLDER_NAME = 'smastrom' as const
 export const APP_NAME = 'ApexDisk' as const
 export const APP_VERSION = version
 export const APP_CREDITS = 'Simone Mastromattei (smastrom)' as const
+/** Short license label (Information footer). */
+export const APP_LICENSE = 'GPL-3.0' as const
+/** License line in the macOS About dialog. */
+export const APP_LICENSE_ABOUT = 'GNU General Public License v3.0' as const
 export const RELEASE_YEAR = 2026 as const
 export const RELEASE_NOTES_URL = 'https://github.com/smastrom/apex-disk/releases' as const
 export const LICENSE_URL = 'https://github.com/smastrom/apex-disk/blob/main/LICENSE.md' as const
