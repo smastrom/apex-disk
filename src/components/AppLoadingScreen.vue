@@ -24,10 +24,19 @@
       stroke: #888;
       transform-origin: center;
       animation: spinner-rotate 2s linear infinite;
+
+      @media (prefers-reduced-motion: reduce) {
+         animation-name: spinner-pulse;
+      }
    }
 
    & circle {
       animation: spinner-dash 1.5s ease-in-out infinite;
+
+      @media (prefers-reduced-motion: reduce) {
+         animation: none;
+         stroke-dasharray: 42 150;
+      }
    }
 }
 
@@ -53,24 +62,13 @@
    }
 }
 
-@media (prefers-reduced-motion: reduce) {
-   .AppLoadingScreen-root svg {
-      animation-name: spinner-pulse;
+@keyframes spinner-pulse {
+   0%,
+   100% {
+      opacity: 1;
    }
-
-   .AppLoadingScreen-root circle {
-      animation: none;
-      stroke-dasharray: 42 150;
-   }
-
-   @keyframes spinner-pulse {
-      0%,
-      100% {
-         opacity: 1;
-      }
-      50% {
-         opacity: 0.4;
-      }
+   50% {
+      opacity: 0.4;
    }
 }
 </style>

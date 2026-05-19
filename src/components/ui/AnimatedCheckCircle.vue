@@ -47,12 +47,21 @@ withDefaults(defineProps<{ size?: number }>(), { size: 48 })
 .AnimatedCheckCircle-circle {
    transform-origin: center;
    animation: AnimatedCheckCircle-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+
+   @media (prefers-reduced-motion: reduce) {
+      animation-name: AnimatedCheckCircle-fade;
+   }
 }
 
 .AnimatedCheckCircle-check {
    stroke-dasharray: 160;
    stroke-dashoffset: 160;
    animation: AnimatedCheckCircle-draw 0.35s ease-out 0.3s forwards;
+
+   @media (prefers-reduced-motion: reduce) {
+      animation: none;
+      stroke-dashoffset: 0;
+   }
 }
 
 @keyframes AnimatedCheckCircle-pop {
@@ -68,17 +77,6 @@ withDefaults(defineProps<{ size?: number }>(), { size: 48 })
 
 @keyframes AnimatedCheckCircle-draw {
    to {
-      stroke-dashoffset: 0;
-   }
-}
-
-@media (prefers-reduced-motion: reduce) {
-   .AnimatedCheckCircle-circle {
-      animation-name: AnimatedCheckCircle-fade;
-   }
-
-   .AnimatedCheckCircle-check {
-      animation: none;
       stroke-dashoffset: 0;
    }
 }

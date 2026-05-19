@@ -55,17 +55,31 @@ withDefaults(defineProps<{ size?: number }>(), { size: 48 })
 .AnimatedAlertCircle-circle {
    transform-origin: center;
    animation: AnimatedAlertCircle-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+
+   @media (prefers-reduced-motion: reduce) {
+      animation-name: AnimatedAlertCircle-fade-in;
+   }
 }
 
 .AnimatedAlertCircle-line {
    stroke-dasharray: 72;
    stroke-dashoffset: 72;
    animation: AnimatedAlertCircle-draw 0.35s ease-out 0.3s forwards;
+
+   @media (prefers-reduced-motion: reduce) {
+      animation: none;
+      stroke-dashoffset: 0;
+   }
 }
 
 .AnimatedAlertCircle-dot {
    opacity: 0;
    animation: AnimatedAlertCircle-fade-in 0.2s ease-out 0.55s forwards;
+
+   @media (prefers-reduced-motion: reduce) {
+      animation: none;
+      opacity: 1;
+   }
 }
 
 @keyframes AnimatedAlertCircle-pop {
@@ -87,22 +101,6 @@ withDefaults(defineProps<{ size?: number }>(), { size: 48 })
 
 @keyframes AnimatedAlertCircle-fade-in {
    to {
-      opacity: 1;
-   }
-}
-
-@media (prefers-reduced-motion: reduce) {
-   .AnimatedAlertCircle-circle {
-      animation-name: AnimatedAlertCircle-fade-in;
-   }
-
-   .AnimatedAlertCircle-line {
-      animation: none;
-      stroke-dashoffset: 0;
-   }
-
-   .AnimatedAlertCircle-dot {
-      animation: none;
       opacity: 1;
    }
 }

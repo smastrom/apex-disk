@@ -47,10 +47,19 @@ defineProps<{
    color: var(--color-text-muted);
    transform-origin: center;
    animation: Spinner-rotate 2s linear infinite;
+
+   @media (prefers-reduced-motion: reduce) {
+      animation-name: Spinner-pulse;
+   }
 }
 
 .Spinner-circle {
    animation: Spinner-dash 1.5s ease-in-out infinite;
+
+   @media (prefers-reduced-motion: reduce) {
+      animation: none;
+      stroke-dasharray: 42 150;
+   }
 }
 
 @keyframes Spinner-rotate {
@@ -74,17 +83,6 @@ defineProps<{
    100% {
       stroke-dasharray: 42 150;
       stroke-dashoffset: -59;
-   }
-}
-
-@media (prefers-reduced-motion: reduce) {
-   .Spinner-root {
-      animation-name: Spinner-pulse;
-   }
-
-   .Spinner-circle {
-      animation: none;
-      stroke-dasharray: 42 150;
    }
 }
 

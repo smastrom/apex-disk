@@ -43,6 +43,17 @@ Applies to `.ts` files and the `<script setup>` block of `.vue` files.
 - **Boundary objects use `snake_case`** (Tauri/Rust IPC). Frontend-only objects use `camelCase`. See `[architecture.md](architecture.md)` — boundary conventions.
 - **Types live in `src/types/`.** Boundary types mirror Rust structs exactly.
 
+## CSS / Vue style
+
+Applies to scoped `<style scoped>` blocks in `.vue` files and to standalone `.css` files.
+
+- **Class format:** `ComponentName-element`, matching the filename. E.g. `.ScanResultsListItem-root`, `.ScanResultsListItem-check`, `.ScanResultsListItem-info`.
+- **Class selectors are always top-level.** Never nest a class selector inside another (including BEM modifiers like `&--selected`). Each class gets its own flat rule: `.ScanResultsListItem-root--selected { … }`.
+- **Nest pseudo and element selectors.** Use `&` inside the parent class rule for pseudo-classes / pseudo-elements / unqualified element selectors: `&:hover`, `&:focus`, `&[disabled]`, `&::before`, `&::after`, `& img`, `& > svg`.
+- **Always nest `@media` inside the selector it overrides.** Applies to responsive tweaks and cross-cutting overrides like `@media (prefers-reduced-motion: reduce)` alike — never write `@media` at the top level of a scoped stylesheet.
+- **Blank line between rule blocks** at the top level.
+- **No hardcoded values** for color, spacing, font sizes, or border radii — use CSS variables from `src/assets/css/theme.css` (see `[themes.md](themes.md)`). Examples: `var(--color-bg)`, `var(--spacing-md)`, `var(--font-size-xl)`, `var(--touch-height-default)`.
+
 ## Vue file shape
 
 ```vue
@@ -93,19 +104,6 @@ const { t } = useTranslations()
 - **Semantic HTML:** use landmarks (`<header>`, `<main>`, `<nav>`), correct heading hierarchy, lists for lists.
 - **SVG icons:** always `aria-hidden="true"`.
 - **Live regions:** `aria-live="polite"` for dynamic status/navigation changes; `assertive` only for urgent messages.
-
-### Style
-
-- `**<style scoped>` always.\*\* Component CSS is local.
-- **Class format:** `ComponentName-element`, matching the filename. E.g. `.ScanResultsListItem-root`, `.ScanResultsListItem-check`, `.ScanResultsListItem-info`.
-- **No top-level chained selectors.** Each top-level rule is one flat selector — write `.ScanResultsListItem-root--selected { … }` as its own rule, not nested under `.ScanResultsListItem-root`.
-- **BEM modifiers** use the full class name with `--`: `.ScanResultsListItem-root--selected`, never `&--selected`. The modifier is a separate top-level rule.
-- **Use `&` only for pseudo-selectors and states** inside an existing selector: `&:hover`, `&:focus`, `&[disabled]`.
-- **Media queries:**
-   - Component-local responsive tweaks: nest the `@media` inside the selector.
-   - Cross-cutting overrides like `@media (prefers-reduced-motion: reduce)`: nest the `@media` inside each selector it overrides (matches how `ScanResultsListItem.vue` and `classes.css` handle reduced motion).
-- **Blank line between rule blocks** at the top level.
-- **No hardcoded values** for color, spacing, font sizes, or border radii — use CSS variables from `src/assets/css/theme.css` (see `[themes.md](themes.md)`). Examples: `var(--color-bg)`, `var(--spacing-md)`, `var(--font-size-xl)`, `var(--touch-height-default)`.
 
 ## File naming
 

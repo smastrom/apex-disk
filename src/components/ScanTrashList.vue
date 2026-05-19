@@ -415,6 +415,10 @@ async function onTrashClick() {
    &:disabled:not([data-deleting]) {
       opacity: 0.5;
    }
+
+   @media (prefers-reduced-motion: reduce) {
+      transition: opacity 0.2s var(--ease-standard);
+   }
 }
 
 .ScanTrashList-captionText {
@@ -427,6 +431,10 @@ async function onTrashClick() {
 .ScanTrashList-caption-enter-active,
 .ScanTrashList-caption-leave-active {
    transition: opacity 0.3s var(--ease-standard);
+
+   @media (prefers-reduced-motion: reduce) {
+      transition: opacity 0.25s var(--ease-standard);
+   }
 }
 
 .ScanTrashList-caption-enter-from,
@@ -436,16 +444,5 @@ async function onTrashClick() {
 
 .ScanTrashList-spinner {
    color: var(--color-on-accent);
-}
-
-@media (prefers-reduced-motion: reduce) {
-   .ScanTrashList-caption-enter-active,
-   .ScanTrashList-caption-leave-active {
-      transition: opacity 0.25s var(--ease-standard);
-   }
-
-   .ScanTrashList-moveToTrashBtn {
-      transition: opacity 0.2s var(--ease-standard);
-   }
 }
 </style>
