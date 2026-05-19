@@ -33,6 +33,7 @@ import {
 import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'
 import { useTranslations } from '@/lib/use-translations'
+import { isWebDriverSession } from '@/lib/utils'
 
 const props = defineProps<{
    folders: FolderInfo[]
@@ -73,7 +74,6 @@ const forwardStack = shallowRef<NavEntry[]>([])
 const current = shallowRef<NavEntry>({ items: [], label: '', path: '', truncated: false })
 const homePath = ref('')
 const isListSlideEnabled = ref(false)
-const isWebDriverSession = typeof navigator !== 'undefined' && navigator.webdriver === true
 
 /**
  * Selection state: Map<path, FolderInfo>.

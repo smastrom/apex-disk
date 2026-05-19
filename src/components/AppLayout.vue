@@ -31,6 +31,7 @@ import { useAppViews } from '@/lib/use-app-views'
 import { disableNativeContextMenu } from '@/lib/use-context-menu'
 import { setupFocusRing } from '@/lib/use-focus-ring'
 import { useScanner } from '@/lib/use-scanner'
+import { isWebDriverSession } from '@/lib/utils'
 import { useAppSettings } from '@/stores/app-settings'
 
 defineProps<{
@@ -55,6 +56,7 @@ const {
    folders,
    isScanning,
    hasFreshResults: hasPendingScanResults,
+   markResultsPending,
    markResultsSeen,
    progress,
    elapsedSeconds,
@@ -67,14 +69,20 @@ const { activeView, setActiveView } = useAppViews({
    onEnter: {
       scan: markResultsSeen,
    },
+   onLeave: {
+      scan: () => {
+         if (isScanning.value) {
+            markResultsPending()
+         }
+      },
+   },
 })
+
 const { isChecking, isDownloading, availableVersion, updateReady, onCheckForUpdates } =
    useAppUpdate({
       autoCheckUpdates: settingsStore.settings.value.autoCheckUpdates,
       autoInstallUpdates: settingsStore.settings.value.autoInstallUpdates,
    })
-
-const isWebDriverSession = typeof navigator !== 'undefined' && navigator.webdriver === true
 
 disableNativeContextMenu()
 setupFocusRing()

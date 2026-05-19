@@ -52,22 +52,47 @@ enum ActiveView {
 }
 
 const activeView = ref<ActiveView>(ActiveView.LAUNCH)
+const isScanViewActivated = ref(true)
+const pendingActiveView = ref<ActiveView | null>(null)
+
+/**
+ * Keeps the rendered body in sync with scanner state without patching the
+ * cached subtree while KeepAlive has moved it out of the visible DOM.
+ */
+function requestActiveView(nextView: ActiveView) {
+   if (!isScanViewActivated.value) {
+      pendingActiveView.value = nextView
+
+      return
+   }
+
+   applyActiveView(nextView)
+}
+
+/** Applies the requested scan body and logs the user-visible view state. */
+function applyActiveView(nextView: ActiveView) {
+   if (nextView === activeView.value) return
+
+   if (nextView === ActiveView.SCANNING) {
+      log('view', 'Scan: view scanning')
+   } else if (nextView === ActiveView.RESULTS) {
+      log('view', 'Scan: view results')
+   } else if (nextView === ActiveView.LAUNCH) {
+      log('view', 'Scan: view launch')
+   }
+
+   activeView.value = nextView
+}
 
 watch(
    [() => isScanning.value, () => folders.value.length],
    ([isScanning, folderCount]) => {
       if (isScanning) {
-         log('view', 'Scan: view scanning')
-
-         activeView.value = ActiveView.SCANNING
+         requestActiveView(ActiveView.SCANNING)
       } else if (folderCount === 0) {
-         log('view', 'Scan: view launch')
-
-         activeView.value = ActiveView.LAUNCH
+         requestActiveView(ActiveView.LAUNCH)
       } else {
-         log('view', 'Scan: view results')
-
-         activeView.value = ActiveView.RESULTS
+         requestActiveView(ActiveView.RESULTS)
       }
    },
    { immediate: true }
@@ -84,7 +109,9 @@ const pendingReset = ref(false)
 
 function resetInternalState() {
    selectedSize.value = 0
-   activeView.value = ActiveView.LAUNCH
+
+   requestActiveView(ActiveView.LAUNCH)
+
    deleteItems.value = []
    deletedSummary.value = null
    pendingSelection.value = null
@@ -103,16 +130,25 @@ watch(
 const suppressInnerTransition = ref(false)
 
 onDeactivated(() => {
+   isScanViewActivated.value = false
+   suppressInnerTransition.value = true
+
    if (activeView.value === ActiveView.TRASH_COMPLETE) {
-      activeView.value = ActiveView.LAUNCH
+      pendingActiveView.value = ActiveView.LAUNCH
 
       onCancel()
    }
-
-   suppressInnerTransition.value = true
 })
 
 onActivated(() => {
+   isScanViewActivated.value = true
+
+   if (pendingActiveView.value) {
+      applyActiveView(pendingActiveView.value)
+
+      pendingActiveView.value = null
+   }
+
    nextTick(() => {
       suppressInnerTransition.value = false
    })

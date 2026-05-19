@@ -5,7 +5,7 @@ import type { FolderInfo, ScanProgress } from '@/types/structs'
 
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
-import { ref, shallowRef } from 'vue'
+import { onMounted, onUnmounted, ref, shallowRef } from 'vue'
 
 import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'
@@ -29,6 +29,10 @@ export function useScanner() {
 
    function markResultsSeen() {
       hasFreshResults.value = false
+   }
+
+   function markResultsPending() {
+      hasFreshResults.value = true
    }
 
    /**
@@ -116,7 +120,6 @@ export function useScanner() {
             )
 
             folders.value = result
-            hasFreshResults.value = result.length > 0
          }
       } catch (error) {
          log('scan', 'Scan: error', error)
@@ -130,6 +133,22 @@ export function useScanner() {
          }
       }
    }
+
+   // Fire-and-forget on window reload: stops the Rust walker and releases
+   // SCAN_RUNNING before the reloaded page tries to start a new scan.
+   function abortOnUnload() {
+      if (!isScanning.value) return
+
+      void invoke('cancel_scan').catch(() => {})
+   }
+
+   onMounted(() => {
+      window.addEventListener('beforeunload', abortOnUnload)
+   })
+
+   onUnmounted(() => {
+      window.removeEventListener('beforeunload', abortOnUnload)
+   })
 
    async function onAbort() {
       log('scan', 'Scan: aborted')
@@ -157,6 +176,7 @@ export function useScanner() {
       folders,
       isScanning,
       hasFreshResults,
+      markResultsPending,
       markResultsSeen,
       progress,
       elapsedSeconds,

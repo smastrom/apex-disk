@@ -59,13 +59,12 @@ describe('Scan flow', () => {
       await assertRowExists('Projects')
    })
 
-   it('shows completed scan dot while results wait behind another view', async () => {
+   it('does not show completed scan dot after visible results are already seen', async () => {
       await goToSettingsView()
 
       const dot = $(sel.footerScanDot)
 
-      await dot.waitForDisplayed({ timeout: 5000 })
-      await expect(dot).toBeDisplayed()
+      await expect(dot).not.toBeDisplayed()
 
       await goToScanView()
       await expect(dot).not.toBeDisplayed()

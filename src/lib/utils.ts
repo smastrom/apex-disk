@@ -47,4 +47,7 @@ export function isHidden(name: string): boolean {
    return name.startsWith('.')
 }
 
+/** True when the app is running under WebDriver automation. */
+export const isWebDriverSession = typeof navigator !== 'undefined' && navigator.webdriver === true
+
 export const isDev = () => import.meta.env.DEV
