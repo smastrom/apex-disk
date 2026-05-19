@@ -99,12 +99,12 @@ scanZeroByte:
 
 resultsEffectiveNextScan:
    en: Applied on next scan
-   it: Applicato alla prossima scansione
-   es: Se aplica en el próximo análisis
-   fr: Appliqué au prochain scan
-   pt: Aplicado na próxima análise
-   de: Gilt beim nächsten Scan
-   ru: Применится при следующем сканировании
+   it: Applicate alla prossima scansione
+   es: Aplicados en el próximo análisis
+   fr: Appliqués au prochain scan
+   pt: Aplicadas na próxima análise
+   de: Gelten beim nächsten Scan
+   ru: Применятся при следующем сканировании
    zh: 下次扫描时生效
    ja: 次回のスキャン時に適用
    ar: تطبق في المسح التالي
