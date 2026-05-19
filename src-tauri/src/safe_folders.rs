@@ -5,6 +5,13 @@
 //!
 //! ApexDisk uses these lists to ensure the user doesn't break their macOS
 //! installation or accidentally delete irreplaceable security credentials.
+//!
+//! Asymmetry between [`is_path_skipped`] and [`is_path_protected`] for
+//! out-of-home paths: a path that is not inside `home` is considered
+//! protected (so we never trash a path we can't anchor) but not skipped
+//! (skipping only ever excludes known-sensitive paths beneath `home`).
+//! The scanner never feeds out-of-home paths into these checks, but the
+//! trash filter does, and this asymmetry is the safer default.
 
 use std::{collections::HashSet, path::Path, sync::LazyLock};
 
@@ -67,11 +74,17 @@ static PROTECTED_SET: LazyLock<HashSet<String>> =
 static SKIPPED_LOWERED: LazyLock<Vec<String>> =
     LazyLock::new(|| SKIPPED_RELATIVE_PATHS.iter().map(|p| p.to_lowercase()).collect());
 
+/// Returns Some(borrowed) when the input has no ASCII uppercase, else None.
+/// Lets call sites skip the lowercase allocation for the common all-lowercase case.
+fn ascii_only_lowercase(rel: &str) -> bool {
+    rel.bytes().all(|b| !b.is_ascii_uppercase())
+}
+
 /// Returns true if the path is a descendant of (or is) a skipped directory.
 /// Comparison is case-insensitive to match macOS APFS behavior.
 pub fn is_path_skipped(path: &Path, home: &Path) -> bool {
     let rel = match get_relative_to_home(path, home) {
-        Some(r) => r.to_lowercase(),
+        Some(r) => r,
         None => return false,
     };
 
@@ -79,6 +92,15 @@ pub fn is_path_skipped(path: &Path, home: &Path) -> bool {
         return false;
     }
 
+    if ascii_only_lowercase(rel) {
+        return matches_any_skipped(rel);
+    }
+
+    let lowered = rel.to_lowercase();
+    matches_any_skipped(&lowered)
+}
+
+fn matches_any_skipped(rel: &str) -> bool {
     for skipped_low in SKIPPED_LOWERED.iter() {
         // Check if it's the folder itself OR a child (e.g., .ssh/id_rsa)
         if rel == *skipped_low
@@ -96,7 +118,7 @@ pub fn is_path_skipped(path: &Path, home: &Path) -> bool {
 /// Comparison is case-insensitive.
 pub fn is_path_protected(path: &Path, home: &Path) -> bool {
     let rel = match get_relative_to_home(path, home) {
-        Some(r) => r.to_lowercase(),
+        Some(r) => r,
         None => return true, // Protecting the home directory itself
     };
 
@@ -104,7 +126,11 @@ pub fn is_path_protected(path: &Path, home: &Path) -> bool {
         return true;
     }
 
-    PROTECTED_SET.contains(&rel)
+    if ascii_only_lowercase(rel) {
+        return PROTECTED_SET.contains(rel);
+    }
+
+    PROTECTED_SET.contains(&rel.to_lowercase())
 }
 
 /// Helper to extract the relative path from the home directory.

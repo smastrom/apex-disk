@@ -7,7 +7,11 @@
 //! Full Disk Access (FDA) to delete. These are sandboxed app containers managed
 //! by the system (e.g., ~/Library/Containers/com.docker.docker).
 
-use std::{ffi::CString, os::unix::ffi::OsStrExt, path::Path};
+use std::{ffi::CString, os::unix::ffi::OsStrExt, path::Path, sync::LazyLock};
+
+/// Fixed attribute name probed by [`has_container_manager_attribute`]; built once.
+static CONTAINER_MANAGER_ATTR: LazyLock<CString> =
+    LazyLock::new(|| CString::new("com.apple.containermanager.identifier").unwrap());
 
 /// Returns true if the path has `com.apple.containermanager.identifier` extended attribute.
 /// This attribute indicates a system-managed container that requires FDA to delete.
@@ -17,15 +21,17 @@ pub fn has_container_manager_attribute(path: &Path) -> bool {
         Err(_) => return false,
     };
 
-    let attr_name = match CString::new("com.apple.containermanager.identifier") {
-        Ok(c) => c,
-        Err(_) => return false,
-    };
-
-    // getxattr returns -1 if the attribute doesn't exist
+    // SAFETY: getxattr is called with valid C strings and a zero-sized value buffer.
+    // It returns the attribute size (>0) when present, or -1 otherwise.
     unsafe {
-        let size =
-            libc::getxattr(path_cstr.as_ptr(), attr_name.as_ptr(), std::ptr::null_mut(), 0, 0, 0);
+        let size = libc::getxattr(
+            path_cstr.as_ptr(),
+            CONTAINER_MANAGER_ATTR.as_ptr(),
+            std::ptr::null_mut(),
+            0,
+            0,
+            0,
+        );
         size > 0
     }
 }
