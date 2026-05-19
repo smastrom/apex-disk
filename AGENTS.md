@@ -114,11 +114,11 @@ Cursor IDE is supported alongside Claude Code. The files under `.cursor/`
 are thin shims that point back to the canonical `.claude/` sources, so
 there's only one place to edit slash commands or rules.
 
-| Path                       | Status    | Purpose                                                                 |
-| -------------------------- | --------- | ----------------------------------------------------------------------- |
-| `.cursor/commands/*.md`    | committed | One-line shims (`@.claude/commands/<name>.md`) — same slash commands.   |
-| `.cursor/rules/*.mdc`      | committed | Cursor-native rule files with `alwaysApply: true`, shimming `.claude/`. |
-| `.cursor/hooks.json`       | committed | `beforeShellExecution` wiring for the same pre-commit-gate script.      |
+| Path                    | Status    | Purpose                                                                 |
+| ----------------------- | --------- | ----------------------------------------------------------------------- |
+| `.cursor/commands/*.md` | committed | One-line shims (`@.claude/commands/<name>.md`) — same slash commands.   |
+| `.cursor/rules/*.mdc`   | committed | Cursor-native rule files with `alwaysApply: true`, shimming `.claude/`. |
+| `.cursor/hooks.json`    | committed | `beforeShellExecution` wiring for the same pre-commit-gate script.      |
 
 ## Key directories
 
