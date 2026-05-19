@@ -1,6 +1,3 @@
-# SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (C) 2026 Simone Mastromattei
-
 description:
    en: >-
       A macOS tool to easily identify and get rid of big, unused files and folders
