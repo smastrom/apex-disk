@@ -133,6 +133,7 @@ const { t } = useTranslations()
 - **Default to no comments.** Code must be readable and clean; comments support code, they do not drive it.
 - **Only add a comment when the WHY is non-obvious** (workaround, subtle invariant, surprising behavior, version constraint).
 - **Do not restate what well-named code already says.** E.g. don't write `// Walk up to find the nearest scrollable ancestor` above an obvious loop.
+- **No narration comments before a single obvious line.** Bad: `// Load system info` right before `await loadSystemInfo()`.
 - **Do not write library-introduction or rationale chatter.** `// Positioning via @floating-ui/dom` is what the import line says.
 - **No commented-out code.** Delete it.
 - **If a function needs a paragraph to explain it**, prefer renaming or splitting it instead.

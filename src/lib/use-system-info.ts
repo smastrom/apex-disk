@@ -18,7 +18,6 @@ export async function useSystemInfo() {
       }
    }
 
-   // Load system info
    await loadSystemInfo()
 
    return {

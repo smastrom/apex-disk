@@ -29,12 +29,10 @@ fn run_command(cmd: &str, args: &[&str]) -> Option<String> {
         .filter(|s| !s.is_empty())
 }
 
-/// Get macOS version using sw_vers command
 fn get_macos_version() -> String {
     run_command("sw_vers", &["-productVersion"]).unwrap_or_else(|| "Unknown".to_string())
 }
 
-/// Get hardware model using system_profiler JSON output
 fn get_hardware_model_from_json(json_str: &str) -> Option<String> {
     let json: serde_json::Value = serde_json::from_str(json_str).ok()?;
     json.get("SPHardwareDataType")?
@@ -45,7 +43,6 @@ fn get_hardware_model_from_json(json_str: &str) -> Option<String> {
         .map(String::from)
 }
 
-/// Get hardware model using system_profiler, with ioreg fallback
 fn get_hardware_model() -> String {
     if let Some(json_str) = run_command("system_profiler", &["SPHardwareDataType", "-json"]) {
         if let Some(model) = get_hardware_model_from_json(&json_str) {
@@ -68,13 +65,11 @@ fn get_hardware_model_ioreg() -> String {
         .unwrap_or_else(|| "Unknown".to_string())
 }
 
-/// Get CPU information using sysctl
 fn get_cpu_info() -> String {
     run_command("sysctl", &["-n", "machdep.cpu.brand_string"])
         .unwrap_or_else(|| "Unknown".to_string())
 }
 
-/// Get memory information using sysctl
 fn get_memory_info() -> String {
     run_command("sysctl", &["-n", "hw.memsize"])
         .and_then(|s| s.parse::<u64>().ok())
@@ -89,13 +84,11 @@ fn get_memory_info() -> String {
         .unwrap_or_else(|| "Unknown".to_string())
 }
 
-/// Get system disk name using existing disk utility function
 fn get_system_disk_name() -> String {
     use std::path::Path;
     get_volume_name(Path::new("/"))
 }
 
-/// Get system disk size from system_profiler storage JSON
 fn get_system_disk_size_from_json(json_str: &str) -> Option<String> {
     let data: serde_json::Value = serde_json::from_str(json_str).ok()?;
     data["SPStorageDataType"]
@@ -106,14 +99,12 @@ fn get_system_disk_size_from_json(json_str: &str) -> Option<String> {
         .map(|size| size.to_string())
 }
 
-/// Get system disk size using system_profiler (for total capacity)
 fn get_system_disk_size() -> String {
     run_command("system_profiler", &["SPStorageDataType", "-json"])
         .and_then(|json_str| get_system_disk_size_from_json(&json_str))
         .unwrap_or_else(|| "Unknown".to_string())
 }
 
-/// Get current user name using whoami
 fn get_current_user() -> String {
     run_command("whoami", &[]).unwrap_or_else(|| "Unknown".to_string())
 }

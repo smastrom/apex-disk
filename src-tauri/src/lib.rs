@@ -82,7 +82,6 @@ pub fn run() {
         .manage(updater::UpdateState::default())
         .enable_macos_default_menu(false)
         .setup(|app| {
-            // Initialize store with defaults
             store::initialize_store(&app.handle())?;
 
             // Initialize locale (handles first-load system detection).

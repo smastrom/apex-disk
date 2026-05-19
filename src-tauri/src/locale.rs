@@ -31,7 +31,6 @@ fn to_supported_language(language: &str) -> String {
 pub fn get_system_language() -> String {
     match get_locale() {
         Some(locale) => {
-            // Extract primary language from locale (e.g., "it-IT" -> "it")
             let primary = locale.split(['-', '_']).next().unwrap_or(&locale).to_lowercase();
 
             to_supported_language(primary.as_str())
@@ -73,7 +72,6 @@ pub fn resolve_app_language(app: tauri::AppHandle) -> Result<String, String> {
         detected
     };
 
-    // Close resource as per best practices
     store.close_resource();
 
     set_app_locale(app.clone(), resolved_language.clone())?;
@@ -86,7 +84,6 @@ pub fn resolve_app_language(app: tauri::AppHandle) -> Result<String, String> {
 #[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn set_app_locale(app: tauri::AppHandle, language: String) -> Result<(), String> {
-    // Map app language codes to macOS locale identifiers
     let locale_id = match language.as_str() {
         "it" => "it_IT",
         "es" => "es_ES",
@@ -100,21 +97,17 @@ pub fn set_app_locale(app: tauri::AppHandle, language: String) -> Result<(), Str
         _ => "en_US", // fallback to English
     };
 
-    // Get the current NSUserDefaults
     let defaults = NSUserDefaults::standardUserDefaults();
 
-    // Create NSString for the locale
     let locale_key = NSString::from_str("AppleLanguages");
     let locale_ns = NSString::from_str(locale_id);
     let locale_value = NSArray::from_slice(&[&*locale_ns]);
 
-    // Set the locale preference
     unsafe {
         defaults.setObject_forKey(Some(&locale_value), &locale_key);
         defaults.synchronize();
     }
 
-    // Update menu to match the new app language
     crate::menu::set_menu_language(app, language)?;
 
     Ok(())

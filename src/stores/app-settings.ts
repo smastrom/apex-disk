@@ -32,7 +32,6 @@ let globalStore: AppSettingsStore | null = null
 export async function initTauriAppSettings(): Promise<AppSettingsStore> {
    if (globalStore) return globalStore
 
-   // Load settings from backend, falling back to default theme if invalid
    const settingsData = await invoke<AppSettings>('get_settings')
 
    if (!THEME_COLORS.includes(settingsData.themeColor)) {
@@ -67,7 +66,6 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
 
          log('settings', `Settings: language ${prev} → ${lang}`)
          await saveSettings()
-         // Update macOS system locale (for context menus) and sync app menu language
          await invoke('set_app_locale', { language: lang })
       },
       setThemeColor: async (theme) => {

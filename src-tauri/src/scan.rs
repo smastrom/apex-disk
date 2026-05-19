@@ -174,7 +174,6 @@ fn build_folder_tree(
     has_fda: bool,
     live: Option<&LiveScanState>,
 ) -> FolderInfo {
-    // Check if scan has been cancelled
     if SCAN_CANCELLED.load(Ordering::Relaxed) {
         return FolderInfo {
             name: "Cancelled".to_string(),
@@ -192,7 +191,6 @@ fn build_folder_tree(
 
     let name = root.file_name().and_then(|n| n.to_str()).unwrap_or("Unknown").to_string();
 
-    // Get metadata once for the root directory
     let root_metadata = std::fs::metadata(root);
 
     let entries = match std::fs::read_dir(root) {
@@ -372,8 +370,6 @@ fn build_folder_tree(
     children.extend(dir_children);
     sort_children(&mut children);
 
-    // Check subdirectories for most recent modification and combine with files (excluding system
-    // files)
     for child in &children {
         // Skip system files for last_modified calculation
         if is_system_file(&child.name) {
@@ -447,7 +443,6 @@ pub fn get_user_folders_sync_with_progress(
     app: tauri::AppHandle,
     options: ScanOptions,
 ) -> Result<Vec<FolderInfo>, String> {
-    // Check FDA status once at the beginning
     let has_fda = crate::permissions::is_full_disk_access_granted();
 
     #[cfg(feature = "e2e")]
@@ -547,12 +542,10 @@ pub async fn get_user_folders(
 ) -> Result<Vec<crate::FolderInfo>, String> {
     log::dev_rust_trace("scan", "get_user_folders");
 
-    // Prevent concurrent scans
     if SCAN_RUNNING.compare_exchange(false, true, Ordering::Acquire, Ordering::Relaxed).is_err() {
         return Err("A scan is already in progress".to_string());
     }
 
-    // Reset cancellation flag at the start of a new scan
     SCAN_CANCELLED.store(false, Ordering::Relaxed);
 
     let options = options.unwrap_or_default();

@@ -202,5 +202,6 @@ agent-facing and exempt.
 - Do not propose launching dev servers (it's always running).
 - Do not use provide/inject for settings.
 - Do not use Options API or plain `<script>`.
+- Do not add narration comments that only restate the next line (for example `// Load system info` before `await loadSystemInfo()`).
 - Do not use em dashes as parenthetical interrupts in user-facing prose, and
   do not use en dashes anywhere (see Prose style above).

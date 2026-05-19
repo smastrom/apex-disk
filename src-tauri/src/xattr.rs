@@ -22,7 +22,6 @@ pub fn has_container_manager_attribute(path: &Path) -> bool {
         Err(_) => return false,
     };
 
-    // Check if the attribute exists by getting its size
     // getxattr returns -1 if the attribute doesn't exist
     unsafe {
         let size =

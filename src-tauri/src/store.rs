@@ -39,7 +39,6 @@ pub fn get_default_settings() -> serde_json::Value {
 pub fn initialize_store_with_handle<R: Runtime>(app: &tauri::AppHandle<R>) -> Result<(), String> {
     let store = app.store(crate::SETTINGS_STORE_PATH).map_err(|e| e.to_string())?;
 
-    // Initialize with defaults if store is empty or corrupted
     let current = store.get("app").unwrap_or_else(|| serde_json::Value::Null);
 
     if current.is_null() || !current.is_object() || current.as_object().unwrap().is_empty() {
@@ -51,7 +50,6 @@ pub fn initialize_store_with_handle<R: Runtime>(app: &tauri::AppHandle<R>) -> Re
         store.save().map_err(|e| e.to_string())?;
     }
 
-    // Close resource as per best practices
     store.close_resource();
     Ok(())
 }
@@ -93,7 +91,6 @@ pub fn get_settings_with_handle<R: Runtime>(
 
     let current = store.get("app").unwrap_or_else(|| get_default_settings());
 
-    // Ensure all required fields exist with defaults
     let defaults = get_default_settings();
     let merged = if current.is_object() {
         let mut merged = current.clone();
@@ -111,7 +108,6 @@ pub fn get_settings_with_handle<R: Runtime>(
         defaults
     };
 
-    // Close resource as per best practices
     store.close_resource();
 
     Ok(merged)
@@ -206,7 +202,6 @@ pub fn get_setting_with_handle<R: Runtime>(
 
     let result = if let Some(obj) = settings.as_object() { obj.get(&key).cloned() } else { None };
 
-    // Close resource as per best practices
     store.close_resource();
 
     Ok(result)

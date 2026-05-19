@@ -35,7 +35,6 @@ pub(crate) fn show_alert(
         alert.setInformativeText(&NSString::from_str(&body));
         alert.setAlertStyle(NSAlertStyle::Informational);
 
-        // Set the embedded app icon
         let data = NSData::with_bytes(APP_ICON);
         if let Some(image) = NSImage::initWithData(NSImage::alloc(), &data) {
             unsafe { alert.setIcon(Some(&image)) };
