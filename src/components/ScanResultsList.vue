@@ -42,6 +42,10 @@ const { t } = useTranslations()
  * type. See reference/scanning.md. */
 const MAX_DISPLAYED_ITEMS = 300
 
+/** Window size is fixed, so > 6 rows always overflows and the overlay
+ * scrollbar paints the right gutter; at or below we reserve it manually. */
+const SCROLLBAR_VISIBLE_THRESHOLD = 6
+
 interface NavEntry {
    items: FolderInfo[]
    label: string
@@ -187,7 +191,7 @@ function buildSelectedItemsForTrash(): TrashListItem[] {
       }
    }
 
-   return out.sort((a, b) => b.size - a.size)
+   return out.slice().sort((a, b) => b.size - a.size)
 }
 
 /** True if item should appear selected: explicitly in map or inside a selected folder. */
@@ -489,7 +493,15 @@ function onCancel() {
       <div class="ScanResultsList-listWrap">
          <div ref="parentRef" class="ScanResultsList-list ScanResultsList-listScroll">
             <Transition name="list-slide" mode="out-in" @after-leave="onAfterListLeave">
-               <div :key="current.path" class="ScanResultsList-listInner">
+               <div
+                  :key="current.path"
+                  class="ScanResultsList-listInner"
+                  :style="
+                     displayedItems.length > SCROLLBAR_VISIBLE_THRESHOLD
+                        ? undefined
+                        : { '--list-item-end-gutter': 'var(--scrollbar-inline-gutter)' }
+                  "
+               >
                   <div
                      v-for="item in displayedItems"
                      :key="item.path"
