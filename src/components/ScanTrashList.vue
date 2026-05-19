@@ -438,7 +438,6 @@ async function onTrashClick() {
    color: var(--color-on-accent);
 }
 
-/* Keep opacity transitions; only remove movement (sliding, gap, padding). */
 @media (prefers-reduced-motion: reduce) {
    .ScanTrashList-caption-enter-active,
    .ScanTrashList-caption-leave-active {
