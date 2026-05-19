@@ -60,6 +60,28 @@
          { "blankLine": "always", "prev": "let", "next": "const" },
          {
             "blankLine": "always",
+            "prev": [
+               { "selector": "ExpressionStatement[expression.type='AssignmentExpression']" },
+               { "selector": "ExpressionStatement[expression.type='UpdateExpression']" }
+            ],
+            "next": [
+               { "selector": "ExpressionStatement[expression.type='CallExpression']" },
+               { "selector": "ExpressionStatement[expression.type='AwaitExpression']" }
+            ]
+         },
+         {
+            "blankLine": "always",
+            "prev": [
+               { "selector": "ExpressionStatement[expression.type='CallExpression']" },
+               { "selector": "ExpressionStatement[expression.type='AwaitExpression']" }
+            ],
+            "next": [
+               { "selector": "ExpressionStatement[expression.type='AssignmentExpression']" },
+               { "selector": "ExpressionStatement[expression.type='UpdateExpression']" }
+            ]
+         },
+         {
+            "blankLine": "always",
             "prev": "*",
             "next": ["return", "throw", "break", "continue"]
          }

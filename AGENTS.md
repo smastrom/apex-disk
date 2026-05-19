@@ -6,14 +6,37 @@ ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for 
 
 ## Stack
 
-| Layer           | Tech                                                           |
-| --------------- | -------------------------------------------------------------- |
-| Backend         | Rust, Tauri 2, objc2 (Foundation/AppKit bindings)              |
-| Frontend        | Vue 3 (`<script setup lang="ts">`), TypeScript, Vite           |
-| Styling         | Scoped CSS with CSS nesting, lightningcss (Safari 13 target)   |
-| Testing         | Rust: `cargo test` (src-tauri/tests/), E2E: WebdriverIO (e2e/) |
-| Formatting      | Oxfmt (import sorting, code formatting)                        |
-| Package manager | pnpm                                                           |
+| Layer                      | Tech                                                                                                       |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Backend                    | Rust, Tauri 2, objc2 (Foundation/AppKit bindings)                                                          |
+| Frontend                   | Vue 3 (`<script setup lang="ts">`), TypeScript, Vite                                                       |
+| Styling                    | Scoped CSS with CSS nesting, lightningcss (Safari 13 target)                                               |
+| Testing                    | Rust: `cargo test` (src-tauri/tests/), E2E: WebdriverIO (e2e/)                                             |
+| Formatting (TS/Vue/JS/CSS) | **Oxfmt** (Prettier-style formatter); **Oxlint** `--fix` adjunct for import order + statement padding only |
+| Linting                    | Core language tooling only — **no ESLint**; see below                                                      |
+| Package manager            | pnpm                                                                                                       |
+
+### Linting (no general-purpose JS linter)
+
+We do **not** use ESLint, Oxlint categories, or any other style/correctness linter for TS/Vue/JS. The only linters are **core language checkers**:
+
+| Language         | Tool                                       | Command          |
+| ---------------- | ------------------------------------------ | ---------------- |
+| TypeScript / Vue | `vue-tsc`                                  | `pnpm typecheck` |
+| Rust             | `rustc` (via `cargo test` / `cargo check`) | `pnpm test:unit` |
+
+Oxlint is **not** a linter in this repo — only a formatter adjunct (import order + statement padding). Do not add ESLint or enable Oxlint rule categories.
+
+### TS / Vue / JS formatting pipeline
+
+Do not hand-sort imports or hand-place statement blank lines. Two tools, fixed roles:
+
+1. **Oxfmt** (`.oxfmtrc.jsonc`) — general formatting (indentation, quotes, wrapping, CSS, JSON, etc.). Same role as Prettier.
+2. **Oxlint** (`.oxlintrc.json`, `oxlint-plugins.mjs`) — formatter adjunct only. Categories are off; JS plugin enables just:
+   - `stylistic/sort-imports`
+   - `stylistic/padding-line-between-statements`
+
+On staged `.js` / `.ts` / `.vue` and on editor save: **oxlint `--fix` first**, then **oxfmt**. Details: `reference/code-style.md`.
 
 ## Agent-facing reference (`reference/`)
 
@@ -29,7 +52,7 @@ commit.
 | `reference/tauri-commands.md` | IPC channels, command surface, `lib.rs` registration, settings store, locale + menu.        |
 | `reference/translations.md`   | Per-component YAML, 10 languages, `useTranslations()`, CJK folding rules.                   |
 | `reference/themes.md`         | CSS variables, `data-theme` switching, 9 themes, adding a new theme.                        |
-| `reference/code-style.md`     | Oxfmt, import sorting, Vue/CSS/TS conventions, file naming, license headers, comments.      |
+| `reference/code-style.md`     | Oxfmt + Oxlint adjunct, Vue/CSS/TS conventions, file naming, license headers, comments.     |
 | `reference/testing.md`        | Suites, when to run, Rust integration patterns, E2E + `e2e` cargo feature, what not to add. |
 | `reference/compatibility.md`  | macOS / Safari / architecture targets, progressive enhancement matrix, oxfmt fallbacks.     |
 | `reference/logging.md`        | `[apex:…]` diagnostic scheme, Vue categories, Rust trace channels, `APEX_DISK_DEBUG`.       |

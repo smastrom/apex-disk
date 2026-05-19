@@ -96,6 +96,7 @@ export function useAppUpdate(options: UseAppUpdateOptions) {
 
       try {
          isChecking.value = true
+
          await invoke('check_for_updates_dialog')
       } catch (error) {
          log('app', `Updates: dialog flow failed: ${error}`)

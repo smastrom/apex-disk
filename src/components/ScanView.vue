@@ -58,12 +58,15 @@ watch(
    ([isScanning, folderCount]) => {
       if (isScanning) {
          log('view', 'Scan: view scanning')
+
          activeView.value = ActiveView.SCANNING
       } else if (folderCount === 0) {
          log('view', 'Scan: view launch')
+
          activeView.value = ActiveView.LAUNCH
       } else {
          log('view', 'Scan: view results')
+
          activeView.value = ActiveView.RESULTS
       }
    },
@@ -102,6 +105,7 @@ const suppressInnerTransition = ref(false)
 onDeactivated(() => {
    if (activeView.value === ActiveView.TRASH_COMPLETE) {
       activeView.value = ActiveView.LAUNCH
+
       onCancel()
    }
 
@@ -120,6 +124,7 @@ function onSelectedSizeUpdate(value: number) {
 
 function onReview(items: TrashListItem[]) {
    log('view', `Scan: view trash review (${items.length} items)`)
+
    deleteItems.value = items
    activeView.value = ActiveView.TRASH
 }
@@ -140,21 +145,25 @@ watch(resultsListRef, (ref) => {
 
    if (pendingReset.value) {
       ref.resetAll()
+
       pendingReset.value = false
    } else if (pendingSelection.value) {
       ref.setSelectedItems(pendingSelection.value)
+
       pendingSelection.value = null
    }
 })
 
 function onTrashComplete(summary: { count: number; size: number }) {
    log('trash', `Trash: complete ${summary.count} item(s), ${formatBytes(summary.size)}`)
+
    deletedSummary.value = summary
    activeView.value = ActiveView.TRASH_COMPLETE
 }
 
 function onRestart() {
    activeView.value = ActiveView.RESULTS
+
    onCancel()
 }
 </script>

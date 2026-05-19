@@ -1,25 +1,26 @@
 # Testing
 
-Three test layers plus three static checks. The frontend has **no unit tests** — only typecheck + e2e. The Rust side has full integration coverage.
+Three test layers plus static checks. The frontend has **no unit tests** and **no ESLint** — only the TypeScript checker (`vue-tsc`) + e2e. The Rust side has full integration coverage. Oxlint is a formatter adjunct (import/padding), not a linter.
 
 ## Suites
 
-| Suite                | Command                                               | Scope                                                                |
-| -------------------- | ----------------------------------------------------- | -------------------------------------------------------------------- |
-| **Format**           | `pnpm fmt:check` / `pnpm fmt`                         | Oxfmt — `.ts` / `.tsx` / `.vue` formatting + import sorting.         |
-| **License headers**  | `pnpm headers:check` / `pnpm headers`                 | SPDX + copyright on every first-party source file.                   |
-| **Typecheck**        | `pnpm typecheck` (= `vue-tsc --noEmit`)               | Frontend type correctness. Committed code must be type-clean.        |
-| **Rust unit / int.** | `pnpm test:unit` (= `cargo test -- --test-threads=1`) | Rust modules + integration tests in `src-tauri/tests/`. **Serial.**  |
-| **E2E**              | `pnpm test:e2e`                                       | WebdriverIO drives a debug Tauri build with the `e2e` cargo feature. |
+| Suite                | Command                                               | Scope                                                                         |
+| -------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------- |
+| **Format**           | `pnpm fmt:check` / `pnpm fmt`                         | Oxfmt — general `.ts` / `.tsx` / `.vue` / CSS / JSON formatting.              |
+| **Import / padding** | `oxlint` / `oxlint --fix`                             | Oxlint adjunct — import order + statement padding only (see `code-style.md`). |
+| **License headers**  | `pnpm headers:check` / `pnpm headers`                 | SPDX + copyright on every first-party source file.                            |
+| **Typecheck**        | `pnpm typecheck` (= `vue-tsc --noEmit`)               | Frontend linter — TypeScript / Vue type correctness only.                     |
+| **Rust unit / int.** | `pnpm test:unit` (= `cargo test -- --test-threads=1`) | Rust modules + integration tests in `src-tauri/tests/`. **Serial.**           |
+| **E2E**              | `pnpm test:e2e`                                       | WebdriverIO drives a debug Tauri build with the `e2e` cargo feature.          |
 
 ## When to run
 
-| Change                                                       | Run                                    |
-| ------------------------------------------------------------ | -------------------------------------- |
-| Always (before every commit)                                 | `pnpm fmt:check`, `pnpm headers:check` |
-| Any `*.ts` / `*.tsx` / `*.vue`                               | + `pnpm typecheck`                     |
-| Any `src-tauri/**`                                           | + `pnpm test:unit`                     |
-| Any user-visible change (`src/**`, `src-tauri/**`, `e2e/**`) | + `pnpm test:e2e`                      |
+| Change                                                       | Run                                              |
+| ------------------------------------------------------------ | ------------------------------------------------ |
+| Always (before every commit)                                 | `pnpm fmt:check`, `oxlint`, `pnpm headers:check` |
+| Any `*.ts` / `*.tsx` / `*.vue`                               | + `pnpm typecheck`                               |
+| Any `src-tauri/**`                                           | + `pnpm test:unit`                               |
+| Any user-visible change (`src/**`, `src-tauri/**`, `e2e/**`) | + `pnpm test:e2e`                                |
 
 `/sync` and `/force-sync` run the relevant subset automatically. They never push red code and never bypass with `--no-verify` / `--force`.
 

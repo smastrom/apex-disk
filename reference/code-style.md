@@ -1,15 +1,32 @@
 # Code Style
 
-The conventions actually used in the codebase. Two tools own the mechanical rules; don't hand-format or hand-reorder.
+The conventions actually used in the codebase. Don't hand-format, hand-sort imports, or hand-place statement blank lines.
 
-## Formatting, imports, blank lines
+## Linting
 
-- **Oxfmt** owns code formatting for `.ts` / `.tsx` / `.vue` / `.css` / `.json` / `.html` / `.md`. Config: `.oxfmtrc.jsonc`. Run `pnpm fmt` / `pnpm fmt:check`.
-- **Oxlint** owns import order and blank-line rules via the JS plugin in `oxlint-plugins.mjs`:
-   - `stylistic/sort-imports` (perfectionist) — group order: `vue-files → type → builtin → external → internal → constants → relative → side-effect → style`. Internal pattern: `^@/.+`. One blank line between groups.
-   - `stylistic/padding-line-between-statements` — blank line after the last import; blank lines around `block-like`, between `const`/`let` runs and expressions, before terminators.
+**No ESLint and no general-purpose JS/TS linter.** Static checks for frontend code come from the **TypeScript compiler** only (`vue-tsc`, `pnpm typecheck`). Rust uses the **compiler** (`cargo test` / `cargo check`). There is no Oxlint correctness/style pass — all Oxlint categories are off in `.oxlintrc.json`.
 
-Config: `.oxlintrc.json`. Run `pnpm oxlint --fix`. With the project `.vscode/settings.json`, save triggers both (`source.fixAll.oxc: always` then format).
+Do not add ESLint, enable extra Oxlint rules, or treat Oxlint output as lint diagnostics beyond the two formatter-adjunct rules below.
+
+## Formatting pipeline (TS / Vue / JS)
+
+**Oxfmt** is the formatter (Prettier-style). **Oxlint** is a formatter adjunct: it is not used as a general linter here (all rule categories off in `.oxlintrc.json`). Only two rules run, via `oxlint-plugins.mjs` bridging `@stylistic/eslint-plugin` and `eslint-plugin-perfectionist`:
+
+| Tool               | Role                                                                                                                               |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **Oxfmt**          | All general formatting — indentation, quotes, line width, CSS, JSON, etc. Config: `.oxfmtrc.jsonc`. `pnpm fmt` / `pnpm fmt:check`. |
+| **Oxlint `--fix`** | Import order + statement padding only (see below). Config: `.oxlintrc.json`.                                                       |
+
+**Order** (lint-staged, editor save): `pnpm oxlint:fix` then `pnpm fmt`. Oxlint applies import/padding fixes; Oxfmt formats everything else without re-litigating those rules.
+
+Rust uses **rustfmt** separately (`pnpm rust:fmt`).
+
+### Oxlint rules (adjunct only)
+
+- `stylistic/sort-imports` — group order: `vue-files → type → builtin → external → internal → constants → relative → side-effect → style`. Internal pattern: `^@/.+`. One blank line between groups.
+- `stylistic/padding-line-between-statements` — blank line after the last import; blank lines around `block-like`, between `const`/`let` runs and expressions, before terminators; blank lines between assignment/update and calls (including `await`, method calls); not between consecutive calls or assignments.
+
+Editor (`.vscode/settings.json`): `source.fixAll.oxc: always`, then format on save.
 
 ## License headers
 

@@ -64,6 +64,7 @@ export function useLabelPopover(
       if (!popover || isOpen.value) return
 
       isOpen.value = true
+
       await position()
       popover.classList.add('is-open')
       addScrollListener()
@@ -75,7 +76,9 @@ export function useLabelPopover(
       if (!popover || !isOpen.value) return
 
       popover.classList.remove('is-open')
+
       isOpen.value = false
+
       removeScrollListener()
    }
 
@@ -102,6 +105,7 @@ export function useLabelPopover(
       const target = ancestor ?? document
 
       target.addEventListener('scroll', dismiss, { passive: true, once: true })
+
       scrollCleanup = () => target.removeEventListener('scroll', dismiss)
    }
 
@@ -113,10 +117,12 @@ export function useLabelPopover(
    function clearTimers() {
       if (enterTimer) {
          clearTimeout(enterTimer)
+
          enterTimer = null
       }
       if (leaveTimer) {
          clearTimeout(leaveTimer)
+
          leaveTimer = null
       }
    }
@@ -126,6 +132,7 @@ export function useLabelPopover(
 
       if (leaveTimer) {
          clearTimeout(leaveTimer)
+
          leaveTimer = null
       }
 
@@ -135,6 +142,7 @@ export function useLabelPopover(
    function onPointerLeave() {
       if (enterTimer) {
          clearTimeout(enterTimer)
+
          enterTimer = null
       }
       if (isOpen.value) {

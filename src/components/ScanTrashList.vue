@@ -65,6 +65,7 @@ let countdownInterval: ReturnType<typeof setInterval> | null = null
 function startCountdown() {
    if (countdownInterval) {
       clearInterval(countdownInterval)
+
       countdownInterval = null
    }
 
@@ -74,6 +75,7 @@ function startCountdown() {
 
       if (countdownRemaining.value <= 0 && countdownInterval) {
          clearInterval(countdownInterval)
+
          countdownInterval = null
       }
    }, 1000)
@@ -82,6 +84,7 @@ function startCountdown() {
 function stopCountdown() {
    if (countdownInterval) {
       clearInterval(countdownInterval)
+
       countdownInterval = null
    }
 
@@ -115,6 +118,7 @@ onUnmounted(stopCountdown)
  */
 onDeactivated(() => {
    stopCountdown()
+
    isDeleting.value = false
 })
 
@@ -197,6 +201,7 @@ function toggle(path: string) {
    const next = new Map(prev)
 
    next.set(path, !wasChecked)
+
    checkedMapRef.value = next
 
    if (!item) {

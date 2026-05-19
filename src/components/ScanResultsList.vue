@@ -94,6 +94,7 @@ watch(
       if (folders.length > 0) {
          backStack.value = []
          forwardStack.value = []
+
          selectedMap.clear()
 
          const rootPath = parentDir(folders[0].path)
@@ -105,6 +106,7 @@ watch(
          forwardStack.value = []
          current.value = { items: [], label: '', path: '', truncated: false }
          homePath.value = ''
+
          selectedMap.clear()
       }
    },
@@ -409,6 +411,7 @@ function resetAll() {
    }
 
    selectedMap.clear()
+
    backStack.value = []
    forwardStack.value = []
 
@@ -431,6 +434,7 @@ function goInto(item: FolderInfo) {
    log('nav', `Results: into "${item.name}" (${item.children.length} children)`)
 
    document.documentElement.style.setProperty('--nav-direction', '1')
+
    backStack.value = [...backStack.value, { ...current.value }]
    forwardStack.value = []
    current.value = {
@@ -448,6 +452,7 @@ function goBack() {
    log('nav', `Results: back to "${backStack.value[backStack.value.length - 1].label || '~'}"`)
 
    document.documentElement.style.setProperty('--nav-direction', '-1')
+
    forwardStack.value = [...forwardStack.value, { ...current.value }]
    current.value = backStack.value.pop()!
 }
@@ -462,6 +467,7 @@ function goForward() {
    )
 
    document.documentElement.style.setProperty('--nav-direction', '1')
+
    backStack.value = [...backStack.value, { ...current.value }]
    current.value = forwardStack.value.pop()!
 }

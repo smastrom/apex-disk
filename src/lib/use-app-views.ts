@@ -24,6 +24,7 @@ export function useAppViews() {
       const dir = viewIndex(view) > viewIndex(activeView.value) ? 1 : -1
 
       document.documentElement.style.setProperty('--nav-direction', String(dir))
+
       activeView.value = view
    }
 
