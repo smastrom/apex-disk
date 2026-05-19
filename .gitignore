@@ -10,11 +10,7 @@ target
 # Logs
 logs
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 pnpm-debug.log*
-lerna-debug.log*
 
 *.local
 
@@ -24,11 +20,6 @@ lerna-debug.log*
 !.vscode/settings.json
 .idea
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
 
 # Environment (signing keys)
 .env
@@ -40,10 +31,6 @@ lerna-debug.log*
 !.claude/hooks/
 !.claude/settings.json
 .claude/.sync-active
-.cursor/
-.windsurf/
-.gemini/
-.cascade/
 
 # Local scratch (reviews, drafts, notes)
 reference/temp/

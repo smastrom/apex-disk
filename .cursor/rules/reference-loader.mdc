@@ -1,0 +1,6 @@
+---
+description: Load the relevant reference file before starting work
+alwaysApply: true
+---
+
+@.claude/rules/reference-loader.md

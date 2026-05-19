@@ -91,10 +91,11 @@ Full suite matrix, commands, and conventions live in `reference/testing.md`. Key
 2. Tests use temp dirs, never the real user home.
 3. Do not add tests unless asked.
 
-The protocol is enforced from the repo by a `PreToolUse` hook in
-`.claude/hooks/pre-commit-gate.sh` (wired via `.claude/settings.json`),
-which refuses agent-initiated `git commit` / `git push` outside of `/sync`
-or `/force-sync`. Details in `.claude/rules/pre-commit-protocol.md`.
+The protocol is enforced by `.claude/hooks/pre-commit-gate.sh`, wired into
+Claude Code via `.claude/settings.json` (`PreToolUse`) and into Cursor via
+`.cursor/hooks.json` (`beforeShellExecution`). It refuses agent-initiated
+`git commit` / `git push` outside of `/sync` or `/force-sync`. Details in
+`.claude/rules/pre-commit-protocol.md`.
 
 ## `.claude/` layout
 
@@ -106,6 +107,18 @@ or `/force-sync`. Details in `.claude/rules/pre-commit-protocol.md`.
 | `.claude/settings.json`       | committed             | Shared hooks + repo-relevant permissions.              |
 | `.claude/settings.local.json` | gitignored            | Personal overrides (paths, one-off allowlist entries). |
 | `.claude/.sync-active`        | gitignored, ephemeral | Marker created by `/sync` to open the pre-commit gate. |
+
+## `.cursor/` layout
+
+Cursor IDE is supported alongside Claude Code. The files under `.cursor/`
+are thin shims that point back to the canonical `.claude/` sources, so
+there's only one place to edit slash commands or rules.
+
+| Path                       | Status    | Purpose                                                                 |
+| -------------------------- | --------- | ----------------------------------------------------------------------- |
+| `.cursor/commands/*.md`    | committed | One-line shims (`@.claude/commands/<name>.md`) — same slash commands.   |
+| `.cursor/rules/*.mdc`      | committed | Cursor-native rule files with `alwaysApply: true`, shimming `.claude/`. |
+| `.cursor/hooks.json`       | committed | `beforeShellExecution` wiring for the same pre-commit-gate script.      |
 
 ## Key directories
 

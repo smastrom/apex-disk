@@ -5,10 +5,11 @@ description: Mandatory steps before committing or releasing
 Before running `git commit` or pushing, complete the following. Do not skip
 any step: these commands automate work that is otherwise easy to forget.
 
-This protocol is enforced from the repo by a `PreToolUse` hook
-(`.claude/hooks/pre-commit-gate.sh`, wired in `.claude/settings.json`). The
+This protocol is enforced from the repo by `.claude/hooks/pre-commit-gate.sh`,
+wired into Claude Code as a `PreToolUse` hook via `.claude/settings.json` and
+into Cursor as a `beforeShellExecution` hook via `.cursor/hooks.json`. The
 hook intercepts agent-initiated `git commit` and `git push` and blocks them
-(exit 2) unless `.claude/.sync-active` is present. `/sync` and `/force-sync`
+unless `.claude/.sync-active` is present. `/sync` and `/force-sync`
 create that marker at their first step and remove it at their last, so they
 flow through unchanged; any other path to `git commit` / `git push` is
 refused with a message pointing here. The marker is gitignored. To bypass
