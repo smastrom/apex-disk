@@ -393,7 +393,6 @@ const currentLanguage = store.settings.value.language
 
 .ScanResultsListItem-checkboxPopover {
    max-width: 280px;
-   padding: var(--spacing-md);
    word-break: normal;
 }
 </style>
