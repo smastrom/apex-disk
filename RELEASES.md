@@ -4,6 +4,45 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 
 ---
 
+## v0.0.17
+
+### New Features
+
+- Add the **Apex Light** theme as the default light option, plus a contrast pass on the existing light theme.
+- Show the GPL-3.0 license in the footer and the About dialog.
+- Add a **Scan .DS_Store** toggle in Settings, gated behind **Show Hidden Files**.
+- Split the auto-update toggle into separate **Check** and **Install** controls, so update prompts can be shown without applying automatically.
+- Show a scan-progress dot on the footer Scan tab. Yellow while scanning, green when fresh results are waiting.
+- Raise the per-folder file cap from 100 to 300 and surface a truncation notice when a folder still exceeds it.
+
+### Improvements
+
+- Replace the Suspense-based system bootstrap with a synchronous `useSystem` composable, so the loading screen no longer flashes on slow setups and the lifecycle hooks inside `App.vue` bind before any async work resolves.
+- Anchor the disabled-checkbox explainer tooltip directly to its icon and keep it interactive on hover.
+- Scope `user-select: text` to the surfaces that need it (tooltips, system info, scan result names).
+- Reserve a scrollbar gutter on the scan results list so the layout no longer shifts when overflow appears.
+- Skip the inner fade across `KeepAlive` reactivation in ScanView so returning to the Scan tab keeps cached content stable.
+- Show the top shadow overlay on the scan results list only once it has scrolled past its top.
+- Gate the list-slide view transition to manual navigation only, skipping the slide on programmatic view changes.
+- Shorten "Copy to clipboard" to "Copy" across all 10 languages.
+- Soften the GradientButton corner radius from full-round to large.
+
+### Bug Fixes
+
+- Theme the AppLoadingScreen with CSS tokens so it no longer flashes a dark background on light themes.
+- Constrain long folder names in the scan results to their container width so they no longer push sibling controls off-screen.
+
+### Chores
+
+- Adopt nightly rustfmt with import grouping and comment wrapping; apply across `src-tauri/`.
+- Demote Oxlint to a formatter adjunct (import order, statement padding, assignment/call padding); apply across `src/` and `e2e/` and wire it into the `/sync` and `/force-sync` verify gates.
+- Enforce `/sync` via a PreToolUse pre-commit gate hook that refuses agent-initiated `git commit` / `git push` outside `/sync` or `/force-sync`.
+- Include `.coderabbit.yaml` in the `/sync` docs sweep.
+- Drop narration comments across the Rust backend and codify the no-narration rule in `AGENTS.md` and `reference/code-style.md`.
+- Always nest `@media` and `prefers-reduced-motion` rules inside their selector; promote CSS style rules into their own section.
+- Add tests for the per-folder file cap and the truncation notice; document the truncation contract in the architecture reference.
+- Add a voice guide and em-dash prose rules for user-facing docs; sweep em-dash interrupts and en-dashes across the repo.
+
 ## v0.0.16
 
 ### Improvements
