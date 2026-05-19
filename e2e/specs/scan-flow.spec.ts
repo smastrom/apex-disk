@@ -21,6 +21,8 @@ import {
    assertRowNotExists,
    navigateIntoFolder,
    navigateBack,
+   goToSettingsView,
+   goToScanView,
 } from '../helpers/navigation'
 
 describe('Scan flow', () => {
@@ -55,6 +57,18 @@ describe('Scan flow', () => {
       await assertRowExists('MyData')
       await assertRowExists('Documents')
       await assertRowExists('Projects')
+   })
+
+   it('shows completed scan dot while results wait behind another view', async () => {
+      await goToSettingsView()
+
+      const dot = $(sel.footerScanDot)
+
+      await dot.waitForDisplayed({ timeout: 5000 })
+      await expect(dot).toBeDisplayed()
+
+      await goToScanView()
+      await expect(dot).not.toBeDisplayed()
    })
 
    it('results are sorted by size descending', async () => {

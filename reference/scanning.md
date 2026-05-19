@@ -111,7 +111,7 @@ Selection lives in `ScanResultsList.vue` as a `reactive(Map<path, FolderInfo>)`,
 - Vue tracks `Map.get(key)` per-key (not `ITERATE_KEY`), so toggling one item only re-renders that row, not the entire list.
 - Storing the full `FolderInfo` (not just the path) means the trash list doesn't have to re-walk the tree to recover metadata.
 
-Selection state does **not** survive navigation between folders — the back/forward stacks track the items being shown, but the user's selection is per-view.
+Selection state survives navigation between folders. The back/forward stacks track the items being shown, while `selectedMap` remains independent so selected rows keep their state as the user drills in and returns.
 
 ## Browser-style navigation
 

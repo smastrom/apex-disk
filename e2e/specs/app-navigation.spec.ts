@@ -6,31 +6,27 @@
  * Ensures footer navigation works LEFT → RIGHT, RIGHT → LEFT, and each view renders its content.
  */
 
+import {
+   sel,
+   goToScanView,
+   goToSettingsView,
+   waitForAppReady,
+   waitForListSlideSettled,
+   waitForScanLaunch,
+} from '../helpers/navigation'
+
 describe('App navigation', () => {
    const VIEW_READY_TIMEOUT = 10000
-   const BUTTON_DISPLAY_TIMEOUT = 5000
+   const BUTTON_DISPLAY_TIMEOUT = 10000
 
-   const appHeader = '[data-testid="app-header"]'
-   const footerScan = '[data-testid="footer-scan"]'
-   const footerSettings = '[data-testid="footer-settings"]'
-   const footerInformation = '[data-testid="footer-information"]'
-   const scanLaunch = '[data-testid="scan-launch"]'
-   const startScanBtn = '[data-testid="start-scan"]'
    const settingsView = '[data-testid="settings-view"]'
    const settingsContent = '[data-testid="settings-content"]'
    const informationView = '[data-testid="information-view"]'
    const informationTitle = '[data-testid="information-title"]'
+   const informationLicenseText = 'GPL-3.0'
 
    async function expectScanViewRendered() {
-      const launch = $(scanLaunch)
-
-      await launch.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
-
-      const btn = $(startScanBtn)
-
-      await btn.waitForDisplayed({ timeout: BUTTON_DISPLAY_TIMEOUT })
-      await expect(launch).toBeDisplayed()
-      await expect(btn).toBeDisplayed()
+      await waitForScanLaunch()
    }
 
    async function expectSettingsViewRendered() {
@@ -57,14 +53,21 @@ describe('App navigation', () => {
       await expect(title).toBeDisplayed()
    }
 
+   async function expectInformationFooterRendered() {
+      const license = $(sel.informationLicense)
+
+      await license.waitForExist({ timeout: BUTTON_DISPLAY_TIMEOUT })
+      await license.scrollIntoView()
+      await license.waitForDisplayed({ timeout: BUTTON_DISPLAY_TIMEOUT })
+
+      const text = await license.getText()
+
+      expect(text).toContain(informationLicenseText)
+   }
+
    before(async () => {
-      const header = $(appHeader)
-
-      await header.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
-
-      const scanBtn = $(footerScan)
-
-      await scanBtn.waitForDisplayed({ timeout: BUTTON_DISPLAY_TIMEOUT })
+      await waitForAppReady()
+      await waitForScanLaunch()
    })
 
    it('starts on Scan view and shows scan launch content', async () => {
@@ -72,43 +75,36 @@ describe('App navigation', () => {
    })
 
    it('navigates LEFT → RIGHT: Scan → Settings → Information', async () => {
-      const settingsBtn = $(footerSettings)
-
-      await settingsBtn.click()
+      await goToSettingsView()
       await expectSettingsViewRendered()
 
-      const informationBtn = $(footerInformation)
+      const informationBtn = $(sel.footerInformation)
 
       await informationBtn.click()
+      await waitForListSlideSettled()
       await expectInformationViewRendered()
+      await expectInformationFooterRendered()
    })
 
    it('navigates RIGHT → LEFT: Information → Settings → Scan', async () => {
-      const settingsBtn = $(footerSettings)
-
-      await settingsBtn.click()
+      await goToSettingsView()
       await expectSettingsViewRendered()
 
-      const scanBtn = $(footerScan)
-
-      await scanBtn.click()
+      await goToScanView()
       await expectScanViewRendered()
    })
 
    it('navigates forward again and back to Scan from Information', async () => {
-      const settingsBtn = $(footerSettings)
-
-      await settingsBtn.click()
+      await goToSettingsView()
       await expectSettingsViewRendered()
 
-      const informationBtn = $(footerInformation)
+      const informationBtn = $(sel.footerInformation)
 
       await informationBtn.click()
+      await waitForListSlideSettled()
       await expectInformationViewRendered()
 
-      const scanBtn = $(footerScan)
-
-      await scanBtn.click()
+      await goToScanView()
       await expectScanViewRendered()
    })
 })
