@@ -4,6 +4,20 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 
 ---
 
+## v0.0.19
+
+### Improvements
+
+- Drop the custom padding override on the selection-limit popover so it matches the smaller hover-popover family.
+
+### Bug Fixes
+
+- Right-clicking outside selected text or an editable field no longer shows the WebKit "Reload" item, and cmd-R / cmd-Shift-R / F5 are intercepted in production, so the page can no longer reload mid-scan while the Rust walker still holds `SCAN_RUNNING`. Native Copy / Look Up / Cut / Paste menus still appear on selected text, and the breadcrumb path in `ScanListNav` joins the results-item name as a selectable surface.
+
+### Chores
+
+- Mirror Claude Code's `.claude/` commands, rules, and pre-commit gate under `.cursor/` via reference shims, so the same `/sync` workflow runs inside Cursor.
+
 ## v0.0.18
 
 ### Improvements
