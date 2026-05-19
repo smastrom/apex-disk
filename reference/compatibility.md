@@ -116,7 +116,7 @@ Cross-reference each Foundation/AppKit symbol with Apple's developer docs for av
 
 Driven by Tauri 2 and objc2: **Rust 1.70+**. No `rust-toolchain.toml` — the MSRV is implicit from dependencies.
 
-Other MSRVs in the tree: tokio (1.63), serde (1.31), rayon (1.59), nix (1.69), trash (1.63). Aggregate stays at 1.70.
+Other MSRVs in the tree: tokio (1.63, dev-only), serde (1.31), rayon (1.59), trash (1.63), dirs (1.65), sys-locale (1.63). Aggregate stays at 1.70.
 
 ### 7. No opt-in to newer-only browser APIs
 

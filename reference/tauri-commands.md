@@ -56,7 +56,7 @@ The setup hook also runs at startup:
 2. Bootstrap locale via `locale.rs` (`AppleLanguages` detection)
 3. Build the native menu (`menu.rs`, `menu_translations.rs`)
 
-Plugins installed: `tauri_plugin_store`, `tauri_plugin_updater`, `tauri_plugin_os`, `tauri_plugin_opener`. Under the `e2e` feature, `tauri_plugin_webdriver` is added.
+Plugins installed: `tauri_plugin_store`, `tauri_plugin_updater`, `tauri_plugin_opener`. Under the `e2e` feature, `tauri_plugin_webdriver` is added.
 
 ## Settings flow
 
@@ -75,9 +75,9 @@ store.rs::update_setting                    src-tauri/src/store.rs
   └─ returns the full merged settings object
 ```
 
-`store.rs` takes an internal `STORE_LOCK` mutex so concurrent writes don't lose updates, and it **re-merges defaults on every read** so new fields added in a Rust upgrade don't fail deserialization for existing installs.
+`store.rs` takes an internal `STORE_LOCK` mutex so concurrent writes don't lose updates, and it **re-merges defaults on every read** so new fields added in a Rust upgrade don't fail deserialization for existing installs. `set_settings` (full-object write) runs under the same lock and is whitelisted: unknown keys are dropped silently, and keys not present in the payload are preserved from the current persisted state, so a partial write can't wipe other settings.
 
-**Adding a new setting is a one-line change:** register the key and its default in `get_default_settings()` inside `store.rs`. `is_valid_setting_key()` accepts it automatically, and existing installs get the field backfilled on next `get_settings`.
+**Adding a new setting is a one-line change:** register the key and its default in `get_default_settings()` inside `store.rs`. The cached `VALID_SETTING_KEYS` set picks it up on next process start, both `update_setting` and `set_settings` accept it automatically, and existing installs get the field backfilled on next `get_settings`.
 
 The frontend mirrors the store in a reactive module-level singleton: `src/stores/app-settings.ts` calls `initTauriAppSettings()` once from `main.ts`, then `useAppSettings()` returns refs. **No `provide` / `inject`** — an explicit init + assertion caught "used before ready" bugs early; we kept it.
 

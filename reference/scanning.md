@@ -74,7 +74,7 @@ This is currently the only event in the app — trash and updater are fully requ
 
 Cooperative two-step:
 
-1. **Atomic flag** — `cancel_scan` invoke flips an atomic; `scan.rs` checks it inside the walk and exits early.
+1. **Per-scan token** — `get_user_folders` registers a fresh `Arc<AtomicBool>` in a global slot before launching the walk. `cancel_scan` flips whatever token is currently registered; the walker checks it inside the walk and exits early. The slot and `SCAN_RUNNING` lock are cleared by an RAII guard so a panic or join error never strands the lock. The token is per-scan, so a stale `cancel_scan` call between scans is a no-op rather than something that would silently kill the next scan.
 2. **Generation counter** — `useScanner` carries a `scanGeneration` ref. Every `loadFolders` / abort bumps it. Async callbacks capture the value at start and compare on resolve; mismatched ones are silently discarded. This drops stale event payloads from a scan the user already cancelled.
 
 Both are needed because the Rust walker may emit one more progress event after the cancel flag is read on a different thread.

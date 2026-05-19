@@ -49,7 +49,7 @@ Subsystem deep-dives live in their own files: [`scanning.md`](scanning.md) (scan
 | App-wide constants (menu ids, URLs, default language/theme)                                  | `constants.rs`                    |
 | E2E-only fixtures (trash dry-run, state reset)                                               | `e2e_fixtures.rs`                 |
 
-Entry points: `main.rs` delegates to `lib.rs::run()`, which installs plugins (`tauri_plugin_store`, `tauri_plugin_updater`, `tauri_plugin_os`, `tauri_plugin_opener`; `tauri_plugin_webdriver` under the `e2e` feature), registers every command in `tauri::generate_handler!`, and runs the setup hook (store defaults, locale bootstrap, menu build).
+Entry points: `main.rs` delegates to `lib.rs::run()`, which installs plugins (`tauri_plugin_store`, `tauri_plugin_updater`, `tauri_plugin_opener`; `tauri_plugin_webdriver` under the `e2e` feature), registers every command in `tauri::generate_handler!`, and runs the setup hook (store defaults, locale bootstrap, menu build).
 
 **Rust never renders UI.** The native menu is the only OS-visible surface it controls directly.
 
@@ -87,7 +87,7 @@ A handful of rules that make the IPC hop easy to reason about:
 - **Names cross the wire unchanged.** Rust structs serialize field names as-is; the frontend consumes them verbatim. That means **Tauri-boundary objects use `snake_case`** even in TypeScript (e.g. `folder_info.is_protected`), while **frontend-only objects use `camelCase`**. Types for boundary shapes live in `src/types/` and mirror the Rust structs.
 - **Do not reimplement Rust logic in Vue.** The "is this path protected?" / "how big is this folder?" / "is FDA granted?" questions belong to Rust, even when the answer is cached in a ref.
 - **Commands are total.** A command either resolves with data or rejects with an error string; no partial states on the wire. Progress-style feedback goes on events, not on the invoke promise.
-- **Cancellation is cooperative.** `cancel_scan` flips an atomic flag; `scan.rs` checks it inside the walk and exits early. The frontend `useScanner` also carries a `scanGeneration` counter so stale event payloads (from a scan the user already cancelled) are dropped in the webview.
+- **Cancellation is cooperative.** Each scan registers a fresh `Arc<AtomicBool>` token in a global slot before the walk starts; `cancel_scan` flips whatever token is registered, and `scan.rs` checks it inside the walk and exits early. The token slot and the `SCAN_RUNNING` lock are cleared by an RAII guard so a panic or join error doesn't strand the lock. The frontend `useScanner` also carries a `scanGeneration` counter so stale event payloads (from a scan the user already cancelled) are dropped in the webview.
 - **Truncation is a shared contract.** `scan::MAX_FILES_PER_DIR` caps files per folder; `ScanResultsList.vue` caps rendered rows at the same number to bound DOM size without a row virtualizer. Rust signals "files were dropped" via `FolderInfo.truncated`; the UI also detects its own slice. Both flow into one notice. The two caps **must be kept in sync** — see [`scanning.md`](scanning.md) for the full contract.
 - **macOS-only.** There's no Windows/Linux branching in either side; see [`compatibility.md`](compatibility.md). objc2 AppKit/Foundation bindings are used freely in Rust.
 
