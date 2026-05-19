@@ -210,16 +210,16 @@ currentUser:
    ar: المستخدم الحالي
 
 copyToClipboard:
-   en: Copy to clipboard
-   it: Copia negli appunti
-   es: Copiar al portapapeles
-   fr: Copier dans le presse-papiers
-   pt: Copiar para a área de transferência
-   de: In Zwischenablage kopieren
-   ru: Скопировать в буфер
-   zh: 复制到剪贴板
-   ja: クリップボードにコピー
-   ar: نسخ إلى الحافظة
+   en: Copy
+   it: Copia
+   es: Copiar
+   fr: Copier
+   pt: Copiar
+   de: Kopieren
+   ru: Скопировать
+   zh: 复制
+   ja: コピー
+   ar: نسخ
 
 copied:
    en: Copied!
