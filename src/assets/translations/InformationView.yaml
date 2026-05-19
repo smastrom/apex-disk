@@ -208,3 +208,27 @@ currentUser:
    zh: 当前用户
    ja: 現在のユーザー
    ar: المستخدم الحالي
+
+copyToClipboard:
+   en: Copy to clipboard
+   it: Copia negli appunti
+   es: Copiar al portapapeles
+   fr: Copier dans le presse-papiers
+   pt: Copiar para a área de transferência
+   de: In Zwischenablage kopieren
+   ru: Скопировать в буфер
+   zh: 复制到剪贴板
+   ja: クリップボードにコピー
+   ar: نسخ إلى الحافظة
+
+copied:
+   en: Copied!
+   it: Copiato!
+   es: ¡Copiado!
+   fr: Copié !
+   pt: Copiado!
+   de: Kopiert!
+   ru: Скопировано!
+   zh: 已复制！
+   ja: コピーしました！
+   ar: تم النسخ!

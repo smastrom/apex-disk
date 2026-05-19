@@ -29,21 +29,15 @@ body {
    overflow: hidden;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-span:not(:empty),
-a:not(:empty),
-button:not(:empty),
-.Popover {
+.Popover,
+.InformationView-detailLabel,
+.InformationView-detailValue,
+.ScanResultsListItem-name {
    user-select: text;
    -webkit-user-select: text;
    -moz-user-select: text;
    -ms-user-select: text;
+   cursor: text;
 }
 
 /*

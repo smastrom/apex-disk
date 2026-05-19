@@ -18,16 +18,65 @@ import Logo from './ui/Logo.vue'
 
 import type { SystemInfo } from '@/types/system-info'
 
+import { ref } from 'vue'
+
 import { formatBytes } from '@/lib/format'
 import { useTranslations } from '@/lib/use-translations'
 
 import { APP_NAME } from '@/lib/constants'
+
+const COPIED_FEEDBACK_MS = 1600
 
 const { t } = useTranslations()
 
 const props = defineProps<{
    systemInfo: SystemInfo | null
 }>()
+
+const isCopied = ref(false)
+
+let copiedTimer: ReturnType<typeof setTimeout> | null = null
+
+function buildSystemInfoText(info: SystemInfo): string {
+   const rows: Array<[string, string | null | undefined]> = [
+      [t('InformationView', 'macosVersion'), info.macos_version],
+      [t('InformationView', 'hardwareModel'), info.hardware_model],
+      [t('InformationView', 'cpu'), info.cpu_info],
+      [t('InformationView', 'memory'), info.memory_info],
+      [t('InformationView', 'systemDisk'), info.system_disk_name],
+      [
+         t('InformationView', 'diskSize'),
+         info.system_disk_size ? formatBytes(info.system_disk_size) : null,
+      ],
+      [t('InformationView', 'currentUser'), info.current_user],
+   ]
+
+   return rows
+      .filter(([, value]) => value)
+      .map(([label, value]) => `${label}: ${value}`)
+      .join('\n')
+}
+
+async function copySystemInfo() {
+   if (!props.systemInfo) return
+
+   try {
+      await navigator.clipboard.writeText(buildSystemInfoText(props.systemInfo))
+   } catch (err) {
+      console.error('Failed to copy system info:', err)
+
+      return
+   }
+
+   isCopied.value = true
+
+   if (copiedTimer) clearTimeout(copiedTimer)
+
+   copiedTimer = setTimeout(() => {
+      isCopied.value = false
+      copiedTimer = null
+   }, COPIED_FEEDBACK_MS)
+}
 </script>
 
 <template>
@@ -47,7 +96,11 @@ const props = defineProps<{
             </section>
 
             <!-- System information section -->
-            <section class="SettingsGroup" v-if="props.systemInfo">
+            <section
+               class="SettingsGroup"
+               style="margin-bottom: var(--spacing-sm)"
+               v-if="props.systemInfo"
+            >
                <div class="SettingsGroup-row" v-if="props.systemInfo.macos_version">
                   <span class="InformationView-detailLabel">{{
                      t('InformationView', 'macosVersion')
@@ -101,6 +154,22 @@ const props = defineProps<{
                   }}</span>
                </div>
             </section>
+
+            <div class="InformationView-copyRow" v-if="props.systemInfo">
+               <button
+                  type="button"
+                  class="InformationView-copyButton"
+                  :class="{ 'InformationView-copyButton--copied': isCopied }"
+                  :aria-live="'polite'"
+                  @click="copySystemInfo"
+               >
+                  {{
+                     isCopied
+                        ? t('InformationView', 'copied')
+                        : t('InformationView', 'copyToClipboard')
+                  }}
+               </button>
+            </div>
 
             <InformationFooter />
          </div>
@@ -179,5 +248,36 @@ const props = defineProps<{
    white-space: nowrap;
    overflow: hidden;
    text-overflow: ellipsis;
+}
+
+.InformationView-copyRow {
+   display: flex;
+   justify-content: flex-end;
+   margin-top: var(--spacing-xs);
+   padding-inline-end: var(--spacing-xs);
+}
+
+.InformationView-copyButton {
+   padding: 0;
+   font-size: var(--font-size-sm);
+   font-weight: 500;
+   color: var(--color-accent);
+   background: none;
+   border: none;
+   cursor: pointer;
+   transition: color 0.2s var(--ease-standard);
+
+   &:hover {
+      color: var(--color-accent-hover);
+   }
+}
+
+.InformationView-copyButton--copied {
+   color: var(--color-text-muted);
+   cursor: default;
+
+   &:hover {
+      color: var(--color-text-muted);
+   }
 }
 </style>
