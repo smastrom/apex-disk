@@ -6,10 +6,10 @@ App
 
 Purpose: Root application component. Bootstraps the settings store, manages scan state, and renders the app shell with header, main content, and footer menu.
 
-Props: none
+Props: systemInfo (SystemInfo | null), isFdaGranted (boolean), diskUsage (DiskUsage | null)
 
 Example:
- <App />
+ <App :systemInfo="systemInfo" :isFdaGranted="isFdaGranted" :diskUsage="diskUsage" />
 -->
 
 <script setup lang="ts">
@@ -20,18 +20,24 @@ import InformationView from './InformationView.vue'
 import ScanView from './ScanView.vue'
 import SettingsView from './SettingsView.vue'
 
-import { ref, watch } from 'vue'
+import type { DiskUsage } from '@/types/disk'
+import type { SystemInfo } from '@/types/system-info'
+
+import { watch } from 'vue'
 
 import { applyTheme, applyDirection } from '@/lib/dom'
 import { useAppUpdate } from '@/lib/use-app-update'
 import { useAppViews } from '@/lib/use-app-views'
 import { disableNativeContextMenu } from '@/lib/use-context-menu'
-import { useDiskUsage } from '@/lib/use-disk-usage'
 import { setupFocusRing } from '@/lib/use-focus-ring'
-import { useFullDiskAccess } from '@/lib/use-full-disk-access'
 import { useScanner } from '@/lib/use-scanner'
-import { useSystemInfo } from '@/lib/use-system-info'
 import { useAppSettings } from '@/stores/app-settings'
+
+defineProps<{
+   systemInfo: SystemInfo | null
+   isFdaGranted: boolean
+   diskUsage: DiskUsage | null
+}>()
 
 import '@/assets/css/theme.css'
 import '@/assets/css/global.css'
@@ -52,31 +58,28 @@ watch(
    (lang) => applyDirection(lang)
 )
 
-const { activeView, setActiveView } = useAppViews()
+const {
+   folders,
+   isScanning,
+   hasFreshResults: hasPendingScanResults,
+   markResultsSeen,
+   progress,
+   elapsedSeconds,
+   loadFolders,
+   onAbort,
+   onCancel,
+} = useScanner()
+
+const { activeView, setActiveView } = useAppViews({
+   onEnter: {
+      scan: markResultsSeen,
+   },
+})
 const { isChecking, isDownloading, availableVersion, updateReady, onCheckForUpdates } =
    useAppUpdate({
       autoCheckUpdates: settingsStore.settings.value.autoCheckUpdates,
       autoInstallUpdates: settingsStore.settings.value.autoInstallUpdates,
    })
-
-const { folders, isScanning, progress, elapsedSeconds, loadFolders, onAbort, onCancel } =
-   useScanner()
-
-const hasPendingScanResults = ref(false)
-
-watch(isScanning, (current, prev) => {
-   if (prev && !current && folders.value.length > 0 && activeView.value !== 'scan') {
-      hasPendingScanResults.value = true
-   }
-})
-
-watch(activeView, (view) => {
-   if (view === 'scan') hasPendingScanResults.value = false
-})
-
-const { systemInfo } = await useSystemInfo()
-const { isFdaGranted } = await useFullDiskAccess()
-const { diskUsage } = await useDiskUsage()
 
 disableNativeContextMenu()
 setupFocusRing()

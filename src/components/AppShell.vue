@@ -4,13 +4,13 @@
 <script setup lang="ts">
 import App from './App.vue'
 import AppLoadingScreen from './AppLoadingScreen.vue'
+
+import { useSystem } from '@/lib/use-system'
+
+const { isSystemLoaded, systemInfo, isFdaGranted, diskUsage } = useSystem()
 </script>
 
 <template>
-   <Suspense>
-      <App />
-      <template #fallback>
-         <AppLoadingScreen />
-      </template>
-   </Suspense>
+   <AppLoadingScreen v-if="!isSystemLoaded" />
+   <App v-else :systemInfo="systemInfo" :isFdaGranted="isFdaGranted" :diskUsage="diskUsage" />
 </template>

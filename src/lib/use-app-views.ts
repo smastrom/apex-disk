@@ -13,7 +13,7 @@ function viewIndex(view: string): number {
    return i >= 0 ? i : 0
 }
 
-export function useAppViews() {
+export function useAppViews(options: { onEnter?: Record<string, () => void> } = {}) {
    const activeView = ref('scan')
 
    function setActiveView(view: string) {
@@ -26,6 +26,8 @@ export function useAppViews() {
       document.documentElement.style.setProperty('--nav-direction', String(dir))
 
       activeView.value = view
+
+      options.onEnter?.[view]?.()
    }
 
    return { activeView, setActiveView }

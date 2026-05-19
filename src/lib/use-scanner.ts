@@ -25,6 +25,11 @@ export function useScanner() {
 
    const folders = shallowRef<FolderInfo[]>([])
    const isScanning = ref(false)
+   const hasFreshResults = ref(false)
+
+   function markResultsSeen() {
+      hasFreshResults.value = false
+   }
 
    /**
     * Generation counter that invalidates in-flight scans. Bumped on every new scan
@@ -111,6 +116,7 @@ export function useScanner() {
             )
 
             folders.value = result
+            hasFreshResults.value = result.length > 0
          }
       } catch (error) {
          log('scan', 'Scan: error', error)
@@ -134,6 +140,7 @@ export function useScanner() {
 
       folders.value = []
       isScanning.value = false
+      hasFreshResults.value = false
       progress.value = { ...INITIAL_PROGRESS }
 
       stopElapsed()
@@ -149,6 +156,8 @@ export function useScanner() {
    return {
       folders,
       isScanning,
+      hasFreshResults,
+      markResultsSeen,
       progress,
       elapsedSeconds,
       loadFolders,
