@@ -1,5 +1,10 @@
 {
    "$schema": "https://schema.tauri.app/config/2",
    "identifier": "com.smastrom.apex-disk.dev",
-   "productName": "ApexDisk Dev"
+   "productName": "ApexDisk Dev",
+   "app": {
+      "security": {
+         "csp": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' ipc: https://ipc.localhost ws://localhost:* http://localhost:*; script-src 'self' 'unsafe-inline' http://localhost:*"
+      }
+   }
 }

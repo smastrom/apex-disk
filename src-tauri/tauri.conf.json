@@ -22,7 +22,9 @@
             "center": true
          }
       ],
-      "security": { "csp": null }
+      "security": {
+         "csp": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' ipc: https://ipc.localhost; script-src 'self'"
+      }
    },
    "plugins": {
       "updater": {
