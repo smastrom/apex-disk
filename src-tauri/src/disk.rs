@@ -7,11 +7,12 @@
 //! With debug builds or `APEX_DISK_DEBUG`, [`crate::log::dev_rust_trace`] on channel **`disk`**
 //! logs **`Disk: usage …`** after a successful read. See **`reference/logging.md`**.
 
+use std::path::{Path, PathBuf};
+
 use objc2_foundation::{
     NSArray, NSNumber, NSString, NSURLVolumeAvailableCapacityForImportantUsageKey,
     NSURLVolumeTotalCapacityKey, NSURL,
 };
-use std::path::{Path, PathBuf};
 
 use crate::log;
 
@@ -42,10 +43,7 @@ pub fn get_volume_name(path: &Path) -> String {
             continue;
         }
 
-        if let Ok(o) = Command::new("/usr/sbin/diskutil")
-            .args(["info", p])
-            .output()
-        {
+        if let Ok(o) = Command::new("/usr/sbin/diskutil").args(["info", p]).output() {
             if o.status.success() {
                 let stdout = String::from_utf8_lossy(&o.stdout);
                 if let Some(name) = parse_volume_name(&stdout) {
@@ -75,12 +73,8 @@ fn get_disk_capacity(path: &Path) -> Result<(u64, u64), String> {
     let url = NSURL::fileURLWithPath(&ns_path);
 
     // SAFETY: These are well-known Apple framework constants, always valid at runtime.
-    let (total_key, free_key) = unsafe {
-        (
-            NSURLVolumeTotalCapacityKey,
-            NSURLVolumeAvailableCapacityForImportantUsageKey,
-        )
-    };
+    let (total_key, free_key) =
+        unsafe { (NSURLVolumeTotalCapacityKey, NSURLVolumeAvailableCapacityForImportantUsageKey) };
 
     let keys = NSArray::from_slice(&[total_key, free_key]);
 
@@ -91,16 +85,14 @@ fn get_disk_capacity(path: &Path) -> Result<(u64, u64), String> {
     let total = values
         .objectForKey(total_key)
         .and_then(|v| {
-            v.downcast_ref::<NSNumber>()
-                .map(|n| u64::try_from(n.longLongValue()).unwrap_or(0))
+            v.downcast_ref::<NSNumber>().map(|n| u64::try_from(n.longLongValue()).unwrap_or(0))
         })
         .ok_or("Failed to read total capacity")?;
 
     let free = values
         .objectForKey(free_key)
         .and_then(|v| {
-            v.downcast_ref::<NSNumber>()
-                .map(|n| u64::try_from(n.longLongValue()).unwrap_or(0))
+            v.downcast_ref::<NSNumber>().map(|n| u64::try_from(n.longLongValue()).unwrap_or(0))
         })
         .ok_or("Failed to read available capacity")?;
 
@@ -124,13 +116,7 @@ pub async fn get_disk_usage() -> Result<DiskUsage, String> {
         let volume_name = get_volume_name(&home);
         let home_path = home.to_string_lossy().into_owned();
 
-        let disk = DiskUsage {
-            total,
-            free,
-            volume_name,
-            user_name,
-            home_path,
-        };
+        let disk = DiskUsage { total, free, volume_name, user_name, home_path };
 
         let used = disk.total.saturating_sub(disk.free);
         log::dev_rust_trace(

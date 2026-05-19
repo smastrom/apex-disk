@@ -7,10 +7,7 @@
 //! static temp directory that persists for the lifetime of the app process, ensuring
 //! consistent scan results regardless of the host machine.
 
-use std::fs;
-use std::io::Write;
-use std::path::PathBuf;
-use std::sync::LazyLock;
+use std::{fs, io::Write, path::PathBuf, sync::LazyLock};
 
 static TEST_HOME: LazyLock<tempfile::TempDir> = LazyLock::new(create_test_home);
 
@@ -22,7 +19,8 @@ pub fn test_home_path() -> PathBuf {
 /// Builds a temp dir that looks like a minimal but realistic home directory.
 ///
 /// **Protected (folders themselves must not be deletable):**
-/// - Top-level: Applications, Desktop, Documents, Downloads, Library, Movies, Music, Pictures, Public
+/// - Top-level: Applications, Desktop, Documents, Downloads, Library, Movies, Music, Pictures,
+///   Public
 /// - Under Library: Application Support, Preferences
 /// - Files inside (deletable): `Documents/report.txt` (2 KB), `Documents/note.txt` (500 B)
 ///
@@ -40,8 +38,8 @@ pub fn test_home_path() -> PathBuf {
 /// - `Projects/src/` — main.rs
 ///
 /// **Truncation test:**
-/// - `Projects/Bulk/` — `MAX_FILES_PER_DIR + 1` files of 1024 B each, so the
-///   scan returns `truncated=true` and the UI shows the truncation notice.
+/// - `Projects/Bulk/` — `MAX_FILES_PER_DIR + 1` files of 1024 B each, so the scan returns
+///   `truncated=true` and the UI shows the truncation notice.
 fn create_test_home() -> tempfile::TempDir {
     let dir = tempfile::tempdir().expect("temp dir");
     let path = dir.path();

@@ -21,7 +21,7 @@ async fn get_system_info_returns_valid_structure() {
             assert!(!system_info.system_disk_name.is_empty());
             assert!(!system_info.system_disk_size.is_empty());
             assert!(!system_info.current_user.is_empty());
-        }
+        },
         Err(e) => panic!("System info command failed: {}", e),
     }
 }

@@ -10,11 +10,8 @@
 
 use std::sync::Mutex;
 
-use tauri::AppHandle;
-use tauri::Runtime;
-
 use serde_json::json;
-
+use tauri::{AppHandle, Runtime};
 use tauri_plugin_store::StoreExt;
 
 use crate::constants;
@@ -39,9 +36,7 @@ pub fn get_default_settings() -> serde_json::Value {
 
 /// Initializes the store with proper defaults if needed for any runtime.
 pub fn initialize_store_with_handle<R: Runtime>(app: &tauri::AppHandle<R>) -> Result<(), String> {
-    let store = app
-        .store(crate::SETTINGS_STORE_PATH)
-        .map_err(|e| e.to_string())?;
+    let store = app.store(crate::SETTINGS_STORE_PATH).map_err(|e| e.to_string())?;
 
     // Initialize with defaults if store is empty or corrupted
     let current = store.get("app").unwrap_or_else(|| serde_json::Value::Null);
@@ -64,8 +59,8 @@ pub fn initialize_store_with_handle<R: Runtime>(app: &tauri::AppHandle<R>) -> Re
 /// store needs to be rewritten, None if no migration is required.
 ///
 /// Migrations:
-/// - `autoUpdates` → `autoCheckUpdates` + `autoInstallUpdates` (a single
-///   "auto" toggle was split into "check" and "install" in the update model).
+/// - `autoUpdates` → `autoCheckUpdates` + `autoInstallUpdates` (a single "auto" toggle was split
+///   into "check" and "install" in the update model).
 fn migrate_legacy_keys(current: &serde_json::Value) -> Option<serde_json::Value> {
     let obj = current.as_object()?;
     if !obj.contains_key("autoUpdates") {
@@ -78,12 +73,8 @@ fn migrate_legacy_keys(current: &serde_json::Value) -> Option<serde_json::Value>
     let legacy = next_obj.remove("autoUpdates")?;
     let legacy_bool = legacy.as_bool().unwrap_or(false);
 
-    next_obj
-        .entry("autoCheckUpdates".to_string())
-        .or_insert(json!(legacy_bool));
-    next_obj
-        .entry("autoInstallUpdates".to_string())
-        .or_insert(json!(legacy_bool));
+    next_obj.entry("autoCheckUpdates".to_string()).or_insert(json!(legacy_bool));
+    next_obj.entry("autoInstallUpdates".to_string()).or_insert(json!(legacy_bool));
 
     Some(next)
 }
@@ -97,9 +88,7 @@ pub fn initialize_store(app: &AppHandle) -> Result<(), String> {
 pub fn get_settings_with_handle<R: Runtime>(
     app: &tauri::AppHandle<R>,
 ) -> Result<serde_json::Value, String> {
-    let store = app
-        .store(crate::SETTINGS_STORE_PATH)
-        .map_err(|e| e.to_string())?;
+    let store = app.store(crate::SETTINGS_STORE_PATH).map_err(|e| e.to_string())?;
 
     let current = store.get("app").unwrap_or_else(|| get_default_settings());
 
@@ -138,9 +127,7 @@ pub fn set_settings_with_handle<R: Runtime>(
     app: &tauri::AppHandle<R>,
     settings: serde_json::Value,
 ) -> Result<(), String> {
-    let store = app
-        .store(crate::SETTINGS_STORE_PATH)
-        .map_err(|e| e.to_string())?;
+    let store = app.store(crate::SETTINGS_STORE_PATH).map_err(|e| e.to_string())?;
 
     if !settings.is_object() {
         return Err("Settings must be an object".to_string());
@@ -161,10 +148,7 @@ pub fn set_settings(app: AppHandle, settings: serde_json::Value) -> Result<(), S
 
 /// Returns true if the key is a known setting field.
 fn is_valid_setting_key(key: &str) -> bool {
-    get_default_settings()
-        .as_object()
-        .map(|obj| obj.contains_key(key))
-        .unwrap_or(false)
+    get_default_settings().as_object().map(|obj| obj.contains_key(key)).unwrap_or(false)
 }
 
 /// Updates a specific setting field for any runtime.
@@ -187,9 +171,7 @@ pub fn update_setting_with_handle<R: Runtime>(
 
     let _guard = STORE_LOCK.lock().unwrap_or_else(|e| e.into_inner());
 
-    let store = app
-        .store(crate::SETTINGS_STORE_PATH)
-        .map_err(|e| e.to_string())?;
+    let store = app.store(crate::SETTINGS_STORE_PATH).map_err(|e| e.to_string())?;
 
     let mut settings = store.get("app").unwrap_or_else(|| get_default_settings());
 
@@ -217,17 +199,11 @@ pub fn get_setting_with_handle<R: Runtime>(
     app: &tauri::AppHandle<R>,
     key: String,
 ) -> Result<Option<serde_json::Value>, String> {
-    let store = app
-        .store(crate::SETTINGS_STORE_PATH)
-        .map_err(|e| e.to_string())?;
+    let store = app.store(crate::SETTINGS_STORE_PATH).map_err(|e| e.to_string())?;
 
     let settings = store.get("app").unwrap_or_else(|| get_default_settings());
 
-    let result = if let Some(obj) = settings.as_object() {
-        obj.get(&key).cloned()
-    } else {
-        None
-    };
+    let result = if let Some(obj) = settings.as_object() { obj.get(&key).cloned() } else { None };
 
     // Close resource as per best practices
     store.close_resource();
@@ -254,7 +230,6 @@ pub fn reset_e2e_state(app: AppHandle) -> Result<(), String> {
 
     let defaults = get_default_settings();
     set_settings_with_handle(&app, defaults.clone())?;
-    app.emit("settings:reset", defaults)
-        .map_err(|e| e.to_string())?;
+    app.emit("settings:reset", defaults).map_err(|e| e.to_string())?;
     Ok(())
 }

@@ -5,13 +5,13 @@
 //! files of varying sizes and visibility so ScanOptions and filter behavior can be
 //! tested against a proper tree.
 
-use std::fs;
-use std::io::Write;
+use std::{fs, io::Write};
 
 /// Builds a temp dir that looks like a minimal but realistic home directory.
 ///
 /// **Protected (must not be deletable):**
-/// - Top-level: Applications, Desktop, Documents, Downloads, Library, Movies, Music, Pictures, Public
+/// - Top-level: Applications, Desktop, Documents, Downloads, Library, Movies, Music, Pictures,
+///   Public
 /// - Under Library: Application Support, Preferences (so nested protected paths are covered)
 ///
 /// **Skipped (excluded from scan, must not be deletable):**
@@ -29,7 +29,8 @@ use std::io::Write;
 /// - ≥ 1 KB: MyData/big.txt (2 KB), Documents/report.txt (2 KB), Projects/app (5 KB)
 ///
 /// This allows tests to assert: protected vs non-protected roots, skipped dirs absent,
-/// show_under_1kb / show_zero_byte / show_hidden_files filtering, and delete filter/trash/permanent behavior.
+/// show_under_1kb / show_zero_byte / show_hidden_files filtering, and delete filter/trash/permanent
+/// behavior.
 pub fn create_test_home() -> tempfile::TempDir {
     let dir = tempfile::tempdir().expect("temp dir");
     let path = dir.path();
@@ -81,7 +82,8 @@ fn write_file(path: std::path::PathBuf, size: usize) {
     f.write_all(&vec![0u8; size]).expect("write");
 }
 
-/// Creates a test home with system files that have recent modification dates to test exclusion logic
+/// Creates a test home with system files that have recent modification dates to test exclusion
+/// logic
 #[allow(dead_code)]
 pub fn create_test_home_with_system_files() -> tempfile::TempDir {
     let dir = create_test_home();

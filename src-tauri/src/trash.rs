@@ -12,8 +12,7 @@
 
 use std::path::Path;
 
-use crate::log;
-use crate::safe_folders;
+use crate::{log, safe_folders};
 
 /// Payload item for the trash command. Matches frontend TrashListItem shape used for trashing.
 #[derive(serde::Deserialize)]
@@ -97,10 +96,7 @@ pub async fn trash_paths(
 
     #[cfg(feature = "e2e")]
     {
-        let mode = E2E_TRASH_MODE
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .clone();
+        let mode = E2E_TRASH_MODE.lock().unwrap_or_else(|e| e.into_inner()).clone();
         return match mode.as_str() {
             "zero" => Ok(TrashResult { count: 0, size: 0 }),
             "error" => Err("E2E simulated trash error".to_string()),
@@ -109,7 +105,7 @@ pub async fn trash_paths(
                 let count = items.len();
                 let size = items.iter().map(|i| i.size).sum();
                 Ok(TrashResult { count, size })
-            }
+            },
         };
     }
 
@@ -133,9 +129,7 @@ static E2E_TRASH_MODE: std::sync::Mutex<String> = std::sync::Mutex::new(String::
 pub fn set_e2e_trash_mode(mode: String) -> Result<(), String> {
     let valid = ["success", "zero", "error"];
     if !valid.contains(&mode.as_str()) {
-        return Err(format!(
-            "Invalid trash mode: {mode}. Must be one of: {valid:?}"
-        ));
+        return Err(format!("Invalid trash mode: {mode}. Must be one of: {valid:?}"));
     }
     *E2E_TRASH_MODE.lock().unwrap_or_else(|e| e.into_inner()) = mode;
     Ok(())

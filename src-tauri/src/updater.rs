@@ -8,10 +8,10 @@
 //! desktop apps (Claude, VS Code, Slack):
 //!
 //! 1. **Auto-check on app start** — the frontend calls `check_for_updates_silent`
-//! 2. **Auto-download** — if an update is found, the frontend calls `download_update`
-//!    to stage it silently (no dialogs)
-//! 3. **Restart prompt** — the UI shows a "Restart to Update" button in Settings
-//!    and the menu item text changes to "Restart to Update (vX.Y.Z)"
+//! 2. **Auto-download** — if an update is found, the frontend calls `download_update` to stage it
+//!    silently (no dialogs)
+//! 3. **Restart prompt** — the UI shows a "Restart to Update" button in Settings and the menu item
+//!    text changes to "Restart to Update (vX.Y.Z)"
 //! 4. **User restarts** — clicking the button or menu item calls `restart_app`
 //!
 //! Both the frontend and the menu-initiated flow avoid spamming users: most
@@ -24,10 +24,7 @@ use std::sync::Mutex;
 use tauri::Manager;
 use tauri_plugin_updater::UpdaterExt;
 
-use crate::constants;
-use crate::log;
-use crate::native_dialog;
-use crate::store;
+use crate::{constants, log, native_dialog, store};
 
 /// Logs an update-related diagnostic to stdout (`[HH:MM:SS.mmm] [apex:rust:updater] …`).
 fn log_update(message: &str) {
@@ -36,10 +33,7 @@ fn log_update(message: &str) {
         return;
     }
 
-    println!(
-        "[{}] [apex:rust:updater] {message}",
-        log::format_diag_utc_time()
-    );
+    println!("[{}] [apex:rust:updater] {message}", log::format_diag_utc_time());
 }
 
 // ── Shared state ────────────────────────────────────────────────────────────
@@ -52,9 +46,7 @@ pub struct UpdateState {
 
 impl Default for UpdateState {
     fn default() -> Self {
-        Self {
-            ready_version: Mutex::new(None),
-        }
+        Self { ready_version: Mutex::new(None) }
     }
 }
 
@@ -76,7 +68,8 @@ fn dialog_labels_for(lang: &str) -> UpdateDialogLabels {
             up_to_date_title: "Nessun aggiornamento disponibile",
             up_to_date_body_prefix: "Stai usando l'ultima versione (v",
             ready_title: "Aggiornamento pronto",
-            ready_body: "L'aggiornamento è stato scaricato ed è pronto per l'installazione. Riavviare ora?",
+            ready_body: "L'aggiornamento è stato scaricato ed è pronto per l'installazione. \
+                         Riavviare ora?",
             restart_button: "Riavvia",
             later_button: "Non ora",
             ok_button: "OK",
@@ -85,7 +78,8 @@ fn dialog_labels_for(lang: &str) -> UpdateDialogLabels {
             up_to_date_title: "No hay actualizaciones disponibles",
             up_to_date_body_prefix: "Estás usando la última versión (v",
             ready_title: "Actualización lista",
-            ready_body: "La actualización se ha descargado y está lista para instalar. ¿Reiniciar ahora?",
+            ready_body: "La actualización se ha descargado y está lista para instalar. ¿Reiniciar \
+                         ahora?",
             restart_button: "Reiniciar",
             later_button: "Ahora no",
             ok_button: "OK",
@@ -94,7 +88,8 @@ fn dialog_labels_for(lang: &str) -> UpdateDialogLabels {
             up_to_date_title: "Aucune mise à jour disponible",
             up_to_date_body_prefix: "Vous utilisez la dernière version (v",
             ready_title: "Mise à jour prête",
-            ready_body: "La mise à jour a été téléchargée et est prête à être installée. Redémarrer maintenant ?",
+            ready_body: "La mise à jour a été téléchargée et est prête à être installée. \
+                         Redémarrer maintenant ?",
             restart_button: "Redémarrer",
             later_button: "Pas maintenant",
             ok_button: "OK",
@@ -103,7 +98,8 @@ fn dialog_labels_for(lang: &str) -> UpdateDialogLabels {
             up_to_date_title: "Nenhuma atualização disponível",
             up_to_date_body_prefix: "Está a utilizar a última versão (v",
             ready_title: "Atualização pronta",
-            ready_body: "A atualização foi transferida e está pronta para instalar. Reiniciar agora?",
+            ready_body: "A atualização foi transferida e está pronta para instalar. Reiniciar \
+                         agora?",
             restart_button: "Reiniciar",
             later_button: "Agora não",
             ok_button: "OK",
@@ -112,7 +108,8 @@ fn dialog_labels_for(lang: &str) -> UpdateDialogLabels {
             up_to_date_title: "Keine Updates verfügbar",
             up_to_date_body_prefix: "Sie verwenden die neueste Version (v",
             ready_title: "Update bereit",
-            ready_body: "Das Update wurde heruntergeladen und ist installationsbereit. Jetzt neu starten?",
+            ready_body: "Das Update wurde heruntergeladen und ist installationsbereit. Jetzt neu \
+                         starten?",
             restart_button: "Neu starten",
             later_button: "Nicht jetzt",
             ok_button: "OK",
@@ -139,7 +136,8 @@ fn dialog_labels_for(lang: &str) -> UpdateDialogLabels {
             up_to_date_title: "アップデートはありません",
             up_to_date_body_prefix: "最新バージョン (v",
             ready_title: "アップデート準備完了",
-            ready_body: "アップデートがダウンロードされ、インストールの準備ができました。今すぐ再起動しますか？",
+            ready_body: "アップデートがダウンロードされ、インストールの準備ができました。\
+                         今すぐ再起動しますか？",
             restart_button: "再起動",
             later_button: "後で",
             ok_button: "OK",
@@ -213,11 +211,7 @@ fn set_update_menu_item(app: &tauri::AppHandle, text: &str, enabled: bool) {
 fn update_menu_text_to_restart(app: &tauri::AppHandle, version: &str) {
     let lang = get_current_language(app);
     let menu_labels = crate::menu_translations::labels_for(&lang);
-    set_update_menu_item(
-        app,
-        &format!("{} (v{})", menu_labels.restart_to_update, version),
-        true,
-    );
+    set_update_menu_item(app, &format!("{} (v{})", menu_labels.restart_to_update, version), true);
 }
 
 /// Resets the menu item text back to the translated "Check for Updates…".
@@ -246,11 +240,7 @@ fn update_menu_text_to_downloading(app: &tauri::AppHandle) {
 fn update_menu_text_to_available(app: &tauri::AppHandle, version: &str) {
     let lang = get_current_language(app);
     let menu_labels = crate::menu_translations::labels_for(&lang);
-    set_update_menu_item(
-        app,
-        &format!("{} v{}", menu_labels.update_to_version, version),
-        true,
-    );
+    set_update_menu_item(app, &format!("{} v{}", menu_labels.update_to_version, version), true);
 }
 
 // ── Frontend commands ───────────────────────────────────────────────────────
@@ -260,10 +250,7 @@ fn update_menu_text_to_available(app: &tauri::AppHandle, version: &str) {
 /// Does not show any dialogs.
 #[tauri::command]
 pub async fn check_for_updates_silent(app: tauri::AppHandle) -> Result<Option<String>, String> {
-    let update = build_updater(&app)?
-        .check()
-        .await
-        .map_err(|e| e.to_string())?;
+    let update = build_updater(&app)?.check().await.map_err(|e| e.to_string())?;
 
     Ok(update.map(|u| u.version))
 }
@@ -273,25 +260,16 @@ pub async fn check_for_updates_silent(app: tauri::AppHandle) -> Result<Option<St
 /// menu item text to "Restart to Update (vX.Y.Z)".
 #[tauri::command]
 pub async fn download_update(app: tauri::AppHandle) -> Result<String, String> {
-    let update = build_updater(&app)?
-        .check()
-        .await
-        .map_err(|e| e.to_string())?;
+    let update = build_updater(&app)?.check().await.map_err(|e| e.to_string())?;
 
     let update = update.ok_or_else(|| "No update available".to_string())?;
     let version = update.version.clone();
 
-    update
-        .download_and_install(|_chunk, _total| {}, || {})
-        .await
-        .map_err(|e| e.to_string())?;
+    update.download_and_install(|_chunk, _total| {}, || {}).await.map_err(|e| e.to_string())?;
 
     // Mark as ready in shared state
     let state = app.state::<UpdateState>();
-    *state
-        .ready_version
-        .lock()
-        .unwrap_or_else(|e| e.into_inner()) = Some(version.clone());
+    *state.ready_version.lock().unwrap_or_else(|e| e.into_inner()) = Some(version.clone());
 
     // Only update menu item text when auto-install is enabled — the menu
     // reflecting "Restart to Update" implies the app staged the update silently.
@@ -361,11 +339,7 @@ async fn run_dialog_update_flow(app: tauri::AppHandle, update_menu: bool) -> Res
                 update_menu_text_to_check(&app);
             }
             // Show "no updates" dialog even on failure (error is already logged)
-            let body = format!(
-                "{}{})",
-                labels.up_to_date_body_prefix,
-                constants::APP_VERSION,
-            );
+            let body = format!("{}{})", labels.up_to_date_body_prefix, constants::APP_VERSION,);
             native_dialog::show_alert(
                 &app,
                 labels.up_to_date_title.to_string(),
@@ -374,7 +348,7 @@ async fn run_dialog_update_flow(app: tauri::AppHandle, update_menu: bool) -> Res
                 None,
             )?;
             return Ok(());
-        }
+        },
         Ok(u) => u,
     };
 
@@ -385,11 +359,7 @@ async fn run_dialog_update_flow(app: tauri::AppHandle, update_menu: bool) -> Res
             if update_menu {
                 update_menu_text_to_check(&app);
             }
-            let body = format!(
-                "{}{})",
-                labels.up_to_date_body_prefix,
-                constants::APP_VERSION,
-            );
+            let body = format!("{}{})", labels.up_to_date_body_prefix, constants::APP_VERSION,);
             native_dialog::show_alert(
                 &app,
                 labels.up_to_date_title.to_string(),
@@ -398,7 +368,7 @@ async fn run_dialog_update_flow(app: tauri::AppHandle, update_menu: bool) -> Res
                 None,
             )?;
             return Ok(());
-        }
+        },
     };
 
     let version = update.version.clone();
@@ -407,10 +377,7 @@ async fn run_dialog_update_flow(app: tauri::AppHandle, update_menu: bool) -> Res
         update_menu_text_to_downloading(&app);
     }
 
-    if let Err(e) = update
-        .download_and_install(|_chunk, _total| {}, || {})
-        .await
-    {
+    if let Err(e) = update.download_and_install(|_chunk, _total| {}, || {}).await {
         log_update(&format!("Dialog: update download failed: {e}"));
         if update_menu {
             update_menu_text_to_check(&app);
@@ -420,10 +387,7 @@ async fn run_dialog_update_flow(app: tauri::AppHandle, update_menu: bool) -> Res
 
     log_update(&format!("Dialog: update v{version} ready to install"));
     let state = app.state::<UpdateState>();
-    *state
-        .ready_version
-        .lock()
-        .unwrap_or_else(|e| e.into_inner()) = Some(version.clone());
+    *state.ready_version.lock().unwrap_or_else(|e| e.into_inner()) = Some(version.clone());
 
     if update_menu {
         update_menu_text_to_restart(&app, &version);
@@ -455,16 +419,12 @@ pub async fn check_for_updates_dialog(app: tauri::AppHandle) -> Result<(), Strin
 /// Spawns the menu-initiated update flow from a sync context.
 ///
 /// - Update already staged (any source) → restart immediately.
-/// - Otherwise → run dialog flow with menu text updates (the menu is the
-///   entrypoint, so it reflects checking/downloading/restart state).
+/// - Otherwise → run dialog flow with menu text updates (the menu is the entrypoint, so it reflects
+///   checking/downloading/restart state).
 pub fn check_for_updates_from_menu(app: &tauri::AppHandle) {
     // If update is already downloaded, restart immediately.
     let state = app.state::<UpdateState>();
-    let staged = state
-        .ready_version
-        .lock()
-        .unwrap_or_else(|e| e.into_inner())
-        .is_some();
+    let staged = state.ready_version.lock().unwrap_or_else(|e| e.into_inner()).is_some();
 
     if staged {
         app.restart();

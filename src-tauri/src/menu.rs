@@ -13,9 +13,9 @@
 //! Up, Translate, etc.) read `AppleLanguages` at launch and still require an
 //! app restart to pick up a new language.
 
-use crate::constants;
-use crate::menu_translations;
 use tauri::menu::{AboutMetadata, Menu, MenuItem, PredefinedMenuItem, Submenu};
+
+use crate::{constants, menu_translations};
 
 /// App icon for the About dialog (128×128 PNG, embedded at compile time).
 const APP_ICON: &[u8] = include_bytes!("../icons/128x128.png");
@@ -88,13 +88,8 @@ pub fn build_app_menu(
 
     // ── Window submenu ──
     let minimize = MenuItem::with_id(handle, "minimize", labels.minimize, true, Some("cmd+m"))?;
-    let close_window = MenuItem::with_id(
-        handle,
-        "close_window",
-        labels.close_window,
-        true,
-        Some("cmd+w"),
-    )?;
+    let close_window =
+        MenuItem::with_id(handle, "close_window", labels.close_window, true, Some("cmd+w"))?;
     let window_submenu = Submenu::with_id_and_items(
         handle,
         tauri::menu::WINDOW_SUBMENU_ID,
@@ -111,13 +106,8 @@ pub fn build_app_menu(
         true,
         None::<&str>,
     )?;
-    let read_license = MenuItem::with_id(
-        handle,
-        constants::LICENSE_MENU_ID,
-        labels.license,
-        true,
-        None::<&str>,
-    )?;
+    let read_license =
+        MenuItem::with_id(handle, constants::LICENSE_MENU_ID, labels.license, true, None::<&str>)?;
     let help_submenu = Submenu::with_id_and_items(
         handle,
         tauri::menu::HELP_SUBMENU_ID,

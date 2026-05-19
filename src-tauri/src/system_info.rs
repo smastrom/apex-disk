@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Simone Mastromattei
 
-use serde::Serialize;
-
 use std::process::Command;
 
-use crate::disk::get_volume_name;
-use crate::log;
+use serde::Serialize;
+
+use crate::{disk::get_volume_name, log};
 
 #[derive(Serialize, Debug)]
 pub struct SystemInfo {
@@ -60,14 +59,11 @@ fn get_hardware_model() -> String {
 fn get_hardware_model_ioreg() -> String {
     run_command("ioreg", &["-c", "IOPlatformExpertDevice", "-d", "2"])
         .and_then(|output| {
-            output
-                .lines()
-                .find(|line| line.contains("model"))
-                .and_then(|line| {
-                    let start = line.find('"')? + 1;
-                    let end = start + line[start..].find('"')?;
-                    Some(line[start..end].to_string())
-                })
+            output.lines().find(|line| line.contains("model")).and_then(|line| {
+                let start = line.find('"')? + 1;
+                let end = start + line[start..].find('"')?;
+                Some(line[start..end].to_string())
+            })
         })
         .unwrap_or_else(|| "Unknown".to_string())
 }
@@ -139,13 +135,7 @@ pub async fn get_system_info() -> Result<SystemInfo, String> {
                 let memory_info = get_memory_info();
                 let system_disk_name = get_system_disk_name();
                 let current_user = get_current_user();
-                (
-                    macos_version,
-                    cpu_info,
-                    memory_info,
-                    system_disk_name,
-                    current_user,
-                )
+                (macos_version, cpu_info, memory_info, system_disk_name, current_user)
             },
         );
 

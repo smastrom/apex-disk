@@ -4,12 +4,10 @@
 //! All tests acquire STORE_LOCK before running because the mock Tauri runtime
 //! shares a single backing store, causing parallel tests to interfere.
 
-use apex_disk_lib::constants;
-use apex_disk_lib::store;
-
-use serde_json::json;
 use std::sync::Mutex;
 
+use apex_disk_lib::{constants, store};
+use serde_json::json;
 use tauri_plugin_store::StoreExt;
 
 /// Serialize store tests: the mock Tauri runtime shares a single backing store.
@@ -48,21 +46,17 @@ fn initialize_store_writes_defaults_for_empty_store() {
     let handle = app.handle();
 
     // Clear the store to ensure it's empty
-    let store_handle = handle
-        .store(apex_disk_lib::SETTINGS_STORE_PATH)
-        .expect("open settings store");
+    let store_handle =
+        handle.store(apex_disk_lib::SETTINGS_STORE_PATH).expect("open settings store");
     store_handle.set("app", serde_json::json!({}));
     store_handle.save().expect("clear store");
     store_handle.close_resource();
 
     store::initialize_store_with_handle(&handle).expect("initialize store");
 
-    let store_handle = handle
-        .store(apex_disk_lib::SETTINGS_STORE_PATH)
-        .expect("open settings store");
-    let value = store_handle
-        .get("app")
-        .expect("settings value written by initialize_store");
+    let store_handle =
+        handle.store(apex_disk_lib::SETTINGS_STORE_PATH).expect("open settings store");
+    let value = store_handle.get("app").expect("settings value written by initialize_store");
 
     store_handle.close_resource();
 
@@ -78,9 +72,8 @@ fn get_settings_merges_existing_with_defaults() {
     let handle = app.handle();
 
     // Clear the store to ensure it's empty
-    let store_handle = handle
-        .store(apex_disk_lib::SETTINGS_STORE_PATH)
-        .expect("open settings store");
+    let store_handle =
+        handle.store(apex_disk_lib::SETTINGS_STORE_PATH).expect("open settings store");
     store_handle.set("app", serde_json::json!({}));
     store_handle.save().expect("clear store");
     store_handle.close_resource();
@@ -113,9 +106,8 @@ fn set_and_get_settings_round_trip() {
     let handle = app.handle();
 
     // Clear the store to ensure it's empty
-    let store_handle = handle
-        .store(apex_disk_lib::SETTINGS_STORE_PATH)
-        .expect("open settings store");
+    let store_handle =
+        handle.store(apex_disk_lib::SETTINGS_STORE_PATH).expect("open settings store");
     store_handle.set("app", serde_json::json!({}));
     store_handle.save().expect("clear store");
     store_handle.close_resource();
@@ -147,9 +139,8 @@ fn update_setting_preserves_other_fields() {
     let app = create_app_with_store();
     let handle = app.handle();
 
-    let store_handle = handle
-        .store(apex_disk_lib::SETTINGS_STORE_PATH)
-        .expect("open settings store");
+    let store_handle =
+        handle.store(apex_disk_lib::SETTINGS_STORE_PATH).expect("open settings store");
     store_handle.set("app", serde_json::json!({}));
     store_handle.save().expect("clear store");
     store_handle.close_resource();
@@ -161,21 +152,13 @@ fn update_setting_preserves_other_fields() {
         .expect("update language");
 
     let settings = store::get_settings_with_handle(&handle).expect("get settings");
-    assert_eq!(
-        settings["language"],
-        json!("it"),
-        "language should be updated"
-    );
+    assert_eq!(settings["language"], json!("it"), "language should be updated");
     assert_eq!(
         settings["themeColor"],
         json!(constants::DEFAULT_THEME),
         "themeColor should remain default"
     );
-    assert_eq!(
-        settings["showHiddenFiles"],
-        json!(false),
-        "showHiddenFiles should remain default"
-    );
+    assert_eq!(settings["showHiddenFiles"], json!(false), "showHiddenFiles should remain default");
 }
 
 /// get_setting_with_handle must return a single field value.
@@ -185,9 +168,8 @@ fn get_setting_returns_single_field() {
     let app = create_app_with_store();
     let handle = app.handle();
 
-    let store_handle = handle
-        .store(apex_disk_lib::SETTINGS_STORE_PATH)
-        .expect("open settings store");
+    let store_handle =
+        handle.store(apex_disk_lib::SETTINGS_STORE_PATH).expect("open settings store");
     store_handle.set("app", serde_json::json!({}));
     store_handle.save().expect("clear store");
     store_handle.close_resource();
@@ -206,9 +188,8 @@ fn get_setting_nonexistent_key_returns_none() {
     let app = create_app_with_store();
     let handle = app.handle();
 
-    let store_handle = handle
-        .store(apex_disk_lib::SETTINGS_STORE_PATH)
-        .expect("open settings store");
+    let store_handle =
+        handle.store(apex_disk_lib::SETTINGS_STORE_PATH).expect("open settings store");
     store_handle.set("app", serde_json::json!({}));
     store_handle.save().expect("clear store");
     store_handle.close_resource();
@@ -240,9 +221,8 @@ fn update_setting_rejects_unknown_key() {
     let app = create_app_with_store();
     let handle = app.handle();
 
-    let store_handle = handle
-        .store(apex_disk_lib::SETTINGS_STORE_PATH)
-        .expect("open settings store");
+    let store_handle =
+        handle.store(apex_disk_lib::SETTINGS_STORE_PATH).expect("open settings store");
     store_handle.set("app", serde_json::json!({}));
     store_handle.save().expect("clear store");
     store_handle.close_resource();
@@ -253,15 +233,9 @@ fn update_setting_rejects_unknown_key() {
         store::update_setting_with_handle(&handle, "bogusField".to_string(), json!("value"));
     assert!(result.is_err(), "unknown key must be rejected");
     let err = result.unwrap_err();
-    assert!(
-        err.contains("bogusField"),
-        "error should mention the offending key, got: {err}"
-    );
+    assert!(err.contains("bogusField"), "error should mention the offending key, got: {err}");
 
     // Persisted settings must be unchanged after a rejected update.
     let settings = store::get_settings_with_handle(&handle).expect("get settings");
-    assert!(
-        settings.get("bogusField").is_none(),
-        "unknown key must not be persisted"
-    );
+    assert!(settings.get("bogusField").is_none(), "unknown key must not be persisted");
 }

@@ -14,21 +14,12 @@ const SUPPORTED_LANGUAGES: &[&str] = &["en", "it", "es", "fr", "pt", "de", "ru",
 fn all_supported_languages_have_non_empty_labels() {
     for lang in SUPPORTED_LANGUAGES {
         let labels = menu_translations::labels_for(lang);
-        assert!(
-            !labels.release_notes.is_empty(),
-            "{lang}: release_notes empty"
-        );
+        assert!(!labels.release_notes.is_empty(), "{lang}: release_notes empty");
         assert!(!labels.license.is_empty(), "{lang}: license empty");
-        assert!(
-            !labels.website_label.is_empty(),
-            "{lang}: website_label empty"
-        );
+        assert!(!labels.website_label.is_empty(), "{lang}: website_label empty");
         assert!(!labels.window.is_empty(), "{lang}: window empty");
         assert!(!labels.minimize.is_empty(), "{lang}: minimize empty");
-        assert!(
-            !labels.close_window.is_empty(),
-            "{lang}: close_window empty"
-        );
+        assert!(!labels.close_window.is_empty(), "{lang}: close_window empty");
         assert!(!labels.help.is_empty(), "{lang}: help empty");
         assert!(!labels.about.is_empty(), "{lang}: about empty");
         assert!(!labels.services.is_empty(), "{lang}: services empty");
@@ -36,22 +27,10 @@ fn all_supported_languages_have_non_empty_labels() {
         assert!(!labels.hide_others.is_empty(), "{lang}: hide_others empty");
         assert!(!labels.show_all.is_empty(), "{lang}: show_all empty");
         assert!(!labels.quit.is_empty(), "{lang}: quit empty");
-        assert!(
-            !labels.check_for_updates.is_empty(),
-            "{lang}: check_for_updates empty"
-        );
-        assert!(
-            !labels.checking_for_updates.is_empty(),
-            "{lang}: checking_for_updates empty"
-        );
-        assert!(
-            !labels.downloading_update.is_empty(),
-            "{lang}: downloading_update empty"
-        );
-        assert!(
-            !labels.restart_to_update.is_empty(),
-            "{lang}: restart_to_update empty"
-        );
+        assert!(!labels.check_for_updates.is_empty(), "{lang}: check_for_updates empty");
+        assert!(!labels.checking_for_updates.is_empty(), "{lang}: checking_for_updates empty");
+        assert!(!labels.downloading_update.is_empty(), "{lang}: downloading_update empty");
+        assert!(!labels.restart_to_update.is_empty(), "{lang}: restart_to_update empty");
     }
 }
 

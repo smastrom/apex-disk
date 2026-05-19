@@ -13,10 +13,7 @@ use crate::log;
 /// Returns the macOS major version (e.g. 12 for Monterey, 14 for Sonoma).
 #[cfg(not(feature = "e2e"))]
 fn macos_major_version() -> Option<u32> {
-    let output = Command::new("sw_vers")
-        .arg("-productVersion")
-        .output()
-        .ok()?;
+    let output = Command::new("sw_vers").arg("-productVersion").output().ok()?;
     let version = String::from_utf8(output.stdout).ok()?;
     version.trim().split('.').next()?.parse().ok()
 }
@@ -53,16 +50,12 @@ pub fn is_full_disk_access_granted() -> bool {
 /// E2E stub: reads `E2E_FDA` (`"true"` ⇒ granted) instead of probing the filesystem.
 #[cfg(feature = "e2e")]
 pub fn is_full_disk_access_granted() -> bool {
-    std::env::var("E2E_FDA")
-        .map(|v| v == "true")
-        .unwrap_or(false)
+    std::env::var("E2E_FDA").map(|v| v == "true").unwrap_or(false)
 }
 
 /// Tauri command: checks whether the app has Full Disk Access.
 #[tauri::command]
 pub async fn check_full_disk_access() -> bool {
     log::dev_rust_trace("permissions", "check_full_disk_access");
-    tauri::async_runtime::spawn_blocking(is_full_disk_access_granted)
-        .await
-        .unwrap_or(false)
+    tauri::async_runtime::spawn_blocking(is_full_disk_access_granted).await.unwrap_or(false)
 }

@@ -9,13 +9,13 @@
 //! context menus like Look Up / Translate follow the app) and rebuilds the
 //! menu bar via `menu::set_menu_language`.
 
-use crate::{APP_LANGUAGE_INITIALIZED_KEY, SETTINGS_STORE_PATH};
-
 #[cfg(target_os = "macos")]
 use objc2_foundation::{NSArray, NSString, NSUserDefaults};
 use serde_json::json;
 use sys_locale::get_locale;
 use tauri_plugin_store::StoreExt;
+
+use crate::{APP_LANGUAGE_INITIALIZED_KEY, SETTINGS_STORE_PATH};
 
 fn to_supported_language(language: &str) -> String {
     match language {
@@ -32,14 +32,10 @@ pub fn get_system_language() -> String {
     match get_locale() {
         Some(locale) => {
             // Extract primary language from locale (e.g., "it-IT" -> "it")
-            let primary = locale
-                .split(['-', '_'])
-                .next()
-                .unwrap_or(&locale)
-                .to_lowercase();
+            let primary = locale.split(['-', '_']).next().unwrap_or(&locale).to_lowercase();
 
             to_supported_language(primary.as_str())
-        }
+        },
         None => "en".to_string(), // fallback to English
     }
 }
@@ -49,10 +45,8 @@ pub fn get_system_language() -> String {
 pub fn resolve_app_language(app: tauri::AppHandle) -> Result<String, String> {
     let store = app.store(SETTINGS_STORE_PATH).map_err(|e| e.to_string())?;
 
-    let initialized = store
-        .get(APP_LANGUAGE_INITIALIZED_KEY)
-        .and_then(|value| value.as_bool())
-        .unwrap_or(false);
+    let initialized =
+        store.get(APP_LANGUAGE_INITIALIZED_KEY).and_then(|value| value.as_bool()).unwrap_or(false);
 
     let current_settings = store.get("app").unwrap_or_else(|| json!({}));
     let stored_language = current_settings
@@ -65,11 +59,8 @@ pub fn resolve_app_language(app: tauri::AppHandle) -> Result<String, String> {
         stored_language.unwrap_or_else(|| "en".to_string())
     } else {
         let detected = get_system_language();
-        let mut next_settings = if current_settings.is_object() {
-            current_settings
-        } else {
-            json!({})
-        };
+        let mut next_settings =
+            if current_settings.is_object() { current_settings } else { json!({}) };
 
         if let Some(obj) = next_settings.as_object_mut() {
             obj.insert("language".to_string(), json!(&detected));

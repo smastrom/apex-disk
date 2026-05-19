@@ -8,25 +8,20 @@
 
 mod support;
 
-use apex_disk_lib::scan;
-use apex_disk_lib::ScanOptions;
+use std::{fs, io::Write};
 
-use std::fs;
-use std::io::Write;
-
+use apex_disk_lib::{scan, ScanOptions};
 use support::{create_test_home, create_test_home_with_system_files};
 
 /// Scan succeeds and every top-level folder has the shape the frontend expects:
-/// non-empty name/path, path under home, and children (if any) with names. Roots are dirs (is_file false).
+/// non-empty name/path, path under home, and children (if any) with names. Roots are dirs (is_file
+/// false).
 #[test]
 fn scan_returns_folder_info_shape() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options = ScanOptions {
-        show_hidden_files: true,
-        show_under_1kb: true,
-        show_zero_byte: true,
-    };
+    let options =
+        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: true };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     assert!(!result.is_empty());
@@ -47,11 +42,8 @@ fn scan_returns_folder_info_shape() {
 fn scan_protected_roots_have_is_protected_true() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options = ScanOptions {
-        show_hidden_files: true,
-        show_under_1kb: true,
-        show_zero_byte: true,
-    };
+    let options =
+        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: true };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
 
@@ -81,22 +73,13 @@ fn scan_protected_roots_have_is_protected_true() {
 fn scan_skipped_dir_not_present() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options = ScanOptions {
-        show_hidden_files: true,
-        show_under_1kb: true,
-        show_zero_byte: true,
-    };
+    let options =
+        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: true };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     let names: std::collections::HashSet<_> = result.iter().map(|f| f.name.as_str()).collect();
-    assert!(
-        !names.contains(".ssh"),
-        ".ssh should be skipped and not appear"
-    );
-    assert!(
-        !names.contains(".Trash"),
-        ".Trash should be skipped and not appear"
-    );
+    assert!(!names.contains(".ssh"), ".ssh should be skipped and not appear");
+    assert!(!names.contains(".Trash"), ".Trash should be skipped and not appear");
 }
 
 /// With the full test home, Library has subdirs including Application Support and Preferences
@@ -106,17 +89,11 @@ fn scan_skipped_dir_not_present() {
 fn scan_library_children_exclude_skipped_keychains() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options = ScanOptions {
-        show_hidden_files: true,
-        show_under_1kb: true,
-        show_zero_byte: true,
-    };
+    let options =
+        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: true };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
-    let library = result
-        .iter()
-        .find(|f| f.name == "Library")
-        .expect("Library exists in test home");
+    let library = result.iter().find(|f| f.name == "Library").expect("Library exists in test home");
     let child_names: Vec<_> = library.children.iter().map(|c| c.name.as_str()).collect();
     assert!(
         !child_names.iter().any(|n| *n == "Keychains"),
@@ -130,11 +107,8 @@ fn scan_library_children_exclude_skipped_keychains() {
 fn scan_show_under_1kb_false_filters_small() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options = ScanOptions {
-        show_hidden_files: true,
-        show_under_1kb: false,
-        show_zero_byte: true,
-    };
+    let options =
+        ScanOptions { show_hidden_files: true, show_under_1kb: false, show_zero_byte: true };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     let mydata = result.iter().find(|f| f.name == "MyData");
@@ -153,11 +127,8 @@ fn scan_show_under_1kb_false_filters_small() {
 fn scan_show_zero_byte_false_filters_zero() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options = ScanOptions {
-        show_hidden_files: true,
-        show_under_1kb: true,
-        show_zero_byte: false,
-    };
+    let options =
+        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: false };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     let mydata = result.iter().find(|f| f.name == "MyData");
@@ -360,11 +331,8 @@ fn scan_folder_last_modified_ignores_system_files() {
 fn scan_show_hidden_files_false_filters_hidden() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options = ScanOptions {
-        show_hidden_files: false,
-        show_under_1kb: true,
-        show_zero_byte: true,
-    };
+    let options =
+        ScanOptions { show_hidden_files: false, show_under_1kb: true, show_zero_byte: true };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
 
@@ -395,11 +363,8 @@ fn scan_show_hidden_files_false_filters_hidden() {
 fn scan_permissive_options_includes_all() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options = ScanOptions {
-        show_hidden_files: true,
-        show_under_1kb: true,
-        show_zero_byte: true,
-    };
+    let options =
+        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: true };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     let names: std::collections::HashSet<_> = result.iter().map(|f| f.name.as_str()).collect();
@@ -409,14 +374,8 @@ fn scan_permissive_options_includes_all() {
     let mydata = result.iter().find(|f| f.name == "MyData").unwrap();
     let child_names: std::collections::HashSet<_> =
         mydata.children.iter().map(|c| c.name.as_str()).collect();
-    assert!(
-        child_names.contains("empty.txt"),
-        "empty.txt should be present"
-    );
-    assert!(
-        child_names.contains("small.txt"),
-        "small.txt should be present"
-    );
+    assert!(child_names.contains("empty.txt"), "empty.txt should be present");
+    assert!(child_names.contains("small.txt"), "small.txt should be present");
     assert!(child_names.contains(".hidden"), ".hidden should be present");
     assert!(child_names.contains("big.txt"), "big.txt should be present");
 }
@@ -427,11 +386,8 @@ fn scan_permissive_options_includes_all() {
 fn scan_folder_size_equals_sum_of_children() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options = ScanOptions {
-        show_hidden_files: true,
-        show_under_1kb: true,
-        show_zero_byte: true,
-    };
+    let options =
+        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: true };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
 
@@ -469,15 +425,8 @@ fn scan_truncated_flag_true_when_file_cap_exceeded() {
     let options = ScanOptions::default();
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
 
-    let projects = result
-        .iter()
-        .find(|f| f.name == "Projects")
-        .expect("Projects exists");
-    let bulk_node = projects
-        .children
-        .iter()
-        .find(|c| c.name == "Bulk")
-        .expect("Bulk child exists");
+    let projects = result.iter().find(|f| f.name == "Projects").expect("Projects exists");
+    let bulk_node = projects.children.iter().find(|c| c.name == "Bulk").expect("Bulk child exists");
 
     assert!(
         bulk_node.truncated,
@@ -500,19 +449,12 @@ fn scan_truncated_flag_true_when_file_cap_exceeded() {
 fn scan_truncated_flag_false_when_under_cap() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options = ScanOptions {
-        show_hidden_files: true,
-        show_under_1kb: true,
-        show_zero_byte: true,
-    };
+    let options =
+        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: true };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     for folder in &result {
-        assert!(
-            !folder.truncated,
-            "{} has few files; truncated should be false",
-            folder.name
-        );
+        assert!(!folder.truncated, "{} has few files; truncated should be false", folder.name);
         for child in &folder.children {
             assert!(
                 !child.truncated,
@@ -543,20 +485,11 @@ fn scan_truncated_flag_ignores_subfolder_count() {
     let options = ScanOptions::default();
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
 
-    let projects = result
-        .iter()
-        .find(|f| f.name == "Projects")
-        .expect("Projects exists");
-    let many_node = projects
-        .children
-        .iter()
-        .find(|c| c.name == "ManyDirs")
-        .expect("ManyDirs child exists");
+    let projects = result.iter().find(|f| f.name == "Projects").expect("Projects exists");
+    let many_node =
+        projects.children.iter().find(|c| c.name == "ManyDirs").expect("ManyDirs child exists");
 
-    assert!(
-        !many_node.truncated,
-        "400 subfolders, 0 files at top: truncated should be false"
-    );
+    assert!(!many_node.truncated, "400 subfolders, 0 files at top: truncated should be false");
     assert_eq!(many_node.children.len(), 400, "all subfolders retained");
 }
 
@@ -565,29 +498,18 @@ fn scan_truncated_flag_ignores_subfolder_count() {
 fn scan_is_file_flag_correct() {
     let home_dir = create_test_home();
     let home = home_dir.path();
-    let options = ScanOptions {
-        show_hidden_files: true,
-        show_under_1kb: true,
-        show_zero_byte: true,
-    };
+    let options =
+        ScanOptions { show_hidden_files: true, show_under_1kb: true, show_zero_byte: true };
 
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
 
     for folder in &result {
         for child in &folder.children {
             if child.is_file {
-                assert!(
-                    child.children.is_empty(),
-                    "File {} should have no children",
-                    child.name
-                );
+                assert!(child.children.is_empty(), "File {} should have no children", child.name);
             }
             if !child.children.is_empty() {
-                assert!(
-                    !child.is_file,
-                    "{} has children but is_file is true",
-                    child.name
-                );
+                assert!(!child.is_file, "{} has children but is_file is true", child.name);
             }
         }
     }

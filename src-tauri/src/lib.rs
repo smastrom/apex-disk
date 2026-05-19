@@ -38,11 +38,7 @@ pub struct ScanOptions {
 
 impl Default for ScanOptions {
     fn default() -> Self {
-        Self {
-            show_hidden_files: false,
-            show_under_1kb: false,
-            show_zero_byte: false,
-        }
+        Self { show_hidden_files: false, show_under_1kb: false, show_zero_byte: false }
     }
 }
 

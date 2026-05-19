@@ -15,20 +15,18 @@
 //! any per-folder permission prompts. No special code path is needed; the
 //! same I/O is used and the OS grants access process-wide when FDA is granted.
 
-use std::cmp::Reverse;
-use std::collections::BinaryHeap;
-use std::path::Path;
-use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::{
+    cmp::Reverse,
+    collections::BinaryHeap,
+    path::Path,
+    sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering},
+    time::{SystemTime, UNIX_EPOCH},
+};
 
 use rayon::prelude::*;
 use tauri::Emitter;
 
-use crate::log;
-use crate::safe_folders;
-use crate::xattr;
-use crate::FolderInfo;
-use crate::ScanOptions;
+use crate::{log, safe_folders, xattr, FolderInfo, ScanOptions};
 
 /// Max file entries kept per directory. We still count ALL file sizes for
 /// accuracy, but only retain the N largest as tree entries to avoid millions
@@ -76,18 +74,15 @@ struct LiveScanState {
 
 impl LiveScanState {
     fn add_size_and_maybe_emit(&self, file_size: u64, folder_path: &Path, home: &Path) {
-        self.scanned_size_total
-            .fetch_add(file_size, Ordering::Relaxed);
+        self.scanned_size_total.fetch_add(file_size, Ordering::Relaxed);
 
         // Skip the syscall unless enough calls have accumulated
         if self.call_count.fetch_add(1, Ordering::Relaxed) % EMIT_CHECK_INTERVAL != 0 {
             return;
         }
 
-        let now = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .map(|d| d.as_millis() as u64)
-            .unwrap_or(0);
+        let now =
+            SystemTime::now().duration_since(UNIX_EPOCH).map(|d| d.as_millis() as u64).unwrap_or(0);
         let last = self.last_emit_ms.load(Ordering::Relaxed);
 
         if now.saturating_sub(last) >= PROGRESS_THROTTLE_MS
@@ -96,11 +91,8 @@ impl LiveScanState {
                 .compare_exchange(last, now, Ordering::Relaxed, Ordering::Relaxed)
                 .is_ok()
         {
-            let folder_name = folder_path
-                .file_name()
-                .and_then(|n| n.to_str())
-                .unwrap_or("Unknown")
-                .to_string();
+            let folder_name =
+                folder_path.file_name().and_then(|n| n.to_str()).unwrap_or("Unknown").to_string();
             let scanned = self.scanned_size_total.load(Ordering::Relaxed);
             let completed_sz = self.completed_size.load(Ordering::Relaxed);
             let current_top = self.completed.load(Ordering::Relaxed);
@@ -171,7 +163,8 @@ fn is_system_file(name: &str) -> bool {
 /// Recursively builds the folder tree with parallelism at every directory level.
 /// Rayon's work-stealing scheduler naturally balances I/O across cores --
 /// threads that finish small directories steal subtasks from large ones like Library.
-/// Respects options: hidden files, items under 1 KB, and 0 B files/folders are excluded when disabled.
+/// Respects options: hidden files, items under 1 KB, and 0 B files/folders are excluded when
+/// disabled.
 fn build_folder_tree(
     root: &Path,
     home: &Path,
@@ -195,11 +188,7 @@ fn build_folder_tree(
         };
     }
 
-    let name = root
-        .file_name()
-        .and_then(|n| n.to_str())
-        .unwrap_or("Unknown")
-        .to_string();
+    let name = root.file_name().and_then(|n| n.to_str()).unwrap_or("Unknown").to_string();
 
     // Get metadata once for the root directory
     let root_metadata = std::fs::metadata(root);
@@ -229,7 +218,7 @@ fn build_folder_tree(
                 last_modified,
                 truncated: false,
             };
-        }
+        },
     };
 
     // Min-heap retains only the N largest files, capping memory at O(MAX_FILES_PER_DIR)
@@ -378,7 +367,8 @@ fn build_folder_tree(
     children.extend(dir_children);
     sort_children(&mut children);
 
-    // Check subdirectories for most recent modification and combine with files (excluding system files)
+    // Check subdirectories for most recent modification and combine with files (excluding system
+    // files)
     for child in &children {
         // Skip system files for last_modified calculation
         if is_system_file(&child.name) {
@@ -418,10 +408,8 @@ pub fn scan_user_folders_from_home(
         std::fs::read_dir(home).map_err(|e| format!("Failed to read user directory: {}", e))?
     {
         let entry = entry.map_err(|e| format!("Failed to read directory entry: {}", e))?;
-        let is_dir_not_symlink = entry
-            .file_type()
-            .map(|ft| ft.is_dir() && !ft.is_symlink())
-            .unwrap_or(false);
+        let is_dir_not_symlink =
+            entry.file_type().map(|ft| ft.is_dir() && !ft.is_symlink()).unwrap_or(false);
         if !is_dir_not_symlink {
             continue;
         }
@@ -468,10 +456,8 @@ pub fn get_user_folders_sync_with_progress(
             .map_err(|e| format!("Failed to read user directory: {}", e))?
         {
             let entry = entry.map_err(|e| format!("Failed to read directory entry: {}", e))?;
-            let is_dir_not_symlink = entry
-                .file_type()
-                .map(|ft| ft.is_dir() && !ft.is_symlink())
-                .unwrap_or(false);
+            let is_dir_not_symlink =
+                entry.file_type().map(|ft| ft.is_dir() && !ft.is_symlink()).unwrap_or(false);
             if !is_dir_not_symlink {
                 continue;
             }
@@ -512,7 +498,8 @@ pub fn get_user_folders_sync_with_progress(
             log::dev_rust_trace(
                 "scan",
                 &format!(
-                    "Scan: top-level done {} size={} progress {}/{} scanned_total={} completed_top={}",
+                    "Scan: top-level done {} size={} progress {}/{} scanned_total={} \
+                     completed_top={}",
                     scan_path_for_log(&path, &user_dir),
                     log::format_bytes_si(info.size),
                     cur,
@@ -556,10 +543,7 @@ pub async fn get_user_folders(
     log::dev_rust_trace("scan", "get_user_folders");
 
     // Prevent concurrent scans
-    if SCAN_RUNNING
-        .compare_exchange(false, true, Ordering::Acquire, Ordering::Relaxed)
-        .is_err()
-    {
+    if SCAN_RUNNING.compare_exchange(false, true, Ordering::Acquire, Ordering::Relaxed).is_err() {
         return Err("A scan is already in progress".to_string());
     }
 

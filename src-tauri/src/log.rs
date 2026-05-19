@@ -7,9 +7,11 @@
 //!
 //! - [`dev_rust_trace`] — stdout `[apex:rust:{channel}]` for IPC entry traces
 //! - [`log_message`] / [`log_error_message`] — Tauri commands used by TS
-//! - [`format_bytes_si`] — human-readable sizes for diagnostic lines (decimal SI, matches Vue `formatBytes`)
+//! - [`format_bytes_si`] — human-readable sizes for diagnostic lines (decimal SI, matches Vue
+//!   `formatBytes`)
 
-/// Human-readable byte string using **decimal (SI) units** (1 KB = 1000 B), matching `formatBytes` in `src/lib/format.ts`.
+/// Human-readable byte string using **decimal (SI) units** (1 KB = 1000 B), matching `formatBytes`
+/// in `src/lib/format.ts`.
 pub(crate) fn format_bytes_si(n: u64) -> String {
     if n == 0 {
         return "0 B".to_string();
@@ -34,9 +36,8 @@ pub(crate) fn is_apex_disk_debug() -> bool {
 
 /// UTC time-of-day prefix matching the Vue logger (`HH:MM:SS.mmm`, no `chrono` dep).
 pub(crate) fn format_diag_utc_time() -> String {
-    let dur = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap_or_default();
+    let dur =
+        std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default();
     let secs_today = dur.as_secs() % 86400;
     let h = secs_today / 3600;
     let m = (secs_today % 3600) / 60;
@@ -52,10 +53,7 @@ pub(crate) fn dev_rust_trace(channel: &str, message: &str) {
         return;
     }
 
-    println!(
-        "[{}] [apex:rust:{channel}] {message}",
-        format_diag_utc_time()
-    );
+    println!("[{}] [apex:rust:{channel}] {message}", format_diag_utc_time());
 }
 
 /// Exposes [`is_apex_disk_debug`] to the frontend so `initLog()` can enable production logging.

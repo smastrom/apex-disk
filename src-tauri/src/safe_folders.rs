@@ -6,9 +6,7 @@
 //! ApexDisk uses these lists to ensure the user doesn't break their macOS
 //! installation or accidentally delete irreplaceable security credentials.
 
-use std::collections::HashSet;
-use std::path::Path;
-use std::sync::LazyLock;
+use std::{collections::HashSet, path::Path, sync::LazyLock};
 
 /// Paths relative to home that are protected from deletion.
 ///
@@ -61,21 +59,13 @@ pub const SKIPPED_RELATIVE_PATHS: &[&str] = &[
 ];
 
 /// Pre-computed lowercased protected paths for O(1) lookup during scans.
-static PROTECTED_SET: LazyLock<HashSet<String>> = LazyLock::new(|| {
-    PROTECTED_RELATIVE_PATHS
-        .iter()
-        .map(|p| p.to_lowercase())
-        .collect()
-});
+static PROTECTED_SET: LazyLock<HashSet<String>> =
+    LazyLock::new(|| PROTECTED_RELATIVE_PATHS.iter().map(|p| p.to_lowercase()).collect());
 
 /// Pre-computed lowercased skipped paths for fast lookup during scans.
 /// Stored as a Vec (not HashSet) because we need prefix matching for descendants.
-static SKIPPED_LOWERED: LazyLock<Vec<String>> = LazyLock::new(|| {
-    SKIPPED_RELATIVE_PATHS
-        .iter()
-        .map(|p| p.to_lowercase())
-        .collect()
-});
+static SKIPPED_LOWERED: LazyLock<Vec<String>> =
+    LazyLock::new(|| SKIPPED_RELATIVE_PATHS.iter().map(|p| p.to_lowercase()).collect());
 
 /// Returns true if the path is a descendant of (or is) a skipped directory.
 /// Comparison is case-insensitive to match macOS APFS behavior.
@@ -122,7 +112,5 @@ fn get_relative_to_home<'a>(path: &'a Path, home: &Path) -> Option<&'a str> {
     let home_str = home.to_str()?;
     let path_str = path.to_str()?;
 
-    path_str
-        .strip_prefix(home_str)
-        .map(|r| r.trim_start_matches('/'))
+    path_str.strip_prefix(home_str).map(|r| r.trim_start_matches('/'))
 }
