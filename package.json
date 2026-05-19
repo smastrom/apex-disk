@@ -44,6 +44,8 @@
       "headers": "scripts/add-license-headers.sh",
       "headers:check": "scripts/add-license-headers.sh --check",
       "prepare": "husky",
+      "rust:fmt": "cargo +nightly fmt --manifest-path src-tauri/Cargo.toml",
+      "rust:fmt:check": "cargo +nightly fmt --manifest-path src-tauri/Cargo.toml -- --check",
       "tauri": "tauri",
       "tauri:build": "source scripts/load-env.sh && tauri build --target universal-apple-darwin --verbose",
       "tauri:build:beta": "source scripts/load-env.sh && tauri build --target universal-apple-darwin --config src-tauri/tauri.beta.conf.json --verbose",
@@ -89,7 +91,7 @@
    },
    "lint-staged": {
       "*.{css,js,json,jsonc,html,ts,vue}": "oxfmt --write",
-      "*.rs": "rustfmt"
+      "*.rs": "rustfmt +nightly"
    },
    "engines": {
       "node": ">=22.0.0",

@@ -125,7 +125,9 @@ const { t } = useTranslations()
 
 ## Rust
 
-- **Import order:** framework → std → 3rd-party → crate-internal. Blank line between groups.
+- **Formatting:** rustfmt with `rustfmt.toml` at the repo root (cargo walks up from `src-tauri/Cargo.toml`). Requires **nightly rustfmt** because the config uses unstable options (`group_imports`, `imports_granularity`, `wrap_comments`, etc.). Run `pnpm rust:fmt` / `pnpm rust:fmt:check`. The build still runs on stable; only the formatter needs nightly.
+- **Install once:** `rustup toolchain install nightly --component rustfmt --profile minimal`.
+- **Import order** (enforced by rustfmt `group_imports = "StdExternalCrate"`): `std` → external crates → crate-internal. Blank line between groups. Adjacent `use` lines from the same crate collapse into nested form.
 - Cargo deps managed in `src-tauri/Cargo.toml`. MSRV is implicit (1.70+) — no `rust-toolchain.toml`.
 - See `[compatibility.md](compatibility.md)` for the macOS API surface allowed within the 10.15 floor.
 
