@@ -31,6 +31,7 @@ export const THEME_COLORS = [
    'apex-coral',
    'apex-ocean',
    'smastrom',
+   'apex-light',
    'macos-dark',
    'macos-graphite',
    'macos-light',

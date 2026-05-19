@@ -28,7 +28,7 @@ commit.
 | `reference/scanning.md`       | Scan + trash flow, `FolderInfo`, progress events, cancellation, selection model.            |
 | `reference/tauri-commands.md` | IPC channels, command surface, `lib.rs` registration, settings store, locale + menu.        |
 | `reference/translations.md`   | Per-component YAML, 10 languages, `useTranslations()`, CJK folding rules.                   |
-| `reference/themes.md`         | CSS variables, `data-theme` switching, 8 themes, adding a new theme.                        |
+| `reference/themes.md`         | CSS variables, `data-theme` switching, 9 themes, adding a new theme.                        |
 | `reference/code-style.md`     | Oxfmt, import sorting, Vue/CSS/TS conventions, file naming, license headers, comments.      |
 | `reference/testing.md`        | Suites, when to run, Rust integration patterns, E2E + `e2e` cargo feature, what not to add. |
 | `reference/compatibility.md`  | macOS / Safari / architecture targets, progressive enhancement matrix, oxfmt fallbacks.     |
