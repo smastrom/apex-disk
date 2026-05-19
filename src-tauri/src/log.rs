@@ -46,14 +46,29 @@ pub(crate) fn format_diag_utc_time() -> String {
     format!("{h:02}:{m:02}:{s:02}.{ms:03}")
 }
 
+/// True when `dev_rust_trace*` lines will actually be printed.
+pub(crate) fn dev_rust_trace_enabled() -> bool {
+    cfg!(debug_assertions) || is_apex_disk_debug()
+}
+
 /// Entry-point traces for IPC handlers. **Debug builds** (`tauri dev`) or
 /// **`APEX_DISK_DEBUG=1`** release: same rule as updater diagnostics.
 pub(crate) fn dev_rust_trace(channel: &str, message: &str) {
-    if !cfg!(debug_assertions) && !is_apex_disk_debug() {
+    if !dev_rust_trace_enabled() {
         return;
     }
 
     println!("[{}] [apex:rust:{channel}] {message}", format_diag_utc_time());
+}
+
+/// Like [`dev_rust_trace`] but defers formatting until logging is enabled.
+/// Use on hot paths where the message would allocate even when nothing is emitted.
+pub(crate) fn dev_rust_trace_lazy<F: FnOnce() -> String>(channel: &str, message: F) {
+    if !dev_rust_trace_enabled() {
+        return;
+    }
+
+    println!("[{}] [apex:rust:{channel}] {}", format_diag_utc_time(), message());
 }
 
 /// Exposes [`is_apex_disk_debug`] to the frontend so `initLog()` can enable production logging.
