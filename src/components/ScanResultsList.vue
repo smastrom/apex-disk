@@ -18,7 +18,17 @@ import ScanResultsListItem from './ScanResultsListItem.vue'
 
 import type { TrashListItem, FolderInfo } from '@/types/structs'
 
-import { ref, reactive, watch, watchEffect, shallowRef, computed, useTemplateRef } from 'vue'
+import {
+   ref,
+   reactive,
+   watch,
+   watchEffect,
+   shallowRef,
+   computed,
+   useTemplateRef,
+   nextTick,
+   onMounted,
+} from 'vue'
 
 import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'
@@ -151,6 +161,29 @@ const isListTruncated = computed(
 )
 
 const parentRef = useTemplateRef<HTMLElement>('parentRef')
+const isTopShadowShown = ref(false)
+
+/**
+ * Shows the top overlay only when the list has genuinely scrolled away from
+ * the top; this prevents transition-time flicker when switching list views.
+ */
+function updateTopShadowVisibility() {
+   const listEl = parentRef.value
+
+   if (!listEl) {
+      isTopShadowShown.value = false
+
+      return
+   }
+
+   const isScrollable = listEl.scrollHeight - listEl.clientHeight > 1
+
+   isTopShadowShown.value = isScrollable && listEl.scrollTop > 10
+}
+
+function onListScroll() {
+   updateTopShadowVisibility()
+}
 
 /**
  * Resets scroll to top after the leaving list has finished its transition.
@@ -161,9 +194,22 @@ const parentRef = useTemplateRef<HTMLElement>('parentRef')
  */
 function onAfterListLeave() {
    parentRef.value?.scrollTo(0, 0)
+   updateTopShadowVisibility()
 
    isListSlideEnabled.value = false
 }
+
+watch(
+   () => current.value.path,
+   async () => {
+      await nextTick()
+      updateTopShadowVisibility()
+   }
+)
+
+onMounted(() => {
+   updateTopShadowVisibility()
+})
 
 /**
  * Walks up the directory hierarchy via string slicing to check if any
@@ -508,8 +554,15 @@ function onCancel() {
          @reset="clearSelectionFromNav"
          @cancel="onCancel"
       />
-      <div class="ScanResultsList-listWrap">
-         <div ref="parentRef" class="ScanResultsList-list ScanResultsList-listScroll">
+      <div
+         class="ScanResultsList-listWrap"
+         :class="{ 'ScanResultsList-listWrap--topShadowShown': isTopShadowShown }"
+      >
+         <div
+            ref="parentRef"
+            class="ScanResultsList-list ScanResultsList-listScroll"
+            @scroll.passive="onListScroll"
+         >
             <Transition
                name="list-slide"
                mode="out-in"
@@ -616,6 +669,14 @@ function onCancel() {
       background: linear-gradient(var(--color-bg), transparent);
       z-index: 1;
       pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.12s ease;
+   }
+}
+
+.ScanResultsList-listWrap--topShadowShown {
+   &::before {
+      opacity: 1;
    }
 }
 
