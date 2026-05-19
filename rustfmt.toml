@@ -1,6 +1,5 @@
 edition = "2021"
 
-# Line width and indentation
 max_width = 100
 newline_style = "Unix"
 hard_tabs = false
@@ -16,17 +15,14 @@ match_block_trailing_comma = true
 # the lint-staged hook and `pnpm rust:fmt` invoke nightly directly.
 unstable_features = true
 
-# Group imports into std / external / crate-internal blocks, like our JS setup
+# Group imports into std / external / crate-internal blocks
 group_imports = "StdExternalCrate"
 
 # Collapse adjacent `use` lines from the same crate into a single nested form
 imports_granularity = "Crate"
 
-# Wrap long line comments at max_width
 wrap_comments = true
 comment_width = 100
-
-# Format Rust code inside `///` doc examples
 format_code_in_doc_comments = true
 
 # Wrap long string literals
