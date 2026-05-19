@@ -84,17 +84,19 @@ pub fn resolve_app_language(app: tauri::AppHandle) -> Result<String, String> {
 #[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn set_app_locale(app: tauri::AppHandle, language: String) -> Result<(), String> {
+    // BCP-47 language tags (hyphen separator) so AppleLanguages can resolve
+    // context-menu localizations consistently across macOS versions.
     let locale_id = match language.as_str() {
-        "it" => "it_IT",
-        "es" => "es_ES",
-        "fr" => "fr_FR",
-        "pt" => "pt_PT",
-        "de" => "de_DE",
-        "ru" => "ru_RU",
-        "zh" => "zh_CN",
-        "ja" => "ja_JP",
-        "ar" => "ar_AE",
-        _ => "en_US", // fallback to English
+        "it" => "it-IT",
+        "es" => "es-ES",
+        "fr" => "fr-FR",
+        "pt" => "pt-PT",
+        "de" => "de-DE",
+        "ru" => "ru-RU",
+        "zh" => "zh-Hans",
+        "ja" => "ja-JP",
+        "ar" => "ar-AE",
+        _ => "en-US", // fallback to English
     };
 
     let defaults = NSUserDefaults::standardUserDefaults();

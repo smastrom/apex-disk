@@ -43,13 +43,31 @@ pub fn get_volume_name(path: &Path) -> String {
             continue;
         }
 
-        if let Ok(o) = Command::new("/usr/sbin/diskutil").args(["info", p]).output() {
-            if o.status.success() {
+        match Command::new("/usr/sbin/diskutil").args(["info", p]).output() {
+            Ok(o) if o.status.success() => {
                 let stdout = String::from_utf8_lossy(&o.stdout);
                 if let Some(name) = parse_volume_name(&stdout) {
                     return name;
                 }
-            }
+                log::dev_rust_trace_lazy("disk", || {
+                    format!("Disk: diskutil info {p}: no Volume Name in stdout")
+                });
+            },
+            Ok(o) => {
+                let stderr = String::from_utf8_lossy(&o.stderr);
+                log::dev_rust_trace_lazy("disk", || {
+                    format!(
+                        "Disk: diskutil info {p}: exit {}, stderr={}",
+                        o.status.code().unwrap_or(-1),
+                        stderr.trim(),
+                    )
+                });
+            },
+            Err(e) => {
+                log::dev_rust_trace_lazy("disk", || {
+                    format!("Disk: diskutil info {p}: spawn error: {e}")
+                });
+            },
         }
     }
     "Startup Disk".to_string()
@@ -105,7 +123,7 @@ pub async fn get_disk_usage() -> Result<DiskUsage, String> {
     let home: PathBuf = dirs::home_dir().ok_or("Unable to determine home directory")?;
 
     // Spawn blocking operations on a separate thread to avoid starving the async runtime.
-    tokio::task::spawn_blocking(move || {
+    tauri::async_runtime::spawn_blocking(move || {
         let (total, free) = get_disk_capacity(&home)?;
 
         let user_name = home
@@ -119,9 +137,8 @@ pub async fn get_disk_usage() -> Result<DiskUsage, String> {
         let disk = DiskUsage { total, free, volume_name, user_name, home_path };
 
         let used = disk.total.saturating_sub(disk.free);
-        log::dev_rust_trace(
-            "disk",
-            &format!(
+        log::dev_rust_trace_lazy("disk", || {
+            format!(
                 "Disk: usage volume={} total={} free={} used={} user={} home={}",
                 disk.volume_name,
                 log::format_bytes_si(disk.total),
@@ -129,8 +146,8 @@ pub async fn get_disk_usage() -> Result<DiskUsage, String> {
                 log::format_bytes_si(used),
                 disk.user_name,
                 disk.home_path,
-            ),
-        );
+            )
+        });
 
         Ok(disk)
     })

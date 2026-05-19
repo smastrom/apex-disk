@@ -17,15 +17,18 @@ const APP_ICON: &[u8] = include_bytes!("../icons/128x128.png");
 /// NSAlertFirstButtonReturn value.
 const NS_ALERT_FIRST_BUTTON: isize = 1000;
 
-/// Dispatches an NSAlert to the main thread and blocks until the user responds.
-pub(crate) fn show_alert(
+/// Dispatches an NSAlert to the main thread and awaits the user response
+/// without blocking an IPC worker thread for the lifetime of the modal.
+pub(crate) async fn show_alert(
     app: &tauri::AppHandle,
     title: String,
     body: String,
     ok_label: String,
     cancel_label: Option<String>,
 ) -> Result<bool, String> {
-    let (tx, rx) = std::sync::mpsc::sync_channel(1);
+    // Capacity-1 mpsc acts as an async oneshot — the main-thread closure sends once,
+    // we await the receiver, and the channel drops at end of scope.
+    let (tx, mut rx) = tauri::async_runtime::channel::<bool>(1);
 
     app.run_on_main_thread(move || {
         let mtm = MainThreadMarker::new().expect("run_on_main_thread guarantees main thread");
@@ -46,34 +49,34 @@ pub(crate) fn show_alert(
         }
 
         let response = alert.runModal();
-        let _ = tx.send(response == NS_ALERT_FIRST_BUTTON);
+        let _ = tx.blocking_send(response == NS_ALERT_FIRST_BUTTON);
     })
     .map_err(|e| e.to_string())?;
 
-    rx.recv().map_err(|e| e.to_string())
+    rx.recv().await.ok_or_else(|| "dialog channel closed".to_string())
 }
 
 /// Shows a native message dialog with the app icon and a single OK button.
 #[tauri::command]
-pub fn show_message_dialog(
+pub async fn show_message_dialog(
     app: tauri::AppHandle,
     title: String,
     body: String,
     ok_label: String,
 ) -> Result<(), String> {
-    show_alert(&app, title, body, ok_label, None)?;
+    show_alert(&app, title, body, ok_label, None).await?;
     Ok(())
 }
 
 /// Shows a native ask dialog with the app icon and OK/Cancel buttons.
 /// Returns `true` if the user clicked the primary (first) button.
 #[tauri::command]
-pub fn show_ask_dialog(
+pub async fn show_ask_dialog(
     app: tauri::AppHandle,
     title: String,
     body: String,
     ok_label: String,
     cancel_label: String,
 ) -> Result<bool, String> {
-    show_alert(&app, title, body, ok_label, Some(cancel_label))
+    show_alert(&app, title, body, ok_label, Some(cancel_label)).await
 }

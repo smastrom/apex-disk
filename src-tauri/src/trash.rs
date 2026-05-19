@@ -76,6 +76,10 @@ fn trash_paths_sync(items: Vec<TrashPathItem>) -> TrashResult {
         Some(h) => h,
         None => return TrashResult { count: 0, size: 0 },
     };
+    // Canonicalize home so symlink-resolved item paths still string-prefix it.
+    // Without this, items that resolve through a symlink no longer match the
+    // home string and `is_path_protected` defaults to true, silently dropping them.
+    let home = home.canonicalize().unwrap_or(home);
     trash_paths_sync_with_home(&home, items)
 }
 
@@ -88,10 +92,7 @@ fn trash_paths_sync(items: Vec<TrashPathItem>) -> TrashResult {
 /// - `"zero"`: returns `{ count: 0, size: 0 }` (simulates all items failing)
 /// - `"error"`: returns `Err(...)` (simulates invoke failure)
 #[tauri::command]
-pub async fn trash_paths(
-    _app: tauri::AppHandle,
-    items: Vec<TrashPathItem>,
-) -> Result<TrashResult, String> {
+pub async fn trash_paths(items: Vec<TrashPathItem>) -> Result<TrashResult, String> {
     log::dev_rust_trace("trash", &format!("trash_paths ({} items)", items.len()));
 
     #[cfg(feature = "e2e")]

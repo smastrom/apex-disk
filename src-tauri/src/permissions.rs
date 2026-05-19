@@ -18,11 +18,32 @@ fn macos_major_version() -> Option<u32> {
     version.trim().split('.').next()?.parse().ok()
 }
 
+/// Probes a path for FDA. Returns:
+/// - `Some(true)` when readable (FDA granted)
+/// - `Some(false)` when `PermissionDenied` (FDA definitely missing)
+/// - `None` when the result is inconclusive (path missing, other I/O error)
+#[cfg(not(feature = "e2e"))]
+fn fda_probe(path: &std::path::Path) -> Option<bool> {
+    match std::fs::read_dir(path) {
+        Ok(_) => Some(true),
+        Err(e) => match e.kind() {
+            std::io::ErrorKind::PermissionDenied => Some(false),
+            _ => None,
+        },
+    }
+}
+
 /// Checks whether the current process has Full Disk Access.
 ///
 /// - Returns `false` if running inside an App Sandbox (FDA is never granted to sandboxed apps).
-/// - On Monterey (12) and later, probes `~/Library/Containers/com.apple.stocks`.
+/// - On Monterey (12) and later, probes `~/Library/Containers/com.apple.stocks` first, then falls
+///   back to `~/Library/Safari` if the primary probe is missing.
 /// - On Catalina (10.15) through Big Sur (11), probes `~/Library/Safari`.
+///
+/// Missing probe folders are inconclusive (return `None`); only an explicit
+/// `PermissionDenied` from the OS is treated as "FDA not granted". This avoids
+/// reporting FDA missing when a perfectly granted user just happens to lack a
+/// rarely-installed system folder.
 #[cfg(not(feature = "e2e"))]
 pub fn is_full_disk_access_granted() -> bool {
     // Sandboxed apps cannot have FDA.
@@ -36,15 +57,19 @@ pub fn is_full_disk_access_granted() -> bool {
 
     let major = macos_major_version().unwrap_or(0);
 
-    // Monterey (12) and later: com.apple.stocks container is TCC-protected.
-    // Catalina to Big Sur: Safari directory is TCC-protected.
-    let probe_dir = if major >= 12 {
+    let primary = if major >= 12 {
         home.join("Library/Containers/com.apple.stocks")
     } else {
         home.join("Library/Safari")
     };
 
-    std::fs::read_dir(probe_dir).is_ok()
+    if let Some(result) = fda_probe(&primary) {
+        return result;
+    }
+
+    // Fallback probe — only reached when the primary probe path is missing.
+    let fallback = home.join("Library/Safari");
+    fda_probe(&fallback).unwrap_or(false)
 }
 
 /// E2E stub: reads `E2E_FDA` (`"true"` ⇒ granted) instead of probing the filesystem.
