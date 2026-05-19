@@ -24,8 +24,9 @@ import {
    PhArrowClockwise,
 } from '@phosphor-icons/vue'
 import { openUrl } from '@tauri-apps/plugin-opener'
-import { computed } from 'vue'
+import { computed, useTemplateRef } from 'vue'
 
+import { useScrollbarVisibility } from '@/lib/use-scrollbar-visibility'
 import { useTranslations } from '@/lib/use-translations'
 import { useAppSettings } from '@/stores/app-settings'
 
@@ -47,6 +48,10 @@ const { t } = useTranslations()
 
 const store = useAppSettings()
 const settings = computed(() => store.settings.value)
+
+const scrollRef = useTemplateRef<HTMLElement>('scrollRef')
+
+useScrollbarVisibility(scrollRef, 'hover-only')
 
 const languageOptions = computed(() => [
    { value: 'en' as Language, label: t('SettingsView', 'languageEn') },
@@ -121,7 +126,7 @@ async function openSystemSettings() {
 
 <template>
    <section class="SettingsView-root" data-testid="settings-view" aria-label="Settings">
-      <div class="SettingsView-scroll">
+      <div ref="scrollRef" class="SettingsView-scroll">
          <div class="SettingsView-content" data-testid="settings-content">
             <!-- App Settings -->
 

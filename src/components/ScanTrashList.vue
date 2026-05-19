@@ -29,11 +29,13 @@ import {
    onActivated,
    onDeactivated,
    onUnmounted,
+   useTemplateRef,
 } from 'vue'
 
 import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'
 import { useReducedMotion } from '@/lib/use-reduced-motion'
+import { useScrollbarVisibility } from '@/lib/use-scrollbar-visibility'
 import { useTranslations } from '@/lib/use-translations'
 
 import { TRASH_COUNTDOWN_MS, TRASH_POST_TRASH_SLEEP_MS } from '@/lib/constants'
@@ -134,6 +136,10 @@ onDeactivated(() => {
  */
 const checkedMapRef = shallowRef(new Map<string, boolean>())
 const isDeleting = ref(false)
+
+const scrollRef = useTemplateRef<HTMLElement>('scrollRef')
+
+useScrollbarVisibility(scrollRef, 'scroll-and-hover')
 
 const { prefersReducedMotion } = useReducedMotion()
 
@@ -286,7 +292,7 @@ async function onTrashClick() {
          class="ScanTrashList-listWrap"
          :class="{ 'ScanTrashList-listWrap--deleting': isDeleting }"
       >
-         <div class="ScanTrashList-list ScanTrashList-listScroll">
+         <div ref="scrollRef" class="ScanTrashList-list ScanTrashList-listScroll">
             <div class="ScanTrashList-listInner">
                <div v-for="item in items" :key="item.path" class="ScanTrashList-listItem">
                   <ScanTrashListItem

@@ -32,6 +32,7 @@ import {
 
 import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'
+import { useScrollbarVisibility } from '@/lib/use-scrollbar-visibility'
 import { useTranslations } from '@/lib/use-translations'
 import { isWebDriverSession } from '@/lib/utils'
 
@@ -163,6 +164,8 @@ const isListTruncated = computed(
 
 const parentRef = useTemplateRef<HTMLElement>('parentRef')
 const isTopShadowShown = ref(false)
+
+useScrollbarVisibility(parentRef, 'scroll-and-hover')
 
 /**
  * Shows the top overlay only when the list has genuinely scrolled away from

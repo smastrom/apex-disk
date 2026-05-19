@@ -78,10 +78,10 @@ html.focus-ring-keyboard [tabindex='0']:focus {
  * `::-webkit-scrollbar` styling bypasses the OS preference entirely and works
  * on every Safari ≥ 13.
  *
- * The pseudo-element only renders when the container actually overflows, so
- * non-scrolling regions never get a visible bar. The thumb is transparent at
- * rest and fades in when the scrollable container or the scrollbar itself is
- * hovered, then brightens on direct thumb hover.
+ * The thumb is transparent at rest. `useScrollbarVisibility()` toggles
+ * `data-scrollbar-active="true"` on the scroll container when the bar should
+ * paint; the rules below key off that attribute, so JS owns the policy
+ * (scroll-and-hover vs hover-only) and CSS owns only the look.
  *
  * `overflow: overlay` (declared per-container) still governs whether the bar
  * steals layout space; our styling here only paints it.
@@ -98,7 +98,7 @@ html.focus-ring-keyboard [tabindex='0']:focus {
 }
 
 ::-webkit-scrollbar-thumb {
-   background-color: transparent;
+   background-color: var(--scrollbar-thumb-color, transparent);
    border: 2px solid transparent;
    border-radius: 5px;
    background-clip: padding-box;
@@ -106,5 +106,16 @@ html.focus-ring-keyboard [tabindex='0']:focus {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-   background-color: var(--color-scrollbar);
+   background-color: var(--scrollbar-thumb-hover-color, var(--scrollbar-thumb-color, transparent));
+}
+
+/*
+ * WebKit doesn't always re-evaluate scrollbar pseudo-element rules when an
+ * attribute on the host toggles, but it does re-evaluate when a CSS custom
+ * property on the host changes. Drive visibility via variables so the
+ * webkit thumb actually repaints.
+ */
+[data-scrollbar-active='true'] {
+   --scrollbar-thumb-color: var(--color-scrollbar);
+   --scrollbar-thumb-hover-color: var(--color-scrollbar-hover);
 }

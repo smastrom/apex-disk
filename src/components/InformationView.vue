@@ -18,9 +18,10 @@ import Logo from './ui/Logo.vue'
 
 import type { SystemInfo } from '@/types/system-info'
 
-import { ref } from 'vue'
+import { ref, useTemplateRef } from 'vue'
 
 import { formatBytes } from '@/lib/format'
+import { useScrollbarVisibility } from '@/lib/use-scrollbar-visibility'
 import { useTranslations } from '@/lib/use-translations'
 
 import { APP_NAME } from '@/lib/constants'
@@ -36,6 +37,10 @@ const props = defineProps<{
 const isCopied = ref(false)
 
 let copiedTimer: ReturnType<typeof setTimeout> | null = null
+
+const scrollRef = useTemplateRef<HTMLElement>('scrollRef')
+
+useScrollbarVisibility(scrollRef, 'hover-only')
 
 function buildSystemInfoText(info: SystemInfo): string {
    const rows: Array<[string, string | null | undefined]> = [
@@ -81,7 +86,7 @@ async function copySystemInfo() {
 
 <template>
    <section class="InformationView-root" data-testid="information-view" aria-label="Information">
-      <div class="InformationView-scroll">
+      <div ref="scrollRef" class="InformationView-scroll">
          <div class="InformationView-content">
             <!-- App branding section -->
             <section class="InformationView-branding">
