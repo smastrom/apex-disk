@@ -38,11 +38,14 @@ export function formatDate(timestamp: number, languageCode: string): string {
 
    const locale =
       APP_LANGUAGES_TO_LOCALE_MAP[languageCode as keyof typeof APP_LANGUAGES_TO_LOCALE_MAP]
+
    if (!locale) {
       console.warn(`Unknown language code: ${languageCode}`)
+
       return new Date(timestamp * 1000).toLocaleDateString(undefined, { dateStyle: 'short' })
    }
 
    const date = new Date(timestamp * 1000)
+
    return date.toLocaleDateString(locale, { dateStyle: 'short' })
 }

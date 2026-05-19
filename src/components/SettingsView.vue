@@ -13,6 +13,8 @@ Example:
 -->
 
 <script setup lang="ts">
+import type { Language, ThemeColor } from '@/types/settings'
+
 import {
    PhArrowCircleUp,
    PhCaretDown,
@@ -21,16 +23,13 @@ import {
    PhWrench as PhGearSix,
    PhArrowClockwise,
 } from '@phosphor-icons/vue'
-
-import { computed } from 'vue'
 import { openUrl } from '@tauri-apps/plugin-opener'
+import { computed } from 'vue'
 
 import { useTranslations } from '@/lib/use-translations'
 import { useAppSettings } from '@/stores/app-settings'
 
 import { APP_VERSION } from '@/lib/constants'
-
-import type { Language, ThemeColor } from '@/types/settings'
 
 const props = defineProps<{
    isFdaGranted: boolean
@@ -104,6 +103,7 @@ function toggleAutoCheckUpdates() {
 
 function toggleAutoInstallUpdates() {
    if (!settings.value.autoCheckUpdates) return // Disabled when checking is off (cascade rule).
+
    store.setAutoInstallUpdates(!settings.value.autoInstallUpdates)
 }
 

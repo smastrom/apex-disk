@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Simone Mastromattei
 
-import { formatBytes } from '@/lib/format'
-import { log } from '@/lib/log'
-import { useAppSettings } from '@/stores/app-settings'
+import type { FolderInfo, ScanProgress } from '@/types/structs'
+
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 import { ref, shallowRef } from 'vue'
 
-import type { FolderInfo, ScanProgress } from '@/types/structs'
+import { formatBytes } from '@/lib/format'
+import { log } from '@/lib/log'
+import { useAppSettings } from '@/stores/app-settings'
 
 const INITIAL_PROGRESS: ScanProgress = {
    current: 0,
@@ -39,12 +40,15 @@ export function useScanner() {
    let unlistenProgress: (() => void) | null = null
 
    const elapsedSeconds = ref(0)
+
    let elapsedInterval: ReturnType<typeof setInterval> | null = null
 
    function startElapsed() {
       stopElapsed()
       elapsedSeconds.value = 0
+
       if (elapsedInterval) return // Guard against multiple concurrent timers
+
       elapsedInterval = setInterval(() => {
          elapsedSeconds.value++
       }, 1000)
@@ -61,6 +65,7 @@ export function useScanner() {
 
    async function loadFolders() {
       const settings = settingsStore.settings.value
+
       log('scan', 'Scan: started', {
          showHiddenFiles: settings.showHiddenFiles,
          showUnder1Kb: settings.showUnder1Kb,
@@ -72,7 +77,9 @@ export function useScanner() {
       unlistenProgress = null
 
       scanGeneration.value += 1
+
       const gen = scanGeneration.value // snapshot — all callbacks below bail if gen is stale
+
       isScanning.value = true
       progress.value = { ...INITIAL_PROGRESS }
       startElapsed()
@@ -92,6 +99,7 @@ export function useScanner() {
 
          if (gen === scanGeneration.value) {
             const totalSize = formatBytes(progress.value.scanned_size_total)
+
             log(
                'scan',
                `Scan: complete ${result.length} folders, ${totalSize}, ${elapsedSeconds.value}s`

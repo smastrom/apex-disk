@@ -16,9 +16,9 @@
  * ```
  */
 
-import { invoke } from '@tauri-apps/api/core'
-
 import type { App } from 'vue'
+
+import { invoke } from '@tauri-apps/api/core'
 
 export type LogCategory = 'app' | 'disk' | 'view' | 'nav' | 'scan' | 'file' | 'trash' | 'settings'
 
@@ -53,6 +53,7 @@ export async function initLog(): Promise<void> {
    if (import.meta.env.DEV) {
       _enabled = true
       _isDev = true
+
       return
    }
 
@@ -72,6 +73,7 @@ export function registerDiagnosticHandlers(app: App): void {
    window.addEventListener('error', (event) => {
       const where = event.filename ? `${event.filename}:${event.lineno}` : ''
       const summary = [event.message, where].filter(Boolean).join(' ')
+
       reportWebProblem('window-error', summary || 'window error', event.error)
    })
 
@@ -81,6 +83,7 @@ export function registerDiagnosticHandlers(app: App): void {
 
    app.config.errorHandler = (err, _instance, info) => {
       const summary = err instanceof Error ? err.message : String(err)
+
       reportWebProblem('vue', `${summary} (${info})`, err)
    }
 }
@@ -101,6 +104,7 @@ function reportWebProblem(kind: string, summary: string, detail?: unknown): void
    }
 
    const time = formatTime()
+
    let line = `[${time}] ${label} ${summary}`
 
    if (detail !== undefined) {
@@ -127,5 +131,6 @@ export function log(category: LogCategory, message: string, data?: unknown): voi
    }
 
    const cliLine = data !== undefined ? `${line} ${JSON.stringify(data)}` : line
+
    invoke('log_message', { message: cliLine }).catch(() => {})
 }

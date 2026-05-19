@@ -14,6 +14,7 @@ Example:
 
 <script setup lang="ts">
 import { computed } from 'vue'
+
 import { useTranslations } from '@/lib/use-translations'
 
 const props = defineProps<{

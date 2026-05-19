@@ -23,8 +23,11 @@ describe('App navigation', () => {
 
    async function expectScanViewRendered() {
       const launch = $(scanLaunch)
+
       await launch.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
+
       const btn = $(startScanBtn)
+
       await btn.waitForDisplayed({ timeout: BUTTON_DISPLAY_TIMEOUT })
       await expect(launch).toBeDisplayed()
       await expect(btn).toBeDisplayed()
@@ -32,26 +35,35 @@ describe('App navigation', () => {
 
    async function expectSettingsViewRendered() {
       const main = $(settingsView)
+
       await main.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
       await expect(main).toBeDisplayed()
+
       const content = $(settingsContent)
+
       await content.waitForDisplayed({ timeout: BUTTON_DISPLAY_TIMEOUT })
       await expect(content).toBeDisplayed()
    }
 
    async function expectInformationViewRendered() {
       const main = $(informationView)
+
       await main.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
       await expect(main).toBeDisplayed()
+
       const title = $(informationTitle)
+
       await title.waitForDisplayed({ timeout: BUTTON_DISPLAY_TIMEOUT })
       await expect(title).toBeDisplayed()
    }
 
    before(async () => {
       const header = $(appHeader)
+
       await header.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
+
       const scanBtn = $(footerScan)
+
       await scanBtn.waitForDisplayed({ timeout: BUTTON_DISPLAY_TIMEOUT })
    })
 
@@ -61,34 +73,41 @@ describe('App navigation', () => {
 
    it('navigates LEFT → RIGHT: Scan → Settings → Information', async () => {
       const settingsBtn = $(footerSettings)
+
       await settingsBtn.click()
       await expectSettingsViewRendered()
 
       const informationBtn = $(footerInformation)
+
       await informationBtn.click()
       await expectInformationViewRendered()
    })
 
    it('navigates RIGHT → LEFT: Information → Settings → Scan', async () => {
       const settingsBtn = $(footerSettings)
+
       await settingsBtn.click()
       await expectSettingsViewRendered()
 
       const scanBtn = $(footerScan)
+
       await scanBtn.click()
       await expectScanViewRendered()
    })
 
    it('navigates forward again and back to Scan from Information', async () => {
       const settingsBtn = $(footerSettings)
+
       await settingsBtn.click()
       await expectSettingsViewRendered()
 
       const informationBtn = $(footerInformation)
+
       await informationBtn.click()
       await expectInformationViewRendered()
 
       const scanBtn = $(footerScan)
+
       await scanBtn.click()
       await expectScanViewRendered()
    })

@@ -13,16 +13,16 @@ Example:
 -->
 
 <script setup lang="ts">
-import ScanResultsListItem from './ScanResultsListItem.vue'
 import ScanListNav from './ScanListNav.vue'
+import ScanResultsListItem from './ScanResultsListItem.vue'
+
+import type { TrashListItem, FolderInfo } from '@/types/structs'
 
 import { ref, reactive, watch, watchEffect, shallowRef, computed, useTemplateRef } from 'vue'
 
 import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'
 import { useTranslations } from '@/lib/use-translations'
-
-import type { TrashListItem, FolderInfo } from '@/types/structs'
 
 const props = defineProps<{
    folders: FolderInfo[]
@@ -93,6 +93,7 @@ watch(
          selectedMap.clear()
 
          const rootPath = parentDir(folders[0].path)
+
          homePath.value = rootPath
          current.value = { items: folders, label: '', path: rootPath, truncated: false }
       } else {
@@ -118,8 +119,10 @@ const displayPath = computed(() => {
       if (isAtRoot && home) {
          // Extract username from home path (e.g. "/Users/username" -> "username")
          const username = home.split('/').pop()
+
          if (username) return `/${username}`
       }
+
       return '~'
    }
    if (home && path.startsWith(home + '/')) return '~' + path.slice(home.length)
@@ -161,8 +164,11 @@ function hasSelectedAncestor(path: string): boolean {
 
    for (;;) {
       const slash = dir.lastIndexOf('/')
+
       if (slash <= 0) return false
+
       dir = dir.slice(0, slash)
+
       if (selectedMap.has(dir)) return true
    }
 }
@@ -209,8 +215,11 @@ watchEffect(() => {
          const slash = dir.lastIndexOf('/')
 
          if (slash <= 0) break
+
          dir = dir.slice(0, slash)
+
          if (selectedMap.has(dir)) break
+
          set.add(dir)
       }
    }
@@ -227,6 +236,7 @@ const selectedSize = computed(() => {
 
    for (const [path, item] of selectedMap) {
       if (hasSelectedAncestor(path)) continue
+
       total += item.size
    }
 
@@ -260,8 +270,11 @@ function findSelectedAncestor(path: string): string | null {
 
    for (;;) {
       const slash = dir.lastIndexOf('/')
+
       if (slash <= 0) return null
+
       dir = dir.slice(0, slash)
+
       if (selectedMap.has(dir)) return dir
    }
 }
@@ -274,6 +287,7 @@ function findSelectedAncestor(path: string): string | null {
  */
 function explodeAncestorExcluding(ancestorPath: string, excludePath: string) {
    const ancestor = selectedMap.get(ancestorPath)
+
    if (!ancestor) return
 
    selectedMap.delete(ancestorPath)
@@ -298,7 +312,9 @@ function explodeAncestorExcluding(ancestorPath: string, excludePath: string) {
 
       // Descend into the next level
       const nextFolder = currentFolder.children.find((c) => c.path === targetChildPath)
+
       if (!nextFolder || nextFolder.is_file) break
+
       currentFolder = nextFolder
       remainingPath = remainingPath.slice(slashIdx + 1)
    }
@@ -321,6 +337,7 @@ function toggleSelect(item: FolderInfo) {
          'file',
          `Results: deselect descendants under ${kind} "${item.name}" ${selectionTotalsLabel()}`
       )
+
       return
    }
 
@@ -333,6 +350,7 @@ function toggleSelect(item: FolderInfo) {
       log('file', `Results: deselect ${kind} "${item.name}" ${selectionTotalsLabel()}`)
    } else {
       const ancestor = findSelectedAncestor(item.path)
+
       if (ancestor) {
          explodeAncestorExcluding(ancestor, item.path)
          log(
@@ -376,6 +394,7 @@ function clearSelectionFromNav() {
    if (selectedMap.size > 0) {
       log('file', `Results: reset selection, was ${selectionTotalsLabel()}`)
    }
+
    selectedMap.clear()
 }
 
@@ -384,6 +403,7 @@ function resetAll() {
    if (selectedMap.size > 0) {
       log('file', `Results: reset all, was ${selectionTotalsLabel()}`)
    }
+
    selectedMap.clear()
    backStack.value = []
    forwardStack.value = []
@@ -403,6 +423,7 @@ defineExpose({ setSelectedItems, resetAll })
 /** Navigates into a folder's children with a forward slide. */
 function goInto(item: FolderInfo) {
    if (item.is_file) return
+
    log('nav', `Results: into "${item.name}" (${item.children.length} children)`)
 
    document.documentElement.style.setProperty('--nav-direction', '1')
@@ -419,6 +440,7 @@ function goInto(item: FolderInfo) {
 /** Navigates to the previous directory with a backward slide. */
 function goBack() {
    if (backStack.value.length === 0) return
+
    log('nav', `Results: back to "${backStack.value[backStack.value.length - 1].label || '~'}"`)
 
    document.documentElement.style.setProperty('--nav-direction', '-1')
@@ -429,6 +451,7 @@ function goBack() {
 /** Re-enters a previously visited directory with a forward slide. */
 function goForward() {
    if (forwardStack.value.length === 0) return
+
    log(
       'nav',
       `Results: forward to "${forwardStack.value[forwardStack.value.length - 1].label || '~'}"`

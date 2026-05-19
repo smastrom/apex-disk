@@ -15,12 +15,12 @@ Example:
 <script setup lang="ts">
 import Spinner from './ui/Spinner.vue'
 
+import type { ScanProgress } from '@/types/structs'
+
 import { computed } from 'vue'
 
 import { formatBytes, formatProgressNumber } from '@/lib/format'
 import { useTranslations } from '@/lib/use-translations'
-
-import type { ScanProgress } from '@/types/structs'
 
 const props = defineProps<{
    progress: ScanProgress
@@ -43,7 +43,9 @@ const elapsedDisplay = computed(() => {
    const total = props.elapsedSeconds
    const mins = Math.floor(total / 60)
    const secs = total % 60
+
    if (mins > 0) return `${mins}m ${String(secs).padStart(2, '0')}s`
+
    return `${secs}s`
 })
 </script>

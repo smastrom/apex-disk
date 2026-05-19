@@ -27,6 +27,8 @@ import {
    PhFileImage,
 } from '@phosphor-icons/vue'
 
+import { getExtension } from '@/lib/utils'
+
 import {
    DOC_EXTENSIONS,
    AUDIO_EXTENSIONS,
@@ -34,7 +36,6 @@ import {
    ARCHIVE_EXTENSIONS,
    IMAGE_EXTENSIONS,
 } from '@/lib/constants'
-import { getExtension } from '@/lib/utils'
 
 defineProps<{
    item: { name: string; is_file: boolean; is_protected?: boolean; is_fda_required?: boolean }
@@ -50,6 +51,7 @@ function fileIconComponent(name: string) {
    if (VIDEO_EXTENSIONS.has(ext)) return PhFileVideo
    if (ARCHIVE_EXTENSIONS.has(ext)) return PhFileArchive
    if (IMAGE_EXTENSIONS.has(ext)) return PhFileImage
+
    return PhFile
 }
 </script>

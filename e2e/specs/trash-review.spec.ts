@@ -31,7 +31,6 @@ import {
    toggleTrashRow,
    waitForTrashConfirmation,
    isReviewButtonDisabled,
-   getReviewButton,
    navigateBack,
    setTrashMode,
 } from '../helpers/navigation'
@@ -63,7 +62,9 @@ describe('Trash review flow', () => {
          await clickReviewSelection()
 
          await waitForTrashList()
+
          const rows = await getTrashRows()
+
          expect(rows.length).toBeGreaterThan(0)
       })
 
@@ -75,10 +76,12 @@ describe('Trash review flow', () => {
          await waitForTrashList()
 
          const rows = await getTrashRows()
+
          expect(rows.length).toBeGreaterThanOrEqual(2)
 
          const myDataRow = await getTrashRowByName('MyData')
          const projectsRow = await getTrashRowByName('Projects')
+
          expect(myDataRow).not.toBeNull()
          expect(projectsRow).not.toBeNull()
       })
@@ -95,9 +98,11 @@ describe('Trash review flow', () => {
          await waitForTrashList()
 
          const rows = await getTrashRows()
+
          for (const row of rows) {
             const checkbox = await row.$(sel.trashRowCheckbox)
             const pressed = await checkbox.getAttribute('aria-pressed')
+
             expect(pressed).toBe('true')
          }
       })
@@ -111,10 +116,12 @@ describe('Trash review flow', () => {
          await browser.pause(1100)
 
          const rows = await getTrashRows()
+
          for (const row of rows) await toggleTrashRow(row)
 
          const confirm = $(sel.confirmTrash)
          const disabled = await confirm.getAttribute('disabled')
+
          expect(disabled).not.toBeNull()
       })
 
@@ -127,14 +134,17 @@ describe('Trash review flow', () => {
          await browser.pause(1100)
 
          const rows = await getTrashRows()
+
          if (rows.length < 2) {
             // Not enough rows for a meaningful test, skip cleanly.
             return
          }
+
          await toggleTrashRow(rows[0])
 
          const confirm = $(sel.confirmTrash)
          const disabled = await confirm.getAttribute('disabled')
+
          expect(disabled).toBeNull()
       })
    })
@@ -150,12 +160,15 @@ describe('Trash review flow', () => {
          await waitForTrashList()
 
          await navigateBack()
+
          // Results list should render again.
          const results = $(sel.resultsList)
+
          await results.waitForDisplayed({ timeout: 5000 })
 
          const myData = await requireRowByName('MyData')
          const classes = await myData.getAttribute('class')
+
          expect(classes).toContain('ScanResultsListItem-root--selected')
       })
 
@@ -166,20 +179,26 @@ describe('Trash review flow', () => {
          await waitForTrashList()
 
          await browser.pause(1100)
+
          const projectsTrash = await getTrashRowByName('Projects')
+
          expect(projectsTrash).not.toBeNull()
          await toggleTrashRow(projectsTrash!)
 
          await navigateBack()
+
          const results = $(sel.resultsList)
+
          await results.waitForDisplayed({ timeout: 5000 })
 
          const projects = await requireRowByName('Projects')
          const classes = await projects.getAttribute('class')
+
          expect(classes).not.toContain('ScanResultsListItem-root--selected')
 
          const myData = await requireRowByName('MyData')
          const myDataClasses = await myData.getAttribute('class')
+
          expect(myDataClasses).toContain('ScanResultsListItem-root--selected')
       })
    })
@@ -195,6 +214,7 @@ describe('Trash review flow', () => {
          await waitForTrashList()
 
          const confirm = $(sel.confirmTrash)
+
          expect(await confirm.getAttribute('disabled')).not.toBeNull()
 
          // TRASH_COUNTDOWN_MS = 1000
@@ -214,6 +234,7 @@ describe('Trash review flow', () => {
          await waitForTrashList()
 
          const confirm = $(sel.confirmTrash)
+
          // Button should be freshly disabled after re-entry.
          expect(await confirm.getAttribute('disabled')).not.toBeNull()
       })
@@ -234,7 +255,9 @@ describe('Trash review flow', () => {
          await $(sel.confirmTrash).click()
 
          await waitForTrashConfirmation()
+
          const restart = $(sel.restart)
+
          await expect(restart).toBeDisplayed()
       })
 
@@ -255,6 +278,7 @@ describe('Trash review flow', () => {
          const launch = $(sel.scanLaunch)
          const onResults = await results.isDisplayed().catch(() => false)
          const onLaunch = await launch.isDisplayed().catch(() => false)
+
          expect(onResults || onLaunch).toBe(true)
       })
    })
@@ -276,6 +300,7 @@ describe('Trash review flow', () => {
 
          // Error variant renders with .ScanTrashConfirmation-iconError somewhere on-screen.
          const errorIcons = await $$('.ScanTrashConfirmation-iconError')
+
          expect(errorIcons.length).toBeGreaterThan(0)
 
          // Clean up: restore success mode so subsequent tests behave.
@@ -298,9 +323,11 @@ describe('Trash review flow', () => {
          // summary, so `hasErrors` is false and the success (check) icon renders.
          // Explicitly assert no error icon and that the restart button is present.
          const errorIcons = await $$('.ScanTrashConfirmation-iconError')
+
          expect(errorIcons.length).toBe(0)
 
          const restart = $(sel.restart)
+
          await expect(restart).toBeDisplayed()
 
          await setTrashMode('success')

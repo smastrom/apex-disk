@@ -33,8 +33,8 @@ import {
    PhTrashSimple,
    PhX,
 } from '@phosphor-icons/vue'
-
 import { useTemplateRef } from 'vue'
+
 import { useLabelPopover } from '@/lib/use-label-popover'
 import { useTranslations } from '@/lib/use-translations'
 

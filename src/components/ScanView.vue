@@ -13,20 +13,20 @@ Example:
 -->
 
 <script setup lang="ts">
-import ScanViewHeader from './ScanViewHeader.vue'
-import ScanTrashList from './ScanTrashList.vue'
-import ScanTrashConfirmation from './ScanTrashConfirmation.vue'
-import ScanResultsList from './ScanResultsList.vue'
-import ScanProgress from './ScanProgress.vue'
 import ScanLaunch from './ScanLaunch.vue'
+import ScanProgress from './ScanProgress.vue'
+import ScanResultsList from './ScanResultsList.vue'
+import ScanTrashConfirmation from './ScanTrashConfirmation.vue'
+import ScanTrashList from './ScanTrashList.vue'
+import ScanViewHeader from './ScanViewHeader.vue'
+
+import type { DiskUsage } from '@/types/disk'
+import type { FolderInfo, ScanProgress as ScanProgressData, TrashListItem } from '@/types/structs'
 
 import { nextTick, onActivated, onDeactivated, ref, toRef, useTemplateRef, watch } from 'vue'
 
 import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'
-
-import type { FolderInfo, ScanProgress as ScanProgressData, TrashListItem } from '@/types/structs'
-import type { DiskUsage } from '@/types/disk'
 
 const props = defineProps<{
    diskUsage?: DiskUsage | null

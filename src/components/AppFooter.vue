@@ -14,8 +14,8 @@ Example:
 
 <script setup lang="ts">
 import { PhMagnifyingGlass, PhGear, PhInfo } from '@phosphor-icons/vue'
-
 import { computed } from 'vue'
+
 import { useTranslations } from '@/lib/use-translations'
 
 const props = defineProps<{

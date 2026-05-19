@@ -15,6 +15,7 @@ function getAppPath(): string {
    const base = path.join(rootDir, 'src-tauri', 'target', 'debug')
    const isWindows = process.platform === 'win32'
    const name = isWindows ? 'apex-disk.exe' : 'apex-disk'
+
    return path.join(base, name)
 }
 
@@ -45,6 +46,7 @@ export const config = {
    },
    beforeSession() {
       const appPath = getAppPath()
+
       appProcess = spawn(appPath, [], {
          cwd: path.join(rootDir, 'src-tauri'),
          stdio: ['ignore', 'pipe', 'pipe'],

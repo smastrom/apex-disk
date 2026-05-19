@@ -13,24 +13,25 @@ Example:
 -->
 
 <script setup lang="ts">
-import AppHeader from './AppHeader.vue'
 import AppFooter from './AppFooter.vue'
+import AppHeader from './AppHeader.vue'
 import AppViewAnnouncer from './AppViewAnnouncer.vue'
+import InformationView from './InformationView.vue'
 import ScanView from './ScanView.vue'
 import SettingsView from './SettingsView.vue'
-import InformationView from './InformationView.vue'
 
 import { ref, watch } from 'vue'
-import { useAppSettings } from '@/stores/app-settings'
-import { useAppViews } from '@/lib/use-app-views'
-import { useAppUpdate } from '@/lib/use-app-update'
-import { useFullDiskAccess } from '@/lib/use-full-disk-access'
-import { useSystemInfo } from '@/lib/use-system-info'
-import { disableNativeContextMenu } from '@/lib/use-context-menu'
+
 import { applyTheme, applyDirection } from '@/lib/dom'
-import { setupFocusRing } from '@/lib/use-focus-ring'
+import { useAppUpdate } from '@/lib/use-app-update'
+import { useAppViews } from '@/lib/use-app-views'
+import { disableNativeContextMenu } from '@/lib/use-context-menu'
 import { useDiskUsage } from '@/lib/use-disk-usage'
+import { setupFocusRing } from '@/lib/use-focus-ring'
+import { useFullDiskAccess } from '@/lib/use-full-disk-access'
 import { useScanner } from '@/lib/use-scanner'
+import { useSystemInfo } from '@/lib/use-system-info'
+import { useAppSettings } from '@/stores/app-settings'
 
 import '@/assets/css/theme.css'
 import '@/assets/css/global.css'

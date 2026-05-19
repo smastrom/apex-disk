@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Simone Mastromattei
 
+import type { DiskUsage } from '@/types/disk'
+
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { ref, onMounted, onUnmounted, type Ref } from 'vue'
-
-import type { DiskUsage } from '@/types/disk'
 
 import { getDiskUsage } from './disk'
 import { formatBytes } from './format'
@@ -34,7 +34,9 @@ export async function useDiskUsage(): Promise<UseDiskUsageReturn> {
    async function setDiskUsage() {
       try {
          const u = await getDiskUsage()
+
          diskUsage.value = u
+
          const used = Math.max(0, u.total - u.free)
 
          log(
@@ -44,7 +46,9 @@ export async function useDiskUsage(): Promise<UseDiskUsageReturn> {
          )
       } catch (err) {
          console.error('Failed to get disk usage:', err)
+
          const msg = err instanceof Error ? err.message : String(err)
+
          log('disk', `Disk: fetch failed ${msg}`)
       }
    }

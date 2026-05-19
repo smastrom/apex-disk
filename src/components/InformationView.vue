@@ -13,13 +13,13 @@ Example:
 -->
 
 <script setup lang="ts">
+import InformationFooter from './InformationFooter.vue'
+import Logo from './ui/Logo.vue'
+
 import type { SystemInfo } from '@/types/system-info'
 
-import Logo from './ui/Logo.vue'
-import InformationFooter from './InformationFooter.vue'
-
-import { useTranslations } from '@/lib/use-translations'
 import { formatBytes } from '@/lib/format'
+import { useTranslations } from '@/lib/use-translations'
 
 import { APP_NAME } from '@/lib/constants'
 

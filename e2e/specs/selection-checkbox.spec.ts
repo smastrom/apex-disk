@@ -50,11 +50,13 @@ describe('Selection model', () => {
    describe('basic selection', () => {
       it('clicking an unselected folder checkbox selects it', async () => {
          const myData = await requireRowByName('MyData')
+
          await assertCheckboxState(myData, 'empty')
 
          await clickRowCheckbox(myData)
 
          const after = await requireRowByName('MyData')
+
          await assertRowSelected(after, true)
          await assertCheckboxState(after, 'selected')
       })
@@ -64,6 +66,7 @@ describe('Selection model', () => {
          await clickCheckboxByName('MyData')
 
          const myData = await requireRowByName('MyData')
+
          await assertRowSelected(myData, false)
          await assertCheckboxState(myData, 'empty')
       })
@@ -74,7 +77,9 @@ describe('Selection model', () => {
          await clickCheckboxByName('MyData')
 
          expect(await isReviewButtonDisabled()).toBe(false)
+
          const text = await getReviewButtonText()
+
          expect(text).toMatch(/\d/) // includes a number (size)
       })
 
@@ -91,9 +96,11 @@ describe('Selection model', () => {
          await clickCheckboxByName('Projects')
 
          expect(await isReviewButtonDisabled()).toBe(false)
+
          // Should show a count greater than one now. We don't assert exact
          // localized text, just that both selections contribute to size.
          const text = await getReviewButtonText()
+
          expect(text.length).toBeGreaterThan(0)
       })
 
@@ -102,6 +109,7 @@ describe('Selection model', () => {
          await clickCheckboxByName('big.txt')
 
          const bigTxt = await requireRowByName('big.txt')
+
          await assertCheckboxState(bigTxt, 'selected')
       })
    })
@@ -117,6 +125,7 @@ describe('Selection model', () => {
 
          for (const name of ['big.txt', 'SubFolder']) {
             const row = await requireRowByName(name)
+
             await assertRowSelected(row, true)
             await assertCheckboxState(row, 'selected')
          }
@@ -127,6 +136,7 @@ describe('Selection model', () => {
          await navigateIntoFolder('MyData')
 
          const subFolder = await requireRowByName('SubFolder')
+
          await assertCheckboxState(subFolder, 'selected')
       })
    })
@@ -145,16 +155,20 @@ describe('Selection model', () => {
          await clickCheckboxByName('big.txt')
 
          const bigTxt = await requireRowByName('big.txt')
+
          await assertRowSelected(bigTxt, false)
          await assertCheckboxState(bigTxt, 'empty')
 
          // Siblings should now be explicitly selected.
          const subFolder = await requireRowByName('SubFolder')
+
          await assertCheckboxState(subFolder, 'selected')
 
          // Return to root: MyData itself must no longer be "fully selected".
          await navigateBack()
+
          const myData = await requireRowByName('MyData')
+
          await assertCheckboxState(myData, 'partial')
       })
 
@@ -168,38 +182,50 @@ describe('Selection model', () => {
 
          // At this (SubFolder) level: siblings beta.txt and Deep should be selected.
          const beta = await requireRowByName('beta.txt')
+
          await assertCheckboxState(beta, 'selected')
+
          const deep = await requireRowByName('Deep')
+
          await assertCheckboxState(deep, 'selected')
 
          // Walk back up to MyData: siblings at MyData level should also be pinned.
          await navigateBack()
+
          const subFolderRow = await requireRowByName('SubFolder')
+
          // SubFolder has a deselected descendant (alpha) plus explicit siblings →
          // it's in indeterminate state.
          await assertCheckboxState(subFolderRow, 'partial')
 
          await navigateBack()
+
          const myData = await requireRowByName('MyData')
+
          await assertCheckboxState(myData, 'partial')
       })
 
       it('size decreases by the excluded file when exploding', async () => {
          await clickCheckboxByName('MyData')
          await navigateBackToRoot()
+
          const fullBytes = await getReviewButtonBytes()
+
          expect(fullBytes).not.toBeNull()
 
          await navigateIntoFolder('MyData')
          await clickCheckboxByName('big.txt') // explode, excluding the 2048 B file
          await navigateBack()
+
          const reducedBytes = await getReviewButtonBytes()
+
          expect(reducedBytes).not.toBeNull()
 
          // Strict arithmetic check: reduction must be at least big.txt's 2048 B.
          // (The formatter rounds to 2 decimals, so allow small rounding noise.)
          const BIG_TXT_SIZE = 2048
          const delta = (fullBytes as number) - (reducedBytes as number)
+
          expect(delta).toBeGreaterThanOrEqual(BIG_TXT_SIZE - 10)
       })
    })
@@ -215,6 +241,7 @@ describe('Selection model', () => {
          await navigateBack()
 
          const myData = await requireRowByName('MyData')
+
          await assertCheckboxState(myData, 'partial')
       })
 
@@ -227,7 +254,9 @@ describe('Selection model', () => {
          await clickCheckboxByName('MyData')
 
          await navigateIntoFolder('MyData')
+
          const bigTxt = await requireRowByName('big.txt')
+
          await assertCheckboxState(bigTxt, 'empty')
       })
 
@@ -237,11 +266,15 @@ describe('Selection model', () => {
          await clickCheckboxByName('alpha.txt')
 
          await navigateBack()
+
          const subFolder = await requireRowByName('SubFolder')
+
          await assertCheckboxState(subFolder, 'partial')
 
          await navigateBack()
+
          const myData = await requireRowByName('MyData')
+
          await assertCheckboxState(myData, 'partial')
       })
 
@@ -256,7 +289,9 @@ describe('Selection model', () => {
 
          await navigateIntoFolder('MyData')
          await navigateIntoFolder('SubFolder')
+
          const alpha = await requireRowByName('alpha.txt')
+
          await assertCheckboxState(alpha, 'empty')
       })
    })
@@ -268,6 +303,7 @@ describe('Selection model', () => {
    describe('protected folder', () => {
       it('checkbox is disabled with no selected descendants', async () => {
          const documents = await requireRowByName('Documents')
+
          await assertCheckboxDisabled(documents, true)
          await assertCheckboxState(documents, 'empty')
       })
@@ -277,6 +313,7 @@ describe('Selection model', () => {
          const beforeClasses = await before.getAttribute('class')
 
          const checkbox = await getCheckbox(before)
+
          // Click may or may not register depending on disabled attribute handling,
          // but state must not change either way.
          try {
@@ -287,6 +324,7 @@ describe('Selection model', () => {
 
          const after = await requireRowByName('Documents')
          const afterClasses = await after.getAttribute('class')
+
          expect(afterClasses).toBe(beforeClasses)
       })
 
@@ -295,7 +333,9 @@ describe('Selection model', () => {
          await clickCheckboxByName('report.txt')
 
          await navigateBack()
+
          const documents = await requireRowByName('Documents')
+
          await assertCheckboxState(documents, 'partial')
          // In "deselect-only" state the checkbox becomes clickable again.
          await assertCheckboxDisabled(documents, false)
@@ -309,6 +349,7 @@ describe('Selection model', () => {
          await clickCheckboxByName('Documents')
 
          const documents = await requireRowByName('Documents')
+
          await assertCheckboxState(documents, 'empty')
          await assertCheckboxDisabled(documents, true)
       })
@@ -325,6 +366,7 @@ describe('Selection model', () => {
          await navigateBack()
 
          const projects = await requireRowByName('Projects')
+
          await assertRowSelected(projects, true)
       })
 
@@ -334,12 +376,17 @@ describe('Selection model', () => {
          expect(await isReviewButtonDisabled()).toBe(false)
 
          const resetBtn = await $(sel.resultsNav).$(`button[aria-label*="eset" i]`)
+
          await resetBtn.click()
 
          expect(await isReviewButtonDisabled()).toBe(true)
+
          const myData = await requireRowByName('MyData')
+
          await assertCheckboxState(myData, 'empty')
+
          const projects = await requireRowByName('Projects')
+
          await assertCheckboxState(projects, 'empty')
       })
    })
@@ -351,12 +398,15 @@ describe('Selection model', () => {
    describe('size computation', () => {
       it('selecting a folder and a child inside does not change size (dedup via ancestor)', async () => {
          await clickCheckboxByName('MyData')
+
          const parentOnlyText = await getReviewButtonText()
 
          await navigateIntoFolder('MyData')
+
          // big.txt is inherited-selected. Clicking it triggers explode, which changes size.
          // So instead verify that navigating without any further action preserves the label.
          const afterNavText = await getReviewButton().getText()
+
          await navigateBack()
 
          expect(afterNavText).toBe(parentOnlyText)
@@ -364,15 +414,19 @@ describe('Selection model', () => {
 
       it('Review button label updates as selections change', async () => {
          await clickCheckboxByName('Projects')
+
          const oneSel = await getReviewButtonText()
 
          await clickCheckboxByName('MyData')
+
          const twoSel = await getReviewButtonText()
 
          expect(twoSel).not.toBe(oneSel)
 
          await clickCheckboxByName('Projects')
+
          const onlyMyData = await getReviewButtonText()
+
          expect(onlyMyData).not.toBe(twoSel)
       })
    })

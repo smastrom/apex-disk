@@ -12,6 +12,7 @@ export function debounce<T extends (...args: any[]) => any>(
 
    return (...args: Parameters<T>) => {
       if (timeoutId) clearTimeout(timeoutId)
+
       timeoutId = setTimeout(() => fn(...args), delay)
    }
 }
@@ -26,6 +27,7 @@ export const noop = () => {}
  */
 export function getExtension(name: string): string {
    const lastDot = name.lastIndexOf('.')
+
    if (lastDot === -1) return ''
 
    return name.slice(lastDot + 1).toLowerCase()

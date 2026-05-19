@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Simone Mastromattei
 
-import { createT } from '@/assets/translations'
-import { useAppSettings } from '@/stores/app-settings'
+import type { TranslationModule } from '@/assets/translations'
+
 import { computed } from 'vue'
 
-import type { TranslationModule } from '@/assets/translations'
+import { createT } from '@/assets/translations'
+import { useAppSettings } from '@/stores/app-settings'
 
 /**
  * Composable that provides a reactive translation function using the settings store language.

@@ -13,10 +13,13 @@ Example:
 -->
 
 <script setup lang="ts">
-import ScanTrashListItem from './ScanTrashListItem.vue'
 import ScanListNav from './ScanListNav.vue'
+import ScanTrashListItem from './ScanTrashListItem.vue'
 import Spinner from './ui/Spinner.vue'
 
+import type { TrashListItem } from '@/types/structs'
+
+import { invoke } from '@tauri-apps/api/core'
 import {
    ref,
    shallowRef,
@@ -27,16 +30,13 @@ import {
    onDeactivated,
    onUnmounted,
 } from 'vue'
-import { invoke } from '@tauri-apps/api/core'
 
 import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'
-import { useTranslations } from '@/lib/use-translations'
 import { useReducedMotion } from '@/lib/use-reduced-motion'
+import { useTranslations } from '@/lib/use-translations'
 
 import { TRASH_COUNTDOWN_MS, TRASH_POST_TRASH_SLEEP_MS } from '@/lib/constants'
-
-import type { TrashListItem } from '@/types/structs'
 
 const props = defineProps<{
    items: TrashListItem[]
@@ -58,6 +58,7 @@ const { t } = useTranslations()
  * navigated in. A plain `let` timer ID is fine; it's never read reactively.
  */
 const countdownRemaining = ref(0)
+
 let countdownInterval: ReturnType<typeof setInterval> | null = null
 
 /** Resets and starts a fresh countdown. Safe to call multiple times. */
@@ -70,6 +71,7 @@ function startCountdown() {
    countdownRemaining.value = TRASH_COUNTDOWN_MS
    countdownInterval = setInterval(() => {
       countdownRemaining.value -= 1000
+
       if (countdownRemaining.value <= 0 && countdownInterval) {
          clearInterval(countdownInterval)
          countdownInterval = null
@@ -137,7 +139,9 @@ let lastInitializedItems: TrashListItem[] | null = null
 /** Builds a fresh all-checked Map from items and assigns it atomically. */
 function initCheckedMap(items: TrashListItem[]) {
    const next = new Map<string, boolean>()
+
    for (const item of items) next.set(item.path, true)
+
    checkedMapRef.value = next
    lastInitializedItems = items
 }
@@ -151,6 +155,7 @@ watch(() => props.items, initCheckedMap, { immediate: true })
 /** Total size of currently checked items. Drives the button label and parent disk-usage bar. */
 const selectedSize = computed(() => {
    const map = checkedMapRef.value
+
    let total = 0
 
    for (const item of props.items) {
@@ -166,6 +171,7 @@ watch(selectedSize, (size) => emit('update:selectedSize', size), { immediate: tr
 /** Number of checked items. Used to disable the trash button when nothing is checked. */
 const checkedCount = computed(() => {
    const map = checkedMapRef.value
+
    let n = 0
 
    for (const item of props.items) {
@@ -224,7 +230,9 @@ async function onTrashClick() {
    if (!trashReady.value || isDeleting.value || checkedCount.value === 0) return
 
    isDeleting.value = true
+
    const toTrash = props.items.filter((item) => checkedMapRef.value.get(item.path))
+
    log('trash', `Trash: moving ${toTrash.length} item(s) (${formatBytes(selectedSize.value)})`)
 
    const items = toTrash.map((item) => ({
@@ -234,8 +242,10 @@ async function onTrashClick() {
    }))
 
    let summary = { count: toTrash.length, size: selectedSize.value }
+
    try {
       const result = await invoke<{ count: number; size: number }>('trash_paths', { items })
+
       summary = result
    } catch (error) {
       log('trash', 'Trash: invoke error, using optimistic values', error)

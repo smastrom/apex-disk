@@ -24,15 +24,15 @@ Example:
 import ScanResultsListItemIconSwitch from '@/components/ScanResultsListItemIconSwitch.vue'
 import SelectionIcon from '@/components/ui/SelectionIcon.vue'
 
+import type { FolderInfo } from '@/types/structs'
+
 import { PhCaretRight } from '@phosphor-icons/vue'
 import { ref, useTemplateRef, computed } from 'vue'
 
-import { useTranslations } from '@/lib/use-translations'
-import { useLabelPopover } from '@/lib/use-label-popover'
 import { formatDate } from '@/lib/format'
+import { useLabelPopover } from '@/lib/use-label-popover'
+import { useTranslations } from '@/lib/use-translations'
 import { useAppSettings } from '@/stores/app-settings'
-
-import type { FolderInfo } from '@/types/structs'
 
 const props = defineProps<{
    item: FolderInfo
@@ -50,6 +50,7 @@ const emit = defineEmits<{
 const selectionState = computed(() => {
    if (props.isSelected) return 'selected'
    if (props.isSomeSelected) return 'partial'
+
    return 'empty'
 })
 
@@ -58,6 +59,7 @@ const isCheckDisabled = computed(() => !props.isSelectable)
 /** Suppress click-to-navigate when the pointer drags far enough to read as a text selection. */
 const isPressing = ref(false)
 const DRAG_THRESHOLD_PX = 4
+
 let pressStartX = 0
 let pressStartY = 0
 let hasPressStart = false
@@ -65,6 +67,7 @@ let hasPressStart = false
 function onRootPointerDown(e: PointerEvent) {
    if (props.item.is_file) return
    if (e.button !== 0) return
+
    pressStartX = e.clientX
    pressStartY = e.clientY
    hasPressStart = true
@@ -73,8 +76,10 @@ function onRootPointerDown(e: PointerEvent) {
 
 function onRootPointerMove(e: PointerEvent) {
    if (!hasPressStart) return
+
    const dx = Math.abs(e.clientX - pressStartX)
    const dy = Math.abs(e.clientY - pressStartY)
+
    if (dx > DRAG_THRESHOLD_PX || dy > DRAG_THRESHOLD_PX) {
       isPressing.value = false
    }
@@ -89,16 +94,22 @@ function onRootClick(e: MouseEvent) {
    if (hasPressStart) {
       const dx = Math.abs(e.clientX - pressStartX)
       const dy = Math.abs(e.clientY - pressStartY)
+
       hasPressStart = false
+
       if (dx > DRAG_THRESHOLD_PX || dy > DRAG_THRESHOLD_PX) return
    }
+
    const selection = window.getSelection()
+
    if (selection && !selection.isCollapsed && selection.toString().trim().length > 0) return
+
    emit('navigate')
 }
 
 function onRootNavigateKey() {
    if (props.item.is_file) return
+
    emit('navigate')
 }
 
@@ -241,6 +252,9 @@ const currentLanguage = store.settings.value.language
    min-height: 64px;
    margin-block: calc(var(--spacing-sm) / 2);
    margin-inline-start: var(--scrollbar-inline-gutter);
+   /* Mirrored only when the list won't scroll; the overlay scrollbar fills
+      the gutter otherwise. Parent sets the var on its non-scrollable list. */
+   margin-inline-end: var(--list-item-end-gutter, 0px);
    border-radius: var(--radius-md);
    box-sizing: border-box;
    background-color: var(--color-row-idle);

@@ -13,16 +13,16 @@ Example:
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import type { DiskUsage } from '@/types/disk'
+
 import { PhHardDrive } from '@phosphor-icons/vue'
+import { computed } from 'vue'
 
 import { formatBytes } from '@/lib/format'
-import { isDev } from '@/lib/utils'
 import { useTranslations } from '@/lib/use-translations'
+import { isDev } from '@/lib/utils'
 
 import { DEV_USER_FOLDER_NAME } from '@/lib/constants'
-
-import type { DiskUsage } from '@/types/disk'
 
 const props = defineProps<{
    usage?: DiskUsage | null

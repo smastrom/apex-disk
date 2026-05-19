@@ -17,8 +17,8 @@ import AnimatedAlertCircle from './ui/AnimatedAlertCircle.vue'
 import AnimatedCheckCircle from './ui/AnimatedCheckCircle.vue'
 
 import { PhMagnifyingGlass, PhX } from '@phosphor-icons/vue'
-import { computed } from 'vue'
 import { getCurrentWindow } from '@tauri-apps/api/window'
+import { computed } from 'vue'
 
 import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'

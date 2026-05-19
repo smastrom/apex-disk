@@ -32,6 +32,7 @@ export function useAppUpdate(options: UseAppUpdateOptions) {
       try {
          isChecking.value = true
          availableVersion.value = await invoke<string | null>('check_for_updates_silent')
+
          if (availableVersion.value) {
             log('app', `Updates: available v${availableVersion.value}`)
          } else {
@@ -60,11 +61,16 @@ export function useAppUpdate(options: UseAppUpdateOptions) {
    /** Downloads the staged update silently. Sets `updateReady` on success. */
    async function downloadSilently() {
       if (isDownloading.value || updateReady.value) return
+
       log('app', 'Downloading update…')
+
       try {
          isDownloading.value = true
+
          const version = await invoke<string>('download_update')
+
          updateReady.value = true
+
          log('app', `Updates: v${version} downloaded, ready to install`)
       } catch (error) {
          log('app', `Updates: download failed: ${error}`)
@@ -84,8 +90,10 @@ export function useAppUpdate(options: UseAppUpdateOptions) {
    async function onCheckForUpdates() {
       if (updateReady.value) {
          await invoke('restart_app')
+
          return
       }
+
       try {
          isChecking.value = true
          await invoke('check_for_updates_dialog')

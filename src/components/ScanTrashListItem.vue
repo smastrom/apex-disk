@@ -21,12 +21,12 @@ Example:
 import ScanResultsListItemIconSwitch from '@/components/ScanResultsListItemIconSwitch.vue'
 import CheckboxIcon from '@/components/ui/CheckboxIcon.vue'
 
+import type { TrashListItem } from '@/types/structs'
+
 import { useTemplateRef } from 'vue'
 
 import { useLabelPopover } from '@/lib/use-label-popover'
 import { displayPath, isHidden } from '@/lib/utils'
-
-import type { TrashListItem } from '@/types/structs'
 
 defineProps<{
    item: TrashListItem

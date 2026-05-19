@@ -26,14 +26,17 @@ export function useLabelPopover(
 
    function shouldShow(): boolean {
       const el = triggerRef.value
+
       if (!el) return false
       if (alwaysShow) return true
+
       return el.scrollWidth > el.clientWidth
    }
 
    async function position() {
       const trigger = triggerRef.value
       const popover = popoverRef.value
+
       if (!trigger || !popover) return
 
       popover.style.maxWidth = `${window.innerWidth - VIEWPORT_PADDING * 2}px`
@@ -49,6 +52,7 @@ export function useLabelPopover(
 
    async function show() {
       const popover = popoverRef.value
+
       if (!popover || isOpen.value) return
 
       isOpen.value = true
@@ -59,6 +63,7 @@ export function useLabelPopover(
 
    function hide() {
       const popover = popoverRef.value
+
       if (!popover || !isOpen.value) return
 
       popover.classList.remove('is-open')
@@ -73,14 +78,19 @@ export function useLabelPopover(
 
    function addScrollListener() {
       const el = triggerRef.value
+
       if (!el) return
 
       let ancestor: HTMLElement | null = el.parentElement
+
       while (ancestor) {
          const { overflow, overflowY } = getComputedStyle(ancestor)
+
          if (/auto|scroll/.test(overflow + overflowY)) break
+
          ancestor = ancestor.parentElement
       }
+
       const target = ancestor ?? document
 
       target.addEventListener('scroll', dismiss, { passive: true, once: true })
@@ -110,6 +120,7 @@ export function useLabelPopover(
          clearTimeout(leaveTimer)
          leaveTimer = null
       }
+
       enterTimer = setTimeout(show, ENTER_DELAY)
    }
 

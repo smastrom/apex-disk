@@ -84,7 +84,9 @@ export async function waitForListSlideSettled(): Promise<void> {
 async function patchRequestAnimationFrame(): Promise<void> {
    await browser.execute(() => {
       const w = window as unknown as { __e2eRafPatched?: boolean }
+
       if (w.__e2eRafPatched) return
+
       w.__e2eRafPatched = true
       window.requestAnimationFrame = ((cb: FrameRequestCallback) =>
          setTimeout(
@@ -97,6 +99,7 @@ async function patchRequestAnimationFrame(): Promise<void> {
 /** Wait for the app to be ready (header visible). */
 export async function waitForAppReady() {
    const header = $(sel.appHeader)
+
    await header.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
    await patchRequestAnimationFrame()
 }
@@ -104,14 +107,18 @@ export async function waitForAppReady() {
 /** Wait for the scan launch screen. */
 export async function waitForScanLaunch() {
    const launch = $(sel.scanLaunch)
+
    await launch.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
+
    const btn = $(sel.startScan)
+
    await btn.waitForDisplayed({ timeout: ELEMENT_TIMEOUT })
 }
 
 /** Wait for the results list to appear after a scan. */
 export async function waitForResultsList() {
    const list = $(sel.resultsList)
+
    await list.waitForDisplayed({ timeout: 30000 })
 }
 
@@ -122,6 +129,7 @@ export async function waitForResultsList() {
 /** Click Start Scan and wait for the results list to render. */
 export async function scanAndWaitForResults() {
    const startBtn = $(sel.startScan)
+
    await startBtn.waitForDisplayed({ timeout: ELEMENT_TIMEOUT })
    await startBtn.click()
    await waitForResultsList()
@@ -139,10 +147,13 @@ export async function scanAndWaitForResults() {
  */
 export async function getRowByName(name: string): Promise<WebdriverIO.Element | null> {
    const rows = await $$(`${sel.rowFolder}, ${sel.rowFile}`)
+
    for (const row of rows) {
       const text = await row.getText()
+
       if (text.includes(name)) return row
    }
+
    return null
 }
 
@@ -158,9 +169,11 @@ export async function getRowByName(name: string): Promise<WebdriverIO.Element | 
  */
 export async function requireRowByName(name: string): Promise<WebdriverIO.Element> {
    let row: WebdriverIO.Element | null = null
+
    await browser.waitUntil(
       async () => {
          row = await getRowByName(name)
+
          return row !== null
       },
       {
@@ -169,6 +182,7 @@ export async function requireRowByName(name: string): Promise<WebdriverIO.Elemen
          timeoutMsg: `Row "${name}" not found in results`,
       }
    )
+
    return row!
 }
 
@@ -184,6 +198,7 @@ export async function getCheckbox(row: WebdriverIO.Element) {
 /** Navigate into a folder by clicking its row (not its checkbox). */
 export async function navigateIntoFolder(name: string) {
    const row = await requireRowByName(name)
+
    // Click the row itself, not the checkbox. The checkbox has @click.stop,
    // so clicking it selects rather than navigates.
    await row.click()
@@ -193,6 +208,7 @@ export async function navigateIntoFolder(name: string) {
 /** Click the back navigation button and wait for the transition to settle. */
 export async function navigateBack() {
    const btn = $(sel.navBack)
+
    await btn.click()
    await waitForListSlideSettled()
 }
@@ -200,6 +216,7 @@ export async function navigateBack() {
 /** Click the forward navigation button and wait for the transition to settle. */
 export async function navigateForward() {
    const btn = $(sel.navForward)
+
    await btn.click()
    await waitForListSlideSettled()
 }
@@ -225,12 +242,14 @@ export async function assertCheckboxState(
    // The class is on the SVG icon inside the checkbox, not the button itself
    const icon = await checkbox.$('svg')
    const classes = await icon.getAttribute('class')
+
    expect(classes).toContain(classMap[expected])
 }
 
 /** Assert that a row appears selected (has the --selected class). */
 export async function assertRowSelected(row: WebdriverIO.Element, selected: boolean) {
    const classes = await row.getAttribute('class')
+
    if (selected) {
       expect(classes).toContain('ScanResultsListItem-root--selected')
    } else {
@@ -242,6 +261,7 @@ export async function assertRowSelected(row: WebdriverIO.Element, selected: bool
 export async function assertCheckboxDisabled(row: WebdriverIO.Element, disabled: boolean) {
    const checkbox = await getCheckbox(row)
    const isDisabled = await checkbox.getAttribute('disabled')
+
    if (disabled) {
       expect(isDisabled).not.toBeNull()
    } else {
@@ -262,6 +282,7 @@ export function getReviewButton() {
 export async function isReviewButtonDisabled(): Promise<boolean> {
    const btn = getReviewButton()
    const val = await btn.getAttribute('disabled')
+
    return val !== null
 }
 
@@ -289,6 +310,7 @@ export async function resetE2eState() {
          .then(() => done(null))
          .catch((e: unknown) => done(String(e && (e as Error).message ? (e as Error).message : e)))
    })
+
    if (err) throw new Error(`reset_e2e_state failed: ${err}`)
 }
 
@@ -300,6 +322,7 @@ export async function setTrashMode(mode: 'success' | 'zero' | 'error') {
          .then(() => done(null))
          .catch((e: unknown) => done(String(e && (e as Error).message ? (e as Error).message : e)))
    }, mode)
+
    if (err) throw new Error(`set_e2e_trash_mode failed: ${err}`)
 }
 
@@ -321,7 +344,9 @@ export async function assertRowExists(name: string) {
  */
 export async function assertRowNotExists(name: string) {
    await waitForListSlideSettled()
+
    const row = await getRowByName(name)
+
    expect(row).toBeNull()
 }
 
@@ -332,18 +357,21 @@ export async function assertRowNotExists(name: string) {
 /** Click the checkbox button inside a row. Does not navigate into the folder. */
 export async function clickRowCheckbox(row: WebdriverIO.Element) {
    const checkbox = await getCheckbox(row)
+
    await checkbox.click()
 }
 
 /** Click the checkbox for a row identified by name. */
 export async function clickCheckboxByName(name: string) {
    const row = await requireRowByName(name)
+
    await clickRowCheckbox(row)
 }
 
 /** Click the reset-selection button in the results nav. */
 export async function clickResetSelection() {
    const resetBtn = await $(sel.resultsNav).$(`button[aria-label*="eset" i]`)
+
    await resetBtn.click()
 }
 
@@ -353,9 +381,12 @@ export async function clickResetSelection() {
  */
 export async function navigateBackToRoot() {
    const back = $(sel.navBack)
+
    for (let i = 0; i < 10; i++) {
       const disabled = await back.getAttribute('disabled')
+
       if (disabled !== null) return
+
       await back.click()
       await waitForListSlideSettled()
    }
@@ -374,17 +405,23 @@ export async function getReviewButtonText(): Promise<string> {
 export async function getReviewButtonBytes(): Promise<number | null> {
    const text = await getReviewButtonText()
    const match = text.match(/([\d.,]+)\s*(B|KB|MB|GB|TB)/)
+
    if (!match) return null
+
    const n = parseFloat(match[1].replace(',', '.'))
+
    if (Number.isNaN(n)) return null
+
    const unit = match[2]
    const mult = { B: 1, KB: 1000, MB: 1e6, GB: 1e9, TB: 1e12 }[unit]!
+
    return n * mult
 }
 
 /** Click the review button to enter the trash review view. */
 export async function clickReviewSelection() {
    const btn = getReviewButton()
+
    await btn.click()
 }
 
@@ -401,7 +438,9 @@ export async function goToScanView() {
 /** Click the Settings footer tab and wait for the settings view. */
 export async function goToSettingsView() {
    await $(sel.footerSettings).click()
+
    const view = $(sel.settingsView)
+
    await view.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
    await waitForListSlideSettled()
 }
@@ -413,6 +452,7 @@ export async function goToSettingsView() {
 /** Wait for the trash review list to be displayed. */
 export async function waitForTrashList() {
    const list = $(sel.trashList)
+
    await list.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
 }
 
@@ -424,22 +464,27 @@ export async function getTrashRows(): Promise<WebdriverIO.Element[]> {
 /** Find a trash row by item name. Returns null if not found. */
 export async function getTrashRowByName(name: string): Promise<WebdriverIO.Element | null> {
    const rows = await getTrashRows()
+
    for (const row of rows) {
       const text = await row.getText()
+
       if (text.includes(name)) return row
    }
+
    return null
 }
 
 /** Toggle a trash row's checkbox by clicking it (has @click.stop). */
 export async function toggleTrashRow(row: WebdriverIO.Element) {
    const checkbox = await row.$(sel.trashRowCheckbox)
+
    await checkbox.click()
 }
 
 /** Wait for the post-trash confirmation screen (either success or error variant). */
 export async function waitForTrashConfirmation() {
    const restart = $(sel.restart)
+
    await restart.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
 }
 
@@ -451,6 +496,7 @@ export async function waitForTrashConfirmation() {
 export async function getToggleState(selector: string): Promise<boolean> {
    const toggle = $(selector)
    const v = await toggle.getAttribute('aria-checked')
+
    return v === 'true'
 }
 
@@ -467,10 +513,12 @@ export async function clickToggle(selector: string) {
 export async function cancelToLaunch() {
    const cancel = $(sel.resultsCancel)
    const onResults = await cancel.isDisplayed().catch(() => false)
+
    if (onResults) {
       await cancel.click()
       await browser.pause(TRANSITION_SETTLE_MS)
    }
+
    await waitForScanLaunch()
 }
 
@@ -504,6 +552,7 @@ export async function resetAndScan() {
    // Trash confirmation screen (TRASH_COMPLETE): click restart to return to results.
    const restart = $(sel.restart)
    const onConfirm = await restart.isDisplayed().catch(() => false)
+
    if (onConfirm) {
       await restart.click()
       await browser.pause(TRANSITION_SETTLE_MS)
@@ -512,8 +561,10 @@ export async function resetAndScan() {
    // Trash list (TRASH): click back to return to results.
    const trashList = $(sel.trashList)
    const onTrash = await trashList.isDisplayed().catch(() => false)
+
    if (onTrash) {
       const back = $(sel.navBack)
+
       await back.click()
       await browser.pause(TRANSITION_SETTLE_MS)
    }
@@ -522,17 +573,22 @@ export async function resetAndScan() {
    // back to root and clear any lingering selection.
    const results = $(sel.resultsList)
    const hasResults = await results.isDisplayed().catch(() => false)
+
    if (hasResults) {
       await navigateBackToRoot()
+
       const resetBtn = await $(sel.resultsNav).$(`button[aria-label*="eset" i]`)
       const disabled = await resetBtn.getAttribute('disabled')
+
       if (disabled === null) await resetBtn.click()
+
       return
    }
 
    // Otherwise we're on the launch screen, so start a new scan.
    const launch = $(sel.scanLaunch)
    const onLaunch = await launch.isDisplayed().catch(() => false)
+
    if (onLaunch) {
       await scanAndWaitForResults()
    }

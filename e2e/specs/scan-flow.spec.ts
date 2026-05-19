@@ -31,18 +31,23 @@ describe('Scan flow', () => {
 
    it('shows scan launch with start button', async () => {
       const launch = $(sel.scanLaunch)
+
       await expect(launch).toBeDisplayed()
+
       const btn = $(sel.startScan)
+
       await expect(btn).toBeDisplayed()
    })
 
    it('starts scan and shows progress indicator', async () => {
       const btn = $(sel.startScan)
+
       await btn.click()
 
       // Progress may be very fast with the small fixture, so just check
       // that eventually results appear (progress might flash too quickly to catch).
       const results = $(sel.resultsList)
+
       await results.waitForDisplayed({ timeout: 30000 })
    })
 
@@ -54,6 +59,7 @@ describe('Scan flow', () => {
 
    it('results are sorted by size descending', async () => {
       const rows = await $$(sel.rowFolder)
+
       expect(rows.length).toBeGreaterThanOrEqual(3)
 
       // With default filters (no hidden / no under 1 KB / no zero-byte):
@@ -62,6 +68,7 @@ describe('Scan flow', () => {
       // Documents: report.txt (2048)  [note.txt 500 is filtered out]
       // So order is: Projects > MyData > Documents.
       const texts: string[] = []
+
       for (const row of rows) {
          texts.push(await row.getText())
       }
@@ -81,16 +88,19 @@ describe('Scan flow', () => {
 
    it('protected folders show disabled checkbox', async () => {
       const documentsRow = await getRowByName('Documents')
+
       expect(documentsRow).not.toBeNull()
       await assertCheckboxDisabled(documentsRow!, true)
    })
 
    it('normal folders show enabled checkbox', async () => {
       const myDataRow = await getRowByName('MyData')
+
       expect(myDataRow).not.toBeNull()
       await assertCheckboxDisabled(myDataRow!, false)
 
       const projectsRow = await getRowByName('Projects')
+
       expect(projectsRow).not.toBeNull()
       await assertCheckboxDisabled(projectsRow!, false)
    })
@@ -98,11 +108,13 @@ describe('Scan flow', () => {
    it('review button is disabled when nothing selected', async () => {
       const reviewBtn = $(sel.reviewSelection)
       const disabled = await reviewBtn.getAttribute('disabled')
+
       expect(disabled).not.toBeNull()
    })
 
    it('can navigate into a folder and see its children', async () => {
       const myDataRow = await getRowByName('MyData')
+
       expect(myDataRow).not.toBeNull()
       await myDataRow!.click()
       await browser.pause(400)
@@ -113,6 +125,7 @@ describe('Scan flow', () => {
 
       // Navigate back
       const backBtn = $(sel.navBack)
+
       await backBtn.click()
       await browser.pause(400)
    })
@@ -120,7 +133,9 @@ describe('Scan flow', () => {
    it('does not show the truncated notice for folders under the file cap', async () => {
       // MyData has only a handful of files; the Rust file cap is nowhere near hit.
       await navigateIntoFolder('MyData')
+
       const notice = $(sel.resultsTruncated)
+
       await expect(notice).not.toBeDisplayed()
       await navigateBack()
    })
@@ -130,7 +145,9 @@ describe('Scan flow', () => {
       // sets `truncated=true` and the UI renders the notice at the end of the list.
       await navigateIntoFolder('Projects')
       await navigateIntoFolder('Bulk')
+
       const notice = $(sel.resultsTruncated)
+
       await expect(notice).toBeDisplayed()
       await navigateBack()
       await navigateBack()
@@ -139,6 +156,7 @@ describe('Scan flow', () => {
    it('can abort scan and return to launch screen', async () => {
       // Navigate to scan launch first
       const footerScan = $(sel.footerScan)
+
       await footerScan.click()
       await browser.pause(300)
 
@@ -147,6 +165,7 @@ describe('Scan flow', () => {
       // to trigger a fresh state. Actually, let's just check if scan launch is available.
       // Since we already completed a scan, we're on results. Navigate to settings then back.
       const footerSettings = $(sel.footerSettings)
+
       await footerSettings.click()
       await browser.pause(300)
 
@@ -165,6 +184,7 @@ describe('Scan flow', () => {
       } else {
          // If we're on the launch screen, that works too
          const launch = $(sel.scanLaunch)
+
          await expect(launch).toBeDisplayed()
       }
    })

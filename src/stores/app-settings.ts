@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Simone Mastromattei
 
-import { THEME_COLORS, ROOT_THEME } from '@/lib/constants'
-import { log } from '@/lib/log'
+import type { AppSettings, ThemeColor, Language } from '@/types/settings'
+
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 import { ref, type Ref } from 'vue'
 
-import type { AppSettings, ThemeColor, Language } from '@/types/settings'
+import { log } from '@/lib/log'
+
+import { THEME_COLORS, ROOT_THEME } from '@/lib/constants'
 
 export interface AppSettingsStore {
    settings: Ref<AppSettings>
@@ -31,16 +33,20 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
 
    // Load settings from backend, falling back to default theme if invalid
    const settingsData = await invoke<AppSettings>('get_settings')
+
    if (!THEME_COLORS.includes(settingsData.themeColor)) {
       settingsData.themeColor = ROOT_THEME
    }
+
    const settings = ref<AppSettings>(settingsData)
 
    // Backend-driven resets (e.g. e2e `reset_e2e_state`) bypass the UI, so the
    // local ref would otherwise drift. The listener keeps it in sync.
    listen<AppSettings>('settings:reset', (event) => {
       const next = event.payload
+
       if (!THEME_COLORS.includes(next.themeColor)) next.themeColor = ROOT_THEME
+
       settings.value = next
       log('settings', 'Settings: reset from backend')
    })
@@ -54,6 +60,7 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
       getThemeColor: () => settings.value.themeColor,
       setLanguage: async (lang) => {
          const prev = settings.value.language
+
          settings.value = { ...settings.value, language: lang }
          log('settings', `Settings: language ${prev} → ${lang}`)
          await saveSettings()
@@ -62,6 +69,7 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
       },
       setThemeColor: async (theme) => {
          const prev = settings.value.themeColor
+
          settings.value = { ...settings.value, themeColor: theme }
          log('settings', `themeColor: ${prev} → ${theme}`)
          await saveSettings()
@@ -84,7 +92,9 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
       setAutoCheckUpdates: async (value) => {
          // Cascade: turning checking off also turns installing off (can't install without checking).
          const next = { ...settings.value, autoCheckUpdates: value }
+
          if (!value && next.autoInstallUpdates) next.autoInstallUpdates = false
+
          settings.value = next
          log('settings', `Settings: autoCheckUpdates ${!value} → ${value}`)
          await saveSettings()
@@ -92,7 +102,9 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
       setAutoInstallUpdates: async (value) => {
          // Cascade: turning installing on forces checking on (install implies check).
          const next = { ...settings.value, autoInstallUpdates: value }
+
          if (value && !next.autoCheckUpdates) next.autoCheckUpdates = true
+
          settings.value = next
          log('settings', `Settings: autoInstallUpdates ${!value} → ${value}`)
          await saveSettings()

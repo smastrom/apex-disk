@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Simone Mastromattei
 
+import type { SystemInfo } from '@/types/system-info'
+
 import { invoke } from '@tauri-apps/api/core'
 import { ref } from 'vue'
-
-import type { SystemInfo } from '@/types/system-info'
 
 /** Loads system information on mount and exposes reactive refs with formatted data. */
 export async function useSystemInfo() {

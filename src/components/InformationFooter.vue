@@ -15,8 +15,8 @@ Example:
 <script setup lang="ts">
 import { openUrl } from '@tauri-apps/plugin-opener'
 
-import { useTranslations } from '@/lib/use-translations'
 import { formatYearRange } from '@/lib/format'
+import { useTranslations } from '@/lib/use-translations'
 
 import {
    APP_CREDITS,
