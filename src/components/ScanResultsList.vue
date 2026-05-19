@@ -690,7 +690,7 @@ function onCancel() {
 }
 
 .ScanResultsList-listScroll {
-   /* Clip horizontal overflow so the list-slide transition (translateX ±10px
+   /* Clip horizontal overflow so the list-slide transition (translateX ±14px
       during folder navigation) doesn't trigger a transient horizontal
       scrollbar from our custom ::-webkit-scrollbar styling. */
    overflow-x: hidden;
@@ -708,7 +708,7 @@ function onCancel() {
 
    &:first-of-type {
       /* Greater than listWrap:before z-index, to prevent first item from partially being hidden by the gradient */
-      z-index: 2;
+      z-index: 5;
    }
 }
 

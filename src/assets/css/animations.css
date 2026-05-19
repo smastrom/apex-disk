@@ -33,8 +33,8 @@
 .list-slide-enter-active,
 .list-slide-leave-active {
    transition:
-      opacity 120ms var(--ease-apple),
-      transform 120ms var(--ease-apple);
+      opacity 120ms var(--ease-apple-out),
+      transform 120ms var(--ease-apple-out);
 
    @media (prefers-reduced-motion: reduce) {
       transition: opacity 200ms var(--ease-out);
@@ -43,7 +43,7 @@
 
 .list-slide-leave-to {
    opacity: 0;
-   transform: translateX(calc(-10px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
+   transform: translateX(calc(-14px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
 
    @media (prefers-reduced-motion: reduce) {
       transform: none;
@@ -52,7 +52,7 @@
 
 .list-slide-enter-from {
    opacity: 0;
-   transform: translateX(calc(10px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
+   transform: translateX(calc(14px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
 
    @media (prefers-reduced-motion: reduce) {
       transform: none;
@@ -72,10 +72,10 @@
 
 .App-view[data-state='leaving'] {
    opacity: 0;
-   transform: translateX(calc(-10px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
+   transform: translateX(calc(-14px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
    transition:
-      opacity 120ms var(--ease-apple),
-      transform 120ms var(--ease-apple);
+      opacity 120ms var(--ease-apple-out),
+      transform 120ms var(--ease-apple-out);
    pointer-events: none;
 
    @media (prefers-reduced-motion: reduce) {
@@ -85,7 +85,7 @@
 }
 
 .App-view[data-state='entering'] {
-   animation: app-view-enter 120ms var(--ease-apple) 120ms backwards;
+   animation: app-view-enter 120ms var(--ease-apple-out) 120ms backwards;
    pointer-events: none;
 
    @media (prefers-reduced-motion: reduce) {
@@ -96,7 +96,7 @@
 @keyframes app-view-enter {
    from {
       opacity: 0;
-      transform: translateX(calc(10px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
+      transform: translateX(calc(14px * var(--nav-direction, 1) * var(--rtl-flip, 1)));
    }
    to {
       opacity: 1;

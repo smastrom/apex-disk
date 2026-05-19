@@ -11,7 +11,7 @@ const VIEW_ORDER = ['scan', 'settings', 'information'] as const
 type View = (typeof VIEW_ORDER)[number]
 type ViewState = 'active' | 'leaving' | 'entering' | 'hidden'
 
-const TRANSITION_HALF_MS = 120
+const TRANSITION_HALF_MS = 136
 const TRANSITION_TOTAL_MS = TRANSITION_HALF_MS * 2
 
 interface UseAppViewsOptions {
@@ -36,7 +36,7 @@ function initialStates(active: View): Record<string, ViewState> {
 /**
  * Coordinates app view changes, exposes lifecycle callbacks, and drives the
  * per-view data-state machine that powers the sequenced slide animation
- * (leave → enter, total 240ms). Replaces the previous outer KeepAlive +
+ * (leave → enter, total 272ms). Replaces the previous outer KeepAlive +
  * Transition wrap, which crashed when patches landed on cached subtrees
  * mid-removal.
  */
