@@ -26,7 +26,7 @@ Use this when source changes were committed directly (not through `/sync`), so t
 5. **Commit** — if any docs changed, stage and commit them as one commit (or split if the drift covers unrelated areas). Subject in the imperative, ≤70 chars; body only when the _why_ isn't obvious; include the agent `Co-Authored-By` trailer. Never skip hooks. If no docs changed, skip this step (don't create an empty commit) but still run step 6.
 
 6. **Verify** — the whole point of `/force-sync` is to recover from commits that bypassed `/sync`'s checks, so always run the test suite on `HEAD` (even if no docs drifted — the source commits in the window may themselves be broken):
-   - Always: `pnpm headers:check` and `pnpm fmt:check`.
+   - Always: `pnpm headers:check`, `pnpm fmt:check`, and `pnpm oxlint`.
    - If any commit in the window touched TypeScript or Vue (`src/**/*.ts`, `*.vue`): `pnpm typecheck` (= `vue-tsc --noEmit`).
    - If any commit in the window touched Rust (`src-tauri/**`): `pnpm test:unit`.
    - If any commit in the window touched frontend (`src/**`), Rust (`src-tauri/**`), or e2e (`e2e/**`): `pnpm test:e2e`.

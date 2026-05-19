@@ -22,7 +22,7 @@ Create logical commits for all uncommitted work since the latest commit, then pu
 6. **Commit** — one commit per group. Follow the repo convention: imperative action-title subject line (≤70 chars), blank line, then a concise bulleted or prose body only when the _why_ isn't obvious from the subject. Include the agent `Co-Authored-By` trailer. Never skip hooks.
 
 7. **Verify** — before pushing, run the relevant test suite on `HEAD` so red code never lands on `origin`. Run only the suites that match what changed across the commits in this sync (tests of pure-docs commits would just burn time):
-   - Always: `pnpm headers:check` and `pnpm fmt:check`.
+   - Always: `pnpm headers:check`, `pnpm fmt:check`, and `pnpm oxlint`.
    - If any commit touched TypeScript or Vue (`src/**/*.ts`, `*.vue`): `pnpm typecheck` again on `HEAD` (belt-and-suspenders — catches drift introduced by hook reformatting between groups).
    - If any commit touched Rust (`src-tauri/**`): `pnpm test:unit`.
    - If any commit touched frontend (`src/**`), Rust (`src-tauri/**`), or e2e (`e2e/**`): `pnpm test:e2e`.
