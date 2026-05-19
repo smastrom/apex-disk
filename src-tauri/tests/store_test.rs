@@ -214,6 +214,61 @@ fn set_settings_rejects_non_object() {
     assert_eq!(result.unwrap_err(), "Settings must be an object");
 }
 
+/// set_settings_with_handle must drop unknown keys instead of persisting them.
+#[test]
+fn set_settings_drops_unknown_keys() {
+    let _lock = STORE_LOCK.lock().unwrap();
+    let app = create_app_with_store();
+    let handle = app.handle();
+
+    let store_handle =
+        handle.store(apex_disk_lib::SETTINGS_STORE_PATH).expect("open settings store");
+    store_handle.set("app", serde_json::json!({}));
+    store_handle.save().expect("clear store");
+    store_handle.close_resource();
+
+    store::initialize_store_with_handle(&handle).expect("initialize store");
+
+    let input = json!({
+        "language": "it",
+        "bogusField": "ignored",
+        "anotherBogus": true,
+    });
+
+    store::set_settings_with_handle(&handle, input).expect("set with unknown keys");
+
+    let settings = store::get_settings_with_handle(&handle).expect("get settings");
+    assert_eq!(settings["language"], json!("it"), "known key persisted");
+    assert!(settings.get("bogusField").is_none(), "unknown key dropped");
+    assert!(settings.get("anotherBogus").is_none(), "unknown key dropped");
+}
+
+/// set_settings_with_handle must preserve keys that aren't in the input.
+#[test]
+fn set_settings_preserves_unspecified_keys() {
+    let _lock = STORE_LOCK.lock().unwrap();
+    let app = create_app_with_store();
+    let handle = app.handle();
+
+    let store_handle =
+        handle.store(apex_disk_lib::SETTINGS_STORE_PATH).expect("open settings store");
+    store_handle.set("app", serde_json::json!({}));
+    store_handle.save().expect("clear store");
+    store_handle.close_resource();
+
+    store::initialize_store_with_handle(&handle).expect("initialize store");
+
+    // Set themeColor first so we can verify it survives a later partial set_settings.
+    store::update_setting_with_handle(&handle, "themeColor".to_string(), json!("apex-coral"))
+        .expect("update themeColor");
+
+    store::set_settings_with_handle(&handle, json!({ "language": "it" })).expect("partial set");
+
+    let settings = store::get_settings_with_handle(&handle).expect("get settings");
+    assert_eq!(settings["language"], json!("it"));
+    assert_eq!(settings["themeColor"], json!("apex-coral"), "themeColor must be preserved");
+}
+
 /// update_setting_with_handle must reject unknown keys so typos or stale
 /// frontend code can't silently write new fields into the persisted settings.
 #[test]

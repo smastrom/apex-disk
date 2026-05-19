@@ -8,7 +8,10 @@
 //! missing from a previously persisted store so newly added settings appear
 //! with their default value on first read.
 
-use std::sync::Mutex;
+use std::{
+    collections::HashSet,
+    sync::{LazyLock, Mutex},
+};
 
 use serde_json::json;
 use tauri::{AppHandle, Runtime};
@@ -120,17 +123,40 @@ pub fn get_settings(app: AppHandle) -> Result<serde_json::Value, String> {
 }
 
 /// Updates settings in the store for any runtime.
+///
+/// Tightened contract: only whitelisted keys are accepted, unknown keys are
+/// dropped, and the merge is serialized with `STORE_LOCK` so it cannot race
+/// against concurrent `update_setting_with_handle` calls. The persisted value
+/// is the current store contents (or defaults if absent) overlaid with the
+/// caller's whitelisted keys — so a partial input only changes the keys it
+/// sets, never wipes the rest.
 pub fn set_settings_with_handle<R: Runtime>(
     app: &tauri::AppHandle<R>,
     settings: serde_json::Value,
 ) -> Result<(), String> {
-    let store = app.store(crate::SETTINGS_STORE_PATH).map_err(|e| e.to_string())?;
-
     if !settings.is_object() {
         return Err("Settings must be an object".to_string());
     }
 
-    store.set("app", settings);
+    let _guard = STORE_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+
+    let store = app.store(crate::SETTINGS_STORE_PATH).map_err(|e| e.to_string())?;
+
+    let mut next = store.get("app").unwrap_or_else(get_default_settings);
+    if !next.is_object() {
+        next = get_default_settings();
+    }
+
+    let next_obj = next.as_object_mut().expect("next is an object");
+    let in_obj = settings.as_object().expect("settings checked above");
+
+    for (key, value) in in_obj {
+        if is_valid_setting_key(key) {
+            next_obj.insert(key.clone(), value.clone());
+        }
+    }
+
+    store.set("app", next);
     store.save().map_err(|e| e.to_string())?;
     store.close_resource();
 
@@ -143,9 +169,27 @@ pub fn set_settings(app: AppHandle, settings: serde_json::Value) -> Result<(), S
     set_settings_with_handle(&app, settings)
 }
 
+/// Cached set of valid setting keys, built once from the defaults.
+static VALID_SETTING_KEYS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
+    let defaults = get_default_settings();
+    defaults
+        .as_object()
+        .map(|obj| {
+            obj.keys()
+                .map(|k| {
+                    // Leak each key into 'static so the set can hold &'static str without
+                    // repeated allocations. The set is built once for the process lifetime.
+                    let leaked: &'static str = Box::leak(k.clone().into_boxed_str());
+                    leaked
+                })
+                .collect()
+        })
+        .unwrap_or_default()
+});
+
 /// Returns true if the key is a known setting field.
 fn is_valid_setting_key(key: &str) -> bool {
-    get_default_settings().as_object().map(|obj| obj.contains_key(key)).unwrap_or(false)
+    VALID_SETTING_KEYS.contains(key)
 }
 
 /// Updates a specific setting field for any runtime.
@@ -156,14 +200,9 @@ pub fn update_setting_with_handle<R: Runtime>(
     value: serde_json::Value,
 ) -> Result<(), String> {
     if !is_valid_setting_key(&key) {
-        return Err(format!(
-            "Unknown setting key: \"{}\". Valid keys: {:?}",
-            key,
-            get_default_settings()
-                .as_object()
-                .map(|obj| obj.keys().cloned().collect::<Vec<_>>())
-                .unwrap_or_default()
-        ));
+        let mut keys: Vec<&str> = VALID_SETTING_KEYS.iter().copied().collect();
+        keys.sort_unstable();
+        return Err(format!("Unknown setting key: \"{}\". Valid keys: {:?}", key, keys));
     }
 
     let _guard = STORE_LOCK.lock().unwrap_or_else(|e| e.into_inner());
