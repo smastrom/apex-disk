@@ -702,23 +702,23 @@ function onCancel() {
             }}
          </button>
       </div>
+      <Teleport to="body">
+         <div
+            ref="namePopoverRef"
+            class="Popover"
+            role="tooltip"
+            @pointerenter="popovers.onNamePopoverEnter"
+            @pointerleave="popovers.onNamePopoverLeave"
+         ></div>
+         <div
+            ref="checkboxPopoverRef"
+            class="Popover ScanResultsList-checkboxPopover"
+            role="tooltip"
+            @pointerenter="popovers.onCheckboxPopoverEnter"
+            @pointerleave="popovers.onCheckboxPopoverLeave"
+         ></div>
+      </Teleport>
    </div>
-   <Teleport to="body">
-      <div
-         ref="namePopoverRef"
-         class="Popover"
-         role="tooltip"
-         @pointerenter="popovers.onNamePopoverEnter"
-         @pointerleave="popovers.onNamePopoverLeave"
-      ></div>
-      <div
-         ref="checkboxPopoverRef"
-         class="Popover ScanResultsList-checkboxPopover"
-         role="tooltip"
-         @pointerenter="popovers.onCheckboxPopoverEnter"
-         @pointerleave="popovers.onCheckboxPopoverLeave"
-      ></div>
-   </Teleport>
 </template>
 
 <style scoped>
