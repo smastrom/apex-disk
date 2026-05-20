@@ -67,7 +67,7 @@ pnpm tauri:dev
 
 ## Saying thanks
 
-Enjoying ApexDisk? Say thanks by sponsoring the project:
+Enjoying ApexDisk? Say thanks by supporting the author:
 
 - [PayPal](https://www.paypal.com/donate/?hosted_button_id=93WKXA68W9WQJ)
 - [Buy Me a Coffee](https://buymeacoffee.com/smastrom)
