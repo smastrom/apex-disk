@@ -34,3 +34,6 @@ pnpm-debug.log*
 
 # Local scratch (reviews, drafts, notes)
 reference/temp/
+
+# Obsidian
+.obsidian/

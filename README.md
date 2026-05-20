@@ -4,8 +4,6 @@
 
 macOS tool to easily identify and get rid of big, unused files and folders in seconds.
 
-<br />
-
 ![ApexDisk Hero](./src/assets/images/apex-disk-hero.png)
 
 ## Why?
@@ -18,11 +16,9 @@ ApexDisk scans your entire user folder and presents everything as a navigable, s
 
 - **Hyper-fast scanning**: Directory scanning distributes I/O across all available CPU cores for maximum throughput
 - **Smart UX**: Easily spot waste with a size-sorted tree and last-modified dates. See exactly how much space you'll save as you select files.
-- **Safe by design**: Files are moved to the Trash, never deleted directly. Reserved system folders are protected, and sensitive directories (like .ssh or .aws) are automatically skipped on scan.
-- **Optional Full Disk Access**: Works without FDA by default with on demand permission prompts. Grant it to gain access to system protected folders or to skip repetitive macOS permission prompts.
-- **Smooth UI**: Performance-minded UI with fluid animations, a clean design, and snappy navigation
+- **Safe by design**: Files are moved to the Trash, never deleted directly. Reserved system folders are protected, and sensitive directories are automatically skipped on scan.
+- **Optional Full Disk Access**: Works without FDA by default with on demand permission prompts
 - **10 languages**: Support for English, Italian, Spanish, French, Portuguese, German, Russian, Chinese, Japanese, and Arabic (with RTL support)
-- **Themes**: Multiple color themes to choose from, with more on the way
 
 ## Installation
 
@@ -45,13 +41,13 @@ cd apex-disk
 # Install dependencies
 pnpm i
 
-# Add the universal macOS target
+# Add target architectures, use `universal-apple-darwin` for a universal binary
 rustup target add aarch64-apple-darwin x86_64-apple-darwin
 
-# Build unsigned binary (requires `xattr -cr /path/to/your/app.app` after building)
+# Build unsigned binary (requires `xattr -cr /path/to/app.app` after building)
 pnpm tauri:build:unsigned
 
-# Build signed binary (requires `APPLE_SIGNING_IDENTITY`, `APPLE_ID`, `APPLE_PASSWORD`, `APPLE_TEAM_ID` environment variables)
+# Build signed binary (requires Apple Developer ID and signing credentials)
 pnpm tauri:build
 ```
 
@@ -69,9 +65,9 @@ pnpm i
 pnpm tauri:dev
 ```
 
-## Donate
+## Saying thanks
 
-Enjoying ApexDisk? Your support helps keep the project going:
+Enjoying ApexDisk? Say thanks by sponsoring the project:
 
 - [PayPal](https://www.paypal.com/donate/?hosted_button_id=93WKXA68W9WQJ)
 - [Buy Me a Coffee](https://buymeacoffee.com/smastrom)
