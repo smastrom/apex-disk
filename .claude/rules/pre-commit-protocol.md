@@ -24,8 +24,6 @@ The sweep must analyze **every** `.md` file in the repository plus
 longer match the change. Coverage includes:
 
 - `reference/*.md`: agent-facing deep specs (how the code works)
-- `marketing/*.md`: outcome-facing content (FAQ, descriptions). Only touch
-  when user-visible outcomes change, not for internal refactors.
 - `AGENTS.md`: scope + pointers
 - `CLAUDE.md`: Claude entrypoint
 - `README.md`: user-facing surface

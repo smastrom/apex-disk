@@ -1,7 +1,7 @@
 # Voice for user-facing docs
 
-Canonical example: [`../marketing/faq.md`](../marketing/faq.md). When in doubt,
-open the FAQ and copy its cadence sentence-by-sentence.
+Canonical example: [`../README.md`](../README.md). When in doubt, open the
+README and copy its cadence sentence-by-sentence.
 
 This guide governs every user-facing surface:
 
@@ -9,7 +9,6 @@ This guide governs every user-facing surface:
 - `RELEASES.md`, `RELEASES_BETA.md` (bullet bodies; the structural headings
   follow [`releases.md`](releases.md))
 - `SECURITY.md`, `CODE_OF_CONDUCT.md`, `LICENSE.md`
-- everything under `marketing/`
 - in-app strings (translations, error copy, dialog text)
 - code comments in `.ts` / `.tsx` / `.vue` / `.rs` / `.sh` / CSS (rules 2-5
   only; rule 1 about second person does not apply, since comments address
@@ -26,7 +25,7 @@ over-application of every rule at once; keep this list tight.
 
 ### 1. Second person, direct
 
-**Applies to:** `README.md`, `marketing/`, in-app strings.
+**Applies to:** `README.md`, in-app strings.
 
 **Does not apply to:**
 
@@ -137,8 +136,8 @@ Normal and encouraged in compound modifiers: "user-facing", "open-source",
 
 ## How to apply
 
-1. Drafting a user-facing doc? Open `../marketing/faq.md` first and read two
-   or three answers to re-calibrate.
+1. Drafting a user-facing doc? Open [`../README.md`](../README.md) first and
+   read a couple of sections to re-calibrate.
 2. Before saving, scan for: banned words (rule 2), em dashes that aren't
    list separators, third-person "the user" (in surfaces where rule 1
    applies), paragraphs longer than three sentences.

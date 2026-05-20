@@ -58,19 +58,11 @@ commit.
 | `reference/logging.md`        | `[apex:…]` diagnostic scheme, Vue categories, Rust trace channels, `APEX_DISK_DEBUG`.       |
 | `reference/releases.md`       | How to cut stable and Beta builds, version fields, changelog conventions, workflows.        |
 | `reference/updates.md`        | In-app updater (auto/manual), endpoint, signing, dialogs.                                   |
-| `reference/voice.md`          | Tone and prose rules for user-facing docs (README, RELEASES, marketing, comments, copy).    |
+| `reference/voice.md`          | Tone and prose rules for user-facing docs (README, RELEASES, comments, copy).               |
 
 Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`,
 `CODE_OF_CONDUCT.md`, `SECURITY.md`, `README.md` stay at the repo root —
 they are user-/CI-facing, not agent instructions.
-
-## Outcome-facing content (`marketing/`)
-
-`marketing/` holds content describing the product to users — FAQs, feature
-descriptions, marketing copy. Unlike `reference/` (how the code works), this
-is about what the user gets. Agents update it only when outcomes change
-(new feature shipped, behavior reframed, FAQ becomes stale); they do not
-edit it for implementation reasons. The `/sync` sweep still covers it.
 
 ## Slash commands (`.claude/commands/`)
 
@@ -144,17 +136,16 @@ reference/           # Agent-facing reference (see table above)
 
 ## Voice for user-facing docs
 
-Canonical example: `[marketing/faq.md](marketing/faq.md)`. Every user-facing
-surface (`README.md`, `RELEASES.md`, `RELEASES_BETA.md`, anything under
-`marketing/`, in-app strings, release-note bullets, error copy) should sound
-like that file. Full guide and worked examples in
-`[reference/voice.md](reference/voice.md)`.
+Canonical example: [`README.md`](README.md). Every user-facing surface
+(`README.md`, `RELEASES.md`, `RELEASES_BETA.md`, in-app strings,
+release-note bullets, error copy) should sound like that file. Full guide
+and worked examples in [`reference/voice.md`](reference/voice.md).
 
 Quick rules:
 
 1. **Second person** ("you", "your Mac"), never "the user". Applies to
-   `README.md`, `marketing/`, and in-app strings. Does **not** apply to code
-   comments (they address the next maintainer) or `RELEASES*.md` (technical
+   `README.md` and in-app strings. Does **not** apply to code comments
+   (they address the next maintainer) or `RELEASES*.md` (technical
    changelogs use past-tense action verbs: "Fixed…", "Added…", "Improved…").
 2. **Plain English, no marketing jargon.** Avoid "leverage", "unleash",
    "powerful", "seamless", "blazing-fast", "simply", "just".
@@ -202,10 +193,10 @@ the label-separator rule allows it) or a hyphen.
 
 **Scope:** the prose rules apply to every file outside `.claude/` and
 `reference/`: `README.md`, `RELEASES.md`, `RELEASES_BETA.md`, `SECURITY.md`,
-`CODE_OF_CONDUCT.md`, `LICENSE.md`, `marketing/*.md`, code comments (`.ts`,
-`.tsx`, `.vue`, `.rs`, `.sh`, CSS), commit messages, PR descriptions, and any
-user-visible string. Files under `.claude/` and `reference/` are
-agent-facing and exempt.
+`CODE_OF_CONDUCT.md`, `LICENSE.md`, code comments (`.ts`, `.tsx`, `.vue`,
+`.rs`, `.sh`, CSS), commit messages, PR descriptions, and any user-visible
+string. Files under `.claude/` and `reference/` are agent-facing and
+exempt.
 
 ## What not to do
 

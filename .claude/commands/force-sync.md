@@ -7,7 +7,7 @@ Use this when source changes were committed directly (not through `/sync`), so t
 1. **License headers** — run `pnpm headers` first. It adds the SPDX + copyright header to any new source file (`.ts`, `.tsx`, `.vue`, `.rs`, `.sh` under `src/`, `src-tauri/src/`, `e2e/`, `tests/`, `scripts/`) and is idempotent on files that already have one. If it modified anything, stage those changes into the docs-drift commit (or a separate commit if the touched files are unrelated to the docs work).
 
 2. **Find the window to re-check** — determine the range of commits that need re-verifying:
-   - `git log -1 --format=%H -- reference/ marketing/ AGENTS.md CLAUDE.md README.md .claude/rules/ .claude/commands/ .coderabbit.yaml` gives the last commit that touched any tracked doc. Use `<that-sha>..HEAD` as the default window.
+   - `git log -1 --format=%H -- reference/ AGENTS.md CLAUDE.md README.md .claude/rules/ .claude/commands/ .coderabbit.yaml` gives the last commit that touched any tracked doc. Use `<that-sha>..HEAD` as the default window.
    - If that produces nothing (or the range is empty), fall back to the last 10 commits: `HEAD~10..HEAD`.
    - If `$ARGUMENTS` is provided, use it as the range or ref (e.g. `HEAD~5..HEAD`, a SHA, or a count).
    - Print the chosen range and list its commits with `git log --oneline <range>` so it's clear what's being reconciled.
@@ -17,7 +17,7 @@ Use this when source changes were committed directly (not through `/sync`), so t
 4. **Docs + tests + file-top comment sweep** — apply the same sweep as `/sync` step 4 (repo-wide `.md`, `.coderabbit.yaml`, test files, file-top comments). The full checklist of what to open and what to verify lives there — read it as the source of truth so the two commands stay in sync. The only difference is the input:
    - `/sync` iterates per uncommitted **group**; `/force-sync` evaluates the entire commit **window** (`<range>`) as one unit.
    - The file lists are identical: every `.md` in the repo, `.coderabbit.yaml`, e2e specs / helpers / fixtures, Rust integration tests, and the leading comment block of every `.vue` / `.rs` / commented `.ts` touched in the window.
-   - `marketing/` only when user-visible outcomes changed in the window, not internal refactors. `RELEASES.md` / `RELEASES_BETA.md` / `LICENSE.md` / `CODE_OF_CONDUCT.md` / `SECURITY.md` stay untouched unless the window directly affects them.
+   - `RELEASES.md` / `RELEASES_BETA.md` / `LICENSE.md` / `CODE_OF_CONDUCT.md` / `SECURITY.md` stay untouched unless the window directly affects them.
 
    Stage everything that drifted into the same recovery commit (or split if the drift covers unrelated areas).
 
