@@ -26,7 +26,9 @@ Three test layers plus static checks. The frontend has **no unit tests** and **n
 
 **Enforced from the repo.** A `PreToolUse` hook (`.claude/hooks/pre-commit-gate.sh`, wired in `.claude/settings.json`) blocks agent-initiated `git commit` and `git push` unless `.claude/.sync-active` is present. `/sync` and `/force-sync` create that marker at start and remove it at end, so they flow through; any other route to commit/push from an agent is refused. Your own commits from a terminal are unaffected. See `.claude/rules/pre-commit-protocol.md` for the rule and bypass instructions.
 
-**`pnpm test:e2e` is slow** — it rebuilds the debug Tauri binary on first run; subsequent runs are faster but still measured in minutes. Don't skip it on the assumption that "frontend-only" changes can't break e2e — they routinely do (selectors, transitions, focus handling, scroll behavior).
+**`pnpm test:e2e` is slow** — it rebuilds the debug Tauri binary on first run; subsequent runs are faster but still measured in minutes. Frontend-only changes routinely break e2e (selectors, transitions, focus handling, scroll behavior), so the suite stays in the matrix and CI runs it on every push.
+
+**`/sync` intentionally skips `pnpm test:e2e`** to keep the local loop fast. Instead, step 4 of `/sync` includes a **test sweep** that opens `e2e/specs/`, `e2e/helpers/`, `e2e/fixtures/`, and `src-tauri/tests/` and verifies they still describe the new behavior. Stale expectations get caught at sync time; live e2e regressions get caught in CI. If you want extra confidence locally (before a release, after a flaky-looking change), run `pnpm test:e2e` manually outside `/sync` — `/force-sync` still runs it for the same reason.
 
 ## Rust integration tests
 
