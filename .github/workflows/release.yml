@@ -4,7 +4,7 @@ on:
    workflow_dispatch:
       inputs:
          prerelease:
-            description: 'Mark as pre-release (e.g. semver -beta.1 / -rc.1)'
+            description: 'Tag GitHub Release as pre-release (RC). Requires -rc.N or -beta.N suffix in version files. For the Beta channel app, run the Beta workflow instead.'
             type: boolean
             default: false
 
