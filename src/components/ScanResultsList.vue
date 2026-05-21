@@ -28,6 +28,8 @@ import {
    useTemplateRef,
    nextTick,
    onMounted,
+   onActivated,
+   onDeactivated,
    onUnmounted,
 } from 'vue'
 
@@ -50,63 +52,62 @@ const emit = defineEmits<{
 
 const { t } = useTranslations()
 
-/** Max rows rendered per view. Matches Rust's `scan::MAX_FILES_PER_DIR` so the
- * frontend bound on DOM size and Rust's bound on file payload stay in sync.
- * The Rust cap drops only files; this cap drops the smallest entries of any
- * type. See reference/scanning.md. */
+/***************************************************************
+ * Constants and types
+ ***************************************************************/
+
+/** Matches Rust `scan::MAX_FILES_PER_DIR`; see reference/scanning.md. */
 const MAX_DISPLAYED_ITEMS = 300
 
-/** First-pass row count on navigation. The remainder (up to MAX_DISPLAYED_ITEMS)
- * is mounted after the enter transition so the slide stays smooth on big lists. */
+/** First pass on navigation; the rest mounts after enter so slides stay smooth. */
 const INITIAL_RENDER_COUNT = 50
 
-/** Window size is fixed, so > 6 rows always overflows and the overlay
- * scrollbar paints the right gutter; at or below we reserve it manually. */
+/** Fixed window: above 6 rows the overlay scrollbar owns the gutter; at or below we reserve it. */
 const SCROLLBAR_VISIBLE_THRESHOLD = 6
 
 interface NavEntry {
    items: FolderInfo[]
    label: string
    path: string
-   /** True when this view's underlying folder had files dropped by the Rust cap. */
    truncated: boolean
 }
 
-/**
- * Browser-style navigation stacks. shallowRef avoids deep reactivity on the
- * NavEntry arrays; we only ever replace the whole array, never mutate in place.
- */
+/***************************************************************
+ * Navigation state
+ ***************************************************************/
+
 const backStack = shallowRef<NavEntry[]>([])
 const forwardStack = shallowRef<NavEntry[]>([])
 const current = shallowRef<NavEntry>({ items: [], label: '', path: '', truncated: false })
 const homePath = ref('')
 const isListSlideEnabled = ref(false)
 
+/** Manual folder nav only uses `out-in`; programmatic/KeepAlive swaps must not leave the scroll container empty. */
+const isListSlideActive = computed(() => isListSlideEnabled.value && !isWebDriverSession)
+const listTransitionMode = computed<'out-in' | undefined>(() =>
+   isListSlideActive.value ? 'out-in' : undefined
+)
+
+/***************************************************************
+ * Selection state
+ ***************************************************************/
+
 /**
- * Selection state: Map<path, FolderInfo>.
- *
- * Performance design choices:
- * - reactive(Map) instead of reactive(Set): Vue tracks Map.get(key) per-key
- *   (not ITERATE_KEY), so toggling one item only re-renders that row, not the
- *   entire list.
- * - Stores FolderInfo references directly: gives O(1) access to item size/name
- *   without needing a separate lookup index. Items are captured at toggle time,
- *   avoiding any upfront tree walk (the folder tree can have 1.5M+ nodes).
+ * Map<path, FolderInfo>. reactive(Map) tracks per-key reads so one toggle re-renders one row.
+ * FolderInfo refs are stored at toggle time to avoid tree walks on a 1.5M+ node scan tree.
  */
 const selectedMap = reactive(new Map<string, FolderInfo>())
 
-/** Extracts the parent directory from a path string. */
+/***************************************************************
+ * Result initialization
+ ***************************************************************/
+
 function parentDir(path: string): string {
    const i = path.lastIndexOf('/')
 
    return i <= 0 ? '' : path.slice(0, i)
 }
 
-/**
- * Resets navigation and sets the root view when scan results arrive.
- * `{ immediate: true }` so the initial prop value is handled synchronously
- * during setup, with no extra render cycle needed.
- */
 watch(
    () => props.folders,
    (folders) => {
@@ -134,7 +135,6 @@ watch(
    { immediate: true }
 )
 
-/** Path for display: replaces the home directory prefix with ~ for brevity, or shows /${username} on first screen. */
 const displayPath = computed(() => {
    const path = current.value.path
    const home = homePath.value
@@ -142,9 +142,7 @@ const displayPath = computed(() => {
 
    if (!path) return '/'
    if (path === home) {
-      // First screen: show /${username} instead of ~
       if (isAtRoot && home) {
-         // Extract username from home path (e.g. "/Users/username" -> "username")
          const username = home.split('/').pop()
 
          if (username) return `/${username}`
@@ -157,11 +155,15 @@ const displayPath = computed(() => {
    return path
 })
 
-/** Two-phase render: starts at INITIAL_RENDER_COUNT on each navigation, then
- * expands to MAX_DISPLAYED_ITEMS after the enter transition completes. */
+/***************************************************************
+ * List rendering and transitions
+ ***************************************************************/
+
+/** Two-phase render: INITIAL_RENDER_COUNT first, MAX_DISPLAYED_ITEMS after enter. */
 const renderedCount = ref(MAX_DISPLAYED_ITEMS)
 
 let expandTimer: ReturnType<typeof setTimeout> | null = null
+let isComponentActive = false
 
 function cancelExpand() {
    if (expandTimer !== null) {
@@ -174,6 +176,10 @@ function cancelExpand() {
 function scheduleExpand() {
    cancelExpand()
 
+   if (!isComponentActive) {
+      return
+   }
+
    expandTimer = setTimeout(() => {
       renderedCount.value = MAX_DISPLAYED_ITEMS
 
@@ -181,14 +187,12 @@ function scheduleExpand() {
    }, 0)
 }
 
-/** Rows actually rendered. Capped at MAX_DISPLAYED_ITEMS (DOM bound; entries
- * arrive sorted by size desc in Rust, so the dropped tail is the smallest). */
+/** Frontend slice; dropped tail is smallest because Rust sorts by size desc. */
 const displayedItems = computed(() =>
    current.value.items.slice(0, Math.min(renderedCount.value, MAX_DISPLAYED_ITEMS))
 )
 
-/** True when either Rust dropped files (truncated flag) or the frontend slice
- * hid additional entries. Either way the notice shown is the same. */
+/** Rust cap or frontend slice; same notice either way. */
 const isListTruncated = computed(
    () => current.value.truncated || current.value.items.length > MAX_DISPLAYED_ITEMS
 )
@@ -207,10 +211,7 @@ const popovers = useListRowPopovers(parentRef, namePopoverRef, checkboxPopoverRe
          : t('ScanResultsListItem', 'protectedTooltip'),
 })
 
-/**
- * Shows the top overlay only when the list has genuinely scrolled away from
- * the top; this prevents transition-time flicker when switching list views.
- */
+/** Avoid top-shadow flicker during list transitions. */
 function updateTopShadowVisibility() {
    const listEl = parentRef.value
 
@@ -225,29 +226,16 @@ function updateTopShadowVisibility() {
    isTopShadowShown.value = isScrollable && listEl.scrollTop > 10
 }
 
-function onListScroll() {
-   updateTopShadowVisibility()
-}
-
-/**
- * Resets scroll to top after the leaving list has finished its transition.
- * Wired to the `<Transition>` `@after-leave` hook below. Running it on
- * `current.path` change directly would scroll the leaving element while it's
- * still mid-slide (visible jump), since `mode="out-in"` keeps it in the DOM
- * for the duration of the leave.
- */
+/** Scroll reset runs on after-leave, not on path change, to avoid mid-slide jumps. */
 function onAfterListLeave() {
    parentRef.value?.scrollTo(0, 0)
    updateTopShadowVisibility()
-
-   isListSlideEnabled.value = false
 }
 
-/** Phase 2 of the two-phase render: fires after the new list has finished
- * entering, so the initial 50 rows have already been mounted + animated.
- * Also fires for non-animated cases (webdriver, isListSlideEnabled=false). */
 function onAfterListEnter() {
    scheduleExpand()
+
+   isListSlideEnabled.value = false
 }
 
 watch(
@@ -264,21 +252,40 @@ watch(
 )
 
 onMounted(() => {
+   isComponentActive = true
+
    updateTopShadowVisibility()
-   // Vue's <Transition> defaults to appear=false, so the very first mount of
-   // the inner list does not fire after-enter; expand manually here instead.
+   // appear=false: first inner list mount does not fire after-enter.
    scheduleExpand()
 })
 
+onActivated(() => {
+   isComponentActive = true
+
+   updateTopShadowVisibility()
+   scheduleExpand()
+})
+
+onDeactivated(() => {
+   isComponentActive = false
+
+   cancelExpand()
+   popovers.dismissAll()
+
+   isListSlideEnabled.value = false
+})
+
 onUnmounted(() => {
+   isComponentActive = false
+
    cancelExpand()
 })
 
-/**
- * Walks up the directory hierarchy via string slicing to check if any
- * ancestor of `path` is already selected. O(depth) — typically 3-6 levels.
- * Used to avoid double-counting nested selections in size totals and trash lists.
- */
+/***************************************************************
+ * Selection
+ ***************************************************************/
+
+/** True when a selected ancestor would double-count this path in totals/trash. */
 function hasSelectedAncestor(path: string): boolean {
    let dir = path
 
@@ -293,11 +300,7 @@ function hasSelectedAncestor(path: string): boolean {
    }
 }
 
-/**
- * Builds a flat list of selected items for the trash review screen.
- * Filters out items whose ancestor folder is already selected (to avoid
- * double-counting), then sorts largest first for user visibility.
- */
+/** Flat selected list for trash review; ancestor-covered paths excluded, largest first. */
 function buildSelectedItemsForTrash(): TrashListItem[] {
    const out: TrashListItem[] = []
 
@@ -310,19 +313,11 @@ function buildSelectedItemsForTrash(): TrashListItem[] {
    return out.slice().sort((a, b) => b.size - a.size)
 }
 
-/** True if item should appear selected: explicitly in map or inside a selected folder. */
 function isSelectedForUI(path: string): boolean {
    return selectedMap.has(path) || hasSelectedAncestor(path)
 }
 
-/**
- * Pre-computed set of folder paths that have at least one selected descendant
- * but are not themselves selected (folders in "indeterminate" state).
- *
- * Rebuilt automatically on every selectedMap mutation via watchEffect.
- * Cost: O(entries × depth) per mutation. The template then does O(1) Set.has()
- * per row instead of a per-row tree traversal.
- */
+/** Indeterminate folder paths; O(entries x depth) on mutation, O(1) per row in template. */
 const someSelectedPaths = shallowRef(new Set<string>())
 
 watchEffect(() => {
@@ -347,10 +342,6 @@ watchEffect(() => {
    someSelectedPaths.value = set
 })
 
-/**
- * Total size of selected items, excluding items already covered by a selected
- * ancestor. Reads item.size directly from the stored FolderInfo — O(entries × depth).
- */
 const selectedSize = computed(() => {
    let total = 0
 
@@ -363,15 +354,12 @@ const selectedSize = computed(() => {
    return total
 })
 
-/** Emits size changes to parent so the disk usage bar stays in sync. */
 watch(selectedSize, (size) => emit('update:selectedSize', size), { immediate: true })
 
-/** Selection count and total size (after ancestor de-dupe) for log lines. */
 function selectionTotalsLabel(): string {
    return `${selectedMap.size} selected, ${formatBytes(selectedSize.value)}`
 }
 
-/** Removes all selectedMap entries whose path is inside `folderPath`. */
 function deselectDescendants(folderPath: string) {
    const prefix = folderPath + '/'
 
@@ -382,9 +370,6 @@ function deselectDescendants(folderPath: string) {
    }
 }
 
-/**
- * Finds the nearest selected ancestor path, or null if none.
- */
 function findSelectedAncestor(path: string): string | null {
    let dir = path
 
@@ -399,12 +384,7 @@ function findSelectedAncestor(path: string): string | null {
    }
 }
 
-/**
- * "Explodes" an ancestor selection to exclude a specific descendant.
- * Walks from the ancestor down to the target's parent, at each level
- * selecting all siblings except the one on the path to the target.
- * O(depth × siblings) — typically 3-6 levels with <100 siblings each.
- */
+/** Replace one ancestor selection with all siblings on the path to excludePath. */
 function explodeAncestorExcluding(ancestorPath: string, excludePath: string) {
    const ancestor = selectedMap.get(ancestorPath)
 
@@ -412,7 +392,6 @@ function explodeAncestorExcluding(ancestorPath: string, excludePath: string) {
 
    selectedMap.delete(ancestorPath)
 
-   // Walk down from ancestor to the exclude target's parent
    let currentFolder = ancestor
    let remainingPath = excludePath.slice(ancestorPath.length + 1) // e.g. "sub/deep/file"
 
@@ -421,16 +400,14 @@ function explodeAncestorExcluding(ancestorPath: string, excludePath: string) {
       const segment = slashIdx === -1 ? remainingPath : remainingPath.slice(0, slashIdx)
       const targetChildPath = currentFolder.path + '/' + segment
 
-      // Select all siblings at this level except the one on the path to exclude
       for (const child of currentFolder.children) {
          if (child.path !== targetChildPath) {
             selectedMap.set(child.path, child)
          }
       }
 
-      if (slashIdx === -1) break // reached the target level
+      if (slashIdx === -1) break
 
-      // Descend into the next level
       const nextFolder = currentFolder.children.find((c) => c.path === targetChildPath)
 
       if (!nextFolder || nextFolder.is_file) break
@@ -442,10 +419,10 @@ function explodeAncestorExcluding(ancestorPath: string, excludePath: string) {
 
 /**
  * Four-state toggle for item selection:
- * 1. Explicitly selected → deselect (remove from map).
- * 2. Inherited selected (ancestor is selected) → explode ancestor, excluding this item.
- * 3. Indeterminate (has selected descendants) → deselect all descendants.
- * 4. Unselected → select (store FolderInfo reference in map).
+ * 1. Explicitly selected: deselect.
+ * 2. Inherited selection: explode the selected ancestor, excluding this item.
+ * 3. Indeterminate: deselect all descendants.
+ * 4. Unselected: store the FolderInfo reference in selectedMap.
  */
 function toggleSelect(item: FolderInfo) {
    const kind = item.is_file ? 'file' : 'folder'
@@ -487,29 +464,59 @@ function toggleSelect(item: FolderInfo) {
    }
 }
 
-/**
- * Restores selection from TrashListItem[] (e.g. after returning from the trash
- * review screen). Converts each item to a FolderInfo stub so selectedMap stays
- * consistent. O(items) — no tree walk needed.
- */
-function setSelectedItems(items: TrashListItem[]) {
-   selectedMap.clear()
+function collectFolderInfosByPath(paths: Set<string>): Map<string, FolderInfo> {
+   const found = new Map<string, FolderInfo>()
+   const stack = [...props.folders]
 
-   for (const item of items) {
-      selectedMap.set(item.path, {
-         name: item.name,
-         path: item.path,
-         size: item.size,
-         is_file: item.is_file,
-         is_protected: false,
-         is_fda_required: false,
-         children: [],
-         truncated: false,
-      })
+   while (stack.length > 0 && found.size < paths.size) {
+      const item = stack.pop()!
+
+      if (paths.has(item.path)) {
+         found.set(item.path, item)
+      }
+
+      if (!item.is_file) {
+         for (const child of item.children) {
+            stack.push(child)
+         }
+      }
+   }
+
+   return found
+}
+
+function fallbackSelectionItem(item: TrashListItem): FolderInfo {
+   return {
+      name: item.name,
+      path: item.path,
+      size: item.size,
+      is_file: item.is_file,
+      is_protected: false,
+      is_fda_required: false,
+      children: [],
+      truncated: false,
    }
 }
 
-/** Clears selection from the nav reset control (selection only; no navigation). */
+function selectionItemFromTrashItem(
+   item: TrashListItem,
+   folderInfoByPath: Map<string, FolderInfo>
+): FolderInfo {
+   return folderInfoByPath.get(item.path) ?? fallbackSelectionItem(item)
+}
+
+/** Restore trash-review selection; keep real FolderInfo nodes when the scan tree still has them. */
+function setSelectedItems(items: TrashListItem[]) {
+   selectedMap.clear()
+
+   const restoredPaths = new Set(items.map((item) => item.path))
+   const folderInfoByPath = collectFolderInfosByPath(restoredPaths)
+
+   for (const item of items) {
+      selectedMap.set(item.path, selectionItemFromTrashItem(item, folderInfoByPath))
+   }
+}
+
 function clearSelectionFromNav() {
    if (selectedMap.size > 0) {
       log('file', `Results: reset selection, was ${selectionTotalsLabel()}`)
@@ -518,7 +525,6 @@ function clearSelectionFromNav() {
    selectedMap.clear()
 }
 
-/** Clears all selections and navigates back to root. */
 function resetAll() {
    if (selectedMap.size > 0) {
       log('file', `Results: reset all, was ${selectionTotalsLabel()}`)
@@ -542,7 +548,10 @@ function resetAll() {
 
 defineExpose({ setSelectedItems, resetAll })
 
-/** Navigates into a folder's children with a forward slide. */
+/***************************************************************
+ * Folder navigation actions
+ ***************************************************************/
+
 function goInto(item: FolderInfo) {
    if (item.is_file) return
 
@@ -562,35 +571,40 @@ function goInto(item: FolderInfo) {
    }
 }
 
-/** Navigates to the previous directory with a backward slide. */
 function goBack() {
    if (backStack.value.length === 0) return
 
-   log('nav', `Results: back to "${backStack.value[backStack.value.length - 1].label || '~'}"`)
+   const previous = backStack.value[backStack.value.length - 1]
+
+   if (!previous) return
+
+   log('nav', `Results: back to "${previous.label || '~'}"`)
 
    isListSlideEnabled.value = true
 
    document.documentElement.style.setProperty('--nav-direction', '-1')
 
    forwardStack.value = [...forwardStack.value, { ...current.value }]
-   current.value = backStack.value.pop()!
+   backStack.value = backStack.value.slice(0, -1)
+   current.value = previous
 }
 
-/** Re-enters a previously visited directory with a forward slide. */
 function goForward() {
    if (forwardStack.value.length === 0) return
 
-   log(
-      'nav',
-      `Results: forward to "${forwardStack.value[forwardStack.value.length - 1].label || '~'}"`
-   )
+   const next = forwardStack.value[forwardStack.value.length - 1]
+
+   if (!next) return
+
+   log('nav', `Results: forward to "${next.label || '~'}"`)
 
    isListSlideEnabled.value = true
 
    document.documentElement.style.setProperty('--nav-direction', '1')
 
    backStack.value = [...backStack.value, { ...current.value }]
-   current.value = forwardStack.value.pop()!
+   forwardStack.value = forwardStack.value.slice(0, -1)
+   current.value = next
 }
 
 function onReviewClick() {
@@ -624,12 +638,12 @@ function onCancel() {
          <div
             ref="parentRef"
             class="ScanResultsList-list ScanResultsList-listScroll"
-            @scroll.passive="onListScroll"
+            @scroll.passive="updateTopShadowVisibility"
          >
             <Transition
                name="list-slide"
-               mode="out-in"
-               :css="isListSlideEnabled && !isWebDriverSession"
+               :mode="listTransitionMode"
+               :css="isListSlideActive"
                @after-leave="onAfterListLeave"
                @after-enter="onAfterListEnter"
             >
@@ -766,9 +780,8 @@ function onCancel() {
 }
 
 .ScanResultsList-listScroll {
-   /* Clip horizontal overflow so the list-slide transition (translateX ±14px
-      during folder navigation) doesn't trigger a transient horizontal
-      scrollbar from our custom ::-webkit-scrollbar styling. */
+   /* Clip horizontal overflow so list-slide translateX does not create a
+      scrollbar from custom ::-webkit-scrollbar styling. */
    overflow-x: hidden;
    overflow-y: auto;
    overflow-y: overlay;
@@ -783,7 +796,7 @@ function onCancel() {
    position: relative;
 
    &:first-of-type {
-      /* Greater than listWrap:before z-index, to prevent first item from partially being hidden by the gradient */
+      /* Keep the first row above the top-shadow gradient. */
       z-index: 5;
    }
 }
