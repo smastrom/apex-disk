@@ -54,18 +54,30 @@ impl Default for ScanOptions {
 #[derive(serde::Serialize, serde::Deserialize, Clone)]
 pub struct FolderInfo {
     pub name: String,
+    /// Absolute path. Used internally by the scanner (safe-folders, xattr) and
+    /// by tests, but excluded from the IPC payload via `#[serde(skip)]`. The
+    /// frontend reconstructs each node's path from `ScanResult.root` plus the
+    /// chain of `name` values, halving the wire size of the tree.
+    #[serde(skip)]
     pub path: String,
     pub size: u64,
-    pub icon: Option<String>,
     pub children: Vec<FolderInfo>,
     pub is_file: bool,
     pub is_protected: bool,
     pub is_fda_required: bool,
     pub last_modified: Option<i64>,
-    /// True when the directory had more files than `scan::MAX_FILES_PER_DIR`
-    /// and at least one was dropped from `children`. Folders are never dropped,
-    /// so this only ever reflects the file cap. Always false for files.
+    /// True when the directory had more entries than the per-folder cap and at
+    /// least one was dropped from `children`: files past `scan::MAX_FILES_PER_DIR`
+    /// or subfolders past `scan::MAX_FOLDERS_PER_DIR`. Always false for files.
     pub truncated: bool,
+}
+
+/// Wire shape of `get_user_folders`. `root` is the home dir; the frontend uses
+/// it to reconstruct each node's `path` (which is skipped on the wire).
+#[derive(serde::Serialize)]
+pub struct ScanResult {
+    pub root: String,
+    pub folders: Vec<FolderInfo>,
 }
 
 pub fn run() {

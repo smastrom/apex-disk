@@ -29,7 +29,7 @@ For the higher-level "what each side owns" picture, see [`architecture.md`](arch
                                   invoke('…') · listen('…')
 ```
 
-The `FolderInfo` tree is the single largest payload that crosses this boundary. Rust builds it under the per-directory file cap (`MAX_FILES_PER_DIR = 300`), serializes it to the webview as the resolved value of `invoke('get_user_folders')`, and **does not retain a copy**. Vue assigns the result into `folders` (`shallowRef`); the previous tree becomes garbage as soon as no nav stack still points at it.
+The `FolderInfo` tree is the single largest payload that crosses this boundary. Rust builds it under per-directory caps (`MAX_FILES_PER_DIR = 100`, `MAX_FOLDERS_PER_DIR = 500`), then wraps it in a `ScanResult { root, folders }` envelope so the home root can be sent once and each node's `path` skipped on the wire. `useScanner.hydrateTree` rebuilds `node.path` on receipt from `root + chain of name`, then `markRaw`s and `Object.freeze`s every node so the tree is immutable and Vue never proxies it. Rust **does not retain a copy** of the tree; Vue assigns it into `folders` (`shallowRef`), and the previous tree becomes garbage as soon as no nav stack still points at it.
 
 ## Scan lifecycle
 
@@ -164,7 +164,7 @@ The selection map is the exception: `reactive(new Map(...))` in [ScanResultsList
 
 ## Cross-cutting contracts
 
-- **Truncation cap is shared.** `scan::MAX_FILES_PER_DIR` ([scan.rs:38](../src-tauri/src/scan.rs#L38)) and `MAX_DISPLAYED_ITEMS` ([ScanResultsList.vue:60](../src/components/ScanResultsList.vue#L60)) must stay in lockstep. The same `truncated` notice fires from either trigger, so they need to match or the copy lies. The cap applies to **files only**; subfolders are always retained.
+- **Two scanner caps + one display cap.** `scan::MAX_FILES_PER_DIR = 100` and `scan::MAX_FOLDERS_PER_DIR = 500` ([scan.rs](../src-tauri/src/scan.rs)) bound the tree on the Rust side; `MAX_DISPLAYED_ITEMS = 300` ([ScanResultsList.vue:60](../src/components/ScanResultsList.vue#L60)) bounds the DOM. The scanner caps cover files + subfolders separately; both flip the same `truncated` flag, which fires one shared "list truncated" notice in the UI. The DOM cap is independent and applies to files + folders combined per view. Folder cap is applied *after* recursion so dropped subfolders' sizes still aggregate into the parent total.
 - **Cancel needs both halves.** Rust's `AtomicBool` token stops the walker; Vue's `scanGeneration` drops late events. Adding a third async surface (e.g. a new IPC event) means routing it through the same generation check.
 - **Boundary objects are `snake_case`.** `FolderInfo`, `ScanProgress`, `TrashListItem` carry Rust field names across the wire unchanged. Frontend-only objects use `camelCase`. See [`architecture.md`](architecture.md).
 - **Rust never keeps the scan tree.** `get_user_folders` returns it across IPC and drops its owning value. Anything that needs the tree later must hold it in Vue.

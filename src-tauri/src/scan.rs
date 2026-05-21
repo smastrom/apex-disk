@@ -7,8 +7,11 @@
 //! logs the directory path being accumulated (throttled) and each completed top-level folder size.
 //! See **`reference/logging.md`**.
 //!
-//! Builds a FolderInfo tree for the user's home top-level directories,
-//! limiting retained file entries per directory to keep memory and IPC bounded.
+//! Builds a `FolderInfo` tree for the user's home top-level directories under two
+//! per-directory caps (`MAX_FILES_PER_DIR`, `MAX_FOLDERS_PER_DIR`) to keep the IPC
+//! payload bounded. The Tauri command `get_user_folders` wraps the result in a
+//! `ScanResult { root, folders }` envelope — `path` is skipped on the wire and
+//! rebuilt on the JS side from `root` plus the chain of `name`.
 //!
 //! On macOS, when the app has Full Disk Access (FDA), all `read_dir` / file
 //! access here succeed for Desktop, Documents, Music, Library, etc. without
@@ -33,9 +36,18 @@ use crate::{log, safe_folders, xattr, FolderInfo, ScanOptions};
 
 /// Max file entries kept per directory. We still count ALL file sizes for
 /// accuracy, but only retain the N largest as tree entries to avoid millions
-/// of allocations and a massive IPC payload. The frontend caps rendered rows
-/// at the same number per view; see [`reference/state-lifecycle.md`].
-pub const MAX_FILES_PER_DIR: usize = 300;
+/// of allocations and a massive IPC payload. Sized for the "spot big files"
+/// use case: 100 is plenty more than any realistic drill-down depth, and the
+/// frontend's DOM cap of 300 covers files + folders combined per view.
+/// See [`reference/state-lifecycle.md`].
+pub const MAX_FILES_PER_DIR: usize = 100;
+
+/// Max subfolder entries kept per directory. Mirrors the file cap so a single
+/// pathological directory (for example `node_modules` with thousands of nested
+/// packages) cannot blow up the JS payload. Folders smaller than the top
+/// `MAX_FOLDERS_PER_DIR` by size are dropped after recursion; their size is
+/// still aggregated into the parent total so the headline number stays exact.
+pub const MAX_FOLDERS_PER_DIR: usize = 500;
 
 /// Minimum interval between progress events emitted during recursive scanning.
 const PROGRESS_THROTTLE_MS: u64 = 150;
@@ -255,7 +267,6 @@ fn build_folder_tree(
             name: "Cancelled".to_string(),
             path: root.to_string_lossy().into_owned(),
             size: 0,
-            icon: None,
             children: Vec::new(),
             is_file: false,
             is_protected: false,
@@ -287,7 +298,6 @@ fn build_folder_tree(
                 name,
                 path,
                 size: 0,
-                icon: None,
                 children: Vec::new(),
                 is_file: false,
                 is_protected,
@@ -316,7 +326,6 @@ fn build_folder_tree(
                 name,
                 path: root.to_string_lossy().into_owned(),
                 size: 0,
-                icon: None,
                 children: Vec::new(),
                 is_file: false,
                 is_protected: false,
@@ -432,7 +441,6 @@ fn build_folder_tree(
                 path,
                 name: fname,
                 size,
-                icon: None,
                 children: Vec::new(),
                 is_file: true,
                 is_protected,
@@ -444,7 +452,7 @@ fn build_folder_tree(
         })
         .collect();
 
-    let dir_children: Vec<FolderInfo> = dir_paths
+    let mut dir_children: Vec<FolderInfo> = dir_paths
         .par_iter()
         .map(|p| build_folder_tree(p, home, options, has_fda, cancel, live))
         .filter(|c| {
@@ -452,7 +460,16 @@ fn build_folder_tree(
         })
         .collect();
 
+    // Compute dir_size from ALL subfolders before truncating, so the parent's
+    // headline total still reflects every byte under it even when the smallest
+    // subfolders are dropped from `children` by the per-folder cap below.
     let dir_size: u64 = dir_children.iter().map(|c| c.size).sum();
+
+    if dir_children.len() > MAX_FOLDERS_PER_DIR {
+        dir_children.sort_unstable_by(|a, b| b.size.cmp(&a.size));
+        dir_children.truncate(MAX_FOLDERS_PER_DIR);
+        truncated = true;
+    }
 
     let mut children = files;
     children.extend(dir_children);
@@ -475,7 +492,6 @@ fn build_folder_tree(
         name,
         path: root.to_string_lossy().into_owned(),
         size: file_size + dir_size,
-        icon: None,
         children,
         is_file: false,
         is_protected: is_root_protected,
@@ -530,11 +546,14 @@ pub fn scan_user_folders_from_home(
 
 /// Scans top-level folders in parallel for I/O concurrency, then builds each subtree.
 /// File sizes are accumulated live during recursion for smooth progress updates.
+/// Returns `(user_dir, folders)` so the Tauri command can hand the home root to
+/// the frontend in [`crate::ScanResult`]; the frontend uses it to reconstruct
+/// each node's path (skipped on the wire to keep the IPC payload small).
 pub fn get_user_folders_sync_with_progress(
     app: tauri::AppHandle,
     options: ScanOptions,
     cancel: Arc<AtomicBool>,
-) -> Result<Vec<FolderInfo>, String> {
+) -> Result<(String, Vec<FolderInfo>), String> {
     let has_fda = crate::permissions::is_full_disk_access_granted();
 
     #[cfg(feature = "e2e")]
@@ -649,7 +668,7 @@ pub fn get_user_folders_sync_with_progress(
     folders.retain(|f| {
         (options.show_zero_byte || f.size > 0) && (options.show_under_1kb || f.size >= 1024)
     });
-    Ok(folders)
+    Ok((user_dir.to_string_lossy().into_owned(), folders))
 }
 
 /// Tauri command: runs the folder scan on a blocking task and emits progress events.
@@ -658,7 +677,7 @@ pub fn get_user_folders_sync_with_progress(
 pub async fn get_user_folders(
     app: tauri::AppHandle,
     options: Option<crate::ScanOptions>,
-) -> Result<Vec<crate::FolderInfo>, String> {
+) -> Result<crate::ScanResult, String> {
     log::dev_rust_trace("scan", "get_user_folders");
 
     if SCAN_RUNNING
@@ -680,11 +699,12 @@ pub async fn get_user_folders(
 
     let options = options.unwrap_or_default();
     let cancel_for_task = cancel.clone();
-    tauri::async_runtime::spawn_blocking(move || {
+    let (root, folders) = tauri::async_runtime::spawn_blocking(move || {
         get_user_folders_sync_with_progress(app, options, cancel_for_task)
     })
     .await
-    .map_err(|e| format!("Task join error: {}", e))?
+    .map_err(|e| format!("Task join error: {}", e))??;
+    Ok(crate::ScanResult { root, folders })
 }
 
 /// Tauri command: cancels any ongoing scan and cleans up resources.

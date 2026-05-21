@@ -29,6 +29,11 @@ interface TestFolderInfo {
    children: TestFolderInfo[]
 }
 
+interface TestScanResult {
+   root: string
+   folders: TestFolderInfo[]
+}
+
 interface TestSettings {
    themeColor: string
    showHiddenFiles: boolean
@@ -85,11 +90,13 @@ async function waitForBackendSettings(expected: Partial<TestSettings>) {
    )
 }
 
-/** Run the scanner directly with the currently persisted settings. */
+/** Run the scanner directly with the currently persisted settings. The Tauri
+ *  command returns `{ root, folders }`; `path` is hydrated on the frontend
+ *  from `root`, so this helper just unwraps and returns the folder array. */
 async function scanWithCurrentSettings(): Promise<TestFolderInfo[]> {
    const settings = await getBackendSettings()
 
-   return await invokeTauri<TestFolderInfo[]>('get_user_folders', {
+   const result = await invokeTauri<TestScanResult>('get_user_folders', {
       options: {
          show_hidden_files: settings.showHiddenFiles,
          show_ds_store: settings.showDsStore,
@@ -97,6 +104,8 @@ async function scanWithCurrentSettings(): Promise<TestFolderInfo[]> {
          show_zero_byte: settings.showZeroByte,
       },
    })
+
+   return result.folders
 }
 
 /** Find a direct child node by name in a scan result list. */

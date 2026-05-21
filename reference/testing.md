@@ -85,7 +85,7 @@ If a test breaks because the source change is correct and the test is outdated, 
 | `src-tauri/tests/trash_test.rs`        | Trash + `filter_items` defense                                       |
 | `src-tauri/tests/store_test.rs`        | Store concurrency, defaults merging, key validation                  |
 | `src-tauri/tests/safe_folders_test.rs` | Protected + skipped path correctness                                 |
-| `src-tauri/tests/scaling_probe.rs`     | Opt-in (`#[ignore]`) IPC payload / node-count probe against real paths; see [`temp/scaling-probe.md`](temp/scaling-probe.md) |
+| `src-tauri/tests/scaling_probe.rs`     | Opt-in (`#[ignore]`) IPC payload / node-count probe against real paths. Run with `cargo test --test scaling_probe -- --ignored --nocapture --test-threads=1` |
 | `src-tauri/tests/support/mod.rs`       | Shared helpers (temp dirs, fixtures)                                 |
 | `src-tauri/src/e2e_fixtures.rs`        | `reset_e2e_state`, dry-run trash mode (compiled under `e2e` feature) |
 | `src-tauri/src/lib.rs`                 | Two `generate_handler!` blocks (default + `#[cfg(feature = "e2e")]`) |

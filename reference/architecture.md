@@ -88,7 +88,7 @@ A handful of rules that make the IPC hop easy to reason about:
 - **Do not reimplement Rust logic in Vue.** The "is this path protected?" / "how big is this folder?" / "is FDA granted?" questions belong to Rust, even when the answer is cached in a ref.
 - **Commands are total.** A command either resolves with data or rejects with an error string; no partial states on the wire. Progress-style feedback goes on events, not on the invoke promise.
 - **Cancellation is cooperative.** Two-step: Rust `Arc<AtomicBool>` token + Vue `scanGeneration` counter. Full mechanics in [`state-lifecycle.md`](state-lifecycle.md).
-- **Truncation is a shared contract.** `scan::MAX_FILES_PER_DIR` and the frontend `MAX_DISPLAYED_ITEMS` cap must stay in lockstep; both flow into one user-facing notice. Full contract in [`state-lifecycle.md`](state-lifecycle.md).
+- **Truncation is a shared contract.** Two scanner caps (`scan::MAX_FILES_PER_DIR`, `scan::MAX_FOLDERS_PER_DIR`) bound the tree on the Rust side; one frontend cap (`MAX_DISPLAYED_ITEMS`) bounds the DOM. All three feed the same user-facing "list truncated" notice; flipping either scanner cap without updating the message lies to the user. Full contract in [`state-lifecycle.md`](state-lifecycle.md).
 - **macOS-only.** There's no Windows/Linux branching in either side; see [`compatibility.md`](compatibility.md). objc2 AppKit/Foundation bindings are used freely in Rust.
 
 ## Build + testing boundary

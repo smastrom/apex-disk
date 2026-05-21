@@ -1,20 +1,28 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Simone Mastromattei
 
-/** Folder/file info from Tauri scan. Matches Rust struct field names (snake_case). */
+/** Folder/file info from Tauri scan. Matches Rust struct field names (snake_case).
+ *  `path` is not on the wire; `useScanner` hydrates it from `ScanResult.root` after IPC. */
 export interface FolderInfo {
    name: string
    path: string
    size: number
-   icon?: string
    children: FolderInfo[]
    is_file: boolean
    is_protected: boolean
    is_fda_required: boolean
    last_modified?: number
    /** True when Rust dropped at least one file from this folder because it exceeded
-    * the per-folder file cap. Always false for files. */
+    * the per-folder file cap, or at least one subfolder beyond the folder cap.
+    * Always false for files. */
    truncated: boolean
+}
+
+/** Wire shape of `get_user_folders`. `root` is the home dir; children paths
+ *  are reconstructed in JS to keep the IPC payload small. */
+export interface ScanResult {
+   root: string
+   folders: FolderInfo[]
 }
 
 /** Single item in the trash review list (flattened from selection). */

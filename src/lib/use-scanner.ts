@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Simone Mastromattei
 
-import type { FolderInfo, ScanProgress } from '@/types/structs'
+import type { FolderInfo, ScanProgress, ScanResult } from '@/types/structs'
 
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
-import { onMounted, onUnmounted, ref, shallowRef } from 'vue'
+import { markRaw, onMounted, onUnmounted, ref, shallowRef } from 'vue'
 
 import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'
@@ -18,6 +18,24 @@ const INITIAL_PROGRESS: ScanProgress = {
    size: 0,
    scanned_size_total: 0,
    completed_size: 0,
+}
+
+/** Materialize each node's `path` from the home root + chain of `name`s
+ *  (Rust skips `path` on the wire to shrink the IPC payload), then make the
+ *  tree immutable. `markRaw` keeps Vue from ever wrapping a node in a Proxy;
+ *  `Object.freeze` locks the shape so JSC/V8 can optimize property access. */
+function hydrateTree(nodes: FolderInfo[], parentPath: string): void {
+   for (const node of nodes) {
+      node.path = `${parentPath}/${node.name}`
+
+      if (node.children.length > 0) {
+         hydrateTree(node.children, node.path)
+      }
+
+      Object.freeze(node.children)
+      markRaw(node)
+      Object.freeze(node)
+   }
 }
 
 export function useScanner() {
@@ -109,17 +127,19 @@ export function useScanner() {
             show_zero_byte: settings.showZeroByte,
          }
 
-         const result = await invoke<FolderInfo[]>('get_user_folders', { options })
+         const result = await invoke<ScanResult>('get_user_folders', { options })
 
          if (gen === scanGeneration.value) {
+            hydrateTree(result.folders, result.root)
+
             const totalSize = formatBytes(progress.value.scanned_size_total)
 
             log(
                'scan',
-               `Scan: complete ${result.length} folders, ${totalSize}, ${elapsedSeconds.value}s`
+               `Scan: complete ${result.folders.length} folders, ${totalSize}, ${elapsedSeconds.value}s`
             )
 
-            folders.value = result
+            folders.value = result.folders
          }
       } catch (error) {
          log('scan', 'Scan: error', error)
