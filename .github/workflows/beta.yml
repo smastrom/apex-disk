@@ -75,7 +75,10 @@ jobs:
            run: pnpm exec tauri build --target universal-apple-darwin --config src-tauri/tauri.beta.conf.json
 
          - name: Verify universal binary excludes e2e symbols
-           run: scripts/verify-no-e2e-symbols.sh src-tauri/target/universal-apple-darwin/release/bundle/macos/ApexDisk.app/Contents/MacOS/ApexDisk
+           # The beta config sets productName="ApexDisk Beta", so the built app
+           # bundle is "ApexDisk Beta.app/Contents/MacOS/ApexDisk Beta" — note
+           # the spaces — not the stable "ApexDisk.app/.../ApexDisk" path.
+           run: scripts/verify-no-e2e-symbols.sh "src-tauri/target/universal-apple-darwin/release/bundle/macos/ApexDisk Beta.app/Contents/MacOS/ApexDisk Beta"
 
          - name: Beta notes summary
            run: |
