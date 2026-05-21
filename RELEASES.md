@@ -4,6 +4,19 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 
 ---
 
+## v0.0.21
+
+### Improvements
+
+- Smooth out folder navigation in the results list: restrict the list-slide transition to manual navigation only, hold off deferred row expansion while the view is deactivated, and re-link trash selections to real `FolderInfo` nodes when re-entering.
+
+### Chores
+
+- Replace the `reference/scanning.md` deep-dive with a broader `state-lifecycle.md` covering UI state and Rust memory across the IPC boundary, and reorder the agent-facing reference index by usage importance.
+- Drop the unused `autoUpdates` legacy-key migration from the Rust settings store before first release.
+- Refresh the README hero image, drop the unused `apex-disk-main-screen.png` asset, remove the leftover `marketing/` scaffolding, and reword the "Say thanks" line.
+- Add e2e coverage for the results-list lifecycle (rescan, abort, cancel, tab switch) and align the trash-restart expectations.
+
 ## v0.0.20
 
 ### Improvements
