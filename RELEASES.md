@@ -4,6 +4,20 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 
 ---
 
+## v0.0.23
+
+### Improvements
+
+- Tighten the trash protected-path enforcement so deletions operate on the canonical path returned by `path.canonicalize()`, closing a symlink/rename TOCTOU window between the protected/skipped check and the `trash::delete` system call.
+- Strengthen scan cancellation memory ordering so rayon walker threads see the abort flag through a real `Release`/`Acquire` happens-before chain instead of eventual `Relaxed` visibility.
+- Surface home-directory canonicalization failures from `trash_paths` as a returned error instead of silently dropping every item as out-of-home protected.
+
+### Chores
+
+- Add a build-time check (`scripts/verify-no-e2e-symbols.sh`) that the Release and Beta workflows refuse to publish a signed binary built with `--features e2e`, since that feature exposes a no-op trash success path used only by WebDriverIO tests.
+- Log `filter_items` canonicalize failures on the `trash` channel with a sanitized basename so broken-symlink drops are debuggable separately from protected drops.
+- Refresh `reference/protected-files.md` and `reference/state-lifecycle.md` to describe the canonical pass-through, the `Acquire`/`Release` cancel ordering, the `STORE_LOCK` read/write asymmetry, and the e2e build gate.
+
 ## v0.0.22
 
 ### Improvements
