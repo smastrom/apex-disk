@@ -161,12 +161,21 @@ jobs:
                 /^## ${TAG}\$/ { found=1; next }
                 found && /^## v/ { exit }
                 found { print }
-              " RELEASES.md > release_notes.md
+              " RELEASES.md > release_body.md
 
-              if [ ! -s release_notes.md ]; then
+              if [ ! -s release_body.md ]; then
                 echo "::error::No release notes found for ${TAG}"
                 exit 1
               fi
+
+              # Prepend "## Release notes" header on the GitHub release body only.
+              # RELEASES.md stays flat (### sub-headings directly under ## vX.Y.Z);
+              # the header is rendered once per published release. See reference/releases.md.
+              {
+                echo "## Release notes"
+                echo ""
+                cat release_body.md
+              } > release_notes.md
 
          - name: Rename per-arch update bundles for distinct GH Release upload
            run: |

@@ -99,3 +99,12 @@ with a comma, parentheses, period, or colon.
 - `../RELEASES_BETA.md`: `## YYYY-MM-DD` (UTC) heading, a one-line summary, then bullets covering UI flows that changed, updater/menu/store touches, and macOS-version-sensitive behavior.
 
 Never edit older sections to retcon history.
+
+### GitHub-release body header
+
+Both workflows prepend a single `## Release notes` heading at the top of the GitHub-release body **before publishing**:
+
+- **Stable** — `release.yml` extracts the first `## vX.Y.Z` section from `../RELEASES.md`, then writes `## Release notes` above the `###` sub-headings into `release_notes.md` (the file passed to `softprops/action-gh-release`).
+- **Beta** — `beta.yml` extracts the first `## YYYY-MM-DD` section from `../RELEASES_BETA.md`, then writes `## Release notes` above it into `beta_prerelease_body.md`.
+
+The header lives **only** on the published release. Do not add it to `../RELEASES.md` or `../RELEASES_BETA.md` — the source files keep their existing top-level (`## vX.Y.Z` / `## YYYY-MM-DD`) structure so the workflows can still grep for them, and `/release`, `/release-from-notes`, and `/beta-notes` keep authoring the same shape they always have.

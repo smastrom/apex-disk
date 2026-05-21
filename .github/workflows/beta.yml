@@ -89,11 +89,14 @@ jobs:
 
          - name: Prepare pre-release notes
            run: |
+              # Prepend "## Release notes" header on the pre-release body only.
+              # RELEASES_BETA.md keeps its dated ## YYYY-MM-DD sections at top level;
+              # the header is rendered once per published Beta. See reference/releases.md.
+              echo "## Release notes" > beta_prerelease_body.md
+              echo "" >> beta_prerelease_body.md
               if awk '/^## /{if(h){exit} h=1} h' RELEASES_BETA.md | grep -q .; then
-                awk '/^## /{if(h){exit} h=1} h' RELEASES_BETA.md > beta_prerelease_body.md
+                awk '/^## /{if(h){exit} h=1} h' RELEASES_BETA.md >> beta_prerelease_body.md
               else
-                echo "## ApexDisk Beta" > beta_prerelease_body.md
-                echo "" >> beta_prerelease_body.md
                 echo "_Add a dated \`##\` section at the top of RELEASES_BETA.md for richer notes._" >> beta_prerelease_body.md
               fi
               echo "" >> beta_prerelease_body.md
