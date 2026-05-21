@@ -6,19 +6,21 @@ macOS tool to easily identify and get rid of big, unused files and folders in se
 
 ![ApexDisk Hero](./src/assets/images/apex-disk-hero.png)
 
-## Why?
+## Why ApexDisk?
 
-Over time, your home folder quietly fills up with forgotten caches, old installers, duplicate images, leftover app data, and all sorts of files you didn't even know were there. macOS doesn't make it easy to figure out where all that space went.
+Your home folder quietly fills with junk that automatic cleaners may not spot or aren't meant to handle: caches and downloads from niche, personal, or long-uninstalled apps and games that no cleaner knows about, cached video and downloads piled up by streaming services, abandoned developer files like install images, SDKs, and build artifacts, leftovers from a weekend experiment, and endless other garbage you never knew was eating your disk, all of which requires your attention to actually go away.
 
-ApexDisk scans your entire user folder and presents everything as a navigable, size-sorted tree. You can drill into any directory, immediately spot what's taking up the most space, and clean it up, all from a single window.
+ApexDisk makes that a breeze. It scans your user folder and lays it out as a size-sorted tree, so the heaviest items surface first. Drill into any directory to see exactly what's hiding inside, select what you don't need, review, and send it to the trash, all from a single window.
+
+Check out the [ApexDisk Website](https://apexdisk.app) for more information.
 
 ## Features
 
-- **Hyper-fast scanning**: Directory scanning distributes I/O across all available CPU cores for maximum throughput
-- **Smart UX**: Easily spot waste with a size-sorted tree and last-modified dates. See exactly how much space you'll save as you select files.
-- **Safe by design**: Files are moved to the Trash, never deleted directly. Reserved system folders are protected, and sensitive directories are automatically skipped on scan.
-- **Optional Full Disk Access**: Works without FDA by default with on demand permission prompts
-- **10 languages**: Support for English, Italian, Spanish, French, Portuguese, German, Russian, Chinese, Japanese, and Arabic (with RTL support)
+- **Hyper-fast scanning:** Multi-core Rust engine builds the disk tree in seconds
+- **Safe by default:** Files move to Trash, system folders stay protected, sensitive directories skipped automatically
+- **Built to navigate:** Size-sorted tree with last-modified dates puts the heaviest folders first
+- **Optional Full Disk Access:** Works without it by default, prompts only when needed
+- **10 languages, 8 themes:** Including RTL support for Arabic
 
 ## Installation
 
