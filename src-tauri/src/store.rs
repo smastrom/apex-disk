@@ -48,37 +48,10 @@ pub fn initialize_store_with_handle<R: Runtime>(app: &tauri::AppHandle<R>) -> Re
         let defaults = get_default_settings();
         store.set("app", defaults);
         store.save().map_err(|e| e.to_string())?;
-    } else if let Some(migrated) = migrate_legacy_keys(&current) {
-        store.set("app", migrated);
-        store.save().map_err(|e| e.to_string())?;
     }
 
     store.close_resource();
     Ok(())
-}
-
-/// One-shot migration of legacy setting keys. Returns Some(new_value) if the
-/// store needs to be rewritten, None if no migration is required.
-///
-/// Migrations:
-/// - `autoUpdates` → `autoCheckUpdates` + `autoInstallUpdates` (a single "auto" toggle was split
-///   into "check" and "install" in the update model).
-fn migrate_legacy_keys(current: &serde_json::Value) -> Option<serde_json::Value> {
-    let obj = current.as_object()?;
-    if !obj.contains_key("autoUpdates") {
-        return None;
-    }
-
-    let mut next = current.clone();
-    let next_obj = next.as_object_mut()?;
-
-    let legacy = next_obj.remove("autoUpdates")?;
-    let legacy_bool = legacy.as_bool().unwrap_or(false);
-
-    next_obj.entry("autoCheckUpdates".to_string()).or_insert(json!(legacy_bool));
-    next_obj.entry("autoInstallUpdates".to_string()).or_insert(json!(legacy_bool));
-
-    Some(next)
 }
 
 /// Initializes the store with proper defaults if needed.

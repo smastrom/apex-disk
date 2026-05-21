@@ -13,7 +13,7 @@ Two independent toggles in Settings control update behavior:
 
 **Cascade rule** — enabling install forces checking on; disabling checking forces install off. The store enforces this in `setAutoCheckUpdates` / `setAutoInstallUpdates` (in `src/stores/app-settings.ts`) so callers don't need to coordinate. The UI also grays out the install toggle when checking is off.
 
-**Defaults on fresh install** — both **OFF** (opt-in). Existing users on the old single `autoUpdates` setting are migrated by `migrate_legacy_keys` in `src-tauri/src/store.rs`: `autoUpdates: true` → both new flags true (preserves prior behavior); `autoUpdates: false` → both new flags false. The legacy key is removed after migration.
+**Defaults on fresh install** — both **OFF** (opt-in).
 
 ### State matrix
 
@@ -116,7 +116,7 @@ To test the full update experience (check → download → "Restart to Update"):
 | File                                 | Role                                                                                                                                                       |
 | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `src-tauri/src/updater.rs`           | Rust module: silent check, native dialog flow, menu text updates, `autoCheckUpdates` / `autoInstallUpdates` setting readers                                |
-| `src-tauri/src/store.rs`             | Persisted settings + `migrate_legacy_keys` (translates the old `autoUpdates` key into the new pair on first run)                                           |
+| `src-tauri/src/store.rs`             | Persisted settings for `autoCheckUpdates` / `autoInstallUpdates`                                                                                           |
 | `src/lib/use-app-update.ts`          | Vue composable: reactive state (checking → downloading → ready), orchestrates silent check, conditional silent download, and manual dialog/restart routing |
 | `src/components/SettingsView.vue`    | UI: update description + action button, both auto-check and auto-install toggles (cascade + gray-out)                                                      |
 | `src-tauri/src/menu_translations.rs` | Menu label translations including "Checking for Updates…", "Downloading Update…", "Update to", "Restart to Update"                                         |
