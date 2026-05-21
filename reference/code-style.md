@@ -162,4 +162,3 @@ const { t } = useTranslations()
 - Body is concise prose or bullets, **only when the why isn't obvious** from the subject.
 - Always include the `Co-Authored-By` trailer when the commit is agent-made.
 - Never skip hooks (`--no-verify`) and never bypass signing — investigate failures instead.
-
