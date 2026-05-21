@@ -4,4 +4,10 @@ Per-run notes for **Beta** builds (manual `workflow_dispatch`, tag `beta-<run_id
 
 ---
 
-_Add your first dated section above the horizontal rule when you want notes attached to a run._
+## 2026-05-21
+
+Verifies the new `## Release notes` heading that the Release and Beta workflows prepend to the GitHub-release body.
+
+- Confirm the published pre-release body opens with a `## Release notes` heading directly above this dated section.
+- Confirm `RELEASES_BETA.md` itself is unchanged on the published artifact: the heading is added only on the rendered release, not the source file.
+- Smoke-test the existing scan and trash flow on a small folder to make sure the build is otherwise untouched.
