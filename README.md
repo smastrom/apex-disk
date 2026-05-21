@@ -8,11 +8,9 @@ macOS tool to easily identify and get rid of big, unused files and folders in se
 
 ## Why ApexDisk?
 
-Your home folder quietly fills with junk that automatic cleaners may not spot or aren't meant to handle: caches and downloads from niche, personal, or long-uninstalled apps and games that no cleaner knows about, cached video and downloads piled up by streaming services, abandoned install images and SDKs, and endless other garbage you never knew was eating your disk, all of which requires your attention to actually go away.
+Your home folder quietly fills with junk that automatic cleaners may not spot or aren't meant to handle: caches and downloads from long‑forgotten apps and games (now uninstalled and undetectable), caches from niche or personal apps no cleaner knows to look for, abandoned developer files like install images, SDKs, and build artifacts, leftovers from a weekend experiment, and endless other garbage you never knew was eating your disk.
 
-ApexDisk makes that a breeze. It scans your user folder and lays it out as a size-sorted tree, so the heaviest items surface first. Drill into any directory to see exactly what's hiding inside, select what you don't need, review, and send it to the trash, all from a single window.
-
-Check out the [ApexDisk Website](https://apexdisk.app) for more information.
+ApexDisk scans your user folder and lays it out as a size-sorted tree, so the heaviest items surface first. Drill into any directory to see exactly what's hiding inside, select what you don't need, review, and send it all to the trash all from a single window.
 
 ## Features
 
@@ -67,7 +65,7 @@ pnpm i
 pnpm tauri:dev
 ```
 
-## Saying thanks
+## Support ApexDisk
 
 Enjoying ApexDisk? Say thanks by supporting the author:
 
