@@ -2,7 +2,8 @@
 // Copyright (C) 2026 Simone Mastromattei
 
 /**
- * E2E: Scan lifecycle — launch, progress, results, abort, re-scan.
+ * E2E: Scan lifecycle — launch, progress, results, abort, re-scan, and
+ * results-list row presence across cancel/rescan and tab switches.
  *
  * Uses the e2e fixture home directory so results are deterministic.
  * Expected folders: MyData, Documents (protected), Projects, plus protected
@@ -13,7 +14,12 @@ import {
    sel,
    waitForAppReady,
    waitForScanLaunch,
+   waitForResultsList,
+   waitForScanRowsInDom,
    scanAndWaitForResults,
+   clickStartScan,
+   abortScanFromProgress,
+   cancelToLaunch,
    getRowByName,
    getCheckbox,
    assertCheckboxDisabled,
@@ -22,6 +28,7 @@ import {
    navigateIntoFolder,
    navigateBack,
    goToSettingsView,
+   goToInformationView,
    goToScanView,
 } from '../helpers/navigation'
 
@@ -166,39 +173,80 @@ describe('Scan flow', () => {
       await navigateBack()
    })
 
-   it('can abort scan and return to launch screen', async () => {
-      // Navigate to scan launch first
-      const footerScan = $(sel.footerScan)
+   describe('Results list lifecycle', () => {
+      beforeEach(async () => {
+         await goToScanView()
+         await cancelToLaunch()
+      })
 
-      await footerScan.click()
-      await browser.pause(300)
+      it('cancel from results returns to launch', async () => {
+         await scanAndWaitForResults()
+         await assertRowExists('MyData')
 
-      // We need to go back to launch. Check if we're on results or launch
-      // If results are showing from previous test, we need to go to settings and back
-      // to trigger a fresh state. Actually, let's just check if scan launch is available.
-      // Since we already completed a scan, we're on results. Navigate to settings then back.
-      const footerSettings = $(sel.footerSettings)
+         await cancelToLaunch()
 
-      await footerSettings.click()
-      await browser.pause(300)
+         await expect($(sel.scanLaunch)).toBeDisplayed()
+      })
 
-      // The scan view stays mounted (v-show); verify we can get back to it
-      // and the results are still there.
-      await footerScan.click()
-      await browser.pause(300)
+      it('rescan after cancel loads rows', async () => {
+         await scanAndWaitForResults()
+         await cancelToLaunch()
+         await scanAndWaitForResults()
 
-      // Results should still be visible from the previous scan
-      const results = $(sel.resultsList)
-      const isResultsDisplayed = await results.isDisplayed()
+         await assertRowExists('MyData')
+         await assertRowExists('Projects')
+      })
 
-      if (isResultsDisplayed) {
-         // Scan view persists across tab switches; results stay in place.
-         await expect(results).toBeDisplayed()
-      } else {
-         // If we're on the launch screen, that works too
-         const launch = $(sel.scanLaunch)
+      it('abort during scan returns to launch', async () => {
+         await clickStartScan()
+         await abortScanFromProgress()
 
-         await expect(launch).toBeDisplayed()
-      }
+         await expect($(sel.scanLaunch)).toBeDisplayed()
+      })
+
+      it('abort during scan then rescan loads rows', async () => {
+         await clickStartScan()
+         await abortScanFromProgress()
+         await scanAndWaitForResults()
+
+         await assertRowExists('MyData')
+         await assertRowExists('Documents')
+      })
+
+      it('keeps result rows when switching away and back after scan', async () => {
+         await scanAndWaitForResults()
+         await assertRowExists('MyData')
+
+         await goToSettingsView()
+         await goToScanView()
+
+         await waitForResultsList()
+         await assertRowExists('MyData')
+         await assertRowExists('Projects')
+      })
+
+      it('loads rows after scan completes on Settings', async () => {
+         await clickStartScan()
+         await goToSettingsView()
+         await waitForScanRowsInDom()
+
+         await goToScanView()
+         await waitForResultsList()
+
+         await assertRowExists('MyData')
+         await assertRowExists('Projects')
+      })
+
+      it('loads rows after scan completes on Information', async () => {
+         await clickStartScan()
+         await goToInformationView()
+         await waitForScanRowsInDom()
+
+         await goToScanView()
+         await waitForResultsList()
+
+         await assertRowExists('MyData')
+         await assertRowExists('Documents')
+      })
    })
 })

@@ -33,6 +33,7 @@ import {
    isReviewButtonDisabled,
    navigateBack,
    setTrashMode,
+   assertRowExists,
 } from '../helpers/navigation'
 
 describe('Trash review flow', () => {
@@ -261,7 +262,7 @@ describe('Trash review flow', () => {
          await expect(restart).toBeDisplayed()
       })
 
-      it('clicking restart returns to results (scan cache reused)', async () => {
+      it('clicking restart returns to launch and a fresh scan loads rows', async () => {
          await setTrashMode('success')
          await clickCheckboxByName('Projects')
          await clickReviewSelection()
@@ -271,15 +272,10 @@ describe('Trash review flow', () => {
          await waitForTrashConfirmation()
 
          await $(sel.restart).click()
-         await browser.pause(500)
+         await waitForScanLaunch()
 
-         // After restart we land back on the results list (e2e mock keeps folders).
-         const results = $(sel.resultsList)
-         const launch = $(sel.scanLaunch)
-         const onResults = await results.isDisplayed().catch(() => false)
-         const onLaunch = await launch.isDisplayed().catch(() => false)
-
-         expect(onResults || onLaunch).toBe(true)
+         await scanAndWaitForResults()
+         await assertRowExists('Projects')
       })
    })
 

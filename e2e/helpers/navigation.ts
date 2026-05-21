@@ -48,6 +48,7 @@ export const sel = {
    informationLicense: '.InformationFooter-credits',
    settingsView: '[data-testid="settings-view"]',
    settingsContent: '[data-testid="settings-content"]',
+   informationView: '[data-testid="information-view"]',
    settingsTheme: '[aria-labelledby="label-theme"]',
    settingsToggleHiddenFiles: '[aria-labelledby="label-hidden-files"]',
    settingsToggleDsStore: '[aria-labelledby="label-ds-store"]',
@@ -145,6 +146,67 @@ export async function waitForResultsList() {
       interval: 100,
       timeoutMsg: 'results rows did not appear within timeout',
    })
+}
+
+/**
+ * Poll until result rows exist in the DOM, even when the Scan tab is hidden.
+ * Use after starting a scan and switching to Settings/Information before
+ * returning to Scan.
+ */
+export async function waitForScanRowsInDom() {
+   await browser.waitUntil(
+      async () =>
+         (await browser.execute(
+            () =>
+               document.querySelectorAll(
+                  '[data-testid="results-row-folder"], [data-testid="results-row-file"]'
+               ).length > 0
+         )) as boolean,
+      {
+         timeout: RESULTS_TIMEOUT,
+         interval: 100,
+         timeoutMsg: 'scan rows did not appear in DOM',
+      }
+   )
+}
+
+/** Click Start Scan without waiting for completion. */
+export async function clickStartScan() {
+   const startBtn = $(sel.startScan)
+
+   await startBtn.waitForDisplayed({ timeout: ELEMENT_TIMEOUT })
+   await startBtn.click()
+}
+
+/** Abort an in-progress scan and wait for the launch screen. */
+export async function abortScanFromProgress() {
+   let scanFinishedEarly = false
+
+   await browser.waitUntil(
+      async () => {
+         if ((await getResultRowCount()) > 0) {
+            scanFinishedEarly = true
+
+            return true
+         }
+
+         const abort = $(sel.scanAbort)
+
+         return await abort.isDisplayed().catch(() => false)
+      },
+      {
+         timeout: ELEMENT_TIMEOUT,
+         interval: 50,
+         timeoutMsg: 'abort button did not appear before scan finished',
+      }
+   )
+
+   if (scanFinishedEarly) {
+      throw new Error('scan finished before abort could be clicked')
+   }
+
+   await $(sel.scanAbort).click()
+   await waitForScanLaunch()
 }
 
 /** Count visible result rows in the current scan view. */
@@ -536,6 +598,15 @@ export async function goToSettingsView() {
    await view.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
 }
 
+/** Click the Information footer tab and wait for the information view. */
+export async function goToInformationView() {
+   await $(sel.footerInformation).click()
+
+   const view = $(sel.informationView)
+
+   await view.waitForDisplayed({ timeout: VIEW_READY_TIMEOUT })
+}
+
 // ---------------------------------------------------------------------------
 // Trash list helpers
 // ---------------------------------------------------------------------------
@@ -632,7 +703,7 @@ export async function rescanFresh() {
  * Bring the app back to a known state and run a fresh scan.
  * - Resets settings to defaults (so hidden/<1 KB/0 B filters are off).
  * - Switches to Scan view.
- * - If on the trash confirmation screen, restarts back to results.
+ * - If on the trash confirmation screen, restart clears scan state back to launch.
  * - If on the trash list, navigates back to results.
  * - If on results, navigates to root and clears any selection.
  * - If on launch, starts a fresh scan.
@@ -641,7 +712,7 @@ export async function resetAndScan() {
    await resetE2eState()
    await goToScanView()
 
-   // Trash confirmation screen (TRASH_COMPLETE): click restart to return to results.
+   // Trash confirmation screen (TRASH_COMPLETE): restart clears folders → launch.
    const restart = $(sel.restart)
    const onConfirm = await restart.isDisplayed().catch(() => false)
 
