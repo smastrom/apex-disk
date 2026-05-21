@@ -126,7 +126,11 @@ jobs:
            run: pnpm exec tauri build --target universal-apple-darwin
 
          - name: Verify universal binary excludes e2e symbols
-           run: scripts/verify-no-e2e-symbols.sh src-tauri/target/universal-apple-darwin/release/bundle/macos/ApexDisk.app/Contents/MacOS/ApexDisk
+           # Binary inside Contents/MacOS/ is named from the Cargo crate
+           # (`apex-disk`), not from `productName`. The .app folder uses
+           # productName ("ApexDisk"), but Tauri does not rename the inner
+           # binary to match.
+           run: scripts/verify-no-e2e-symbols.sh src-tauri/target/universal-apple-darwin/release/bundle/macos/ApexDisk.app/Contents/MacOS/apex-disk
 
          - name: Build, sign and notarize Apple Silicon (aarch64) binary
            env:
@@ -139,7 +143,7 @@ jobs:
            run: pnpm exec tauri build --target aarch64-apple-darwin
 
          - name: Verify aarch64 binary excludes e2e symbols
-           run: scripts/verify-no-e2e-symbols.sh src-tauri/target/aarch64-apple-darwin/release/bundle/macos/ApexDisk.app/Contents/MacOS/ApexDisk
+           run: scripts/verify-no-e2e-symbols.sh src-tauri/target/aarch64-apple-darwin/release/bundle/macos/ApexDisk.app/Contents/MacOS/apex-disk
 
          - name: Build, sign and notarize Intel (x86_64) binary
            env:
@@ -152,7 +156,7 @@ jobs:
            run: pnpm exec tauri build --target x86_64-apple-darwin
 
          - name: Verify x86_64 binary excludes e2e symbols
-           run: scripts/verify-no-e2e-symbols.sh src-tauri/target/x86_64-apple-darwin/release/bundle/macos/ApexDisk.app/Contents/MacOS/ApexDisk
+           run: scripts/verify-no-e2e-symbols.sh src-tauri/target/x86_64-apple-darwin/release/bundle/macos/ApexDisk.app/Contents/MacOS/apex-disk
 
          - name: Extract release notes
            run: |
