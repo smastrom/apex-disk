@@ -4,6 +4,16 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 
 ---
 
+## v0.0.22
+
+### Improvements
+
+- Cover more macOS folders and credential paths in the protected and skipped lists: protect structural Library folders that apps recreate with wrong permissions (`Application Scripts`, `Caches`, `CloudStorage`, `Logs`, `Saved Application State`, `WebKit`) and the `Photos Library.photoslibrary` bundle so a one-click trash can no longer delete a whole photo library; skip `.config/gcloud`, `.config/doctl`, `.netrc`, `.subversion`, and the `Library/Messages/chat.db` iMessage history file (without hiding the cleanable `Library/Messages/Attachments`).
+
+### Chores
+
+- Tighten the README "Why ApexDisk?" paragraph and refresh the hero image.
+
 ## v0.0.21
 
 ### Improvements

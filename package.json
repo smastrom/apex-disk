@@ -1,6 +1,6 @@
 {
    "name": "apex-disk",
-   "version": "0.0.21",
+   "version": "0.0.22",
    "private": false,
    "description": "macOS tool to easily identify and get rid of big, unused files and folders in seconds.",
    "keywords": [
