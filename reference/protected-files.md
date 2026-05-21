@@ -4,24 +4,24 @@ ApexDisk filters two classes of paths so a careless click can't break macOS or e
 
 ## Two lists, two purposes
 
-| List                      | Examples                                                                                  | Threat model                                                                                                                                                                |
-| ------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PROTECTED_RELATIVE_PATHS` | `Library`, `Documents`, `Desktop`, `Dropbox`, `OneDrive`, `Pictures/Photos Library.photoslibrary` | The **folder itself** must survive. Removing it breaks system hooks, app registration, or triggers cascade-deletion on cloud-sync remotes. Contents may still be trashed.   |
-| `SKIPPED_RELATIVE_PATHS`  | `.ssh`, `.gnupg`, `.aws`, `.kube`, `.password-store`, `Library/Keychains`, `Library/Messages/chat.db`, `.Trash` | Secret material: SSH keys, GPG keys, cloud tokens, password vaults, iMessage history, system keychains. The folder **and every descendant** is hidden from the scan and refused by the trash filter, so keys never surface in the UI. |
+| List                       | Examples                                                                                                        | Threat model                                                                                                                                                                                                                          |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PROTECTED_RELATIVE_PATHS` | `Library`, `Documents`, `Desktop`, `Dropbox`, `OneDrive`, `Pictures/Photos Library.photoslibrary`               | The **folder itself** must survive. Removing it breaks system hooks, app registration, or triggers cascade-deletion on cloud-sync remotes. Contents may still be trashed.                                                             |
+| `SKIPPED_RELATIVE_PATHS`   | `.ssh`, `.gnupg`, `.aws`, `.kube`, `.password-store`, `Library/Keychains`, `Library/Messages/chat.db`, `.Trash` | Secret material: SSH keys, GPG keys, cloud tokens, password vaults, iMessage history, system keychains. The folder **and every descendant** is hidden from the scan and refused by the trash filter, so keys never surface in the UI. |
 
 Comparison is **case-insensitive**, matching APFS's default case-insensitive volume layout (case-sensitive APFS volumes also work, since both sides are lowercased before comparison). Both functions take `home` as a parameter so tests can point them at a temp dir; production passes the canonicalized `dirs::home_dir()`.
 
 ## Where Rust checks
 
-| Function                       | Match                    | Call sites                                                                                          |
-| ------------------------------ | ------------------------ | --------------------------------------------------------------------------------------------------- |
-| `is_path_skipped(path, home)`  | folder or any descendant | [`scan.rs`](../src-tauri/src/scan.rs) walker + user-folder seed; [`trash.rs`](../src-tauri/src/trash.rs) `filter_items` |
+| Function                        | Match                    | Call sites                                                                                                                              |
+| ------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `is_path_skipped(path, home)`   | folder or any descendant | [`scan.rs`](../src-tauri/src/scan.rs) walker + user-folder seed; [`trash.rs`](../src-tauri/src/trash.rs) `filter_items`                 |
 | `is_path_protected(path, home)` | exact folder only        | [`scan.rs`](../src-tauri/src/scan.rs) sets `FolderInfo.is_protected` for the UI; [`trash.rs`](../src-tauri/src/trash.rs) `filter_items` |
 
 ### Scan side
 
 - Skipped paths are pruned at `read_dir` time, so credential trees are never traversed and never appear in `FolderInfo`.
-- Protected paths are still walked; the `is_protected: true` flag on the resulting `FolderInfo` lets the UI lock the row from selection. The user can dive in and trash *contents*, but not the folder itself.
+- Protected paths are still walked; the `is_protected: true` flag on the resulting `FolderInfo` lets the UI lock the row from selection. The user can dive in and trash _contents_, but not the folder itself.
 
 ### Trash side (yes, enforced)
 
@@ -52,4 +52,4 @@ The scanner never feeds out-of-home paths into these checks. The trash filter do
 
 1. Append to `PROTECTED_RELATIVE_PATHS` or `SKIPPED_RELATIVE_PATHS` in `safe_folders.rs`. Use the on-disk casing; matching lowercases the input.
 2. The coverage tests in [`src-tauri/tests/safe_folders_test.rs`](../src-tauri/tests/safe_folders_test.rs) (`is_path_skipped_exact_match_all`, `is_path_protected_exact_match_all`, `is_path_skipped_descendant_all`) iterate the constants, so a new entry is exercised automatically. Add a targeted assertion only if the path has unusual casing, depth, or descendant semantics worth pinning.
-3. If the change adds a new *class* of sensitive path (not just a new entry), update the threat-model column above so the rationale stays current.
+3. If the change adds a new _class_ of sensitive path (not just a new entry), update the threat-model column above so the rationale stays current.
