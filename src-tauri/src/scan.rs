@@ -146,7 +146,7 @@ impl LiveScanState {
     }
 
     fn is_cancelled(&self) -> bool {
-        self.cancel.load(AtomicOrdering::Relaxed)
+        self.cancel.load(AtomicOrdering::Acquire)
     }
 }
 
@@ -250,7 +250,7 @@ fn build_folder_tree(
     cancel: &AtomicBool,
     live: Option<&LiveScanState>,
 ) -> FolderInfo {
-    if cancel.load(AtomicOrdering::Relaxed) {
+    if cancel.load(AtomicOrdering::Acquire) {
         return FolderInfo {
             name: "Cancelled".to_string(),
             path: root.to_string_lossy().into_owned(),
@@ -311,7 +311,7 @@ fn build_folder_tree(
 
     for (i, entry) in entries.filter_map(|e| e.ok()).enumerate() {
         // Periodic cancellation check inside large directories
-        if i % 1000 == 0 && i > 0 && cancel.load(AtomicOrdering::Relaxed) {
+        if i % 1000 == 0 && i > 0 && cancel.load(AtomicOrdering::Acquire) {
             return FolderInfo {
                 name,
                 path: root.to_string_lossy().into_owned(),
@@ -549,7 +549,7 @@ pub fn get_user_folders_sync_with_progress(
     {
         let deadline = Instant::now() + std::time::Duration::from_millis(500);
         while Instant::now() < deadline {
-            if cancel.load(AtomicOrdering::Relaxed) {
+            if cancel.load(AtomicOrdering::Acquire) {
                 return Err("Scan cancelled".to_string());
             }
             std::thread::sleep(std::time::Duration::from_millis(50));

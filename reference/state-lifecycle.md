@@ -74,7 +74,7 @@ What Vue replaces on the new scan:
 
 **Two-step cooperative cancel.** A single AtomicBool isn't enough because the walker may emit one more progress event after the flag is read on a different thread. So:
 
-1. **Rust side.** `cancel_scan` ([scan.rs:678](../src-tauri/src/scan.rs#L678)) locks `ACTIVE_CANCEL`, loads the current `Arc<AtomicBool>` (if any), flips it. The walker checks the flag every `EMIT_CHECK_INTERVAL` entries and returns early. The `ScanRunningGuard` drops, releases `SCAN_RUNNING`, and clears the token slot.
+1. **Rust side.** `cancel_scan` ([scan.rs:678](../src-tauri/src/scan.rs#L678)) locks `ACTIVE_CANCEL`, loads the current `Arc<AtomicBool>` (if any), and flips it with `AtomicOrdering::Release`. The walker reads the flag with `AtomicOrdering::Acquire` at entry, every 1000 directory entries, and after the rayon collect, returning early on `true`. The `Release`/`Acquire` pair establishes a happens-before relationship so the flip is visible promptly across rayon worker threads. The `ScanRunningGuard` drops, releases `SCAN_RUNNING`, and clears the token slot.
 2. **Vue side.** `onAbort` bumps `scanGeneration` **before** awaiting `invoke('cancel_scan')`. Every async callback captured the previous generation; the comparisons at [use-scanner.ts:101](../src/lib/use-scanner.ts#L101) and [use-scanner.ts:114](../src/lib/use-scanner.ts#L114) drop their results silently.
 
 Either step alone leaves a hole. Just the AtomicBool: late progress events still update `progress` in Vue. Just the generation counter: a Rust walker keeps running on a cancelled scan until it finishes naturally, burning CPU and emitting events that get dropped.
@@ -106,9 +106,10 @@ selectedMap (Vue)  ──►  ScanTrashList (review with checkedMapRef)
 ```
 
 - Selection lives only in Vue ([ScanResultsList.vue:99](../src/components/ScanResultsList.vue#L99) — `reactive(Map<path, FolderInfo>)`). Rust receives only the paths it needs to delete.
-- `filter_items` ([trash.rs:34](../src-tauri/src/trash.rs#L34)) reapplies the protected-path filter — defense in depth, since `safe_folders.rs` is the single source of truth and the cached tree might be stale.
-- `trash_paths_sync_with_home` ([trash.rs:55](../src-tauri/src/trash.rs#L55)) iterates files then dirs and calls `trash::delete()` per path. The `trash` crate moves the input vec and retains nothing.
-- E2E dry-run: `E2E_TRASH_MODE: Mutex<String>` ([trash.rs:123](../src-tauri/src/trash.rs#L123)) holds `"success"` / `"zero"` / `"error"`. Set by `set_e2e_trash_mode`, reset by [reset_e2e_state](../src-tauri/src/store.rs#L236).
+- `filter_items` ([trash.rs:42](../src-tauri/src/trash.rs#L42)) reapplies the protected-path filter against each item's **canonical** path — defense in depth, since `safe_folders.rs` is the single source of truth and the cached tree might be stale. Survivors are wrapped in `FilteredItem` carrying the canonical `PathBuf`, so `trash::delete` operates on the same identity the checks approved (no symlink/rename TOCTOU between filter and delete).
+- `trash_paths_sync` ([trash.rs](../src-tauri/src/trash.rs)) surfaces a `Result<TrashResult, String>` so a home-directory canonicalize failure is reported instead of silently zeroing the batch (which would otherwise compare canonical item paths against a non-canonical home and drop everything as "protected").
+- `trash_paths_sync_with_home` iterates files then dirs and calls `trash::delete(&item.canonical)` per path. The `trash` crate moves the input vec and retains nothing.
+- E2E dry-run: `E2E_TRASH_MODE: Mutex<String>` ([trash.rs:123](../src-tauri/src/trash.rs#L123)) holds `"success"` / `"zero"` / `"error"`. Set by `set_e2e_trash_mode`, reset by [reset_e2e_state](../src-tauri/src/store.rs#L236). The command, its mode store, and the `reset_e2e_state` helper are all behind `#[cfg(feature = "e2e")]`; release and beta workflows ship without `--features e2e`, and [`scripts/verify-no-e2e-symbols.sh`](../scripts/verify-no-e2e-symbols.sh) is run from both workflows to fail the build if any of the e2e command symbols leak into a signed binary.
 
 The Vue `checkedMapRef` in `ScanTrashList` sits inside a `<KeepAlive>` boundary and survives view switches. See [Vue retention pitfalls](#vue-retention-pitfalls).
 
@@ -131,6 +132,8 @@ Every `static` / `LazyLock` / `Mutex` that outlives a single command. Items not 
 | `TEST_HOME`                 | `e2e_fixtures.rs`                                          | `LazyLock<TempDir>` (e2e only)     | Fake home tempdir                                        | Init on first access                                         | App exit (`TempDir::drop`)   |
 
 `tauri_plugin_store` is **not cached in memory** between calls — `store.rs` opens the store via `app.store(SETTINGS_STORE_PATH)` and calls `store.close_resource()` on every read/write. The cost is one file I/O per call; the upside is no stale in-memory copy to invalidate.
+
+`STORE_LOCK` only serializes the read-modify-write paths (`set_settings_with_handle`, `update_setting_with_handle`). Pure reads (`get_settings_with_handle`, `get_setting_with_handle`) do not take the lock — `tauri_plugin_store` opens the file from a single in-process resource map, so a torn JSON read isn't possible from a concurrent RMW (the writer flushes the full object atomically).
 
 ## Vue retention pitfalls
 

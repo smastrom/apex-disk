@@ -125,6 +125,9 @@ jobs:
               TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
            run: pnpm exec tauri build --target universal-apple-darwin
 
+         - name: Verify universal binary excludes e2e symbols
+           run: scripts/verify-no-e2e-symbols.sh src-tauri/target/universal-apple-darwin/release/bundle/macos/ApexDisk.app/Contents/MacOS/ApexDisk
+
          - name: Build, sign and notarize Apple Silicon (aarch64) binary
            env:
               APPLE_SIGNING_IDENTITY: ${{ env.APPLE_SIGNING_IDENTITY }}
@@ -135,6 +138,9 @@ jobs:
               TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
            run: pnpm exec tauri build --target aarch64-apple-darwin
 
+         - name: Verify aarch64 binary excludes e2e symbols
+           run: scripts/verify-no-e2e-symbols.sh src-tauri/target/aarch64-apple-darwin/release/bundle/macos/ApexDisk.app/Contents/MacOS/ApexDisk
+
          - name: Build, sign and notarize Intel (x86_64) binary
            env:
               APPLE_SIGNING_IDENTITY: ${{ env.APPLE_SIGNING_IDENTITY }}
@@ -144,6 +150,9 @@ jobs:
               TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
               TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
            run: pnpm exec tauri build --target x86_64-apple-darwin
+
+         - name: Verify x86_64 binary excludes e2e symbols
+           run: scripts/verify-no-e2e-symbols.sh src-tauri/target/x86_64-apple-darwin/release/bundle/macos/ApexDisk.app/Contents/MacOS/ApexDisk
 
          - name: Extract release notes
            run: |

@@ -74,6 +74,9 @@ jobs:
               TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
            run: pnpm exec tauri build --target universal-apple-darwin --config src-tauri/tauri.beta.conf.json
 
+         - name: Verify universal binary excludes e2e symbols
+           run: scripts/verify-no-e2e-symbols.sh src-tauri/target/universal-apple-darwin/release/bundle/macos/ApexDisk.app/Contents/MacOS/ApexDisk
+
          - name: Beta notes summary
            run: |
               echo "## Beta notes (top section of RELEASES_BETA.md)" >> "$GITHUB_STEP_SUMMARY"

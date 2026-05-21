@@ -29,13 +29,13 @@ fn filter_items_protected_paths_removed() {
 
     let (files, dirs) = filter_items(&home_canon, items);
     assert!(files.is_empty());
-    let dir_paths: Vec<_> = dirs.iter().map(|i| i.path.as_str()).collect();
-    let docs_str = docs_path.to_str().unwrap();
-    let lib_str = lib_path.to_str().unwrap();
-    let mydata_str = mydata_path.to_str().unwrap();
-    assert!(!dir_paths.contains(&docs_str), "Documents should be filtered out (protected)");
-    assert!(!dir_paths.contains(&lib_str), "Library should be filtered out (protected)");
-    assert!(dir_paths.contains(&mydata_str), "MyData should remain (not protected)");
+    let dir_paths: Vec<&std::path::Path> = dirs.iter().map(|i| i.canonical.as_path()).collect();
+    assert!(
+        !dir_paths.contains(&docs_path.as_path()),
+        "Documents should be filtered out (protected)"
+    );
+    assert!(!dir_paths.contains(&lib_path.as_path()), "Library should be filtered out (protected)");
+    assert!(dir_paths.contains(&mydata_path.as_path()), "MyData should remain (not protected)");
 }
 
 /// Items whose path is skipped (e.g. .ssh) must be removed. A normal file under MyData
@@ -55,7 +55,7 @@ fn filter_items_skipped_paths_removed() {
 
     let (files, dirs) = filter_items(&home_canon, items);
     assert_eq!(files.len(), 1);
-    assert_eq!(files[0].path, mydata_file.to_string_lossy().into_owned());
+    assert_eq!(files[0].canonical, mydata_file);
     assert!(dirs.is_empty(), ".ssh should be filtered out (skipped)");
 }
 
@@ -98,7 +98,7 @@ fn filter_items_nonexistent_path_removed() {
 
     let (files, _) = filter_items(&home_canon, items);
     assert_eq!(files.len(), 1);
-    assert_eq!(files[0].path, real_file.to_string_lossy().into_owned());
+    assert_eq!(files[0].canonical, real_file);
 }
 
 /// trash_paths_sync_with_home must run without panicking and must use the same

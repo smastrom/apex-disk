@@ -5,12 +5,15 @@
 //!
 //! Items are moved to the macOS Trash so the user can recover them. Items
 //! whose canonical path is protected OR skipped (see `safe_folders`) are
-//! filtered out before trashing. Individual failures (permission, in-use,
-//! etc.) are silently skipped; the returned count/size reflect only the
-//! items actually trashed, so the UI can surface a real number without
-//! per-item error dialogs.
+//! filtered out before trashing. Survivors carry the canonical `PathBuf`
+//! through to `trash::delete`, so the system call operates on the exact
+//! identity the filter approved (no symlink/rename TOCTOU between the
+//! check and the delete). Individual `trash::delete` failures (permission,
+//! in-use, etc.) are silently skipped; the returned count/size reflect
+//! only the items actually trashed, so the UI can surface a real number
+//! without per-item error dialogs.
 
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use crate::{log, safe_folders};
 
@@ -22,6 +25,16 @@ pub struct TrashPathItem {
     pub size: u64,
 }
 
+/// Survivor of `filter_items`. Carries the canonical `PathBuf` so the
+/// eventual `trash::delete` operates on the exact identity the
+/// protected/skipped checks approved, closing the symlink/rename TOCTOU
+/// window between filter and delete.
+pub struct FilteredItem {
+    pub canonical: PathBuf,
+    pub is_file: bool,
+    pub size: u64,
+}
+
 /// Result returned after trashing: how many items were actually trashed and the total size freed.
 #[derive(serde::Serialize)]
 pub struct TrashResult {
@@ -29,24 +42,54 @@ pub struct TrashResult {
     pub size: u64,
 }
 
-/// Filters items, removing any whose path is protected or skipped.
+/// Filters items, removing any whose canonical path is protected or skipped.
+/// Survivors carry their canonical `PathBuf` so trashing operates on the same
+/// identity that was approved. Items whose `canonicalize` fails (broken
+/// symlinks, permission errors, missing files) are dropped fail-closed.
 /// Takes `home` so tests can pass a temp dir; production calls with `dirs::home_dir()?`.
 pub fn filter_items(
     home: &Path,
     items: Vec<TrashPathItem>,
-) -> (Vec<TrashPathItem>, Vec<TrashPathItem>) {
+) -> (Vec<FilteredItem>, Vec<FilteredItem>) {
     items
         .into_iter()
-        .filter(|i| {
+        .filter_map(|i| {
             let p = Path::new(&i.path);
             let canonical = match p.canonicalize() {
                 Ok(c) => c,
-                Err(_) => return false,
+                Err(err) => {
+                    log::dev_rust_trace(
+                        "trash",
+                        &format!(
+                            "filter_items: canonicalize failed for {}: {}",
+                            sanitize_log_path(&i.path, home),
+                            err
+                        ),
+                    );
+                    return None;
+                },
             };
-            !safe_folders::is_path_protected(&canonical, home)
-                && !safe_folders::is_path_skipped(&canonical, home)
+            if safe_folders::is_path_protected(&canonical, home)
+                || safe_folders::is_path_skipped(&canonical, home)
+            {
+                return None;
+            }
+            Some(FilteredItem { canonical, is_file: i.is_file, size: i.size })
         })
         .partition(|i| i.is_file)
+}
+
+// Strips `home` from `raw`; if outside home, falls back to the basename so
+// logs never carry full absolute paths that may live outside the user tree.
+fn sanitize_log_path(raw: &str, home: &Path) -> String {
+    let p = Path::new(raw);
+    match p.strip_prefix(home) {
+        Ok(rel) if !rel.as_os_str().is_empty() => rel.to_string_lossy().into_owned(),
+        _ => p
+            .file_name()
+            .map(|n| n.to_string_lossy().into_owned())
+            .unwrap_or_else(|| "<unknown>".to_string()),
+    }
 }
 
 /// Moves items to the macOS Trash via the system API, one by one.
@@ -61,7 +104,7 @@ pub fn trash_paths_sync_with_home(home: &Path, items: Vec<TrashPathItem>) -> Tra
     // Trash files first, then dirs. Each item is trashed individually so we
     // can track which ones actually succeeded.
     for item in files.iter().chain(dirs.iter()) {
-        if trash::delete(&item.path).is_ok() {
+        if trash::delete(&item.canonical).is_ok() {
             count += 1;
             size += item.size;
         }
@@ -71,16 +114,15 @@ pub fn trash_paths_sync_with_home(home: &Path, items: Vec<TrashPathItem>) -> Tra
 }
 
 #[cfg(not(feature = "e2e"))]
-fn trash_paths_sync(items: Vec<TrashPathItem>) -> TrashResult {
-    let home = match dirs::home_dir() {
-        Some(h) => h,
-        None => return TrashResult { count: 0, size: 0 },
-    };
+fn trash_paths_sync(items: Vec<TrashPathItem>) -> Result<TrashResult, String> {
+    let home = dirs::home_dir().ok_or("Unable to determine user directory")?;
     // Canonicalize home so symlink-resolved item paths still string-prefix it.
-    // Without this, items that resolve through a symlink no longer match the
-    // home string and `is_path_protected` defaults to true, silently dropping them.
-    let home = home.canonicalize().unwrap_or(home);
-    trash_paths_sync_with_home(&home, items)
+    // Surface the failure rather than silently zeroing the batch: the
+    // un-canonical fallback would compare canonical items against a
+    // non-canonical home, dropping legitimate items as "protected".
+    let home =
+        home.canonicalize().map_err(|e| format!("Failed to canonicalize home directory: {}", e))?;
+    Ok(trash_paths_sync_with_home(&home, items))
 }
 
 /// Tauri command: runs trashing on a blocking task so the UI stays responsive.
@@ -114,7 +156,7 @@ pub async fn trash_paths(items: Vec<TrashPathItem>) -> Result<TrashResult, Strin
     {
         tauri::async_runtime::spawn_blocking(move || trash_paths_sync(items))
             .await
-            .map_err(|e| e.to_string())
+            .map_err(|e| e.to_string())?
     }
 }
 
