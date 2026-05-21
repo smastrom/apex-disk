@@ -542,6 +542,20 @@ pub fn get_user_folders_sync_with_progress(
     #[cfg(not(feature = "e2e"))]
     let user_dir = dirs::home_dir().ok_or("Unable to determine user directory")?;
 
+    // The e2e fixture is tiny enough that a debug scan can finish before
+    // WebdriverIO polls the abort button. Hold the walker for a beat so the
+    // SCANNING view is reliably observable, and bail early if abort fires.
+    #[cfg(feature = "e2e")]
+    {
+        let deadline = Instant::now() + std::time::Duration::from_millis(500);
+        while Instant::now() < deadline {
+            if cancel.load(AtomicOrdering::Relaxed) {
+                return Err("Scan cancelled".to_string());
+            }
+            std::thread::sleep(std::time::Duration::from_millis(50));
+        }
+    }
+
     let folder_paths: Vec<std::path::PathBuf> = {
         let mut paths = Vec::new();
         for entry in std::fs::read_dir(&user_dir)
