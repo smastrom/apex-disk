@@ -4,6 +4,19 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 
 ---
 
+## v0.0.24
+
+### Improvements
+
+- Shrink the scan IPC payload by roughly 55%: wrap `get_user_folders` results in a `ScanResult { root, folders }` envelope so each node's `path` ships once at the root and is rebuilt on the JS side, drop the unused `icon` field from `FolderInfo`, lower `MAX_FILES_PER_DIR` from 300 to 100, add a `MAX_FOLDERS_PER_DIR = 500` cap, and freeze the hydrated tree so JSC can optimize property access without proxy overhead.
+
+### Chores
+
+- Fix the Beta workflow's e2e-symbol verify step to use the `ApexDisk Beta.app` bundle path produced by the beta config's `productName` override, unblocking the prior smoke-test Beta build.
+- Prepend a `## Release notes` header to GitHub release bodies, with a dated `RELEASES_BETA.md` section that exercised the change via the Beta workflow.
+- Add an opt-in `src-tauri/tests/scaling_probe.rs` for measuring scan IPC payload and node-count behavior on real-system paths; intentionally `#[ignore]`d so it never runs in CI or `/sync`.
+- Format `reference/state-lifecycle.md` and `reference/testing.md` per oxfmt after the scaling-bundle doc updates.
+
 ## v0.0.23
 
 ### Improvements
