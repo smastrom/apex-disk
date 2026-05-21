@@ -1,6 +1,6 @@
 # Themes
 
-ApexDisk ships **9 themes**, applied via a `data-theme` attribute on `<html>` and resolved with CSS variables. Pure frontend — no Rust involvement except the persisted setting.
+ApexDisk ships **8 themes**, applied via a `data-theme` attribute on `<html>` and resolved with CSS variables. Pure frontend — no Rust involvement except the persisted setting.
 
 ## How it works
 
@@ -40,7 +40,7 @@ Spacing, font sizes, and touch-target heights are **shared across themes** — t
 
 ## Theme set
 
-The 9 themes ship in `src/assets/css/theme.css`. Names are kebab-case identifiers used both as the `data-theme` attribute value and as the persisted setting value.
+The 8 themes are listed in `src/lib/constants.ts::THEME_COLORS` (single source of truth). The default `apex` inherits `:root` values; the other 7 ship `[data-theme='<name>']` blocks in `src/assets/css/theme.css`. Names are kebab-case identifiers used both as the `data-theme` attribute value and as the persisted setting value.
 
 If the persisted theme name doesn't match any defined theme (e.g. after removing one in a release), the `[data-theme]` selector silently fails to match and the fallback `:root` values render — usually unreadable. The Settings picker is the source of truth for valid names; keep it in sync with `theme.css`.
 

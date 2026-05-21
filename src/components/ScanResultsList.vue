@@ -56,7 +56,7 @@ const { t } = useTranslations()
  * Constants and types
  ***************************************************************/
 
-/** Matches Rust `scan::MAX_FILES_PER_DIR`; see reference/scanning.md. */
+/** Matches Rust `scan::MAX_FILES_PER_DIR`; see reference/state-lifecycle.md. */
 const MAX_DISPLAYED_ITEMS = 300
 
 /** First pass on navigation; the rest mounts after enter so slides stay smooth. */

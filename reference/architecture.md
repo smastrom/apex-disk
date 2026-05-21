@@ -25,7 +25,7 @@ ApexDisk is a **macOS-only Tauri 2 desktop app**. Two processes, one bundle:
 
 The boundary is the only real design axis in this codebase: every feature has a **Rust side** (anything touching the OS, the filesystem, or persistent state) and a **webview side** (anything you can see or click). Everything else (themes, animations, translations) is pure frontend with Rust as a passive store.
 
-Subsystem deep-dives live in their own files: [`scanning.md`](scanning.md) (scan + trash flow), [`tauri-commands.md`](tauri-commands.md) (IPC channels, command surface, settings store), [`translations.md`](translations.md), [`themes.md`](themes.md). See also [`updates.md`](updates.md), [`releases.md`](releases.md), [`logging.md`](logging.md), [`compatibility.md`](compatibility.md).
+Subsystem deep-dives live in their own files: [`state-lifecycle.md`](state-lifecycle.md) (scan + trash flow, Vue/Rust memory lifecycle), [`tauri-commands.md`](tauri-commands.md) (IPC channels, command surface, settings store), [`translations.md`](translations.md), [`themes.md`](themes.md). See also [`updates.md`](updates.md), [`releases.md`](releases.md), [`logging.md`](logging.md), [`compatibility.md`](compatibility.md).
 
 ## What each side owns
 
@@ -87,8 +87,8 @@ A handful of rules that make the IPC hop easy to reason about:
 - **Names cross the wire unchanged.** Rust structs serialize field names as-is; the frontend consumes them verbatim. That means **Tauri-boundary objects use `snake_case`** even in TypeScript (e.g. `folder_info.is_protected`), while **frontend-only objects use `camelCase`**. Types for boundary shapes live in `src/types/` and mirror the Rust structs.
 - **Do not reimplement Rust logic in Vue.** The "is this path protected?" / "how big is this folder?" / "is FDA granted?" questions belong to Rust, even when the answer is cached in a ref.
 - **Commands are total.** A command either resolves with data or rejects with an error string; no partial states on the wire. Progress-style feedback goes on events, not on the invoke promise.
-- **Cancellation is cooperative.** Each scan registers a fresh `Arc<AtomicBool>` token in a global slot before the walk starts; `cancel_scan` flips whatever token is registered, and `scan.rs` checks it inside the walk and exits early. The token slot and the `SCAN_RUNNING` lock are cleared by an RAII guard so a panic or join error doesn't strand the lock. The frontend `useScanner` also carries a `scanGeneration` counter so stale event payloads (from a scan the user already cancelled) are dropped in the webview.
-- **Truncation is a shared contract.** `scan::MAX_FILES_PER_DIR` caps files per folder; `ScanResultsList.vue` caps rendered rows at the same number to bound DOM size without a row virtualizer. Rust signals "files were dropped" via `FolderInfo.truncated`; the UI also detects its own slice. Both flow into one notice. The two caps **must be kept in sync** — see [`scanning.md`](scanning.md) for the full contract.
+- **Cancellation is cooperative.** Two-step: Rust `Arc<AtomicBool>` token + Vue `scanGeneration` counter. Full mechanics in [`state-lifecycle.md`](state-lifecycle.md).
+- **Truncation is a shared contract.** `scan::MAX_FILES_PER_DIR` and the frontend `MAX_DISPLAYED_ITEMS` cap must stay in lockstep; both flow into one user-facing notice. Full contract in [`state-lifecycle.md`](state-lifecycle.md).
 - **macOS-only.** There's no Windows/Linux branching in either side; see [`compatibility.md`](compatibility.md). objc2 AppKit/Foundation bindings are used freely in Rust.
 
 ## Build + testing boundary

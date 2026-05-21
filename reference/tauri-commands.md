@@ -1,6 +1,6 @@
 # Tauri Commands + IPC
 
-How the Rust ↔ webview boundary actually works: the three channels, the full command surface, registration patterns in `lib.rs`, and the settings flow. See [`architecture.md`](architecture.md) for the higher-level "what each side owns" picture; see [`scanning.md`](scanning.md) for the scan/trash flow specifically.
+How the Rust ↔ webview boundary actually works: the three channels, the full command surface, registration patterns in `lib.rs`, and the settings flow. See [`architecture.md`](architecture.md) for the higher-level "what each side owns" picture; see [`state-lifecycle.md`](state-lifecycle.md) for the scan/trash flow and the Vue/Rust memory lifecycle.
 
 ## Three channels
 
@@ -22,7 +22,7 @@ src/lib/use-scanner.ts
 
 One direction, many subscribers. Used when Rust needs to stream progress without blocking.
 
-Currently the only event is `folder-scan-progress` (see [`scanning.md`](scanning.md)). Trash and updater are fully request/response.
+Currently the only event is `folder-scan-progress` (see [`state-lifecycle.md`](state-lifecycle.md)). Trash and updater are fully request/response.
 
 ### 3. Persistent state — the settings store
 
@@ -77,7 +77,7 @@ store.rs::update_setting                    src-tauri/src/store.rs
 
 `store.rs` takes an internal `STORE_LOCK` mutex so concurrent writes don't lose updates, and it **re-merges defaults on every read** so new fields added in a Rust upgrade don't fail deserialization for existing installs. `set_settings` (full-object write) runs under the same lock and is whitelisted: unknown keys are dropped silently, and keys not present in the payload are preserved from the current persisted state, so a partial write can't wipe other settings.
 
-**Adding a new setting is a one-line change:** register the key and its default in `get_default_settings()` inside `store.rs`. The cached `VALID_SETTING_KEYS` set picks it up on next process start, both `update_setting` and `set_settings` accept it automatically, and existing installs get the field backfilled on next `get_settings`.
+**Adding a new setting** touches three files: register the key + default in `get_default_settings()` (`src-tauri/src/store.rs`), add the field to the `AppSettings` interface (`src/types/settings.ts`), and add a typed setter in `src/stores/app-settings.ts` if the UI mutates it. The cached `VALID_SETTING_KEYS` set picks the new key up on next process start; both `update_setting` and `set_settings` accept it automatically; existing installs get the field backfilled on next `get_settings`.
 
 The frontend mirrors the store in a reactive module-level singleton: `src/stores/app-settings.ts` calls `initTauriAppSettings()` once from `main.ts`, then `useAppSettings()` returns refs. **No `provide` / `inject`** — an explicit init + assertion caught "used before ready" bugs early; we kept it.
 

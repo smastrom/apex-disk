@@ -34,7 +34,7 @@ use crate::{log, safe_folders, xattr, FolderInfo, ScanOptions};
 /// Max file entries kept per directory. We still count ALL file sizes for
 /// accuracy, but only retain the N largest as tree entries to avoid millions
 /// of allocations and a massive IPC payload. The frontend caps rendered rows
-/// at the same number per view; see [`reference/scanning.md`].
+/// at the same number per view; see [`reference/state-lifecycle.md`].
 pub const MAX_FILES_PER_DIR: usize = 300;
 
 /// Minimum interval between progress events emitted during recursive scanning.

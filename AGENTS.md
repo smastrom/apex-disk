@@ -45,20 +45,20 @@ On staged `.js` / `.ts` / `.vue` and on editor save: **oxlint `--fix` first**, t
 file; the `pre-commit-protocol` rule guarantees a docs sweep before any
 commit.
 
-| File                          | Covers                                                                                      |
-| ----------------------------- | ------------------------------------------------------------------------------------------- |
-| `reference/architecture.md`   | Frontend/backend split, what each side owns, boundary conventions, build/testing.           |
-| `reference/scanning.md`       | Scan + trash flow, `FolderInfo`, progress events, cancellation, selection model.            |
-| `reference/tauri-commands.md` | IPC channels, command surface, `lib.rs` registration, settings store, locale + menu.        |
-| `reference/translations.md`   | Per-component YAML, 10 languages, `useTranslations()`, CJK folding rules.                   |
-| `reference/themes.md`         | CSS variables, `data-theme` switching, 9 themes, adding a new theme.                        |
-| `reference/code-style.md`     | Oxfmt + Oxlint adjunct, Vue/CSS/TS conventions, file naming, license headers, comments.     |
-| `reference/testing.md`        | Suites, when to run, Rust integration patterns, E2E + `e2e` cargo feature, what not to add. |
-| `reference/compatibility.md`  | macOS / Safari / architecture targets, progressive enhancement matrix, oxfmt fallbacks.     |
-| `reference/logging.md`        | `[apex:…]` diagnostic scheme, Vue categories, Rust trace channels, `APEX_DISK_DEBUG`.       |
-| `reference/releases.md`       | How to cut stable and Beta builds, version fields, changelog conventions, workflows.        |
-| `reference/updates.md`        | In-app updater (auto/manual), endpoint, signing, dialogs.                                   |
-| `reference/voice.md`          | Tone and prose rules for user-facing docs (README, RELEASES, comments, copy).               |
+| File                           | Covers                                                                                      |
+| ------------------------------ | ------------------------------------------------------------------------------------------- |
+| `reference/architecture.md`    | Frontend/backend split, what each side owns, boundary conventions, build/testing.           |
+| `reference/state-lifecycle.md` | UI ↔ memory: scan + trash lifecycle, Vue reactive state, Rust statics, what frees when.     |
+| `reference/tauri-commands.md`  | IPC channels, command surface, `lib.rs` registration, settings store, locale + menu.        |
+| `reference/code-style.md`      | Oxfmt + Oxlint adjunct, Vue/CSS/TS conventions, file naming, license headers, comments.     |
+| `reference/translations.md`    | Per-component YAML, 10 languages, `useTranslations()`, CJK folding rules.                   |
+| `reference/testing.md`         | Suites, when to run, Rust integration patterns, E2E + `e2e` cargo feature, what not to add. |
+| `reference/themes.md`          | CSS variables, `data-theme` switching, 8 themes, adding a new theme.                        |
+| `reference/compatibility.md`   | macOS / Safari / architecture targets, progressive enhancement matrix, oxfmt fallbacks.     |
+| `reference/voice.md`           | Tone and prose rules for user-facing docs (README, RELEASES, comments, copy).               |
+| `reference/logging.md`         | `[apex:…]` diagnostic scheme, Vue categories, Rust trace channels, `APEX_DISK_DEBUG`.       |
+| `reference/updates.md`         | In-app updater (auto/manual), endpoint, signing, dialogs.                                   |
+| `reference/releases.md`        | How to cut stable and Beta builds, version fields, changelog conventions, workflows.        |
 
 Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`,
 `CODE_OF_CONDUCT.md`, `SECURITY.md`, `README.md` stay at the repo root —
@@ -155,48 +155,16 @@ Quick rules:
 
 ## Prose style: em and en dashes
 
-**Em dashes (`—`) are allowed as label separators**, where the dash sits
-between a short label and its description. This applies broadly: bullets,
-list items, table headings, CSS / Rust / TS section-header comments,
-file-title comments, complexity annotations — any `[label] — [description]`
-construct. They are **never** used as parenthetical interrupts in running
-prose.
+**Em dashes (`—`)** are allowed only as label separators in `[label] — [description]`
+constructs (bullets, list items, table headings, section-header comments). They are
+**never** used as parenthetical interrupts in running prose; rewrite with a comma,
+parentheses, period, or colon. **En dashes (`–`)** are not used anywhere. See
+[`reference/voice.md`](reference/voice.md) for examples and edge cases.
 
-Allowed:
-
-- `**Fast** — scans hundreds of thousands of files in seconds.`
-- `**New Features** — user-visible additions.`
-- `/* Theme: macOS Dark — Apple's system dark appearance */`
-- `/// Silent update check — returns the available version string or null.`
-
-Not allowed (interrupt in a flowing sentence):
-
-- ~~"ApexDisk is built with Rust — a fast systems language — and runs natively."~~
-  → "ApexDisk is built with Rust, a fast systems language, and runs natively."
-- ~~"Scanning is fast — even on huge folders."~~
-  → "Scanning is fast, even on huge folders."
-- ~~"We only ever replace the whole array — never mutate in place."~~
-  → "We only ever replace the whole array, never mutate in place."
-
-The test: if the words around the dash form a flowing sentence and the dash
-is interrupting it to add a side note, it's an interrupt and must go.
-
-**Log strings:** even when they look like `[category] — [data]`, remove the
-dash. The existing convention is `"Scan: complete 5 folders"`, not
-`"Scan: complete — 5 folders"`.
-
-**En dashes (`–`) are not used anywhere in this project.** Use an em dash (when
-the label-separator rule allows it) or a hyphen.
-
-**Hyphens (`-`)** in compound words (`agent-facing`, `user-visible`,
-`open-source`) are normal and unrelated.
-
-**Scope:** the prose rules apply to every file outside `.claude/` and
-`reference/`: `README.md`, `RELEASES.md`, `RELEASES_BETA.md`, `SECURITY.md`,
-`CODE_OF_CONDUCT.md`, `LICENSE.md`, code comments (`.ts`, `.tsx`, `.vue`,
-`.rs`, `.sh`, CSS), commit messages, PR descriptions, and any user-visible
-string. Files under `.claude/` and `reference/` are agent-facing and
-exempt.
+**Scope:** applies to every file outside `.claude/` and `reference/`:
+`README.md`, `RELEASES.md`, `RELEASES_BETA.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`,
+`LICENSE.md`, code comments (`.ts`, `.tsx`, `.vue`, `.rs`, `.sh`, CSS), commit
+messages, PR descriptions, and any user-visible string.
 
 ## What not to do
 
@@ -204,7 +172,7 @@ exempt.
 - Do not create tests or docs unless asked.
 - Do not add platform-specific code for Windows/Linux.
 - Do not propose launching dev servers (it's always running).
-- Do not use provide/inject for settings.
+- Do not use provide/inject for settings — use `useAppSettings()`.
 - Do not use Options API or plain `<script>`.
 - Do not add narration comments that only restate the next line (for example `// Load system info` before `await loadSystemInfo()`).
 - Do not use em dashes as parenthetical interrupts in user-facing prose, and

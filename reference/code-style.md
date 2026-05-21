@@ -57,7 +57,7 @@ Applies to `.ts` files and the `<script setup>` block of `.vue` files.
 - **`if` bodies:** braces required unless condition + statement fit on one line. One-line form is fine: `if (cond) return`.
 - **Prefer `!value`** over `value === false`.
 - **No `as any`, no `// @ts-ignore`** to silence the checker. Code must be type-clean (`pnpm typecheck`).
-- **Boundary objects use `snake_case`** (Tauri/Rust IPC). Frontend-only objects use `camelCase`. See `[architecture.md](architecture.md)` — boundary conventions.
+- **Boundary objects use `snake_case`** (Tauri/Rust IPC). Frontend-only objects use `camelCase`. See [`architecture.md`](architecture.md), Boundary conventions.
 - **Types live in `src/types/`.** Boundary types mirror Rust structs exactly.
 
 ## CSS / Vue style
@@ -69,7 +69,7 @@ Applies to scoped `<style scoped>` blocks in `.vue` files and to standalone `.cs
 - **Nest pseudo and element selectors.** Use `&` inside the parent class rule for pseudo-classes / pseudo-elements / unqualified element selectors: `&:hover`, `&:focus`, `&[disabled]`, `&::before`, `&::after`, `& img`, `& > svg`.
 - **Always nest `@media` inside the selector it overrides.** Applies to responsive tweaks and cross-cutting overrides like `@media (prefers-reduced-motion: reduce)` alike — never write `@media` at the top level of a scoped stylesheet.
 - **Blank line between rule blocks** at the top level.
-- **No hardcoded values** for color, spacing, font sizes, or border radii — use CSS variables from `src/assets/css/theme.css` (see `[themes.md](themes.md)`). Examples: `var(--color-bg)`, `var(--spacing-md)`, `var(--font-size-xl)`, `var(--touch-height-default)`.
+- **No hardcoded values** for color, spacing, font sizes, or border radii — use CSS variables from `src/assets/css/theme.css` (see [`themes.md`](themes.md)). Examples: `var(--color-bg)`, `var(--spacing-md)`, `var(--font-size-xl)`, `var(--touch-height-default)`.
 
 ## Vue file shape
 
@@ -137,7 +137,7 @@ const { t } = useTranslations()
 - **Do not write library-introduction or rationale chatter.** `// Positioning via @floating-ui/dom` is what the import line says.
 - **No commented-out code.** Delete it.
 - **If a function needs a paragraph to explain it**, prefer renaming or splitting it instead.
-- **No em dashes (`—`) as parenthetical interrupts in comments, and no en dashes (`–`) at all.** Comments are user-facing prose: follow [`voice.md`](voice.md). Em dashes are only acceptable as label separators in a bulleted comment list, which is rare; almost always rewrite with a comma, parentheses, period, or colon.
+- **Em / en dashes:** comments follow the project prose rule. See [`voice.md`](voice.md). Em dashes are allowed only as label separators; en dashes are not used.
 
 ## Rust
 
@@ -145,7 +145,7 @@ const { t } = useTranslations()
 - **Install once:** `rustup toolchain install nightly --component rustfmt --profile minimal`.
 - **Import order** (enforced by rustfmt `group_imports = "StdExternalCrate"`): `std` → external crates → crate-internal. Blank line between groups. Adjacent `use` lines from the same crate collapse into nested form.
 - Cargo deps managed in `src-tauri/Cargo.toml`. MSRV is implicit (1.70+) — no `rust-toolchain.toml`.
-- See `[compatibility.md](compatibility.md)` for the macOS API surface allowed within the 10.15 floor.
+- See [`compatibility.md`](compatibility.md) for the macOS API surface allowed within the 10.15 floor.
 
 ## External scripts (codegen, build tooling, one-off utilities)
 
@@ -163,11 +163,3 @@ const { t } = useTranslations()
 - Always include the `Co-Authored-By` trailer when the commit is agent-made.
 - Never skip hooks (`--no-verify`) and never bypass signing — investigate failures instead.
 
-## What not to do
-
-- Do not install npm packages unless asked.
-- Do not create tests or docs unless asked.
-- Do not add platform-specific code for Windows/Linux.
-- Do not propose launching dev servers (it's always running).
-- Do not use `provide` / `inject` for settings — use `useAppSettings()`.
-- Do not use Options API or plain `<script>`.

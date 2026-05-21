@@ -58,7 +58,7 @@ Conventions:
 
 The E2E suite drives a real Tauri build via WebDriver. Key pieces:
 
-- **Cargo feature** — `cargo build --features e2e` enables `tauri_plugin_webdriver` and a handful of test-only commands (`trash::set_e2e_trash_mode`, `store::reset_e2e_state`). These commands exist in a **second** `tauri::generate_handler!` block in `src-tauri/src/lib.rs` (one for default builds, one for `#[cfg(feature = "e2e")]`). **When you add a new command, update both blocks** — the macro can't expand nested macros, hence the duplication.
+- **Cargo feature** — `cargo build --features e2e` enables `tauri_plugin_webdriver` and the test-only commands (`trash::set_e2e_trash_mode`, `store::reset_e2e_state`). These live in a second `generate_handler!` block under `#[cfg(feature = "e2e")]`. See [`tauri-commands.md`](tauri-commands.md) for the dual-block rule when adding new commands.
 - **Trash dry-run** — `set_e2e_trash_mode` swaps in a dry-run trash that records intent without touching disk. Specs assert on the recorded calls instead of actual macOS Trash interactions.
 - **Spec location** — `e2e/specs/`, plus shared helpers under `e2e/`.
 - **First run is slow** — the debug Tauri build is compiled lazily. The CI machine and local dev share this cost.
