@@ -1,12 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Simone Mastromattei
 
-import { computePosition, flip, offset, shift, type Placement } from '@floating-ui/dom'
+import type { Placement } from '@floating-ui/dom'
+
 import { onMounted, onUnmounted, type Ref } from 'vue'
 
-const ENTER_DELAY = 400
-const LEAVE_DELAY = 200
-const VIEWPORT_PADDING = 16
+import {
+   attachScrollDismiss,
+   clearPopoverTimer,
+   clearPopoverTimers,
+   isTextTruncated,
+   POPOVER_ENTER_DELAY,
+   POPOVER_LEAVE_DELAY,
+   positionPopover,
+   type PopoverTimerRef,
+} from '@/lib/popover-utils'
 
 type PopoverKind = 'name' | 'checkbox'
 type DisabledTooltipKind = 'fda' | 'protected'
@@ -15,8 +23,8 @@ interface PopoverState {
    trigger: HTMLElement | null
    anchor: HTMLElement | null
    isOpen: boolean
-   enterTimer: ReturnType<typeof setTimeout> | null
-   leaveTimer: ReturnType<typeof setTimeout> | null
+   enterTimer: PopoverTimerRef
+   leaveTimer: PopoverTimerRef
    cleanupScroll: (() => void) | null
 }
 
@@ -64,15 +72,7 @@ export function useListRowPopovers(
 
       if (!state.anchor || !el) return
 
-      el.style.maxWidth = `${window.innerWidth - VIEWPORT_PADDING * 2}px`
-
-      const { x, y } = await computePosition(state.anchor, el, {
-         placement: placementFor(kind),
-         middleware: [offset(8), flip(), shift({ padding: VIEWPORT_PADDING })],
-      })
-
-      el.style.left = `${x}px`
-      el.style.top = `${y}px`
+      await positionPopover(state.anchor, el, { placement: placementFor(kind) })
    }
 
    async function open(kind: PopoverKind, text: string) {
@@ -110,26 +110,12 @@ export function useListRowPopovers(
 
       if (!state.trigger) return
 
-      let ancestor: HTMLElement | null = state.trigger.parentElement
-
-      while (ancestor) {
-         const { overflow, overflowY } = getComputedStyle(ancestor)
-
-         if (/auto|scroll/.test(overflow + overflowY)) break
-
-         ancestor = ancestor.parentElement
-      }
-
-      const target = ancestor ?? document
-
       const dismiss = () => {
          clearTimers(kind)
          close(kind)
       }
 
-      target.addEventListener('scroll', dismiss, { passive: true, once: true })
-
-      state.cleanupScroll = () => target.removeEventListener('scroll', dismiss)
+      state.cleanupScroll = attachScrollDismiss(state.trigger, dismiss)
    }
 
    function removeScrollListener(kind: PopoverKind) {
@@ -140,18 +126,7 @@ export function useListRowPopovers(
    }
 
    function clearTimers(kind: PopoverKind) {
-      const state = states[kind]
-
-      if (state.enterTimer) {
-         clearTimeout(state.enterTimer)
-
-         state.enterTimer = null
-      }
-      if (state.leaveTimer) {
-         clearTimeout(state.leaveTimer)
-
-         state.leaveTimer = null
-      }
+      clearPopoverTimers(states[kind])
    }
 
    interface Match {
@@ -167,7 +142,7 @@ export function useListRowPopovers(
       const nameEl = target.closest<HTMLElement>('.ScanResultsListItem-name')
 
       if (nameEl) {
-         if (nameEl.scrollWidth <= nameEl.clientWidth) return null
+         if (!isTextTruncated(nameEl)) return null
 
          return {
             kind: 'name',
@@ -205,11 +180,7 @@ export function useListRowPopovers(
       const state = states[match.kind]
 
       if (state.trigger === match.trigger) {
-         if (state.leaveTimer) {
-            clearTimeout(state.leaveTimer)
-
-            state.leaveTimer = null
-         }
+         state.leaveTimer = clearPopoverTimer(state.leaveTimer)
 
          return
       }
@@ -226,7 +197,7 @@ export function useListRowPopovers(
 
          position(match.kind)
       } else {
-         state.enterTimer = setTimeout(() => open(match.kind, match.text), ENTER_DELAY)
+         state.enterTimer = setTimeout(() => open(match.kind, match.text), POPOVER_ENTER_DELAY)
       }
    }
 
@@ -243,16 +214,12 @@ export function useListRowPopovers(
 
          if (related && el && el.contains(related)) continue
 
-         if (state.enterTimer) {
-            clearTimeout(state.enterTimer)
-
-            state.enterTimer = null
-         }
+         state.enterTimer = clearPopoverTimer(state.enterTimer)
 
          if (state.isOpen) {
-            if (state.leaveTimer) clearTimeout(state.leaveTimer)
+            state.leaveTimer = clearPopoverTimer(state.leaveTimer)
 
-            state.leaveTimer = setTimeout(() => close(kind), LEAVE_DELAY)
+            state.leaveTimer = setTimeout(() => close(kind), POPOVER_LEAVE_DELAY)
          } else {
             state.trigger = null
             state.anchor = null
@@ -263,11 +230,7 @@ export function useListRowPopovers(
    function onPopoverEnter(kind: PopoverKind) {
       const state = states[kind]
 
-      if (state.leaveTimer) {
-         clearTimeout(state.leaveTimer)
-
-         state.leaveTimer = null
-      }
+      state.leaveTimer = clearPopoverTimer(state.leaveTimer)
    }
 
    function onPopoverLeave(kind: PopoverKind) {
@@ -275,9 +238,9 @@ export function useListRowPopovers(
 
       if (!state.isOpen) return
 
-      if (state.leaveTimer) clearTimeout(state.leaveTimer)
+      state.leaveTimer = clearPopoverTimer(state.leaveTimer)
 
-      state.leaveTimer = setTimeout(() => close(kind), LEAVE_DELAY)
+      state.leaveTimer = setTimeout(() => close(kind), POPOVER_LEAVE_DELAY)
    }
 
    function dismissAll() {

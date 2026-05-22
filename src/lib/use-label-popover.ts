@@ -1,12 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Simone Mastromattei
 
-import { computePosition, flip, offset, shift, type Placement } from '@floating-ui/dom'
+import type { Placement } from '@floating-ui/dom'
+
 import { ref, onUnmounted, type Ref } from 'vue'
 
-const ENTER_DELAY = 400
-const LEAVE_DELAY = 200
-const VIEWPORT_PADDING = 16
+import {
+   attachScrollDismiss,
+   clearPopoverTimer,
+   isTextTruncated,
+   POPOVER_DEFAULT_OFFSET,
+   POPOVER_ENTER_DELAY,
+   POPOVER_LEAVE_DELAY,
+   positionPopover,
+   type PopoverTimerRef,
+} from '@/lib/popover-utils'
 
 /** Wrap the popover element in `<Teleport to="body">` so ancestor `overflow` does not clip it. */
 export function useLabelPopover(
@@ -23,12 +31,12 @@ export function useLabelPopover(
 ) {
    const isOpen = ref(false)
 
-   let enterTimer: ReturnType<typeof setTimeout> | null = null
-   let leaveTimer: ReturnType<typeof setTimeout> | null = null
+   let enterTimer: PopoverTimerRef = null
+   let leaveTimer: PopoverTimerRef = null
    let scrollCleanup: (() => void) | null = null
 
    const placement = options.placement ?? 'top'
-   const offsetPx = options.offset ?? 8
+   const offsetPx = options.offset ?? POPOVER_DEFAULT_OFFSET
    const alwaysShow = options.alwaysShow ?? false
    const anchorRef = options.anchorRef ?? triggerRef
 
@@ -38,7 +46,7 @@ export function useLabelPopover(
       if (!el) return false
       if (alwaysShow) return true
 
-      return el.scrollWidth > el.clientWidth
+      return isTextTruncated(el)
    }
 
    async function position() {
@@ -47,15 +55,7 @@ export function useLabelPopover(
 
       if (!anchor || !popover) return
 
-      popover.style.maxWidth = `${window.innerWidth - VIEWPORT_PADDING * 2}px`
-
-      const { x, y } = await computePosition(anchor, popover, {
-         placement,
-         middleware: [offset(offsetPx), flip(), shift({ padding: VIEWPORT_PADDING })],
-      })
-
-      popover.style.left = `${x}px`
-      popover.style.top = `${y}px`
+      await positionPopover(anchor, popover, { placement, offsetPx })
    }
 
    async function show() {
@@ -92,21 +92,7 @@ export function useLabelPopover(
 
       if (!el) return
 
-      let ancestor: HTMLElement | null = el.parentElement
-
-      while (ancestor) {
-         const { overflow, overflowY } = getComputedStyle(ancestor)
-
-         if (/auto|scroll/.test(overflow + overflowY)) break
-
-         ancestor = ancestor.parentElement
-      }
-
-      const target = ancestor ?? document
-
-      target.addEventListener('scroll', dismiss, { passive: true, once: true })
-
-      scrollCleanup = () => target.removeEventListener('scroll', dismiss)
+      scrollCleanup = attachScrollDismiss(el, dismiss)
    }
 
    function removeScrollListener() {
@@ -115,38 +101,23 @@ export function useLabelPopover(
    }
 
    function clearTimers() {
-      if (enterTimer) {
-         clearTimeout(enterTimer)
-
-         enterTimer = null
-      }
-      if (leaveTimer) {
-         clearTimeout(leaveTimer)
-
-         leaveTimer = null
-      }
+      enterTimer = clearPopoverTimer(enterTimer)
+      leaveTimer = clearPopoverTimer(leaveTimer)
    }
 
    function onPointerEnter() {
       if (!shouldShow()) return
 
-      if (leaveTimer) {
-         clearTimeout(leaveTimer)
+      leaveTimer = clearPopoverTimer(leaveTimer)
 
-         leaveTimer = null
-      }
-
-      enterTimer = setTimeout(show, ENTER_DELAY)
+      enterTimer = setTimeout(show, POPOVER_ENTER_DELAY)
    }
 
    function onPointerLeave() {
-      if (enterTimer) {
-         clearTimeout(enterTimer)
+      enterTimer = clearPopoverTimer(enterTimer)
 
-         enterTimer = null
-      }
       if (isOpen.value) {
-         leaveTimer = setTimeout(hide, LEAVE_DELAY)
+         leaveTimer = setTimeout(hide, POPOVER_LEAVE_DELAY)
       }
    }
 

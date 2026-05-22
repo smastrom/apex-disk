@@ -132,17 +132,18 @@ Feature components (`Scan*.vue`, `SettingsView.vue`) own behavior and IPC.
 
 ## Module index
 
-| Location                              | What                                       |
-| ------------------------------------- | ------------------------------------------ |
-| `src/components/AppLayout.vue`        | Shell wiring (focus ring, views, scanner)  |
-| `src/lib/use-app-views.ts`            | View state machine + WebDriver snap        |
-| `src/lib/use-focus-ring.ts`           | Keyboard focus ring                        |
-| `src/lib/use-context-menu.ts`         | Suppress Reload context menu               |
-| `src/lib/use-label-popover.ts`        | Single-element floating tooltip            |
-| `src/lib/use-list-row-popovers.ts`    | Delegated list row tooltips                |
-| `src/lib/use-reduced-motion.ts`       | `prefers-reduced-motion` ref               |
-| `src/lib/use-scrollbar-visibility.ts` | Custom scrollbar visibility                |
-| `src/lib/use-full-disk-access.ts`     | FDA invoke on bootstrap                    |
-| `src/components/ui/`                  | Shared presentational widgets              |
-| `src/assets/css/animations.css`       | `list-slide`, shell slides, reduced motion |
-| `src/assets/css/global.css`           | Focus ring, scrollbar thumb styles         |
+| Location                              | What                                                           |
+| ------------------------------------- | -------------------------------------------------------------- |
+| `src/components/AppLayout.vue`        | Shell wiring (focus ring, views, scanner)                      |
+| `src/lib/use-app-views.ts`            | View state machine + WebDriver snap                            |
+| `src/lib/use-focus-ring.ts`           | Keyboard focus ring                                            |
+| `src/lib/use-context-menu.ts`         | Suppress Reload context menu                                   |
+| `src/lib/use-label-popover.ts`        | Single-element floating tooltip                                |
+| `src/lib/use-list-row-popovers.ts`    | Delegated list row tooltips                                    |
+| `src/lib/popover-utils.ts`            | Shared popover positioning, timing, and scroll-dismiss helpers |
+| `src/lib/use-reduced-motion.ts`       | `prefers-reduced-motion` ref                                   |
+| `src/lib/use-scrollbar-visibility.ts` | Custom scrollbar visibility                                    |
+| `src/lib/use-full-disk-access.ts`     | FDA invoke on bootstrap                                        |
+| `src/components/ui/`                  | Shared presentational widgets                                  |
+| `src/assets/css/animations.css`       | `list-slide`, shell slides, reduced motion                     |
+| `src/assets/css/global.css`           | Focus ring, scrollbar thumb styles                             |
