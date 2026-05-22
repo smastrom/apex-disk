@@ -4,6 +4,23 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 
 ---
 
+## v0.0.27
+
+### Improvements
+
+- Tell users what's hidden when a folder hits the 100-row cap. Surface `hidden_files_count` / `hidden_files_size` / `hidden_folders_count` / `hidden_folders_size` on `FolderInfo` (skipped on the wire when zero, so non-truncated nodes and every file pay no cost), and rewrite the truncation notice across all 10 locales to read, e.g. _"Only the 100 largest entries are shown. 247 more (1.2 GB) are not listed but still counted in this folder's size."_ Folder rows also show the real item count, so `~/Library/Containers` reads "284 items" instead of "100".
+- Polish the UI surface across themes: rename `--color-accent-bg` / `-hover` to `--color-divider` / `--color-bg-hover` and retone to neutral white-alpha or theme-tinted values (the role was always divider + hover background, never accent); add a `--font-weight-min` token (400 dark / 500 light) for better contrast on pale themes; inset the focus ring on results-list rows so the scrollport doesn't clip it; allow text selection on the trash list name and path; make the nav path and trash path popovers always show on hover and render the full path with an opaque background; rename the macOS Graphite theme to Apex Graphite and reposition it in the Apex family.
+
+### Bug Fixes
+
+- Align the truncation notice with the actual cap: all 10 locales still said "300 largest entries" after v0.0.24 dropped `MAX_FILES_PER_DIR` to 100.
+
+### Chores
+
+- Add per-architecture DMG builds (aarch64 + x64) to the Beta workflow, matching the stable channel. Testers on a known architecture now download ~50% less.
+- Surface the version on the Beta release page: title is `ApexDisk Beta vX.Y.Z (run <id>)`, the body opens with a build-metadata line (version, branch, short commit link, run-id link), and the tag is `beta-vX.Y.Z-<run_id>`. Drop `-beta.N` from the semver pre-release docs and reserve `-beta` for the channel name.
+- Format `reference/releases.md` per oxfmt after the table cells widened to fit the new tag-format examples.
+
 ## v0.0.26
 
 ### Chores
