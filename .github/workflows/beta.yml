@@ -93,6 +93,32 @@ jobs:
            # from productName, so it does NOT get a "Beta" suffix.
            run: scripts/verify-no-e2e-symbols.sh "src-tauri/target/universal-apple-darwin/release/bundle/macos/ApexDisk Beta.app/Contents/MacOS/apex-disk"
 
+         - name: Build, sign and notarize Apple Silicon (aarch64) binary (beta)
+           env:
+              APPLE_SIGNING_IDENTITY: ${{ env.APPLE_SIGNING_IDENTITY }}
+              APPLE_ID: ${{ secrets.APPLE_ID }}
+              APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+              APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+              TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+              TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+           run: pnpm exec tauri build --target aarch64-apple-darwin --config src-tauri/tauri.beta.conf.json
+
+         - name: Verify aarch64 binary excludes e2e symbols (beta)
+           run: scripts/verify-no-e2e-symbols.sh "src-tauri/target/aarch64-apple-darwin/release/bundle/macos/ApexDisk Beta.app/Contents/MacOS/apex-disk"
+
+         - name: Build, sign and notarize Intel (x86_64) binary (beta)
+           env:
+              APPLE_SIGNING_IDENTITY: ${{ env.APPLE_SIGNING_IDENTITY }}
+              APPLE_ID: ${{ secrets.APPLE_ID }}
+              APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+              APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+              TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+              TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+           run: pnpm exec tauri build --target x86_64-apple-darwin --config src-tauri/tauri.beta.conf.json
+
+         - name: Verify x86_64 binary excludes e2e symbols (beta)
+           run: scripts/verify-no-e2e-symbols.sh "src-tauri/target/x86_64-apple-darwin/release/bundle/macos/ApexDisk Beta.app/Contents/MacOS/apex-disk"
+
          - name: Beta notes summary
            run: |
               echo "## Beta notes (top section of RELEASES_BETA.md)" >> "$GITHUB_STEP_SUMMARY"
@@ -135,6 +161,8 @@ jobs:
               fail_on_unmatched_files: true
               files: |
                  src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+                 src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg
+                 src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg
                  RELEASES_BETA.md
 
          - name: Upload DMG and beta notes
@@ -143,5 +171,7 @@ jobs:
               name: ApexDisk-Beta-${{ github.run_id }}
               path: |
                  src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+                 src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg
+                 src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg
                  RELEASES_BETA.md
               retention-days: 30

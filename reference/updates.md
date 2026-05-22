@@ -124,5 +124,5 @@ To test the full update experience (check → download → "Restart to Update"):
 | `src-tauri/tauri.beta.conf.json`     | Merge config for the Beta-channel DMG: bundle id / product name, `createUpdaterArtifacts: false`                                                           |
 | `src-tauri/Entitlements.plist`       | macOS entitlements (minimal): `com.apple.security.cs.allow-jit` for WKWebView, `com.apple.security.network.client` for downloads                           |
 | `.github/workflows/release.yml`      | CI: builds, signs artifacts, generates `latest.json`, uploads to release                                                                                   |
-| `.github/workflows/beta.yml`         | CI: `workflow_dispatch` only — unit tests, Beta DMG, **pre-release** (`beta-v<version>-<run_id>`) + artifact                                               |
+| `.github/workflows/beta.yml`         | CI: `workflow_dispatch` only — unit tests, three Beta DMGs (universal + aarch64 + x64), **pre-release** (`beta-v<version>-<run_id>`) + artifact            |
 | `../RELEASES_BETA.md`                | Optional Beta QA notes; pre-release body + artifact; first `##` section in job summary; not used for semver                                                |

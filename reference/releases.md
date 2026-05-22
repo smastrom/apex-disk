@@ -55,7 +55,7 @@ The Beta channel is **QA-only**: dispatch-triggered, no updater, sits beside the
 
 1. (Optional) Add a dated section to `../RELEASES_BETA.md` — use the `/beta-notes` slash command or add a `## YYYY-MM-DD` section at the top with tester notes. The **first** such section becomes the pre-release body.
 2. Go to **Actions → Beta → Run workflow** and pick the **branch** to build (e.g. `main`, a feature branch).
-3. When the job finishes, open the **pre-release** on the Releases page (tag `beta-v<version>-<run_id>`) and download the DMG, or grab the `ApexDisk-Beta-<run_id>` artifact.
+3. When the job finishes, open the **pre-release** on the Releases page (tag `beta-v<version>-<run_id>`) and download a DMG (universal, `aarch64` for Apple Silicon, or `x64` for Intel — the arch-specific DMGs are ~50% smaller), or grab the `ApexDisk-Beta-<run_id>` artifact.
 
 Config (`src-tauri/tauri.beta.conf.json`): product name **ApexDisk Beta**, bundle id `com.smastrom.apex-disk.beta`, and `bundle.createUpdaterArtifacts: false`. This lets Beta install side-by-side with stable and keeps it out of the updater channel.
 
