@@ -1,5 +1,5 @@
 # Builds a signed, notarized **ApexDisk Beta** DMG. Trigger: **workflow_dispatch only** (never on push).
-# Publishes a GitHub **pre-release** (tag `beta-<run_id>`) with the DMG + RELEASES_BETA.md so testers
+# Publishes a GitHub **pre-release** (tag `beta-v<version>-<run_id>`) with the DMG + RELEASES_BETA.md so testers
 # can install from the Releases page. Also uploads a workflow artifact. No latest.json / updater channel.
 # Version is whatever is on the branch you choose when clicking "Run workflow". See reference/updates.md.
 
@@ -25,6 +25,18 @@ jobs:
 
          - name: Setup pnpm
            uses: pnpm/action-setup@v5
+
+         - name: Read build metadata
+           # Beta does not bump or validate the version (see reference/releases.md):
+           # it ships whatever is on the selected branch. We still surface that
+           # version in the release title + body so testers can match the GitHub
+           # release to the About-box semver without scrolling to the DMG filename.
+           run: |
+              VERSION=$(node -p "require('./package.json').version")
+              COMMIT_SHORT="${GITHUB_SHA:0:7}"
+              echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+              echo "COMMIT_SHORT=$COMMIT_SHORT" >> "$GITHUB_ENV"
+              echo "Beta build: v$VERSION ($COMMIT_SHORT) from branch ${GITHUB_REF_NAME}"
 
          - name: Install frontend dependencies
            run: pnpm install
@@ -96,23 +108,27 @@ jobs:
               # Prepend "## Release notes" header on the pre-release body only.
               # RELEASES_BETA.md keeps its dated ## YYYY-MM-DD sections at top level;
               # the header is rendered once per published Beta. See reference/releases.md.
+              COMMIT_URL="${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
+              RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
               echo "## Release notes" > beta_prerelease_body.md
+              echo "" >> beta_prerelease_body.md
+              # Build metadata line: version up front so testers can match the
+              # About box, commit + run for traceability. Several Beta builds
+              # may share one version, so the run link is the unique key.
+              echo "**ApexDisk Beta v${VERSION}**, built from branch \`${GITHUB_REF_NAME}\` ([\`${COMMIT_SHORT}\`](${COMMIT_URL}), [run #${{ github.run_id }}](${RUN_URL}))." >> beta_prerelease_body.md
               echo "" >> beta_prerelease_body.md
               if awk '/^## /{if(h){exit} h=1} h' RELEASES_BETA.md | grep -q .; then
                 awk '/^## /{if(h){exit} h=1} h' RELEASES_BETA.md >> beta_prerelease_body.md
               else
                 echo "_Add a dated \`##\` section at the top of RELEASES_BETA.md for richer notes._" >> beta_prerelease_body.md
               fi
-              echo "" >> beta_prerelease_body.md
-              echo "---" >> beta_prerelease_body.md
-              echo "" >> beta_prerelease_body.md
-              echo "_Workflow run [\`${{ github.run_id }}\`](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}), commit \`${{ github.sha }}\`._" >> beta_prerelease_body.md
 
          - name: Publish GitHub pre-release
            uses: softprops/action-gh-release@v2
            with:
-              tag_name: beta-${{ github.run_id }}
-              name: ApexDisk Beta (${{ github.run_id }})
+              tag_name: beta-v${{ env.VERSION }}-${{ github.run_id }}
+              name: ApexDisk Beta v${{ env.VERSION }} (run ${{ github.run_id }})
               body_path: beta_prerelease_body.md
               prerelease: true
               generate_release_notes: false

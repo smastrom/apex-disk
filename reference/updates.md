@@ -90,9 +90,9 @@ The **Release** workflow uses these to sign each per-arch `.tar.gz` update artif
 The updater endpoint `https://github.com/.../releases/latest/download/latest.json` is a redirect. GitHub resolves `latest` to the most recent release that is **not** marked as a pre-release. So:
 
 - `v0.9.0` (stable) → `latest.json` is served from here
-- `v0.10.0-beta.1` (pre-release) → has its own `latest.json`, but nobody fetches it because `/releases/latest/` still points to `v0.9.0`
+- `v0.10.0-rc.1` (pre-release) → has its own `latest.json`, but nobody fetches it because `/releases/latest/` still points to `v0.9.0`
 
-Each release has a direct URL too: `/releases/download/v0.10.0-beta.1/latest.json` — but the app never uses that URL. This also keeps Beta-channel builds (tag `beta-<run_id>`) off the updater: they're GitHub pre-releases and don't ship `latest.json` anyway.
+Each release has a direct URL too: `/releases/download/v0.10.0-rc.1/latest.json` — but the app never uses that URL. This also keeps Beta-channel builds (tag `beta-v<version>-<run_id>`) off the updater: they're GitHub pre-releases and don't ship `latest.json` anyway.
 
 Beta and dev builds also short-circuit `check_for_updates_silent` / `check_for_updates_dialog` / `check_for_updates_from_menu` by bundle identifier so a release-mode Beta DMG never advertises stable updates even if it inherits the stable updater endpoint from `tauri.conf.json`. The runtime check compares `app.config().identifier` against the hardcoded stable identifier in `updater.rs`.
 
@@ -124,5 +124,5 @@ To test the full update experience (check → download → "Restart to Update"):
 | `src-tauri/tauri.beta.conf.json`     | Merge config for the Beta-channel DMG: bundle id / product name, `createUpdaterArtifacts: false`                                                           |
 | `src-tauri/Entitlements.plist`       | macOS entitlements (minimal): `com.apple.security.cs.allow-jit` for WKWebView, `com.apple.security.network.client` for downloads                           |
 | `.github/workflows/release.yml`      | CI: builds, signs artifacts, generates `latest.json`, uploads to release                                                                                   |
-| `.github/workflows/beta.yml`         | CI: `workflow_dispatch` only — unit tests, Beta DMG, **pre-release** (`beta-<run_id>`) + artifact                                                          |
+| `.github/workflows/beta.yml`         | CI: `workflow_dispatch` only — unit tests, Beta DMG, **pre-release** (`beta-v<version>-<run_id>`) + artifact                                               |
 | `../RELEASES_BETA.md`                | Optional Beta QA notes; pre-release body + artifact; first `##` section in job summary; not used for semver                                                |

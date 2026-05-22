@@ -7,7 +7,7 @@ There are two changelog files at the repo root, one per channel:
 |                             | `../RELEASES.md`                                                                                                                                     | `../RELEASES_BETA.md`                                                                                                    |
 | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | **Contents**                | One `## vX.Y.Z` section per shipped stable version, newest-first.                                                                                    | One `## YYYY-MM-DD` section per Beta run you want to annotate, newest-first.                                             |
-| **Used by CI for version?** | **Yes** — the Release workflow reads the **first** `## vX.Y.Z` heading and fails if `package.json`, `tauri.conf.json`, and `Cargo.toml` don't match. | **No** — the Beta workflow does not touch semver; it tags pre-releases as `beta-<run_id>`.                               |
+| **Used by CI for version?** | **Yes** — the Release workflow reads the **first** `## vX.Y.Z` heading and fails if `package.json`, `tauri.conf.json`, and `Cargo.toml` don't match. | **No** — the Beta workflow does not touch semver; it tags pre-releases as `beta-v<version>-<run_id>`, where `<version>` is whatever `package.json` carries at dispatch time. |
 | **Used by CI at all?**      | Drives the Git tag, GitHub-Release body, and build.                                                                                                  | The **first** `## …` section becomes the pre-release body and the job summary; the full file is attached as an artifact. |
 | **Purpose**                 | Canonical shipping history + semver for the updater and installers.                                                                                  | Optional tester-facing notes (what to smoke-test, known issues) for a given branch snapshot.                             |
 
@@ -38,11 +38,11 @@ Or follow these steps by hand:
 
 Users on older stable versions pick it up on next app start (auto-updates ON) or when they check manually.
 
-### Semver pre-release (e.g. `-beta.1`, `-rc.1`)
+### Semver pre-release (e.g. `-rc.1`)
 
-A **Release-workflow** run whose GitHub release is flagged as a pre-release, so stable users don't auto-update to it. Distinct from the [Beta channel](#beta-channel) below.
+A **Release-workflow** run whose GitHub release is flagged as a pre-release, so stable users don't auto-update to it. Use this when you need to validate the production updater path end-to-end before cutting a stable version. For side-by-side QA without touching the updater, use the [Beta channel](#beta-channel) below instead — this repo intentionally reserves `-beta` for that channel name and does not use it as a semver suffix.
 
-1. Set the version to something like `0.10.0-beta.1` in all three files + `../RELEASES.md`.
+1. Set the version to something like `0.10.0-rc.1` in all three files + `../RELEASES.md`.
 2. Commit and push.
 3. **Actions → Release → Run workflow**, **check** "Mark as pre-release".
 4. CI produces the same artifacts and creates a GitHub **pre-release**.
@@ -55,7 +55,7 @@ The Beta channel is **QA-only**: dispatch-triggered, no updater, sits beside the
 
 1. (Optional) Add a dated section to `../RELEASES_BETA.md` — use the `/beta-notes` slash command or add a `## YYYY-MM-DD` section at the top with tester notes. The **first** such section becomes the pre-release body.
 2. Go to **Actions → Beta → Run workflow** and pick the **branch** to build (e.g. `main`, a feature branch).
-3. When the job finishes, open the **pre-release** on the Releases page (tag `beta-<run_id>`) and download the DMG, or grab the `ApexDisk-Beta-<run_id>` artifact.
+3. When the job finishes, open the **pre-release** on the Releases page (tag `beta-v<version>-<run_id>`) and download the DMG, or grab the `ApexDisk-Beta-<run_id>` artifact.
 
 Config (`src-tauri/tauri.beta.conf.json`): product name **ApexDisk Beta**, bundle id `com.smastrom.apex-disk.beta`, and `bundle.createUpdaterArtifacts: false`. This lets Beta install side-by-side with stable and keeps it out of the updater channel.
 
@@ -63,14 +63,14 @@ Config (`src-tauri/tauri.beta.conf.json`): product name **ApexDisk Beta**, bundl
 
 ## Version nomenclature
 
-**Stable + semver pre-releases** — one semver (e.g. `0.0.13`, `0.10.0-beta.1`) lives in `package.json`, `src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml`, and the newest `## v…` block in `../RELEASES.md`. That number appears in the app, the Git tag (`v0.0.13`), and `latest.json`.
+**Stable + semver pre-releases** — one semver (e.g. `0.0.13`, `0.10.0-rc.1`) lives in `package.json`, `src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml`, and the newest `## v…` block in `../RELEASES.md`. That number appears in the app, the Git tag (`v0.0.13`), and `latest.json`.
 
 **Beta channel** — the DMG reports whatever semver is on the selected branch at dispatch time. The Beta workflow does not bump or validate the version.
 
 Implications:
 
 - Several Beta builds can share the same version (e.g. three builds while `main` is still `0.0.13`). Beta is a branch **snapshot**, not a new release line.
-- Tell builds apart by **run id** (in the artifact name), **commit SHA**, or download date — not the About-box semver.
+- Tell builds apart by **run id**: it's in the release title (`ApexDisk Beta vX.Y.Z (run <id>)`), the Git tag (`beta-vX.Y.Z-<id>`), the artifact name, and the body's build-metadata line. The version on its own is not unique across runs.
 - Optional policy: bump `../RELEASES.md` / semver only when cutting a real Release, or bump right after each release so Beta builds report the _upcoming_ version early. Either way, still one source of truth — no `RELEASES_BETA` version.
 
 The project does **not** embed build metadata (e.g. `0.0.13+beta.abc1234`) — adding that would require mutating the three version fields on every Beta run.
@@ -105,6 +105,6 @@ Never edit older sections to retcon history.
 Both workflows prepend a single `## Release notes` heading at the top of the GitHub-release body **before publishing**:
 
 - **Stable** — `release.yml` extracts the first `## vX.Y.Z` section from `../RELEASES.md`, then writes `## Release notes` above the `###` sub-headings into `release_notes.md` (the file passed to `softprops/action-gh-release`).
-- **Beta** — `beta.yml` extracts the first `## YYYY-MM-DD` section from `../RELEASES_BETA.md`, then writes `## Release notes` above it into `beta_prerelease_body.md`.
+- **Beta** — `beta.yml` extracts the first `## YYYY-MM-DD` section from `../RELEASES_BETA.md`, then writes `## Release notes` followed by a one-line build-metadata block (version, branch, short commit link, run-id link) above it into `beta_prerelease_body.md`. The metadata block answers "which version did I just download?" without scrolling to the DMG filename.
 
 The header lives **only** on the published release. Do not add it to `../RELEASES.md` or `../RELEASES_BETA.md` — the source files keep their existing top-level (`## vX.Y.Z` / `## YYYY-MM-DD`) structure so the workflows can still grep for them, and `/release`, `/release-from-notes`, and `/beta-notes` keep authoring the same shape they always have.

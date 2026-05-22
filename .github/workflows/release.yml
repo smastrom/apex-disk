@@ -4,7 +4,7 @@ on:
    workflow_dispatch:
       inputs:
          prerelease:
-            description: 'Tag GitHub Release as pre-release (RC). Requires -rc.N or -beta.N suffix in version files. For the Beta channel app, run the Beta workflow instead.'
+            description: 'Tag GitHub Release as pre-release (RC). Requires an -rc.N suffix in version files. For side-by-side QA builds, run the Beta workflow instead.'
             type: boolean
             default: false
 
