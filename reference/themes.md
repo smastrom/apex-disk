@@ -25,7 +25,7 @@ ApexDisk ships **8 themes**, applied via a `data-theme` attribute on `<html>` an
 }
 ```
 
-The default theme is set on first launch via `src-tauri/src/constants.rs::DEFAULT_THEME` and persisted on first read.
+The default theme is set on first launch via `src-tauri/src/constants.rs::DEFAULT_THEME` and persisted on first read. `src/index.html` hardcodes `data-theme="apex"` on `<html>` so the initial paint (before JS sets the attribute) renders the apex palette instead of an unstyled shell.
 
 ## Variables
 
@@ -38,13 +38,18 @@ Every themed value is a CSS variable. Components **must not hardcode colors, spa
 - **Touch height** — `--touch-height-sm/default/lg`
 - **Effects** — `--glow-text`, `--shadow-card`
 
-Spacing, font sizes, and touch-target heights are **shared across themes** — they live at `:root` in `theme.css`, not inside the `[data-theme]` blocks. Only colors and color-derived effects (glows, shadows) vary per theme.
+`:root` in `theme.css` holds two layers:
+
+- **Cross-theme tokens** (no per-theme variation): spacing, typography, easings, radius scale, layout dimensions, focus-ring sizes, scrollbar gutter.
+- **Dark-mode base**: bg / surface / text / hairlines / chrome / shadows / row state / scrollbar colors and the glow/`gbtn-*`/`btn-action-*` derived abstractions. Partial-override themes (`apex-coral`) inherit these; standalone themes (`apex-light`, `macos-light`, …) override them.
+
+Each theme's own block under `[data-theme='<name>']` carries only its accent palette and any per-theme deviations from the dark base.
 
 ## Theme set
 
-The 8 themes are listed in `src/lib/constants.ts::THEME_COLORS` (single source of truth). The default `apex` inherits `:root` values; the other 7 ship `[data-theme='<name>']` blocks in `src/assets/css/theme.css`. Names are kebab-case identifiers used both as the `data-theme` attribute value and as the persisted setting value.
+The 8 themes are listed in `src/lib/constants.ts::THEME_COLORS` (single source of truth). All 8 ship a `[data-theme='<name>']` block in `src/assets/css/theme.css`. Names are kebab-case identifiers used both as the `data-theme` attribute value and as the persisted setting value.
 
-If the persisted theme name doesn't match any defined theme (e.g. after removing one in a release), the `[data-theme]` selector silently fails to match and the fallback `:root` values render — usually unreadable. The Settings picker is the source of truth for valid names; keep it in sync with `theme.css`.
+If the persisted theme name doesn't match any defined theme (e.g. after removing one in a release), the `[data-theme]` selector silently fails to match and the bare `:root` dark base renders without any accent palette — buttons, focus rings, and the active footer nav lose their color. The Settings picker is the source of truth for valid names; keep it in sync with `theme.css`.
 
 ## Adding a new theme
 
@@ -60,11 +65,12 @@ Not a theme, but lives in adjacent CSS: `src/lib/use-reduced-motion.ts` plus `@m
 
 ## Module index
 
-| Location                          | What                                                             |
-| --------------------------------- | ---------------------------------------------------------------- |
-| `src/assets/css/theme.css`        | All CSS variables: `:root` (cross-theme) + `[data-theme]` blocks |
-| `src/stores/app-settings.ts`      | `setTheme` — persists + writes `data-theme` on `<html>`          |
-| `src/components/SettingsView.vue` | Theme picker UI                                                  |
-| `src-tauri/src/constants.rs`      | `DEFAULT_THEME` — initial value on first launch                  |
-| `src/assets/css/animations.css`   | Animation declarations + `prefers-reduced-motion` overrides      |
-| `src/lib/use-reduced-motion.ts`   | Reactive `prefers-reduced-motion` query                          |
+| Location                          | What                                                                         |
+| --------------------------------- | ---------------------------------------------------------------------------- |
+| `src/assets/css/theme.css`        | All CSS variables: `:root` (cross-theme + dark base) + `[data-theme]` blocks |
+| `src/index.html`                  | `<html data-theme="apex">` sets the initial palette before JS runs           |
+| `src/stores/app-settings.ts`      | `setTheme` — persists + writes `data-theme` on `<html>`                      |
+| `src/components/SettingsView.vue` | Theme picker UI                                                              |
+| `src-tauri/src/constants.rs`      | `DEFAULT_THEME` — initial value on first launch                              |
+| `src/assets/css/animations.css`   | Animation declarations + `prefers-reduced-motion` overrides                  |
+| `src/lib/use-reduced-motion.ts`   | Reactive `prefers-reduced-motion` query                                      |

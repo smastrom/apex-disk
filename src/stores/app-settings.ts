@@ -9,7 +9,7 @@ import { ref, type Ref } from 'vue'
 
 import { log } from '@/lib/log'
 
-import { THEME_COLORS, ROOT_THEME } from '@/lib/constants'
+import { THEME_COLORS, DEFAULT_THEME } from '@/lib/constants'
 
 export interface AppSettingsStore {
    settings: Ref<AppSettings>
@@ -35,7 +35,7 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
    const settingsData = await invoke<AppSettings>('get_settings')
 
    if (!THEME_COLORS.includes(settingsData.themeColor)) {
-      settingsData.themeColor = ROOT_THEME
+      settingsData.themeColor = DEFAULT_THEME
    }
 
    const settings = ref<AppSettings>(settingsData)
@@ -45,7 +45,7 @@ export async function initTauriAppSettings(): Promise<AppSettingsStore> {
    listen<AppSettings>('settings:reset', (event) => {
       const next = event.payload
 
-      if (!THEME_COLORS.includes(next.themeColor)) next.themeColor = ROOT_THEME
+      if (!THEME_COLORS.includes(next.themeColor)) next.themeColor = DEFAULT_THEME
 
       settings.value = next
 

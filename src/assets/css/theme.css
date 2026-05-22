@@ -1,6 +1,7 @@
 /* ApexDisk — Theme variables */
 
-/* Default theme: Apex — vivid purple-indigo accent, neutral dark base */
+/* Shared base — cross-theme tokens (spacing, typography, easings, layout) and
+ * dark-mode defaults that partial-override themes (apex-coral, etc.) inherit. */
 :root {
    /* Semantic colors */
    --color-on-accent: #fff;
@@ -8,20 +9,11 @@
    --color-bg-elevated: #1c1c1c;
    --color-surface: #262626;
    --color-surface-hover: #323232;
-   --color-accent: #7c5cf5;
-   --color-accent-hover: #9b85f8;
-   --color-accent-alt: #b9a4f8;
-   --color-accent-alt-glow: rgba(185, 164, 248, 0.45);
-   --color-scan-busy: #f5b647;
-   --color-scan-busy-glow: rgba(245, 182, 71, 0.45);
-   --color-scan-ready: #34c759;
-   --color-scan-ready-glow: rgba(52, 199, 89, 0.45);
    --color-text: #f5f5f7;
    --color-text-muted: #a8a6ab;
    --color-text-dim: #7a787e;
 
    /* Glow system */
-   --color-accent-glow: rgba(124, 92, 245, 0.45);
    --color-divider: rgba(255, 255, 255, 0.05);
    --color-bg-hover: rgba(255, 255, 255, 0.025);
    --color-border: #2a2a2a;
@@ -95,16 +87,6 @@
    --color-scrollbar: rgba(255, 255, 255, 0.18);
    --color-scrollbar-hover: rgba(255, 255, 255, 0.36);
 
-   /* Gradient button (accent-based) */
-   --btn-gradient-0: #7c5cf5;
-   --btn-gradient-50: #6d4ee7;
-   --btn-gradient-100: #7c5cf5;
-
-   /* Step button variants (lighter versions for secondary actions) */
-   --btn-step-0: #9b85f8;
-   --btn-step-50: #7c5cf5;
-   --btn-step-100: #9b85f8;
-
    /* Abort/cancel text color */
    --color-abort: #e24838;
 
@@ -118,9 +100,6 @@
    --focus-ring-color: var(--color-accent);
    --focus-ring-width: 2px;
    --focus-ring-offset: 2px;
-
-   /* Footer navigation active color (lighter than accent for distinction) */
-   --footer-nav-active-color: #9b85f8;
 
    /* AppLayout */
    --header-height: 50px;
@@ -139,6 +118,29 @@
    --font-size-lg: 0.9375rem; /* 15px */
    --font-size-xl: 1rem; /* 16px */
    --font-size-2xl: 1.125rem; /* 18px */
+}
+
+/* Theme: Apex — vivid purple-indigo accent on the dark base */
+[data-theme='apex'] {
+   --color-accent: #7c5cf5;
+   --color-accent-hover: #9b85f8;
+   --color-accent-alt: #b9a4f8;
+   --color-accent-alt-glow: rgba(185, 164, 248, 0.45);
+   --color-accent-glow: rgba(124, 92, 245, 0.45);
+   --color-scan-busy: #f5b647;
+   --color-scan-busy-glow: rgba(245, 182, 71, 0.45);
+   --color-scan-ready: #34c759;
+   --color-scan-ready-glow: rgba(52, 199, 89, 0.45);
+
+   --btn-gradient-0: #7c5cf5;
+   --btn-gradient-50: #6d4ee7;
+   --btn-gradient-100: #7c5cf5;
+
+   --btn-step-0: #9b85f8;
+   --btn-step-50: #7c5cf5;
+   --btn-step-100: #9b85f8;
+
+   --footer-nav-active-color: #9b85f8;
 }
 
 /* Theme: Apex Coral — coral-orange accent, same neutral dark base as Apex */

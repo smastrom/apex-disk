@@ -34,5 +34,5 @@ pub const CHECK_FOR_UPDATES_MENU_ID: &str = "check-for-updates";
 /// Default language for the application.
 pub const DEFAULT_LANGUAGE: &str = "en";
 
-/// Default theme for the application. Must match ROOT_THEME in src/lib/constants.ts.
+/// Default theme for the application. Must match DEFAULT_THEME in src/lib/constants.ts.
 pub const DEFAULT_THEME: &str = "apex";
