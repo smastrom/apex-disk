@@ -2,13 +2,10 @@ import path from 'path'
 
 import yaml from '@rollup/plugin-yaml'
 import vue from '@vitejs/plugin-vue'
+import { browserslistToTargets } from 'lightningcss'
 import { defineConfig } from 'vite'
 
 const host = process.env.TAURI_DEV_HOST
-
-// Safari version matching minimumSystemVersion in tauri.conf.json (macOS 10.15 = Safari 13)
-// Version encoding: (major << 16) | (minor << 8) | patch
-const safari13 = (13 << 16) | (0 << 8) | 0
 
 export default defineConfig(() => ({
    root: 'src',
@@ -22,9 +19,7 @@ export default defineConfig(() => ({
    css: {
       transformer: 'lightningcss' as const,
       lightningcss: {
-         targets: {
-            safari: safari13,
-         },
+         targets: browserslistToTargets(['safari 13']), // Matches minimumSystemVersion in tauri.conf.json (macOS 10.15 = Safari 13)
       },
    },
 
