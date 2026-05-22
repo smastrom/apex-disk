@@ -59,13 +59,13 @@ cancel:
    ar: إلغاء
 
 truncated:
-   en: Only the 100 largest entries are shown per folder.
-   it: Vengono mostrati solo i 100 elementi più grandi per cartella.
-   es: Solo se muestran las 100 entradas más grandes por carpeta.
-   fr: Seules les 100 entrées les plus volumineuses sont affichées par dossier.
-   pt: Apenas as 100 maiores entradas são mostradas por pasta.
-   de: Es werden nur die 100 größten Einträge pro Ordner angezeigt.
-   ru: Показаны только 100 самых больших элементов в каждой папке.
-   zh: 每个文件夹仅显示最大的 100 个条目。
-   ja: フォルダごとに最大100件のエントリのみ表示されます。
-   ar: يتم عرض أكبر 100 إدخال فقط لكل مجلد.
+   en: Only the 100 largest entries are shown. {{count}} more ({{size}}) are not listed but still counted in this folder's size.
+   it: Vengono mostrati solo i 100 elementi più grandi. Altri {{count}} ({{size}}) non sono in elenco ma contano nella dimensione di questa cartella.
+   es: Solo se muestran las 100 entradas más grandes. {{count}} más ({{size}}) no están en la lista pero sí cuentan en el tamaño de esta carpeta.
+   fr: Seules les 100 entrées les plus volumineuses sont affichées. {{count}} de plus ({{size}}) ne sont pas listées mais comptent dans la taille de ce dossier.
+   pt: Apenas as 100 maiores entradas são mostradas. Mais {{count}} ({{size}}) não estão listadas mas contam no tamanho desta pasta.
+   de: Es werden nur die 100 größten Einträge angezeigt. Weitere {{count}} ({{size}}) sind nicht aufgeführt, zählen aber zur Ordnergröße.
+   ru: Показаны только 100 самых больших элементов. Ещё {{count}} ({{size}}) не показаны, но учтены в размере этой папки.
+   zh: 每个文件夹仅显示最大的 100 个条目。另有 {{count}} 个 ({{size}}) 未列出，但已计入此文件夹的大小。
+   ja: フォルダごとに最大100件のエントリのみ表示されます。他に {{count}} 件 ({{size}}) はリストにありませんがフォルダのサイズには含まれています。
+   ar: يتم عرض أكبر 100 إدخال فقط. {{count}} إدخالات أخرى ({{size}}) غير مدرجة لكنها محسوبة في حجم هذا المجلد.

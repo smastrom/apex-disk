@@ -16,6 +16,13 @@ export interface FolderInfo {
     * the per-folder file cap, or at least one subfolder beyond the folder cap.
     * Always false for files. */
    truncated: boolean
+   /** Files dropped by the per-folder file cap. Bytes still contribute to `size`.
+    * Rust skips these on the wire when zero, so they arrive as `undefined`. */
+   hidden_files_count?: number
+   hidden_files_size?: number
+   /** Subfolders dropped by the per-folder folder cap. Bytes still contribute to `size`. */
+   hidden_folders_count?: number
+   hidden_folders_size?: number
 }
 
 /** Wire shape of `get_user_folders`. `root` is the home dir; children paths

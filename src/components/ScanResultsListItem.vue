@@ -46,6 +46,16 @@ const emit = defineEmits<{
    (e: 'navigate'): void
 }>()
 
+/** Total entries under this folder, including children Rust dropped at the
+ *  per-folder caps. `children.length` is capped at 100, but the user expects
+ *  to see the real number (e.g. ~/Library/Containers has far more). */
+const realItemCount = computed(() => {
+   const visible = props.item.children.length
+   const hidden = (props.item.hidden_files_count ?? 0) + (props.item.hidden_folders_count ?? 0)
+
+   return visible + hidden
+})
+
 const selectionState = computed(() => {
    if (props.isSelected) return 'selected'
    if (props.isSomeSelected) return 'partial'
@@ -160,6 +170,8 @@ const currentLanguage = store.settings.value.language
          :disabled="isCheckDisabled"
          :aria-disabled="isCheckDisabled"
          @click.stop="!isCheckDisabled && emit('select')"
+         @keydown.enter.stop
+         @keydown.space.stop.prevent
          @pointerdown.stop
       >
          <SelectionIcon
@@ -183,9 +195,9 @@ const currentLanguage = store.settings.value.language
          <span class="ScanResultsListItem-details">
             <span v-if="!item.is_file">
                {{
-                  item.children.length === 1
+                  realItemCount === 1
                      ? t('ScanResultsListItem', 'itemOne')
-                     : t('ScanResultsListItem', 'itemsCount', { count: item.children.length })
+                     : t('ScanResultsListItem', 'itemsCount', { count: realItemCount })
                }}<span v-if="item.last_modified" style="opacity: 0.5">,</span>
             </span>
             <span style="opacity: 0.5" v-if="item.last_modified">

@@ -51,7 +51,15 @@ impl Default for ScanOptions {
     }
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Clone)]
+fn is_zero_u32(n: &u32) -> bool {
+    *n == 0
+}
+
+fn is_zero_u64(n: &u64) -> bool {
+    *n == 0
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Clone, Default)]
 pub struct FolderInfo {
     pub name: String,
     /// Absolute path. Used internally by the scanner (safe-folders, xattr) and
@@ -70,6 +78,22 @@ pub struct FolderInfo {
     /// least one was dropped from `children`: files past `scan::MAX_FILES_PER_DIR`
     /// or subfolders past `scan::MAX_FOLDERS_PER_DIR`. Always false for files.
     pub truncated: bool,
+    /// Number of files dropped from `children` because the directory had more
+    /// than `scan::MAX_FILES_PER_DIR`. Bytes of dropped files still contribute
+    /// to `size` (see [`reference/state-lifecycle.md`]). Zero on files and on
+    /// folders that weren't truncated; skipped on the wire when zero.
+    #[serde(default, skip_serializing_if = "is_zero_u32")]
+    pub hidden_files_count: u32,
+    /// Total bytes of the dropped files counted by `hidden_files_count`.
+    #[serde(default, skip_serializing_if = "is_zero_u64")]
+    pub hidden_files_size: u64,
+    /// Number of subfolders dropped from `children` because the directory had
+    /// more than `scan::MAX_FOLDERS_PER_DIR`. Bytes still contribute to `size`.
+    #[serde(default, skip_serializing_if = "is_zero_u32")]
+    pub hidden_folders_count: u32,
+    /// Total bytes of the dropped subfolders counted by `hidden_folders_count`.
+    #[serde(default, skip_serializing_if = "is_zero_u64")]
+    pub hidden_folders_size: u64,
 }
 
 /// Wire shape of `get_user_folders`. `root` is the home dir; the frontend uses

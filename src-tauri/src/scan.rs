@@ -13,6 +13,12 @@
 //! `ScanResult { root, folders }` envelope — `path` is skipped on the wire and
 //! rebuilt on the JS side from `root` plus the chain of `name`.
 //!
+//! When a per-directory cap drops children, the surviving `FolderInfo` carries
+//! `truncated = true` plus `hidden_files_count` / `hidden_files_size` and
+//! `hidden_folders_count` / `hidden_folders_size`. Bytes of dropped children
+//! still aggregate into `size`, so the headline total stays exact; the
+//! `hidden_*` fields let the UI tell the user what's missing from the list.
+//!
 //! On macOS, when the app has Full Disk Access (FDA), all `read_dir` / file
 //! access here succeed for Desktop, Documents, Music, Library, etc. without
 //! any per-folder permission prompts. No special code path is needed; the
@@ -267,13 +273,7 @@ fn build_folder_tree(
         return FolderInfo {
             name: "Cancelled".to_string(),
             path: root.to_string_lossy().into_owned(),
-            size: 0,
-            children: Vec::new(),
-            is_file: false,
-            is_protected: false,
-            is_fda_required: false,
-            last_modified: None,
-            truncated: false,
+            ..Default::default()
         };
     }
 
@@ -298,13 +298,10 @@ fn build_folder_tree(
             return FolderInfo {
                 name,
                 path,
-                size: 0,
-                children: Vec::new(),
-                is_file: false,
                 is_protected,
                 is_fda_required,
                 last_modified,
-                truncated: false,
+                ..Default::default()
             };
         },
     };
@@ -315,6 +312,11 @@ fn build_folder_tree(
     let mut dir_paths: Vec<std::path::PathBuf> = Vec::new();
     let mut file_size = 0u64;
     let mut next_idx: u32 = 0;
+    // Count of every file that passed the size filters, before the heap cap.
+    // Used to derive the per-folder `hidden_files_count` shown in the UI's
+    // truncation notice. The heap retains only the N largest files; the
+    // difference is the number we hid from `children`.
+    let mut total_file_count: u32 = 0;
     // Set to true if at least one file is dropped because the directory has
     // more than MAX_FILES_PER_DIR files. Surfaced to the UI so it can show
     // a "list truncated" notice. Folders are never dropped here.
@@ -326,13 +328,7 @@ fn build_folder_tree(
             return FolderInfo {
                 name,
                 path: root.to_string_lossy().into_owned(),
-                size: 0,
-                children: Vec::new(),
-                is_file: false,
-                is_protected: false,
-                is_fda_required: false,
-                last_modified: None,
-                truncated: false,
+                ..Default::default()
             };
         }
 
@@ -368,6 +364,7 @@ fn build_folder_tree(
                 continue;
             }
             file_size += size;
+            total_file_count = total_file_count.saturating_add(1);
 
             let idx = next_idx;
             next_idx = next_idx.wrapping_add(1);
@@ -442,16 +439,20 @@ fn build_folder_tree(
                 path,
                 name: fname,
                 size,
-                children: Vec::new(),
                 is_file: true,
                 is_protected,
-                // Only directories can have container-manager xattrs.
-                is_fda_required: false,
                 last_modified,
-                truncated: false,
+                ..Default::default()
             }
         })
         .collect();
+
+    // Files dropped from `children` by the heap cap. `total_file_count` counts
+    // every file that survived the size filters; the heap retains at most
+    // MAX_FILES_PER_DIR. The difference is what the UI flags as hidden.
+    let visible_files_size: u64 = files.iter().map(|f| f.size).sum();
+    let hidden_files_count = total_file_count.saturating_sub(files.len() as u32);
+    let hidden_files_size = file_size.saturating_sub(visible_files_size);
 
     let mut dir_children: Vec<FolderInfo> = dir_paths
         .par_iter()
@@ -465,12 +466,18 @@ fn build_folder_tree(
     // headline total still reflects every byte under it even when the smallest
     // subfolders are dropped from `children` by the per-folder cap below.
     let dir_size: u64 = dir_children.iter().map(|c| c.size).sum();
+    let total_folder_count = dir_children.len();
 
     if dir_children.len() > MAX_FOLDERS_PER_DIR {
         dir_children.sort_unstable_by(|a, b| b.size.cmp(&a.size));
         dir_children.truncate(MAX_FOLDERS_PER_DIR);
         truncated = true;
     }
+
+    // Mirrors the file-side computation for the subfolder cap.
+    let visible_folders_size: u64 = dir_children.iter().map(|c| c.size).sum();
+    let hidden_folders_count = (total_folder_count - dir_children.len()) as u32;
+    let hidden_folders_size = dir_size.saturating_sub(visible_folders_size);
 
     let mut children = files;
     children.extend(dir_children);
@@ -499,6 +506,10 @@ fn build_folder_tree(
         is_fda_required: is_root_fda_required,
         last_modified: most_recent_modified,
         truncated,
+        hidden_files_count,
+        hidden_files_size,
+        hidden_folders_count,
+        hidden_folders_size,
     }
 }
 

@@ -74,15 +74,37 @@ interface NavEntry {
    label: string
    path: string
    truncated: boolean
+   /** Children Rust dropped by the per-folder file/folder caps for the parent
+    * of `items`. Their bytes are already counted in the parent's size; these
+    * fields exist so the truncation notice can tell the user how many items
+    * and how many bytes were hidden. Zero on root and on non-truncated views. */
+   hiddenFilesCount: number
+   hiddenFilesSize: number
+   hiddenFoldersCount: number
+   hiddenFoldersSize: number
 }
 
 /***************************************************************
  * Navigation state
  ***************************************************************/
 
+function makeNavEntry(partial: Partial<NavEntry> = {}): NavEntry {
+   return {
+      items: [],
+      label: '',
+      path: '',
+      truncated: false,
+      hiddenFilesCount: 0,
+      hiddenFilesSize: 0,
+      hiddenFoldersCount: 0,
+      hiddenFoldersSize: 0,
+      ...partial,
+   }
+}
+
 const backStack = shallowRef<NavEntry[]>([])
 const forwardStack = shallowRef<NavEntry[]>([])
-const current = shallowRef<NavEntry>({ items: [], label: '', path: '', truncated: false })
+const current = shallowRef<NavEntry>(makeNavEntry())
 const homePath = ref('')
 const isListSlideEnabled = ref(false)
 
@@ -126,11 +148,11 @@ watch(
          const rootPath = parentDir(folders[0].path)
 
          homePath.value = rootPath
-         current.value = { items: folders, label: '', path: rootPath, truncated: false }
+         current.value = makeNavEntry({ items: folders, path: rootPath })
       } else {
          backStack.value = []
          forwardStack.value = []
-         current.value = { items: [], label: '', path: '', truncated: false }
+         current.value = makeNavEntry()
          homePath.value = ''
 
          selectedMap.clear()
@@ -200,6 +222,27 @@ const displayedItems = computed(() =>
 const isListTruncated = computed(
    () => current.value.truncated || current.value.items.length > MAX_DISPLAYED_ITEMS
 )
+
+/** Items hidden from `displayedItems`: Rust dropped them past the per-folder
+ *  caps, or the frontend slice dropped them past MAX_DISPLAYED_ITEMS. Both can
+ *  contribute; the two sources don't overlap. Bytes already count in the
+ *  folder's headline `size`. */
+const hiddenSummary = computed(() => {
+   const entry = current.value
+
+   let count = entry.hiddenFilesCount + entry.hiddenFoldersCount
+   let size = entry.hiddenFilesSize + entry.hiddenFoldersSize
+
+   if (entry.items.length > MAX_DISPLAYED_ITEMS) {
+      const sliced = entry.items.slice(MAX_DISPLAYED_ITEMS)
+
+      count += sliced.length
+
+      for (const item of sliced) size += item.size
+   }
+
+   return { count, size }
+})
 
 const parentRef = useTemplateRef<HTMLElement>('parentRef')
 const namePopoverRef = useTemplateRef<HTMLElement>('namePopoverRef')
@@ -541,12 +584,7 @@ function resetAll() {
    isListSlideEnabled.value = false
 
    if (homePath.value && props.folders.length > 0) {
-      current.value = {
-         items: props.folders,
-         label: '',
-         path: homePath.value,
-         truncated: false,
-      }
+      current.value = makeNavEntry({ items: props.folders, path: homePath.value })
    }
 }
 
@@ -567,12 +605,16 @@ function goInto(item: FolderInfo) {
 
    backStack.value = [...backStack.value, { ...current.value }]
    forwardStack.value = []
-   current.value = {
+   current.value = makeNavEntry({
       items: item.children,
       label: item.name,
       path: item.path,
       truncated: item.truncated,
-   }
+      hiddenFilesCount: item.hidden_files_count ?? 0,
+      hiddenFilesSize: item.hidden_files_size ?? 0,
+      hiddenFoldersCount: item.hidden_folders_count ?? 0,
+      hiddenFoldersSize: item.hidden_folders_size ?? 0,
+   })
 }
 
 function goBack() {
@@ -691,7 +733,12 @@ function onCancel() {
                      class="ScanResultsList-truncated"
                      data-testid="results-truncated"
                   >
-                     {{ t('ScanResultsList', 'truncated') }}
+                     {{
+                        t('ScanResultsList', 'truncated', {
+                           count: hiddenSummary.count,
+                           size: formatBytes(hiddenSummary.size),
+                        })
+                     }}
                   </p>
                </div>
             </Transition>

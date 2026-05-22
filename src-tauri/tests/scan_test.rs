@@ -478,6 +478,18 @@ fn scan_truncated_flag_true_when_file_cap_exceeded() {
         scan::MAX_FILES_PER_DIR,
         "should retain exactly MAX_FILES_PER_DIR files"
     );
+    // The dropped files must be surfaced as `hidden_files_*` so the UI can
+    // tell the user how much of the folder's size lives outside the list.
+    assert_eq!(
+        bulk_node.hidden_files_count, 1,
+        "Bulk had 1 file past the cap; hidden_files_count should be 1"
+    );
+    assert_eq!(
+        bulk_node.hidden_files_size, 1024,
+        "the one dropped file weighed 1 KiB; hidden_files_size should match"
+    );
+    assert_eq!(bulk_node.hidden_folders_count, 0, "no subfolders were dropped");
+    assert_eq!(bulk_node.hidden_folders_size, 0, "no subfolders were dropped");
 }
 
 /// Folders with fewer files than the cap must not set `truncated`. The flag is
@@ -497,6 +509,10 @@ fn scan_truncated_flag_false_when_under_cap() {
     let result = scan::scan_user_folders_from_home(home, &options, false).expect("scan");
     for folder in &result {
         assert!(!folder.truncated, "{} has few files; truncated should be false", folder.name);
+        assert_eq!(folder.hidden_files_count, 0, "{} hidden_files_count", folder.name);
+        assert_eq!(folder.hidden_files_size, 0, "{} hidden_files_size", folder.name);
+        assert_eq!(folder.hidden_folders_count, 0, "{} hidden_folders_count", folder.name);
+        assert_eq!(folder.hidden_folders_size, 0, "{} hidden_folders_size", folder.name);
         for child in &folder.children {
             assert!(
                 !child.truncated,
@@ -549,6 +565,18 @@ fn scan_truncated_flag_true_when_folder_cap_exceeded() {
         many_node.size, expected_size,
         "dropped subfolders' sizes must still aggregate into the parent total"
     );
+    // The dropped subfolders are surfaced via `hidden_folders_*` so the UI
+    // can quantify what's missing from the list.
+    assert_eq!(
+        many_node.hidden_folders_count, 1,
+        "ManyDirs had 1 subfolder past the cap; hidden_folders_count should be 1"
+    );
+    assert_eq!(
+        many_node.hidden_folders_size, 1024,
+        "the dropped subfolder held a 1 KiB file; hidden_folders_size should match"
+    );
+    assert_eq!(many_node.hidden_files_count, 0, "no files were dropped from ManyDirs");
+    assert_eq!(many_node.hidden_files_size, 0, "no files were dropped from ManyDirs");
 }
 
 /// Files within a folder must have is_file set to true; dirs with children must not.
