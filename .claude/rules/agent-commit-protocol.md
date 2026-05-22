@@ -19,10 +19,10 @@ Never use `--no-verify` or `--force`.
 
 ## Also before committing (when applicable)
 
-| Trigger | Action |
-| ------- | ------ |
-| Any code change | `/sync` (docs + tests + comments + verify + push) |
+| Trigger                          | Action                                                                                 |
+| -------------------------------- | -------------------------------------------------------------------------------------- |
+| Any code change                  | `/sync` (docs + tests + comments + verify + push)                                      |
 | Dep bump or new JS/CSS/macOS API | `/compatibility-check` → [`reference/compatibility.md`](../reference/compatibility.md) |
-| Beta build | `/beta-notes` before Beta workflow |
+| Beta build                       | `/beta-notes` before Beta workflow                                                     |
 
 If you believe a step should be skipped, **stop and ask the user first**.

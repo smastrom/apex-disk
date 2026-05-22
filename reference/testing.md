@@ -86,5 +86,5 @@ If a test breaks because the source change is correct and the test is outdated, 
 | `src-tauri/src/e2e_fixtures.rs`        | `reset_e2e_state`, dry-run trash mode (compiled under `e2e` feature)                                                                                         |
 | `src-tauri/src/lib.rs`                 | Two `generate_handler!` blocks (default + `#[cfg(feature = "e2e")]`)                                                                                         |
 | `e2e/specs/`                           | WebdriverIO test scenarios                                                                                                                                   |
-| `package.json`                         | `test:unit`, `test:e2e`, `typecheck`, `fmt`, `headers` scripts |
-| [`e2e.md`](e2e.md)                     | `data-testid` contract, `sel` registry, fixture names          |
+| `package.json`                         | `test:unit`, `test:e2e`, `typecheck`, `fmt`, `headers` scripts                                                                                               |
+| [`e2e.md`](e2e.md)                     | `data-testid` contract, `sel` registry, fixture names                                                                                                        |

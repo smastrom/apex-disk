@@ -39,16 +39,16 @@ Trash and updater are fully request/response.
 
 All commands registered in `src-tauri/src/lib.rs`, grouped by area:
 
-| Area              | Commands                                                                                                                               |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| **Disk / scan**   | `get_disk_usage`, `get_user_folders`, `cancel_scan`                                                                                    |
-| **Trash**         | `trash_paths` (+ `set_e2e_trash_mode` under `e2e`)                                                                                     |
-| **Permissions**   | `check_full_disk_access`                                                                                                               |
-| **Native dialog** | `show_message_dialog`, `show_ask_dialog`                                                                                               |
-| **Locale + menu** | `set_app_locale`, `get_system_language`, `resolve_app_language`, `set_menu_language`                                                   |
-| **Settings**      | `get_settings`, `set_settings`, `get_setting`, `update_setting` (+ `reset_e2e_state` under `e2e`)                                      |
-| **System**        | `get_system_info`                                                                                                                      |
-| **Logging**       | `is_debug_mode`, `log_message`, `log_error_message`                                                                                    |
+| Area              | Commands                                                                                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Disk / scan**   | `get_disk_usage`, `get_user_folders`, `cancel_scan`                                                                                                                 |
+| **Trash**         | `trash_paths` (+ `set_e2e_trash_mode` under `e2e`)                                                                                                                  |
+| **Permissions**   | `check_full_disk_access`                                                                                                                                            |
+| **Native dialog** | `show_message_dialog`, `show_ask_dialog`                                                                                                                            |
+| **Locale + menu** | `set_app_locale`, `get_system_language`, `resolve_app_language`, `set_menu_language`                                                                                |
+| **Settings**      | `get_settings`, `set_settings`, `get_setting`, `update_setting` (+ `reset_e2e_state` under `e2e`)                                                                   |
+| **System**        | `get_system_info`                                                                                                                                                   |
+| **Logging**       | `is_debug_mode`, `log_message`, `log_error_message`                                                                                                                 |
 | **Updater**       | `check_for_updates_silent`, `check_for_updates_dialog`, `download_update`, `restart_app`, `set_update_menu_ready`, `set_update_menu_available`, `reset_update_menu` |
 
 ## Registration in `lib.rs`

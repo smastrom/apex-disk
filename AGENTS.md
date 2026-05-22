@@ -6,15 +6,15 @@ ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for 
 
 ## Stack
 
-| Layer                      | Tech                                                                                                       |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Backend                    | Rust, Tauri 2, objc2 (Foundation/AppKit bindings)                                                          |
-| Frontend                   | Vue 3 (`<script setup lang="ts">`), TypeScript, Vite                                                       |
-| Styling                    | Scoped CSS with CSS nesting, lightningcss (Safari 13 target)                                               |
-| Testing                    | Rust: `cargo test` (src-tauri/tests/), E2E: WebdriverIO (e2e/)                                             |
-| Formatting (TS/Vue/JS/CSS) | **Oxfmt** + **Oxlint** adjunct — see [`reference/code-style.md`](reference/code-style.md) |
+| Layer                      | Tech                                                                                               |
+| -------------------------- | -------------------------------------------------------------------------------------------------- |
+| Backend                    | Rust, Tauri 2, objc2 (Foundation/AppKit bindings)                                                  |
+| Frontend                   | Vue 3 (`<script setup lang="ts">`), TypeScript, Vite                                               |
+| Styling                    | Scoped CSS with CSS nesting, lightningcss (Safari 13 target)                                       |
+| Testing                    | Rust: `cargo test` (src-tauri/tests/), E2E: WebdriverIO (e2e/)                                     |
+| Formatting (TS/Vue/JS/CSS) | **Oxfmt** + **Oxlint** adjunct — see [`reference/code-style.md`](reference/code-style.md)          |
 | Linting                    | `vue-tsc` (TS/Vue), `cargo test` (Rust) — see [`reference/code-style.md`](reference/code-style.md) |
-| Package manager            | pnpm                                                                                                       |
+| Package manager            | pnpm                                                                                               |
 
 Formatting, linting, and Oxlint adjunct rules: [`reference/code-style.md`](reference/code-style.md).
 

@@ -91,7 +91,7 @@
       "vue-tsc": "^2.2.12"
    },
    "lint-staged": {
-      "*.{css,json,jsonc,html}": "oxfmt --write",
+      "*.{css,json,jsonc,html,md}": "oxfmt --write",
       "*.{js,ts,vue}": [
          "oxlint --fix",
          "oxfmt --write"

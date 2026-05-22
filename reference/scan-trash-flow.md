@@ -39,10 +39,10 @@ The `FolderInfo` tree is the single largest payload that crosses this boundary. 
 
 ### Start triggers
 
-| Trigger                                   | UI source                                                                                         | Wired via                                                                                                                               | What it calls                                                         |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| User clicks **Scan** on the launch screen | [ScanLaunch.vue](../src/components/ScanLaunch.vue) `emit('start-scan')`                           | [ScanView.vue:184](../src/components/ScanView.vue) `@start-scan="loadFolders"`                                                     | `loadFolders()` in [use-scanner.ts:95](../src/lib/use-scanner.ts) |
-| User clicks **Scan again** after trashing | [ScanTrashConfirmation.vue:49](../src/components/ScanTrashConfirmation.vue) `emit('restart')` | [ScanView.onRestart](../src/components/ScanView.vue) → `onCancel()` wipes Vue state → folders=[] → activeView falls back to LAUNCH | User then clicks **Scan** again (no auto-restart)                     |
+| Trigger                                   | UI source                                                                                     | Wired via                                                                                                                          | What it calls                                                     |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| User clicks **Scan** on the launch screen | [ScanLaunch.vue](../src/components/ScanLaunch.vue) `emit('start-scan')`                       | [ScanView.vue:184](../src/components/ScanView.vue) `@start-scan="loadFolders"`                                                     | `loadFolders()` in [use-scanner.ts:95](../src/lib/use-scanner.ts) |
+| User clicks **Scan again** after trashing | [ScanTrashConfirmation.vue:49](../src/components/ScanTrashConfirmation.vue) `emit('restart')` | [ScanView.onRestart](../src/components/ScanView.vue) → `onCancel()` wipes Vue state → folders=[] → activeView falls back to LAUNCH | User then clicks **Scan** again (no auto-restart)                 |
 
 `loadFolders()` in order:
 
@@ -69,8 +69,8 @@ What Vue replaces on the new scan:
 
 ### Cancel paths
 
-| Trigger                                                      | UI source                                                                                       | `cancel_scan` | `scanGeneration++` | Wipes Vue state                                 |
-| ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- | ------------- | ------------------ | ----------------------------------------------- |
+| Trigger                                                      | UI source                                                                                  | `cancel_scan` | `scanGeneration++` | Wipes Vue state                                 |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ------------- | ------------------ | ----------------------------------------------- |
 | User clicks **Abort** during scan                            | `ScanProgress` emit → `ScanView.onAbort` → [useScanner.onAbort](../src/lib/use-scanner.ts) | Yes           | Yes                | Yes (folders=[], progress reset, timer stopped) |
 | Window reloads / closes mid-scan                             | [use-scanner.ts:166](../src/lib/use-scanner.ts) `beforeunload` listener                    | Yes           | No                 | No (page is unloading)                          |
 | User finishes **trash → confirm** then clicks **Scan again** | [ScanView.onRestart](../src/components/ScanView.vue) → `onCancel()` (= `onAbort`)          | Yes           | Yes                | Yes                                             |
@@ -121,19 +121,19 @@ The Vue `checkedMapRef` in `ScanTrashList` sits inside a `<KeepAlive>` boundary 
 
 Every `static` / `LazyLock` / `Mutex` that outlives a single command. Items not listed here are task-scoped.
 
-| Symbol                      | File:line                                                  | Type                               | Holds                                                    | Mutated by                                                   | Cleared by                   |
-| --------------------------- | ---------------------------------------------------------- | ---------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------ | ---------------------------- |
+| Symbol                      | File:line                                              | Type                               | Holds                                                    | Mutated by                                                   | Cleared by                   |
+| --------------------------- | ------------------------------------------------------ | ---------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------ | ---------------------------- |
 | `SCAN_RUNNING`              | [scan.rs:63](../src-tauri/src/scan.rs)                 | `AtomicBool`                       | One-scan-at-a-time gate                                  | `get_user_folders` acquire; guard drop release               | Guard drop                   |
 | `ACTIVE_CANCEL`             | [scan.rs:68](../src-tauri/src/scan.rs)                 | `Mutex<Option<Arc<AtomicBool>>>`   | Per-scan cancel token                                    | `get_user_folders` set; `cancel_scan` flip; guard drop clear | Guard drop                   |
 | `STORE_LOCK`                | [store.rs:24](../src-tauri/src/store.rs)               | `Mutex<()>`                        | Serializes settings RMW                                  | `set_settings_with_handle`, `update_setting_with_handle`     | Per-call release             |
-| `VALID_SETTING_KEYS`        | [store.rs:146](../src-tauri/src/store.rs)             | `LazyLock<HashSet<&'static str>>`  | Whitelisted setting keys, `Box::leak`'d                  | Init once from `get_default_settings()`                      | Never (intentional; ~8 keys) |
+| `VALID_SETTING_KEYS`        | [store.rs:146](../src-tauri/src/store.rs)              | `LazyLock<HashSet<&'static str>>`  | Whitelisted setting keys, `Box::leak`'d                  | Init once from `get_default_settings()`                      | Never (intentional; ~8 keys) |
 | `PROTECTED_SET`             | [safe_folders.rs:81](../src-tauri/src/safe_folders.rs) | `LazyLock<HashSet<String>>`        | Lowercased protected paths                               | Init once                                                    | Never                        |
 | `SKIPPED_LOWERED`           | [safe_folders.rs:86](../src-tauri/src/safe_folders.rs) | `LazyLock<Vec<String>>`            | Lowercased skipped path prefixes                         | Init once                                                    | Never                        |
 | `CONTAINER_MANAGER_ATTR`    | [xattr.rs:13](../src-tauri/src/xattr.rs)               | `LazyLock<CString>`                | `"com.apple.containermanager.identifier"` for `getxattr` | Init once                                                    | Never                        |
 | `UpdateState.last_checked`  | [updater.rs:50](../src-tauri/src/updater.rs)           | `Mutex<Option<Update>>`            | Cached check result                                      | `check_for_update` set; `download_update` consume            | Consumed by download         |
 | `UpdateState.ready_version` | [updater.rs:46](../src-tauri/src/updater.rs)           | `Mutex<Option<String>>`            | Downloaded version, for menu copy                        | `download_update` set; `reset_update_menu` clear             | Restart, reset               |
-| `E2E_TRASH_MODE`            | [trash.rs:165](../src-tauri/src/trash.rs)             | `Mutex<String>` (e2e feature only) | Dry-run mode label                                       | `set_e2e_trash_mode`                                         | `reset_e2e_state`            |
-| `TEST_HOME`                 | `e2e_fixtures.rs`                                          | `LazyLock<TempDir>` (e2e only)     | Fake home tempdir                                        | Init on first access                                         | App exit (`TempDir::drop`)   |
+| `E2E_TRASH_MODE`            | [trash.rs:165](../src-tauri/src/trash.rs)              | `Mutex<String>` (e2e feature only) | Dry-run mode label                                       | `set_e2e_trash_mode`                                         | `reset_e2e_state`            |
+| `TEST_HOME`                 | `e2e_fixtures.rs`                                      | `LazyLock<TempDir>` (e2e only)     | Fake home tempdir                                        | Init on first access                                         | App exit (`TempDir::drop`)   |
 
 `tauri_plugin_store` is **not cached in memory** between calls — `store.rs` opens the store via `app.store(SETTINGS_STORE_PATH)` and calls `store.close_resource()` on every read/write. The cost is one file I/O per call; the upside is no stale in-memory copy to invalidate.
 
@@ -176,20 +176,20 @@ The selection map is the exception: `reactive(new Map(...))` in [ScanResultsList
 
 ## Module index
 
-| Side  | File                                       | Responsibility                                                |
-| ----- | ------------------------------------------ | ------------------------------------------------------------- |
-| Rust  | `src-tauri/src/scan.rs`                    | Walker, `FolderInfo`, progress throttling, cancel token, RAII |
-| Rust  | `src-tauri/src/trash.rs`                   | `trash_paths`, `filter_items`, e2e dry-run                    |
+| Side  | File                                       | Responsibility                                                                                      |
+| ----- | ------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| Rust  | `src-tauri/src/scan.rs`                    | Walker, `FolderInfo`, progress throttling, cancel token, RAII                                       |
+| Rust  | `src-tauri/src/trash.rs`                   | `trash_paths`, `filter_items`, e2e dry-run                                                          |
 | Rust  | `src-tauri/src/safe_folders.rs`            | Protected + skipped lists (consumed by scan AND trash) — [`protected-files.md`](protected-files.md) |
-| Rust  | `src-tauri/src/store.rs`                   | Settings persistence, per-call store open/close               |
-| Rust  | `src-tauri/src/updater.rs`                 | Updater state (`last_checked`, `ready_version`)               |
-| Vue   | `src/lib/use-scanner.ts`                   | Scan lifecycle, progress listener, generation counter         |
-| Vue   | `src/components/ScanLaunch.vue`            | Entry point UI                                                |
-| Vue   | `src/components/ScanView.vue`              | Local view-state machine, restart wiring                      |
-| Vue   | `src/components/ScanResultsList.vue`       | Tree render, back/forward stacks, selection map               |
-| Vue   | `src/components/ScanTrashList.vue`         | Review selected items, `checkedMapRef`                        |
-| Vue   | `src/components/ScanTrashConfirmation.vue` | Post-delete summary, "Scan again"                             |
-| Types | `src/types/structs.ts`                     | `FolderInfo`, `ScanProgress`, `TrashListItem`                 |
-| Tests | `src-tauri/tests/scan_test.rs`             | Walker + filter behavior                                      |
-| Tests | `src-tauri/tests/trash_test.rs`            | Trash + `filter_items`                                        |
-| Tests | `src-tauri/tests/safe_folders_test.rs`     | Protected/skipped correctness                                 |
+| Rust  | `src-tauri/src/store.rs`                   | Settings persistence, per-call store open/close                                                     |
+| Rust  | `src-tauri/src/updater.rs`                 | Updater state (`last_checked`, `ready_version`)                                                     |
+| Vue   | `src/lib/use-scanner.ts`                   | Scan lifecycle, progress listener, generation counter                                               |
+| Vue   | `src/components/ScanLaunch.vue`            | Entry point UI                                                                                      |
+| Vue   | `src/components/ScanView.vue`              | Local view-state machine, restart wiring                                                            |
+| Vue   | `src/components/ScanResultsList.vue`       | Tree render, back/forward stacks, selection map                                                     |
+| Vue   | `src/components/ScanTrashList.vue`         | Review selected items, `checkedMapRef`                                                              |
+| Vue   | `src/components/ScanTrashConfirmation.vue` | Post-delete summary, "Scan again"                                                                   |
+| Types | `src/types/structs.ts`                     | `FolderInfo`, `ScanProgress`, `TrashListItem`                                                       |
+| Tests | `src-tauri/tests/scan_test.rs`             | Walker + filter behavior                                                                            |
+| Tests | `src-tauri/tests/trash_test.rs`            | Trash + `filter_items`                                                                              |
+| Tests | `src-tauri/tests/safe_folders_test.rs`     | Protected/skipped correctness                                                                       |

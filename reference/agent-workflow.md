@@ -10,11 +10,11 @@ Commit gate and release triggers: [`.claude/rules/agent-commit-protocol.md`](../
 
 ## Three phases
 
-| Phase | When | Who runs it | What it covers |
-| ----- | ---- | ----------- | -------------- |
-| **While coding** | Before writing or changing code | Agent | Read the relevant `reference/*.md` file(s) from [`index.md`](index.md) **Task routing**. Update a reference in the same change if it is wrong. |
-| **At commit** | Every `git commit` | **Husky + lint-staged** (automatic) | Staged `*.{js,ts,vue}` → `oxlint --fix` + `oxfmt`; staged CSS/JSON → `oxfmt`; staged `*.rs` → `rustfmt`. Do **not** manually re-run fmt/oxlint on files lint-staged already covers unless a hook failed. |
-| **Before push** | End of a work session | Agent via **`/sync`** or **`/force-sync`** | Logical commit grouping, license headers, typecheck, doc/coderabbit/test/comment sweeps, `test:unit` when Rust changed, push. See [`.claude/commands/sync.md`](../.claude/commands/sync.md). |
+| Phase            | When                            | Who runs it                                | What it covers                                                                                                                                                                                              |
+| ---------------- | ------------------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **While coding** | Before writing or changing code | Agent                                      | Read the relevant `reference/*.md` file(s) from [`index.md`](index.md) **Task routing**. Update a reference in the same change if it is wrong.                                                              |
+| **At commit**    | Every `git commit`              | **Husky + lint-staged** (automatic)        | Staged `*.{js,ts,vue}` → `oxlint --fix` + `oxfmt`; staged CSS/JSON/MD → `oxfmt`; staged `*.rs` → `rustfmt`. Do **not** manually re-run fmt/oxlint on files lint-staged already covers unless a hook failed. |
+| **Before push**  | End of a work session           | Agent via **`/sync`** or **`/force-sync`** | Logical commit grouping, license headers, typecheck, doc/coderabbit/test/comment sweeps, `test:unit` when Rust changed, push. See [`.claude/commands/sync.md`](../.claude/commands/sync.md).                |
 
 Human commits from a terminal follow the same husky hook at commit time. Only
 **agent-initiated** `git commit` / `git push` are gated (next section).
@@ -36,14 +36,14 @@ Never use `--no-verify` or `--force` to skip hooks.
 After commits, `/sync` step 7 runs checks on `HEAD` that lint-staged does
 **not** cover:
 
-| Check | In lint-staged? | In `/sync` verify? |
-| ----- | --------------- | ------------------ |
-| oxlint + oxfmt (TS/Vue/CSS/JSON) | Yes, on staged files at commit | `fmt:check` + `oxlint` on whole tree (belt-and-suspenders) |
-| rustfmt | Yes, on staged `.rs` at commit | `fmt:check` covers TS side; Rust fmt via lint-staged per commit |
-| License headers | No | `headers:check` |
-| Typecheck (`vue-tsc`) | No | Yes, when TS/Vue touched |
-| Rust unit tests | No | Yes, when `src-tauri/**` touched |
-| E2E | No | **`/sync` skips locally**; CI runs it. Step 4 **test sweep** reads specs instead. **`/force-sync` runs e2e** when the commit window touched frontend, Rust, or e2e. |
+| Check                            | In lint-staged?                | In `/sync` verify?                                                                                                                                                  |
+| -------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| oxlint + oxfmt (TS/Vue/CSS/JSON) | Yes, on staged files at commit | `fmt:check` + `oxlint` on whole tree (belt-and-suspenders)                                                                                                          |
+| rustfmt                          | Yes, on staged `.rs` at commit | `fmt:check` covers TS side; Rust fmt via lint-staged per commit                                                                                                     |
+| License headers                  | No                             | `headers:check`                                                                                                                                                     |
+| Typecheck (`vue-tsc`)            | No                             | Yes, when TS/Vue touched                                                                                                                                            |
+| Rust unit tests                  | No                             | Yes, when `src-tauri/**` touched                                                                                                                                    |
+| E2E                              | No                             | **`/sync` skips locally**; CI runs it. Step 4 **test sweep** reads specs instead. **`/force-sync` runs e2e** when the commit window touched frontend, Rust, or e2e. |
 
 Docs-only syncs can skip the verify step entirely (see `/sync` step 7).
 
