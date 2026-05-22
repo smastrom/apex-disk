@@ -4,6 +4,12 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 
 ---
 
+## v0.0.25
+
+### Bug Fixes
+
+- Restore the "list truncated" notice on folders past the per-folder file cap. The frontend slice cap was still 300 from before v0.0.24 dropped `MAX_FILES_PER_DIR` to 100, so the two caps stopped lining up; align `MAX_DISPLAYED_ITEMS` at 100 and tighten `MAX_FOLDERS_PER_DIR` from 500 to 100 so the wire payload, children slice, and visible rows stay in lockstep. Worst-case per-node payload drops from 600 children to 200.
+
 ## v0.0.24
 
 ### Improvements
