@@ -441,9 +441,10 @@ fn scan_folder_size_equals_sum_of_children() {
 }
 
 /// When a folder has more files than `MAX_FILES_PER_DIR`, the scan must:
-/// (a) retain exactly the cap as file children, (b) set `truncated = true` on the
-/// folder so the UI can show the "list truncated" notice. Subfolders are never
-/// dropped, so the flag reflects only the file cap.
+/// (a) retain exactly the cap as file children, (b) set `truncated = true` on
+/// the folder so the UI can show the "list truncated" notice. The companion
+/// `scan_truncated_flag_true_when_folder_cap_exceeded` test covers the same
+/// contract for the subfolder cap.
 #[test]
 fn scan_truncated_flag_true_when_file_cap_exceeded() {
     let home_dir = create_test_home();
@@ -506,17 +507,18 @@ fn scan_truncated_flag_false_when_under_cap() {
     }
 }
 
-/// Adding folders never trips the truncated flag. Only the file cap drops entries.
+/// Subfolders past `MAX_FOLDERS_PER_DIR` also trip the truncated flag, mirroring
+/// the file cap. The dropped subfolders' sizes still aggregate into the parent
+/// total via `dir_size`, so the headline number remains exact.
 #[test]
-fn scan_truncated_flag_ignores_subfolder_count() {
+fn scan_truncated_flag_true_when_folder_cap_exceeded() {
     let home_dir = create_test_home();
     let home = home_dir.path();
 
-    // 400 subfolders under Projects/ManyDirs (well past MAX_FILES_PER_DIR).
-    // Each contains one ≥ 1 KB file so it survives default filters.
     let many = home.join("Projects/ManyDirs");
     fs::create_dir(&many).expect("create ManyDirs");
-    for i in 0..400 {
+    let over_cap = scan::MAX_FOLDERS_PER_DIR + 1;
+    for i in 0..over_cap {
         let sub = many.join(format!("d_{:04}", i));
         fs::create_dir(&sub).expect("create sub");
         let mut f = fs::File::create(sub.join("file.bin")).expect("create file");
@@ -530,8 +532,23 @@ fn scan_truncated_flag_ignores_subfolder_count() {
     let many_node =
         projects.children.iter().find(|c| c.name == "ManyDirs").expect("ManyDirs child exists");
 
-    assert!(!many_node.truncated, "400 subfolders, 0 files at top: truncated should be false");
-    assert_eq!(many_node.children.len(), 400, "all subfolders retained");
+    assert!(
+        many_node.truncated,
+        "ManyDirs had {} subfolders (cap {}); truncated should be true",
+        over_cap,
+        scan::MAX_FOLDERS_PER_DIR
+    );
+    assert_eq!(
+        many_node.children.len(),
+        scan::MAX_FOLDERS_PER_DIR,
+        "should retain exactly MAX_FOLDERS_PER_DIR subfolders"
+    );
+    // Parent size must still reflect every subfolder, even the dropped ones.
+    let expected_size = (over_cap as u64) * 1024;
+    assert_eq!(
+        many_node.size, expected_size,
+        "dropped subfolders' sizes must still aggregate into the parent total"
+    );
 }
 
 /// Files within a folder must have is_file set to true; dirs with children must not.

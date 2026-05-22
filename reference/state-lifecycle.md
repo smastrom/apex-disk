@@ -13,7 +13,7 @@ For the higher-level "what each side owns" picture, see [`architecture.md`](arch
 │   • folders: shallowRef<FolderInfo[]>  │   │   • Arc<AtomicBool> cancel token           │
 │   • progress: ref<ScanProgress>        │   │   • LiveScanState (atomics + AppHandle)    │
 │   • scanGeneration: ref<number>        │   │   • rayon walker threads                   │
-│   • backStack / forwardStack / current │   │   • per-dir BinaryHeap<HeapEntry> (≤300)   │
+│   • backStack / forwardStack / current │   │   • per-dir BinaryHeap<HeapEntry> (≤100)   │
 │   • selectedMap: reactive(Map)         │   │   • ScanRunningGuard (RAII)                │
 │                                        │   │                                            │
 │  View-scoped (until KeepAlive drops)   │   │  Process-lifetime                          │
@@ -29,7 +29,7 @@ For the higher-level "what each side owns" picture, see [`architecture.md`](arch
                                   invoke('…') · listen('…')
 ```
 
-The `FolderInfo` tree is the single largest payload that crosses this boundary. Rust builds it under per-directory caps (`MAX_FILES_PER_DIR = 100`, `MAX_FOLDERS_PER_DIR = 500`), then wraps it in a `ScanResult { root, folders }` envelope so the home root can be sent once and each node's `path` skipped on the wire. `useScanner.hydrateTree` rebuilds `node.path` on receipt from `root + chain of name`, then `markRaw`s and `Object.freeze`s every node so the tree is immutable and Vue never proxies it. Rust **does not retain a copy** of the tree; Vue assigns it into `folders` (`shallowRef`), and the previous tree becomes garbage as soon as no nav stack still points at it.
+The `FolderInfo` tree is the single largest payload that crosses this boundary. Rust builds it under per-directory caps (`MAX_FILES_PER_DIR = 100`, `MAX_FOLDERS_PER_DIR = 100`), then wraps it in a `ScanResult { root, folders }` envelope so the home root can be sent once and each node's `path` skipped on the wire. `useScanner.hydrateTree` rebuilds `node.path` on receipt from `root + chain of name`, then `markRaw`s and `Object.freeze`s every node so the tree is immutable and Vue never proxies it. Rust **does not retain a copy** of the tree; Vue assigns it into `folders` (`shallowRef`), and the previous tree becomes garbage as soon as no nav stack still points at it.
 
 ## Scan lifecycle
 
@@ -164,7 +164,7 @@ The selection map is the exception: `reactive(new Map(...))` in [ScanResultsList
 
 ## Cross-cutting contracts
 
-- **Two scanner caps + one display cap.** `scan::MAX_FILES_PER_DIR = 100` and `scan::MAX_FOLDERS_PER_DIR = 500` ([scan.rs](../src-tauri/src/scan.rs)) bound the tree on the Rust side; `MAX_DISPLAYED_ITEMS = 300` ([ScanResultsList.vue:60](../src/components/ScanResultsList.vue#L60)) bounds the DOM. The scanner caps cover files + subfolders separately; both flip the same `truncated` flag, which fires one shared "list truncated" notice in the UI. The DOM cap is independent and applies to files + folders combined per view. Folder cap is applied _after_ recursion so dropped subfolders' sizes still aggregate into the parent total.
+- **Two scanner caps + one display cap, all 100.** `scan::MAX_FILES_PER_DIR` and `scan::MAX_FOLDERS_PER_DIR` ([scan.rs](../src-tauri/src/scan.rs)) bound the tree on the Rust side; `MAX_DISPLAYED_ITEMS` ([ScanResultsList.vue:60](../src/components/ScanResultsList.vue#L60)) bounds the DOM. All three are 100 so the wire payload, the children slice, and the visible rows match: nothing the user could scroll to is silently dropped on the wire. The scanner caps cover files + subfolders separately; both flip the same `truncated` flag, which fires the "list truncated" notice in the UI. The DOM cap applies to files + folders combined per view and also flips the notice when a node ships up to 200 children (top 100 files + top 100 folders) and the slice drops the smaller half. Folder cap is applied _after_ recursion so dropped subfolders' sizes still aggregate into the parent total.
 - **Cancel needs both halves.** Rust's `AtomicBool` token stops the walker; Vue's `scanGeneration` drops late events. Adding a third async surface (e.g. a new IPC event) means routing it through the same generation check.
 - **Boundary objects are `snake_case`.** `FolderInfo`, `ScanProgress`, `TrashListItem` carry Rust field names across the wire unchanged. Frontend-only objects use `camelCase`. See [`architecture.md`](architecture.md).
 - **Rust never keeps the scan tree.** `get_user_folders` returns it across IPC and drops its owning value. Anything that needs the tree later must hold it in Vue.

@@ -56,8 +56,12 @@ const { t } = useTranslations()
  * Constants and types
  ***************************************************************/
 
-/** Matches Rust `scan::MAX_FILES_PER_DIR`; see reference/state-lifecycle.md. */
-const MAX_DISPLAYED_ITEMS = 300
+/** DOM cap applied to files + folders combined per view. Matches the Rust
+ *  per-folder caps (`MAX_FILES_PER_DIR`, `MAX_FOLDERS_PER_DIR`, both 100) so
+ *  the wire and the visible rows stay in lockstep; a folder-heavy view past
+ *  this slice still flips the truncation notice via `isListTruncated`.
+ *  See reference/state-lifecycle.md. */
+const MAX_DISPLAYED_ITEMS = 100
 
 /** First pass on navigation; the rest mounts after enter so slides stay smooth. */
 const INITIAL_RENDER_COUNT = 50

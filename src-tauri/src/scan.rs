@@ -37,17 +37,18 @@ use crate::{log, safe_folders, xattr, FolderInfo, ScanOptions};
 /// Max file entries kept per directory. We still count ALL file sizes for
 /// accuracy, but only retain the N largest as tree entries to avoid millions
 /// of allocations and a massive IPC payload. Sized for the "spot big files"
-/// use case: 100 is plenty more than any realistic drill-down depth, and the
-/// frontend's DOM cap of 300 covers files + folders combined per view.
-/// See [`reference/state-lifecycle.md`].
+/// use case: 100 is plenty more than any realistic drill-down depth, and it
+/// matches the frontend's per-view DOM cap so nothing the user can scroll to
+/// is silently dropped on the wire. See [`reference/state-lifecycle.md`].
 pub const MAX_FILES_PER_DIR: usize = 100;
 
-/// Max subfolder entries kept per directory. Mirrors the file cap so a single
-/// pathological directory (for example `node_modules` with thousands of nested
-/// packages) cannot blow up the JS payload. Folders smaller than the top
-/// `MAX_FOLDERS_PER_DIR` by size are dropped after recursion; their size is
-/// still aggregated into the parent total so the headline number stays exact.
-pub const MAX_FOLDERS_PER_DIR: usize = 500;
+/// Max subfolder entries kept per directory. Matches the file cap and the
+/// frontend's DOM cap so a single pathological directory (for example
+/// `node_modules` with thousands of nested packages) cannot blow up the JS
+/// payload with subtrees the UI would slice off anyway. Folders smaller than
+/// the top `MAX_FOLDERS_PER_DIR` by size are dropped after recursion; their
+/// size still aggregates into the parent total so the headline stays exact.
+pub const MAX_FOLDERS_PER_DIR: usize = 100;
 
 /// Minimum interval between progress events emitted during recursive scanning.
 const PROGRESS_THROTTLE_MS: u64 = 150;

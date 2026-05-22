@@ -100,9 +100,9 @@ fn create_test_home() -> tempfile::TempDir {
     fs::create_dir(path.join("Projects/src")).expect("Projects/src");
     write_file(path.join("Projects/src/main.rs"), 1024);
 
-    // Bulk: 301 files of 1024 bytes each. Crosses `scan::MAX_FILES_PER_DIR`
-    // so the scan returns truncated=true; the truncation-notice spec relies
-    // on this. Each file is ≥ 1 KB so it survives the default filters.
+    // Bulk: `MAX_FILES_PER_DIR + 1` files of 1024 bytes each. Crosses the cap
+    // so the scan returns truncated=true; the truncation-notice spec relies on
+    // this. Each file is ≥ 1 KB so it survives the default filters.
     let bulk = path.join("Projects/Bulk");
     fs::create_dir(&bulk).expect("Projects/Bulk");
     let over_cap = crate::scan::MAX_FILES_PER_DIR + 1;
