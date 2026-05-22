@@ -12,6 +12,8 @@ Your home folder quietly fills with junk that automatic cleaners may not spot or
 
 ApexDisk scans your user folder and lays it out as a size-sorted tree, so the heaviest items surface first. Drill into any directory to see exactly what's hiding inside, select what you don't need, review, and send it all to the trash all from a single window.
 
+Visit the [ApexDisk website](https://apexdisk.app) for more information.
+
 ## Features
 
 - **Hyper-fast scanning:** Multi-core Rust engine builds the disk tree in seconds

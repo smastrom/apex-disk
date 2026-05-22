@@ -57,7 +57,7 @@ const { t } = useTranslations()
 /**
  * Safety countdown: the trash button stays disabled for TRASH_COUNTDOWN_MS
  * after the view becomes active. Prevents accidental taps when the user just
- * navigated in. A plain `let` timer ID is fine; it's never read reactively.
+ * navigated in.
  */
 const countdownRemaining = ref(0)
 

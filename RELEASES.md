@@ -4,6 +4,12 @@ Changelog for **stable** builds shipped via the GitHub Release workflow. Newest-
 
 ---
 
+## v0.0.26
+
+### Chores
+
+- Link the ApexDisk website from the README intro so the project landing page is one click away.
+
 ## v0.0.25
 
 ### Bug Fixes
