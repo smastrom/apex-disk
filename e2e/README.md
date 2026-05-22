@@ -1,5 +1,7 @@
 # E2E Testing
 
+Agent-facing selector and fixture contract: [`reference/e2e.md`](../reference/e2e.md).
+
 The E2E suite uses WebdriverIO against a real debug Tauri binary built with the
 `e2e` Cargo feature. The app still talks to Rust through Tauri IPC; the test
 feature swaps the real home folder and trash operations for deterministic

@@ -1,6 +1,8 @@
 # Tauri Commands + IPC
 
-How the Rust ↔ webview boundary actually works: the three channels, the full command surface, registration patterns in `lib.rs`, and the settings flow. See [`architecture.md`](architecture.md) for the higher-level "what each side owns" picture; see [`state-lifecycle.md`](state-lifecycle.md) for the scan/trash flow and the Vue/Rust memory lifecycle.
+Keywords: invoke, command, event, settings, store, menu, generate_handler.
+
+How the Rust ↔ webview boundary actually works: the three channels, the full command surface, registration patterns in `lib.rs`, and the settings flow. See [`architecture.md`](architecture.md) for the higher-level "what each side owns" picture; see [`scan-trash-flow.md`](scan-trash-flow.md) for the scan/trash flow and the Vue/Rust memory lifecycle.
 
 ## Three channels
 
@@ -22,7 +24,12 @@ src/lib/use-scanner.ts
 
 One direction, many subscribers. Used when Rust needs to stream progress without blocking.
 
-Currently the only event is `folder-scan-progress` (see [`state-lifecycle.md`](state-lifecycle.md)). Trash and updater are fully request/response.
+Two events:
+
+- `folder-scan-progress` — streaming scan progress from `scan.rs` (see [`scan-trash-flow.md`](scan-trash-flow.md)).
+- `settings:reset` — emitted by `store::reset_e2e_state` after persisting defaults; the webview re-reads settings on receipt.
+
+Trash and updater are fully request/response.
 
 ### 3. Persistent state — the settings store
 
@@ -42,7 +49,7 @@ All commands registered in `src-tauri/src/lib.rs`, grouped by area:
 | **Settings**      | `get_settings`, `set_settings`, `get_setting`, `update_setting` (+ `reset_e2e_state` under `e2e`)                                      |
 | **System**        | `get_system_info`                                                                                                                      |
 | **Logging**       | `is_debug_mode`, `log_message`, `log_error_message`                                                                                    |
-| **Updater**       | `check_for_updates_silent`, `check_for_updates_dialog`, `download_update`, `restart_app`, `set_update_menu_ready`, `reset_update_menu` |
+| **Updater**       | `check_for_updates_silent`, `check_for_updates_dialog`, `download_update`, `restart_app`, `set_update_menu_ready`, `set_update_menu_available`, `reset_update_menu` |
 
 ## Registration in `lib.rs`
 

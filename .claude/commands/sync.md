@@ -9,13 +9,14 @@ Create logical commits for all uncommitted work since the latest commit, then pu
 3. **Group** — split the work into logically-cohesive commits: one intent per commit. Don't mix unrelated changes. If a single file spans multiple intents, stage it in pieces (edit the file down to one intent, commit, restore the rest).
 
 4. **Docs + tests + file-top comment sweep** — for each group:
-   - **Repo-wide `.md` sweep.** Open **every** `.md` file in the repo and decide whether any no longer match the change. This includes `reference/*.md`, `AGENTS.md`, `CLAUDE.md`, `README.md`, `.claude/rules/*.md`, and `.claude/commands/*.md`. Skip `RELEASES.md` / `RELEASES_BETA.md` (owned by `/release` and `/beta-notes`) and the immutable surface (`LICENSE.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`) unless the change directly affects them.
-   - **`.coderabbit.yaml` sweep.** Re-read `.coderabbit.yaml`'s `path_instructions` and verify they still match current conventions (Composition API rule, scoped styles + design tokens, tauri-plugin-store schema, translation key coverage, e2e fixture style, capability surface, workflow expectations). CodeRabbit auto-reviews every PR against these, so drift here turns into noisy or incorrect review comments. Update keys whose intent changed; do not edit `path_filters`, `auto_review`, `tools`, or the chat / knowledge_base blocks unless the change directly touches them.
-   - **Test sweep.** For every group that changes runtime behavior (Vue, Rust, scanning, trash flow, settings, IPC, translations, themes, fixture shape), open the test files that exercise that surface and verify their setup, assertions, and helper calls still describe the new behavior. Agents routinely change a feature and forget the tests. Check:
-      - **`e2e/specs/*.spec.ts`** — selectors (`data-testid`), fixture row names (e.g. `MyData`, `Projects`), expected counts, copy strings, and flow steps (Review → trash list → confirm). If the UI was renamed, restructured, or had testids changed, the spec is stale.
-      - **`e2e/helpers/*.ts` and anything under `e2e/fixtures/`** — helpers encode the current selector contract; fixtures encode the current scan shape. Both must move with the code.
-      - **`src-tauri/tests/*.rs`** — Rust integration tests around `FolderInfo`, scan walker, trash, settings store. Verify command names, payload shapes, and emitted-event names still match.
-      - Because `/sync` skips `pnpm test:e2e` (it rebuilds the debug binary and is too slow), this sweep is the only chance to catch stale e2e expectations before CI does. If a test edit is non-obvious, surface it to the user instead of guessing.
+   - **Scoped doc sweep.** Walk the **Changed paths → re-verify** table in [`reference/index.md`](../reference/index.md). Update any listed doc that drifted with the change.
+   - **Repo-wide `.md` skim.** Skim every other `.md` in the repo for eligibility (including `AGENTS.md`, `CLAUDE.md`, `.claude/rules/`, `.claude/commands/`, `.cursor/rules/`, `.cursor/commands/`). Skip `RELEASES.md` / `RELEASES_BETA.md` (owned by `/release` and `/beta-notes`) and `LICENSE.md` / `CODE_OF_CONDUCT.md` / `SECURITY.md` unless the change directly affects them.
+   - **`.coderabbit.yaml` sweep.** Re-read `path_instructions` and verify they still match current conventions. Update keys whose intent changed; do not edit `path_filters`, `auto_review`, `tools`, or chat / knowledge_base blocks unless the change directly touches them.
+   - **Test sweep.** For every group that changes runtime behavior, verify tests still describe the new behavior. See [`reference/e2e.md`](../reference/e2e.md) for the selector/fixture contract. Check:
+      - **`e2e/specs/*.spec.ts`** — `sel` selectors, fixture row names (`MyData`, `Projects`, …), counts, copy, flow steps.
+      - **`e2e/helpers/*.ts`** — selector registry and helpers move with the UI.
+      - **`src-tauri/tests/*.rs`** — command names, payload shapes, event names.
+      - `/sync` skips `pnpm test:e2e` locally (CI runs it). Step 4 is the read sweep; surface the skip in the end-of-sync summary.
    - **File-top comment sweep.** For every modified `.vue` and `.rs` file in the group, re-read its leading comment block and verify it still matches the current implementation. Agents routinely forget this. Check:
       - **`.vue`** — the `<!-- ComponentName ... -->` block after the SPDX header. Verify **Purpose**, **Props**, and **Example** still describe the component as it now is (props renamed, emits added, behavior shifted, etc.).
       - **`.rs`** — the `//!` module doc comment at the top of the file. Verify it still describes the module's responsibility and any externally-visible behavior (channel names, command names, emitted events).
@@ -26,12 +27,14 @@ Create logical commits for all uncommitted work since the latest commit, then pu
 
 6. **Commit** — one commit per group. Follow the repo convention: imperative action-title subject line (≤70 chars), blank line, then a concise bulleted or prose body only when the _why_ isn't obvious from the subject. Include the agent `Co-Authored-By` trailer. Never skip hooks.
 
-7. **Verify** — before pushing, run the relevant test suite on `HEAD` so red code never lands on `origin`. Run only the suites that match what changed across the commits in this sync (tests of pure-docs commits would just burn time):
-   - Always: `pnpm headers:check`, `pnpm fmt:check`, and `pnpm oxlint`.
-   - If any commit touched TypeScript or Vue (`src/**/*.ts`, `*.vue`): `pnpm typecheck` again on `HEAD` (belt-and-suspenders — catches drift introduced by hook reformatting between groups).
+7. **Verify** — before pushing, run checks on `HEAD` that lint-staged does not cover. Lint-staged already ran oxlint/oxfmt/rustfmt on staged files at each commit; step 7 catches whole-tree drift and missing headers/types.
+
+   Run only what matches the commits in this sync:
+   - When not docs-only: `pnpm headers:check`, `pnpm fmt:check`, and `pnpm oxlint` (whole-tree belt-and-suspenders).
+   - If any commit touched TypeScript or Vue (`src/**/*.ts`, `*.vue`): `pnpm typecheck` on `HEAD`.
    - If any commit touched Rust (`src-tauri/**`): `pnpm test:unit`.
-   - **Do not run `pnpm test:e2e`.** It rebuilds the debug Tauri binary and takes minutes; CI runs it on every push. The step-4 test sweep is what catches stale e2e expectations locally — surface the skip in the end-of-sync summary, and offer to run e2e on demand (e.g. before a release).
-   - Skip the whole step if every commit in this sync is docs-only (changes confined to `reference/`, root `*.md`, `.claude/`, or comments).
+   - **Do not run `pnpm test:e2e`.** CI runs it. Step 4 test sweep + [`reference/e2e.md`](../reference/e2e.md) cover stale expectations locally.
+   - Skip the whole step if every commit is docs-only (changes confined to `reference/`, root `*.md`, `.claude/`, or comments).
 
    If anything fails, stop and surface the failures. Do **not** push. The user fixes forward (a follow-up commit) or asks for a revert — never bypass with `--no-verify` / `--force`.
 

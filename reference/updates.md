@@ -1,5 +1,7 @@
 # Updates
 
+Keywords: updater, latest.json, autoCheckUpdates, signing, restart.
+
 In-app update behavior for **stable** builds (the [tauri-plugin-updater](https://v2.tauri.app/plugin/updater/) channel backed by GitHub Releases). For how stable and Beta builds are **cut** — release workflow, version fields, changelog files, Beta channel — see `releases.md`.
 
 ## In-App Updates (Stable Releases)

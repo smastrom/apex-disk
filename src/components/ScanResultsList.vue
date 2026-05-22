@@ -60,7 +60,7 @@ const { t } = useTranslations()
  *  per-folder caps (`MAX_FILES_PER_DIR`, `MAX_FOLDERS_PER_DIR`, both 100) so
  *  the wire and the visible rows stay in lockstep; a folder-heavy view past
  *  this slice still flips the truncation notice via `isListTruncated`.
- *  See reference/state-lifecycle.md. */
+ *  See reference/scan-trash-flow.md. */
 const MAX_DISPLAYED_ITEMS = 100
 
 /** First pass on navigation; the rest mounts after enter so slides stay smooth. */

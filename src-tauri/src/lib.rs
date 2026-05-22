@@ -80,7 +80,7 @@ pub struct FolderInfo {
     pub truncated: bool,
     /// Number of files dropped from `children` because the directory had more
     /// than `scan::MAX_FILES_PER_DIR`. Bytes of dropped files still contribute
-    /// to `size` (see [`reference/state-lifecycle.md`]). Zero on files and on
+    /// to `size` (see [`reference/scan-trash-flow.md`]). Zero on files and on
     /// folders that weren't truncated; skipped on the wire when zero.
     #[serde(default, skip_serializing_if = "is_zero_u32")]
     pub hidden_files_count: u32,

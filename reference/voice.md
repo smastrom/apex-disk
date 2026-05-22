@@ -1,5 +1,7 @@
 # Voice for user-facing docs
 
+Keywords: README, RELEASES, copy, tone, em dash, second person.
+
 Canonical example: [`../README.md`](../README.md). When in doubt, open the
 README and copy its cadence sentence-by-sentence.
 

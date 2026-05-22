@@ -1,5 +1,7 @@
 # Code Style
 
+Keywords: oxfmt, oxlint, vue, script setup, BEM, headers, rustfmt, comments.
+
 The conventions actually used in the codebase. Don't hand-format, hand-sort imports, or hand-place statement blank lines.
 
 ## Linting
@@ -57,7 +59,7 @@ Applies to `.ts` files and the `<script setup>` block of `.vue` files.
 - **`if` bodies:** braces required unless condition + statement fit on one line. One-line form is fine: `if (cond) return`.
 - **Prefer `!value`** over `value === false`.
 - **No `as any`, no `// @ts-ignore`** to silence the checker. Code must be type-clean (`pnpm typecheck`).
-- **Boundary objects use `snake_case`** (Tauri/Rust IPC). Frontend-only objects use `camelCase`. See [`architecture.md`](architecture.md), Boundary conventions.
+- **Boundary objects use `snake_case`** (Tauri/Rust IPC). Frontend-only objects use `camelCase`. Canonical rules: [`architecture.md`](architecture.md), Boundary conventions.
 - **Types live in `src/types/`.** Boundary types mirror Rust structs exactly.
 
 ## CSS / Vue style

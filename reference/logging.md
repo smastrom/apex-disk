@@ -1,5 +1,7 @@
 # Logging (Vue + Rust)
 
+Keywords: apex, dev_rust_trace, APEX_DISK_DEBUG, scan, trash, category.
+
 Single diagnostic scheme for maintainers and bug reports: **`[apex:…]`**-prefixed lines, UTC **`HH:MM:SS.mmm`** timestamps on intentional logs, and clear separation of **stdout** vs **stderr**.
 
 ## When output appears

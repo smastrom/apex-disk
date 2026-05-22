@@ -4,14 +4,16 @@ Use this command when **you haven't written the release notes yet** — the agen
 
 Walk through each step to prepare the release:
 
-0. **Reject if notes are already there** — read `RELEASES.md` and look at the first `## vX.Y.Z` heading. If it equals `## v$ARGUMENTS`, **stop immediately**: do not overwrite or duplicate the existing notes. Tell the user to run `/release-from-notes $ARGUMENTS` instead. (If the first heading is a _different_ version, that's fine — it's the previous release, and the new `## v$ARGUMENTS` section will go above it.)
+0. **Open the gate** — `mkdir -p .claude && touch .claude/.sync-active`. The pre-commit hook in `.claude/hooks/pre-commit-gate.sh` blocks `git commit` and `git push` unless this marker is present. Clear it at the end (step 6). The marker is gitignored.
 
-1. **Bump version** — Update the version string to `$ARGUMENTS` in all three files (they must match exactly):
+1. **Reject if notes are already there** — read `RELEASES.md` and look at the first `## vX.Y.Z` heading. If it equals `## v$ARGUMENTS`, **stop immediately** (close the gate — step 6): do not overwrite or duplicate the existing notes. Tell the user to run `/release-from-notes $ARGUMENTS` instead. (If the first heading is a _different_ version, that's fine — it's the previous release, and the new `## v$ARGUMENTS` section will go above it.)
+
+2. **Bump version** — Update the version string to `$ARGUMENTS` in all three files (they must match exactly):
    - `package.json` → `"version"`
    - `src-tauri/Cargo.toml` → `version`
    - `src-tauri/tauri.conf.json` → `"version"`
 
-2. **Update RELEASES.md** — Add a new `## v$ARGUMENTS` section at the **top** of the changelog (newest-first), directly below the `---` horizontal rule and above the previous entry. The GitHub **Release** workflow uses the **first** `## vX.Y.Z` line as the canonical version—if you append at the bottom, CI would read the wrong version. Summarize changes since the last tag (e.g. `git log` since the previous `v*` tag), **grouped under these `###` subheadings in this order**:
+3. **Update RELEASES.md** — Add a new `## v$ARGUMENTS` section at the **top** of the changelog (newest-first), directly below the `---` horizontal rule and above the previous entry. The GitHub **Release** workflow uses the **first** `## vX.Y.Z` line as the canonical version—if you append at the bottom, CI would read the wrong version. Summarize changes since the last tag (e.g. `git log` since the previous `v*` tag), **grouped under these `###` subheadings in this order**:
    - **New Features** — user-visible additions.
    - **Improvements** — enhancements to existing behavior, UX polish, perf wins, refactors with observable effects.
    - **Bug Fixes** — defect fixes.
@@ -23,8 +25,10 @@ Walk through each step to prepare the release:
 
    **Frontend / Backend split for Improvements and Bug Fixes — only when the group has more than 4 entries.** At 4 or fewer, list them flat under the `###` heading sorted by significance. At 5 or more, split into `#### Frontend` and `#### Backend` sub-blocks (omit either if empty), and apply the significance sort inside each sub-block. Frontend covers UI, themes, translations, components, settings surface; backend covers Rust, scanning, IPC, updater, build. New Features and Chores stay flat regardless of count.
 
-3. **Verify consistency** — Confirm all three version files and RELEASES.md heading match `$ARGUMENTS`.
+4. **Verify consistency** — Confirm all three version files and RELEASES.md heading match `$ARGUMENTS`.
 
-4. **Commit** — Stage and commit with the message `Release v$ARGUMENTS`.
+5. **Commit** — Stage and commit with the message `Release v$ARGUMENTS`.
+
+6. **Close the gate** — `rm -f .claude/.sync-active`. Run this on success **and** on any early-exit (reject in step 1, user abort).
 
 Do NOT push or trigger the GitHub Actions workflow — just prepare the commit locally.

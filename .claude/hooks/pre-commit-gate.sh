@@ -3,7 +3,7 @@
 #
 # Blocks agent-initiated `git commit` and `git push` so they go through `/sync`,
 # which enforces the docs sweep + test gates from
-# .claude/rules/pre-commit-protocol.md.
+# .claude/rules/agent-commit-protocol.md.
 #
 # `/sync` opts in by creating .claude/.sync-active at its start and removing it
 # at its end. When that marker is present, the hook lets the command through.
@@ -38,7 +38,7 @@ if printf '%s' "$cmd" | grep -qE '(^|[[:space:];&|({])git[[:space:]]+(commit|pus
    fi
    if [ "$is_cursor" = "1" ]; then
       cat <<'EOF'
-{"permission":"deny","user_message":"Pre-commit gate blocked this command.\n\nThis repo requires /sync for every commit + push (see .claude/rules/pre-commit-protocol.md). /sync runs the docs sweep, license-header check, typecheck, unit and e2e gates, commits in logical groups, and pushes.\n\nRun /sync instead. To bypass intentionally, ask the user first.","agent_message":"Pre-commit gate blocked git commit/push. Run /sync instead (see .claude/rules/pre-commit-protocol.md). To bypass intentionally, ask the user first."}
+{"permission":"deny","user_message":"Pre-commit gate blocked this command.\n\nThis repo requires /sync for every agent commit + push (see .claude/rules/agent-commit-protocol.md). /sync groups commits, runs the doc/test sweep, typecheck, headers, and unit tests, then pushes. E2E runs in CI (/sync skips it locally).\n\nRun /sync instead. To bypass intentionally, ask the user first.","agent_message":"Pre-commit gate blocked git commit/push. Run /sync instead (see .claude/rules/agent-commit-protocol.md and reference/agent-workflow.md). To bypass intentionally, ask the user first."}
 EOF
       exit 0
    fi
@@ -46,9 +46,9 @@ EOF
 Pre-commit gate blocked this command.
 
 This repo requires `/sync` for every commit + push (see
-.claude/rules/pre-commit-protocol.md). `/sync` runs the docs sweep,
-license-header check, typecheck, unit and e2e gates, commits in logical
-groups, and pushes.
+.claude/rules/agent-commit-protocol.md). `/sync` groups commits, runs the
+doc/test sweep, typecheck, headers, and unit tests, then pushes. E2E runs
+in CI (`/sync` skips it locally).
 
 Run `/sync` instead. To bypass intentionally, ask the user first.
 MSG

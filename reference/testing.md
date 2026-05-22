@@ -1,5 +1,7 @@
 # Testing
 
+Keywords: cargo test, e2e, wdio, typecheck, fmt, headers, test sweep.
+
 Three test layers plus static checks. The frontend has **no unit tests** and **no ESLint** — only the TypeScript checker (`vue-tsc`) + e2e. The Rust side has full integration coverage. Oxlint is a formatter adjunct (import/padding), not a linter.
 
 ## Suites
@@ -15,20 +17,13 @@ Three test layers plus static checks. The frontend has **no unit tests** and **n
 
 ## When to run
 
-| Change                                                       | Run                                              |
-| ------------------------------------------------------------ | ------------------------------------------------ |
-| Always (before every commit)                                 | `pnpm fmt:check`, `oxlint`, `pnpm headers:check` |
-| Any `*.ts` / `*.tsx` / `*.vue`                               | + `pnpm typecheck`                               |
-| Any `src-tauri/**`                                           | + `pnpm test:unit`                               |
-| Any user-visible change (`src/**`, `src-tauri/**`, `e2e/**`) | + `pnpm test:e2e`                                |
+When to run lint-staged vs `/sync` verify: [`agent-workflow.md`](agent-workflow.md).
+Do not duplicate work lint-staged already did at commit time.
 
-`/sync` and `/force-sync` run the relevant subset automatically. They never push red code and never bypass with `--no-verify` / `--force`.
-
-**Enforced from the repo.** A `PreToolUse` hook (`.claude/hooks/pre-commit-gate.sh`, wired in `.claude/settings.json`) blocks agent-initiated `git commit` and `git push` unless `.claude/.sync-active` is present. `/sync` and `/force-sync` create that marker at start and remove it at end, so they flow through; any other route to commit/push from an agent is refused. Your own commits from a terminal are unaffected. See `.claude/rules/pre-commit-protocol.md` for the rule and bypass instructions.
-
-**`pnpm test:e2e` is slow** — it rebuilds the debug Tauri binary on first run; subsequent runs are faster but still measured in minutes. Frontend-only changes routinely break e2e (selectors, transitions, focus handling, scroll behavior), so the suite stays in the matrix and CI runs it on every push.
-
-**`/sync` intentionally skips `pnpm test:e2e`** to keep the local loop fast. Instead, step 4 of `/sync` includes a **test sweep** that opens `e2e/specs/`, `e2e/helpers/`, `e2e/fixtures/`, and `src-tauri/tests/` and verifies they still describe the new behavior. Stale expectations get caught at sync time; live e2e regressions get caught in CI. If you want extra confidence locally (before a release, after a flaky-looking change), run `pnpm test:e2e` manually outside `/sync` — `/force-sync` still runs it for the same reason.
+**E2E note:** `/sync` skips `pnpm test:e2e` locally (CI runs it). Step 4 of
+`/sync` includes a **test sweep** of specs/helpers/fixtures. `/force-sync`
+runs e2e when the commit window touched frontend, Rust, or e2e. Selector and
+fixture contract: [`e2e.md`](e2e.md).
 
 ## Rust integration tests
 
@@ -56,7 +51,8 @@ Conventions:
 
 ## E2E (WebdriverIO + `e2e` cargo feature)
 
-The E2E suite drives a real Tauri build via WebDriver. Key pieces:
+The E2E suite drives a real Tauri build via WebDriver. Selector registry,
+fixture names, and interaction rules: [`e2e.md`](e2e.md). Key pieces:
 
 - **Cargo feature** — `cargo build --features e2e` enables `tauri_plugin_webdriver` and the test-only commands (`trash::set_e2e_trash_mode`, `store::reset_e2e_state`). These live in a second `generate_handler!` block under `#[cfg(feature = "e2e")]`. See [`tauri-commands.md`](tauri-commands.md) for the dual-block rule when adding new commands.
 - **Trash dry-run** — `set_e2e_trash_mode` swaps in a dry-run trash that records intent without touching disk. Specs assert on the recorded calls instead of actual macOS Trash interactions.
@@ -90,4 +86,5 @@ If a test breaks because the source change is correct and the test is outdated, 
 | `src-tauri/src/e2e_fixtures.rs`        | `reset_e2e_state`, dry-run trash mode (compiled under `e2e` feature)                                                                                         |
 | `src-tauri/src/lib.rs`                 | Two `generate_handler!` blocks (default + `#[cfg(feature = "e2e")]`)                                                                                         |
 | `e2e/specs/`                           | WebdriverIO test scenarios                                                                                                                                   |
-| `package.json`                         | `test:unit`, `test:e2e`, `typecheck`, `fmt`, `headers` scripts                                                                                               |
+| `package.json`                         | `test:unit`, `test:e2e`, `typecheck`, `fmt`, `headers` scripts |
+| [`e2e.md`](e2e.md)                     | `data-testid` contract, `sel` registry, fixture names          |

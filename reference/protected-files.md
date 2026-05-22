@@ -1,12 +1,16 @@
 # Protected files
 
+Keywords: safe_folders, protected, skipped, credentials, trash filter, canonical.
+
 ApexDisk filters two classes of paths so a careless click can't break macOS or expose credentials. Both lists live in [`src-tauri/src/safe_folders.rs`](../src-tauri/src/safe_folders.rs) as `const &[&str]`. Edit them there; everything downstream is derived.
+
+See also [`scan-trash-flow.md`](scan-trash-flow.md) (trash lifecycle) and [`e2e.md`](e2e.md) (fixture paths used in specs).
 
 ## Two lists, two purposes
 
 | List                       | Examples                                                                                                        | Threat model                                                                                                                                                                                                                          |
 | -------------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PROTECTED_RELATIVE_PATHS` | `Library`, `Documents`, `Desktop`, `Dropbox`, `OneDrive`, `Pictures/Photos Library.photoslibrary`               | The **folder itself** must survive. Removing it breaks system hooks, app registration, or triggers cascade-deletion on cloud-sync remotes. Contents may still be trashed.                                                             |
+| `PROTECTED_RELATIVE_PATHS` | `Library`, `Documents`, `Desktop`, `Dropbox`, `OneDrive`, `Google Drive`, `Creative Cloud Files`, `Pictures/Photos Library.photoslibrary` | The **folder itself** must survive. Removing it breaks system hooks, app registration, or triggers cascade-deletion on cloud-sync remotes. Contents may still be trashed.                                                             |
 | `SKIPPED_RELATIVE_PATHS`   | `.ssh`, `.gnupg`, `.aws`, `.kube`, `.password-store`, `Library/Keychains`, `Library/Messages/chat.db`, `.Trash` | Secret material: SSH keys, GPG keys, cloud tokens, password vaults, iMessage history, system keychains. The folder **and every descendant** is hidden from the scan and refused by the trash filter, so keys never surface in the UI. |
 
 Comparison is **case-insensitive**, matching APFS's default case-insensitive volume layout (case-sensitive APFS volumes also work, since both sides are lowercased before comparison). Both functions take `home` as a parameter so tests can point them at a temp dir; production passes the canonicalized `dirs::home_dir()`.

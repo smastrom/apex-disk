@@ -1,5 +1,7 @@
 # Themes
 
+Keywords: data-theme, theme.css, CSS variables, palette, oklch.
+
 ApexDisk ships **8 themes**, applied via a `data-theme` attribute on `<html>` and resolved with CSS variables. Pure frontend — no Rust involvement except the persisted setting.
 
 ## How it works

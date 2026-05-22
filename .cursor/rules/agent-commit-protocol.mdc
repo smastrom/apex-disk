@@ -3,4 +3,4 @@ description: Mandatory steps before committing or releasing
 alwaysApply: true
 ---
 
-@.claude/rules/pre-commit-protocol.md
+@.claude/rules/agent-commit-protocol.md

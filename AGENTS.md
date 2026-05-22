@@ -12,53 +12,22 @@ ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for 
 | Frontend                   | Vue 3 (`<script setup lang="ts">`), TypeScript, Vite                                                       |
 | Styling                    | Scoped CSS with CSS nesting, lightningcss (Safari 13 target)                                               |
 | Testing                    | Rust: `cargo test` (src-tauri/tests/), E2E: WebdriverIO (e2e/)                                             |
-| Formatting (TS/Vue/JS/CSS) | **Oxfmt** (Prettier-style formatter); **Oxlint** `--fix` adjunct for import order + statement padding only |
-| Linting                    | Core language tooling only — **no ESLint**; see below                                                      |
+| Formatting (TS/Vue/JS/CSS) | **Oxfmt** + **Oxlint** adjunct — see [`reference/code-style.md`](reference/code-style.md) |
+| Linting                    | `vue-tsc` (TS/Vue), `cargo test` (Rust) — see [`reference/code-style.md`](reference/code-style.md) |
 | Package manager            | pnpm                                                                                                       |
 
-### Linting (no general-purpose JS linter)
-
-We do **not** use ESLint, Oxlint categories, or any other style/correctness linter for TS/Vue/JS. The only linters are **core language checkers**:
-
-| Language         | Tool                                       | Command          |
-| ---------------- | ------------------------------------------ | ---------------- |
-| TypeScript / Vue | `vue-tsc`                                  | `pnpm typecheck` |
-| Rust             | `rustc` (via `cargo test` / `cargo check`) | `pnpm test:unit` |
-
-Oxlint is **not** a linter in this repo — only a formatter adjunct (import order + statement padding). Do not add ESLint or enable Oxlint rule categories.
-
-### TS / Vue / JS formatting pipeline
-
-Do not hand-sort imports or hand-place statement blank lines. Two tools, fixed roles:
-
-1. **Oxfmt** (`.oxfmtrc.jsonc`) — general formatting (indentation, quotes, wrapping, CSS, JSON, etc.). Same role as Prettier.
-2. **Oxlint** (`.oxlintrc.json`, `oxlint-plugins.mjs`) — formatter adjunct only. Categories are off; JS plugin enables just:
-   - `stylistic/sort-imports`
-   - `stylistic/padding-line-between-statements`
-
-On staged `.js` / `.ts` / `.vue` and on editor save: **oxlint `--fix` first**, then **oxfmt**. Details: `reference/code-style.md`.
+Formatting, linting, and Oxlint adjunct rules: [`reference/code-style.md`](reference/code-style.md).
 
 ## Agent-facing reference (`reference/`)
 
-`reference/` holds deep specs that agents read on demand. The
-`reference-loader` rule in `.claude/rules/` maps operations to the right
-file; the `pre-commit-protocol` rule guarantees a docs sweep before any
-commit.
+`reference/` holds deep specs that agents read on demand. The always-on
+`reference-loader` rule points at [`reference/index.md`](reference/index.md)
+(**Task routing**). For lint-staged vs `/sync`, see
+[`reference/agent-workflow.md`](reference/agent-workflow.md). The
+`agent-commit-protocol` rule requires `/sync` before agent commit/push.
 
-| File                           | Covers                                                                                      |
-| ------------------------------ | ------------------------------------------------------------------------------------------- |
-| `reference/architecture.md`    | Frontend/backend split, what each side owns, boundary conventions, build/testing.           |
-| `reference/state-lifecycle.md` | UI ↔ memory: scan + trash lifecycle, Vue reactive state, Rust statics, what frees when.     |
-| `reference/tauri-commands.md`  | IPC channels, command surface, `lib.rs` registration, settings store, locale + menu.        |
-| `reference/code-style.md`      | Oxfmt + Oxlint adjunct, Vue/CSS/TS conventions, file naming, license headers, comments.     |
-| `reference/translations.md`    | Per-component YAML, 10 languages, `useTranslations()`, CJK folding rules.                   |
-| `reference/testing.md`         | Suites, when to run, Rust integration patterns, E2E + `e2e` cargo feature, what not to add. |
-| `reference/themes.md`          | CSS variables, `data-theme` switching, 8 themes, adding a new theme.                        |
-| `reference/compatibility.md`   | macOS / Safari / architecture targets, progressive enhancement matrix, oxfmt fallbacks.     |
-| `reference/voice.md`           | Tone and prose rules for user-facing docs (README, RELEASES, comments, copy).               |
-| `reference/logging.md`         | `[apex:…]` diagnostic scheme, Vue categories, Rust trace channels, `APEX_DISK_DEBUG`.       |
-| `reference/updates.md`         | In-app updater (auto/manual), endpoint, signing, dialogs.                                   |
-| `reference/releases.md`        | How to cut stable and Beta builds, version fields, changelog conventions, workflows.        |
+Full file list, read tiers, and the commit-time **Changed paths → re-verify**
+table live in [`reference/index.md`](reference/index.md).
 
 Root-level `RELEASES.md`, `RELEASES_BETA.md`, `LICENSE.md`,
 `CODE_OF_CONDUCT.md`, `SECURITY.md`, `README.md` stay at the repo root —
@@ -77,17 +46,11 @@ they are user-/CI-facing, not agent instructions.
 
 ## Testing
 
-Full suite matrix, commands, and conventions live in `reference/testing.md`. Key always-on rules:
+Suites, when to run, and conventions: [`reference/testing.md`](reference/testing.md).
+Agent commit gate: [`.claude/rules/agent-commit-protocol.md`](.claude/rules/agent-commit-protocol.md).
 
-1. `/sync` and `/force-sync` run the relevant suites before pushing. Never push red code, never bypass with `--no-verify` / `--force`. If a suite fails, stop and surface — fix forward in a follow-up commit.
-2. Tests use temp dirs, never the real user home.
-3. Do not add tests unless asked.
-
-The protocol is enforced by `.claude/hooks/pre-commit-gate.sh`, wired into
-Claude Code via `.claude/settings.json` (`PreToolUse`) and into Cursor via
-`.cursor/hooks.json` (`beforeShellExecution`). It refuses agent-initiated
-`git commit` / `git push` outside of `/sync` or `/force-sync`. Details in
-`.claude/rules/pre-commit-protocol.md`.
+Key rules: `/sync` never pushes red code; tests use temp dirs only; do not add
+tests unless asked.
 
 ## `.claude/` layout
 
@@ -128,7 +91,7 @@ src-tauri/
   tests/             # Rust integration tests
   tauri.conf.json    # Tauri config (bundle targets, min macOS version)
 
-reference/           # Agent-facing reference (see table above)
+reference/           # Agent-facing reference — see reference/index.md
 .claude/
   rules/             # Always-loaded routing + protocol rules
   commands/          # Slash commands

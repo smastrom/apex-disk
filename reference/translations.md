@@ -1,5 +1,7 @@
 # Translations
 
+Keywords: i18n, yaml, useTranslations, CJK, locale, menu_translations.
+
 Per-component i18n for the webview. Native menu strings live in Rust ([`tauri-commands.md`](tauri-commands.md) — Locale + native menu).
 
 ## Languages
@@ -15,12 +17,14 @@ The default falls back to `en` when a key is missing for the requested language.
 ```
 src/assets/translations/
 ├── index.ts            # Factory: combines all module files, exposes useTranslations()
-├── app-shell.yaml      # Per-module YAML files (one per Vue component or feature)
-├── scan-launch.yaml
-├── scan-results-list.yaml
-├── settings-view.yaml
+├── AppFooter.yaml      # Per-module YAML files (one per Vue component)
+├── ScanLaunch.yaml
+├── ScanResultsList.yaml
+├── SettingsView.yaml
 └── ...
 ```
+
+Filenames match the importing Vue component name (PascalCase).
 
 Each YAML file is **key-first** — one entry per phrase, with a language sub-key:
 
@@ -49,11 +53,11 @@ import { useTranslations } from '@/lib/use-translations'
 
 const { t } = useTranslations()
 
-t('scan-launch', 'scan_again') // → "Scan again" / current lang
-t('settings-view', 'theme_label', { name: 'Sky' }) // with vars
+t('ScanLaunch', 'scan_again') // → "Scan again" / current lang
+t('SettingsView', 'theme_label', { name: 'Sky' }) // with vars
 ```
 
-Signature: `t(module, key, vars?)`. The `module` argument is the YAML filename (kebab-case, no extension). Interpolation tokens are `{name}` style.
+Signature: `t(module, key, vars?)`. The `module` argument is the YAML filename without extension (PascalCase, matching the Vue component). Interpolation tokens are `{{name}}` style (double braces).
 
 `useTranslations()` is reactive — when the user changes language in Settings (which writes to the store, which also fires `set_menu_language` for the native menu), all `t()` calls re-evaluate.
 

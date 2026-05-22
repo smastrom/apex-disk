@@ -20,7 +20,7 @@
 - [ ] `pnpm fmt:check` passes
 - [ ] `pnpm test:unit` passes (required for any Rust / `src-tauri/` change)
 - [ ] `pnpm test:e2e` passes if UI flows changed
-- [ ] `reference/` and root `.md` files reviewed — updated any whose contents no longer match this change, or confirmed none apply
+- [ ] `reference/` and root `.md` files reviewed — use the **Changed paths → re-verify** table in `reference/index.md`, then skim remaining docs; update any that drifted
 - [ ] Commits follow the repo style: imperative subject, short body only when the _why_ isn't obvious, `Co-Authored-By` trailer when a commit was made by an agent
 - [ ] No new platform-specific code for Windows/Linux (macOS-only project)
 

@@ -1,5 +1,7 @@
 # Releases
 
+Keywords: RELEASES, semver, beta, workflow, version bump, DMG.
+
 How to cut **stable** and **Beta** builds of ApexDisk. For the in-app update behavior (auto vs manual, signing, dialogs), see `updates.md`.
 
 There are two changelog files at the repo root, one per channel:

@@ -1,5 +1,7 @@
 # Compatibility
 
+Keywords: safari13, macOS 10.15, lightningcss, MSRV, grep, progressive enhancement.
+
 The supported target and how to verify it. ApexDisk runs portable Vue + JS implementations of animations, popovers, focus styling, and scrollbars; the LLM does not need to know which newer Safari APIs we "could have used" — only what's available today.
 
 ## Targets
@@ -26,7 +28,7 @@ Minimum supported macOS: **10.15 Catalina** (Safari 13.0 / WebKit 605.1.15). The
 ## What lightningcss does NOT handle (avoid)
 
 - `color-mix()` whose operands are CSS custom properties — cannot be resolved at build time. Use `opacity` on a solid color instead.
-- `:has()` selector — would emit unchanged; Safari 13–15.3 don't support it. Don't use `:has()`.
+- `:has()` selector — would emit unchanged; Safari 13 to 15.3 don't support it. Don't use `:has()`.
 
 ## Progressive-enhancement features (still allowed)
 
@@ -69,11 +71,13 @@ Expected: `"minimumSystemVersion": "10.15"`.
 `vite.config.ts` must have:
 
 ```ts
-const safari13 = (13 << 16) | (0 << 8) | 0
+import { browserslistToTargets } from 'lightningcss'
+
+const cssTargets = browserslistToTargets(['safari 13'])
 
 css: {
    transformer: 'lightningcss',
-   lightningcss: { targets: { safari: safari13 } },
+   lightningcss: { targets: cssTargets },
 },
 
 build: {

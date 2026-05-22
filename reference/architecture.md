@@ -1,5 +1,7 @@
 # Architecture
 
+Keywords: frontend, backend, Rust, Vue, IPC, boundary, snake_case, Tauri.
+
 ApexDisk is a **macOS-only Tauri 2 desktop app**. Two processes, one bundle:
 
 ```
@@ -25,7 +27,7 @@ ApexDisk is a **macOS-only Tauri 2 desktop app**. Two processes, one bundle:
 
 The boundary is the only real design axis in this codebase: every feature has a **Rust side** (anything touching the OS, the filesystem, or persistent state) and a **webview side** (anything you can see or click). Everything else (themes, animations, translations) is pure frontend with Rust as a passive store.
 
-Subsystem deep-dives live in their own files: [`state-lifecycle.md`](state-lifecycle.md) (scan + trash flow, Vue/Rust memory lifecycle), [`tauri-commands.md`](tauri-commands.md) (IPC channels, command surface, settings store), [`translations.md`](translations.md), [`themes.md`](themes.md). See also [`updates.md`](updates.md), [`releases.md`](releases.md), [`logging.md`](logging.md), [`compatibility.md`](compatibility.md).
+Deep specs: [`reference/index.md`](index.md) (task routing and aliases).
 
 ## What each side owns
 
@@ -36,7 +38,7 @@ Subsystem deep-dives live in their own files: [`state-lifecycle.md`](state-lifec
 | Home-folder scan (walk, size, filter protected/skipped paths, emit progress, support cancel) | `scan.rs`                         |
 | Move-to-Trash (with protected-path filter applied again before delete)                       | `trash.rs`                        |
 | Persistent settings (read/write/merge with defaults, concurrent-write locking)               | `store.rs`                        |
-| Protected + skipped folder lists (single source of truth, consumed by scan _and_ trash)      | `safe_folders.rs`                 |
+| Protected + skipped folder lists (single source of truth, consumed by scan _and_ trash)      | `safe_folders.rs` — see [`protected-files.md`](protected-files.md) |
 | Disk volume usage (total / free / used for the home volume)                                  | `disk.rs`                         |
 | System info (OS version, arch, memory)                                                       | `system_info.rs`                  |
 | Full Disk Access (FDA) TCC check                                                             | `permissions.rs`                  |
@@ -65,7 +67,7 @@ Entry points: `main.rs` delegates to `lib.rs::run()`, which installs plugins (`t
 | Theme application — `data-theme` attribute on `<html>`, CSS variables                    | `src/assets/css/theme.css`, `src/stores/app-settings.ts`                                           |
 | Translations — per-component `.yaml` files (key-first), reactive via `useTranslations()` | `src/assets/translations/`, `src/lib/use-translations.ts`                                          |
 | All presentational primitives (buttons, popovers, spinners, icons)                       | `src/components/ui/`                                                                               |
-| Animations, view transitions, reduced-motion handling                                    | `src/assets/css/animations.css`, `src/lib/use-view-transition.ts`, `src/lib/use-reduced-motion.ts` |
+| Animations, view transitions, reduced-motion handling                                    | `src/assets/css/animations.css`, `src/lib/use-app-views.ts`, `src/lib/use-reduced-motion.ts` |
 | Vue-side diagnostic log (forwards to Rust when `APEX_DISK_DEBUG` is on)                  | `src/lib/log.ts`                                                                                   |
 
 **Frontend owns no filesystem logic.** If a feature needs to know _what's on disk_ (including whether a path is protected), it asks Rust. The "protected" flag on a `FolderInfo` is filled server-side so the UI never re-evaluates it.
@@ -87,8 +89,8 @@ A handful of rules that make the IPC hop easy to reason about:
 - **Names cross the wire unchanged.** Rust structs serialize field names as-is; the frontend consumes them verbatim. That means **Tauri-boundary objects use `snake_case`** even in TypeScript (e.g. `folder_info.is_protected`), while **frontend-only objects use `camelCase`**. Types for boundary shapes live in `src/types/` and mirror the Rust structs.
 - **Do not reimplement Rust logic in Vue.** The "is this path protected?" / "how big is this folder?" / "is FDA granted?" questions belong to Rust, even when the answer is cached in a ref.
 - **Commands are total.** A command either resolves with data or rejects with an error string; no partial states on the wire. Progress-style feedback goes on events, not on the invoke promise.
-- **Cancellation is cooperative.** Two-step: Rust `Arc<AtomicBool>` token + Vue `scanGeneration` counter. Full mechanics in [`state-lifecycle.md`](state-lifecycle.md).
-- **Truncation is a shared contract.** Two scanner caps (`scan::MAX_FILES_PER_DIR`, `scan::MAX_FOLDERS_PER_DIR`) bound the tree on the Rust side; one frontend cap (`MAX_DISPLAYED_ITEMS`) bounds the DOM. All three feed the same user-facing "list truncated" notice; flipping either scanner cap without updating the message lies to the user. Full contract in [`state-lifecycle.md`](state-lifecycle.md).
+- **Cancellation is cooperative.** Two-step: Rust `Arc<AtomicBool>` token + Vue `scanGeneration` counter. Full mechanics in [`scan-trash-flow.md`](scan-trash-flow.md).
+- **Truncation is a shared contract.** Two scanner caps (`scan::MAX_FILES_PER_DIR`, `scan::MAX_FOLDERS_PER_DIR`) bound the tree on the Rust side; one frontend cap (`MAX_DISPLAYED_ITEMS`) bounds the DOM. All three feed the same user-facing "list truncated" notice; flipping either scanner cap without updating the message lies to the user. Full contract in [`scan-trash-flow.md`](scan-trash-flow.md).
 - **macOS-only.** There's no Windows/Linux branching in either side; see [`compatibility.md`](compatibility.md). objc2 AppKit/Foundation bindings are used freely in Rust.
 
 ## Build + testing boundary

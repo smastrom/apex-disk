@@ -45,7 +45,7 @@ use crate::{log, safe_folders, xattr, FolderInfo, ScanOptions};
 /// of allocations and a massive IPC payload. Sized for the "spot big files"
 /// use case: 100 is plenty more than any realistic drill-down depth, and it
 /// matches the frontend's per-view DOM cap so nothing the user can scroll to
-/// is silently dropped on the wire. See [`reference/state-lifecycle.md`].
+/// is silently dropped on the wire. See [`reference/scan-trash-flow.md`].
 pub const MAX_FILES_PER_DIR: usize = 100;
 
 /// Max subfolder entries kept per directory. Matches the file cap and the
