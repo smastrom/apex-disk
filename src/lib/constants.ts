@@ -30,10 +30,10 @@ export const THEME_COLORS = [
    ROOT_THEME,
    'apex-coral',
    'apex-ocean',
+   'apex-graphite',
    'smastrom',
    'apex-light',
    'macos-dark',
-   'macos-graphite',
    'macos-light',
 ] as const
 

@@ -5,7 +5,7 @@ html {
       -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif;
    font-size: 100%;
    line-height: 1.5;
-   font-weight: 400;
+   font-weight: var(--font-weight-min);
    color: var(--color-text);
    background: var(--color-bg);
    -webkit-font-smoothing: antialiased;
@@ -33,6 +33,8 @@ body {
 .InformationView-detailLabel,
 .InformationView-detailValue,
 .ScanResultsListItem-name,
+.ScanTrashListItem-name,
+.ScanTrashListItem-path,
 .ScanListNav-pathText {
    user-select: text;
    -webkit-user-select: text;
@@ -67,6 +69,13 @@ html.focus-ring-keyboard [tabindex='0']:focus {
    box-shadow:
       0 0 0 var(--focus-ring-offset) var(--color-bg),
       0 0 0 calc(var(--focus-ring-offset) + 2px) var(--color-accent-glow);
+}
+
+/* Outward ring is clipped by ScanResultsList's overflow scrollport (right edge
+ * and when rows scroll flush to the edge). Inset keeps the indicator inside
+ * the row's rounded box. */
+html.focus-ring-keyboard .ScanResultsListItem-root:focus {
+   box-shadow: inset 0 0 0 var(--focus-ring-width) var(--color-accent-glow);
 }
 
 /*

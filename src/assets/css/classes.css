@@ -26,9 +26,8 @@
    max-width: 420px;
    border: 1px solid var(--color-chrome-border);
    border-radius: var(--radius-sm);
-   background: var(--color-chrome);
-   -webkit-backdrop-filter: saturate(180%) blur(30px);
-   backdrop-filter: saturate(180%) blur(30px);
+   /* Opaque fill: a translucent chrome bg lets accent-glow halos behind the popover bleed through. */
+   background: var(--color-bg-elevated);
    color: var(--color-text);
    font-size: var(--font-size-sm);
    font-weight: 500;

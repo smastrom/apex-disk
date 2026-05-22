@@ -117,7 +117,7 @@ async function openWebsite() {
 
 .InformationFooter-version {
    margin-left: var(--spacing-xs);
-   font-weight: 400;
+   font-weight: var(--font-weight-min);
    color: var(--color-text-muted);
 }
 
@@ -155,7 +155,7 @@ async function openWebsite() {
 
 .InformationFooter-sep {
    color: var(--color-text-dim);
-   font-weight: 400;
+   font-weight: var(--font-weight-min);
    pointer-events: none;
 }
 </style>

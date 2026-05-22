@@ -364,6 +364,18 @@ themeApexOcean:
    ja: Apex Ocean
    ar: Apex Ocean
 
+themeApexGraphite:
+   en: Apex Graphite
+   it: Apex Graphite
+   es: Apex Graphite
+   fr: Apex Graphite
+   pt: Apex Graphite
+   de: Apex Graphite
+   ru: Apex Graphite
+   zh: Apex Graphite
+   ja: Apex Graphite
+   ar: Apex Graphite
+
 themeApexGreen:
    en: Apex Green
    it: Apex Green
@@ -399,18 +411,6 @@ themeMacosDark:
    zh: macOS Dark
    ja: macOS Dark
    ar: macOS Dark
-
-themeMacosGraphite:
-   en: macOS Graphite
-   it: macOS Graphite
-   es: macOS Graphite
-   fr: macOS Graphite
-   pt: macOS Graphite
-   de: macOS Graphite
-   ru: macOS Graphite
-   zh: macOS Graphite
-   ja: macOS Graphite
-   ar: macOS Graphite
 
 themeMacosLight:
    en: macOS Light

@@ -66,7 +66,9 @@ const { t } = useTranslations()
 const pathTextRef = useTemplateRef<HTMLElement>('pathTextRef')
 const pathPopoverRef = useTemplateRef<HTMLElement>('pathPopoverRef')
 
-const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopoverRef)
+const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopoverRef, {
+   alwaysShow: true,
+})
 </script>
 
 <template>

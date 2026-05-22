@@ -46,7 +46,8 @@ const pathPopoverRef = useTemplateRef<HTMLElement>('pathPopoverRef')
 const { onPointerEnter, onPointerLeave } = useLabelPopover(triggerRef, popoverRef)
 const { onPointerEnter: onPathPointerEnter, onPointerLeave: onPathPointerLeave } = useLabelPopover(
    pathTriggerRef,
-   pathPopoverRef
+   pathPopoverRef,
+   { alwaysShow: true }
 )
 </script>
 
@@ -110,7 +111,7 @@ const { onPointerEnter: onPathPointerEnter, onPointerLeave: onPathPointerLeave }
             @pointerenter="onPathPointerEnter"
             @pointerleave="onPathPointerLeave"
          >
-            {{ displayPath(item.path) }}
+            {{ item.path }}
          </div>
       </Teleport>
    </div>
@@ -125,11 +126,11 @@ const { onPointerEnter: onPathPointerEnter, onPointerLeave: onPathPointerLeave }
    min-height: 48px;
    cursor: pointer;
    transition: background 0.2s var(--ease-standard);
-   border-bottom: 1px solid var(--color-accent-bg);
+   border-bottom: 1px solid var(--color-divider);
    z-index: 2;
 
    &:hover {
-      background: var(--color-accent-bg-hover);
+      background: var(--color-bg-hover);
    }
 }
 
