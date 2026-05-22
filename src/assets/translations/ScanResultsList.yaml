@@ -59,13 +59,13 @@ cancel:
    ar: إلغاء
 
 truncated:
-   en: Only the 300 largest entries are shown per folder.
-   it: Vengono mostrati solo i 300 elementi più grandi per cartella.
-   es: Solo se muestran las 300 entradas más grandes por carpeta.
-   fr: Seules les 300 entrées les plus volumineuses sont affichées par dossier.
-   pt: Apenas as 300 maiores entradas são mostradas por pasta.
-   de: Es werden nur die 300 größten Einträge pro Ordner angezeigt.
-   ru: Показаны только 300 самых больших элементов в каждой папке.
-   zh: 每个文件夹仅显示最大的 300 个条目。
-   ja: フォルダごとに最大300件のエントリのみ表示されます。
-   ar: يتم عرض أكبر 300 إدخال فقط لكل مجلد.
+   en: Only the 100 largest entries are shown per folder.
+   it: Vengono mostrati solo i 100 elementi più grandi per cartella.
+   es: Solo se muestran las 100 entradas más grandes por carpeta.
+   fr: Seules les 100 entrées les plus volumineuses sont affichées par dossier.
+   pt: Apenas as 100 maiores entradas são mostradas por pasta.
+   de: Es werden nur die 100 größten Einträge pro Ordner angezeigt.
+   ru: Показаны только 100 самых больших элементов в каждой папке.
+   zh: 每个文件夹仅显示最大的 100 个条目。
+   ja: フォルダごとに最大100件のエントリのみ表示されます。
+   ar: يتم عرض أكبر 100 إدخال فقط لكل مجلد.
