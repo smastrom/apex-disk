@@ -4,7 +4,7 @@
 
 macOS tool to easily identify and get rid of big, unused files and folders in seconds.
 
-![ApexDisk Hero](./src/assets/images/apex-disk-hero.png)
+![ApexDisk Cover](./src/assets/images/apex-disk-article-cover.png)
 
 ## Why ApexDisk?
 
@@ -20,7 +20,7 @@ Visit the [ApexDisk website](https://apexdisk.app) for more information.
 - **Safe by default:** Files move to Trash, system folders stay protected, sensitive directories skipped automatically
 - **Built to navigate:** Size-sorted tree with last-modified dates puts the heaviest folders first
 - **Optional Full Disk Access:** Works without it by default, prompts only when needed
-- **10 languages, 8 themes:** Including RTL support for Arabic
+- **10 languages, 8 color themes:** Including Chinese, Japanese, and Arabic
 
 ## Installation
 
