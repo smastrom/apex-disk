@@ -161,7 +161,7 @@ const { onPointerEnter: onPathPointerEnter, onPointerLeave: onPathPointerLeave }
    justify-content: center;
    width: 24px;
    height: 24px;
-   color: var(--color-accent);
+   color: var(--color-icon-muted);
 }
 
 .ScanTrashListItem-icon--hidden {
