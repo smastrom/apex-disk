@@ -4,7 +4,7 @@
 
 macOS tool to easily identify and get rid of big, unused files and folders in seconds.
 
-![ApexDisk Cover](./src/assets/images/apex-disk-article-cover-2.png)
+![ApexDisk Cover](./src/assets/images/apex-disk-og-image.png)
 
 ## Why ApexDisk?
 
@@ -24,7 +24,7 @@ Visit the [ApexDisk website](https://apexdisk.app) for more information.
 
 ## Installation
 
-Download the latest `.dmg` from [Releases](https://github.com/smastrom/apex-disk/releases) and drag the app to your Applications folder.
+Download the latest `.dmg` (~5MB) from [Releases](https://github.com/smastrom/apex-disk/releases) and drag the app to your Applications folder.
 
 ## Building from source
 
@@ -69,11 +69,11 @@ pnpm tauri:dev
 
 ## Support ApexDisk
 
-Enjoying ApexDisk? Say thanks by supporting the author:
+Enjoying ApexDisk? Support the author with a donation:
 
 - [PayPal](https://www.paypal.com/donate/?hosted_button_id=93WKXA68W9WQJ)
 - [Buy Me a Coffee](https://buymeacoffee.com/smastrom)
-- [Crypto (NOWPayments)](https://nowpayments.io/donation/smastrom)
+- [Crypto (NOWPayments)](https://nowpayments.io/donation/smastrom) (BTC, ETH, USDT, etc.)
 
 ## License
 
