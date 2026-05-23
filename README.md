@@ -4,7 +4,7 @@
 
 macOS tool to easily identify and get rid of big, unused files and folders in seconds.
 
-![ApexDisk Cover](./src/assets/images/apex-disk-article-cover.png)
+![ApexDisk Cover](./src/assets/images/apex-disk-article-cover-2.png)
 
 ## Why ApexDisk?
 
