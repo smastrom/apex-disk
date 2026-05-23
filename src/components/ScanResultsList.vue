@@ -364,13 +364,16 @@ function isSelectedForUI(path: string): boolean {
    return selectedMap.has(path) || hasSelectedAncestor(path)
 }
 
-/** Indeterminate folder paths; O(entries x depth) on mutation, O(1) per row in template. */
+/** Indeterminate folder paths + their selected-descendant sizes;
+ *  O(entries x depth) on mutation, O(1) per row in template. */
 const someSelectedPaths = shallowRef(new Set<string>())
+const someSelectedSizes = shallowRef(new Map<string, number>())
 
 watchEffect(() => {
    const set = new Set<string>()
+   const sizes = new Map<string, number>()
 
-   for (const [path] of selectedMap) {
+   for (const [path, info] of selectedMap) {
       let dir = path
 
       for (;;) {
@@ -383,10 +386,12 @@ watchEffect(() => {
          if (selectedMap.has(dir)) break
 
          set.add(dir)
+         sizes.set(dir, (sizes.get(dir) ?? 0) + info.size)
       }
    }
 
    someSelectedPaths.value = set
+   someSelectedSizes.value = sizes
 })
 
 const selectedSize = computed(() => {
@@ -710,12 +715,14 @@ function onCancel() {
                         item.path,
                         isSelectedForUI(item.path),
                         someSelectedPaths.has(item.path),
+                        someSelectedSizes.get(item.path),
                      ]"
                   >
                      <ScanResultsListItem
                         :item="item"
                         :isSelected="isSelectedForUI(item.path)"
                         :isSomeSelected="someSelectedPaths.has(item.path)"
+                        :someSelectedSize="someSelectedSizes.get(item.path) ?? 0"
                         :isSelectable="
                            !item.is_protected && !item.is_fda_required
                               ? true

@@ -40,20 +40,20 @@ Settings toggles use **`aria-labelledby="label-…"`** selectors in `sel`
 
 ### Current `data-testid` map (Vue → spec)
 
-| `data-testid`                                                                | Component / area            |
-| ---------------------------------------------------------------------------- | --------------------------- |
-| `app-header`                                                                 | `AppHeader.vue`             |
-| `footer-scan`, `footer-settings`, `footer-information`, `footer-scan-dot`    | `AppFooter.vue`             |
-| `scan-launch`, `start-scan`                                                  | `ScanLaunch.vue`            |
-| `scanning-results`, `scan-abort`                                             | `ScanProgress.vue`          |
-| `results-list`, `review-selection`, `results-truncated`                      | `ScanResultsList.vue`       |
-| `results-row-folder` / `results-row-file`, `results-row-checkbox`            | `ScanResultsListItem.vue`   |
-| `results-nav`, `nav-back`, `nav-forward`, `nav-path-label`, `results-cancel` | `ScanListNav.vue`           |
-| `trash-list`, `confirm-trash`                                                | `ScanTrashList.vue`         |
-| `trash-list-row`, `trash-list-row-checkbox`                                  | `ScanTrashListItem.vue`     |
-| `restart`                                                                    | `ScanTrashConfirmation.vue` |
-| `settings-view`, `settings-content`                                          | `SettingsView.vue`          |
-| `information-view`                                                           | `InformationView.vue`       |
+| `data-testid`                                                                                  | Component / area            |
+| ---------------------------------------------------------------------------------------------- | --------------------------- |
+| `app-header`                                                                                   | `AppHeader.vue`             |
+| `footer-scan`, `footer-settings`, `footer-information`, `footer-scan-dot`                      | `AppFooter.vue`             |
+| `scan-launch`, `start-scan`                                                                    | `ScanLaunch.vue`            |
+| `scanning-results`, `scan-abort`                                                               | `ScanProgress.vue`          |
+| `results-list`, `review-selection`, `results-truncated`                                        | `ScanResultsList.vue`       |
+| `results-row-folder` / `results-row-file`, `results-row-checkbox`, `results-row-selected-size` | `ScanResultsListItem.vue`   |
+| `results-nav`, `nav-back`, `nav-forward`, `nav-path-label`, `results-cancel`                   | `ScanListNav.vue`           |
+| `trash-list`, `confirm-trash`                                                                  | `ScanTrashList.vue`         |
+| `trash-list-row`, `trash-list-row-checkbox`                                                    | `ScanTrashListItem.vue`     |
+| `restart`                                                                                      | `ScanTrashConfirmation.vue` |
+| `settings-view`, `settings-content`                                                            | `SettingsView.vue`          |
+| `information-view`                                                                             | `InformationView.vue`       |
 
 When you rename, add, or remove a `data-testid`, update **`sel`**, the
 Vue template, and any spec that asserted on the old id in the same change.

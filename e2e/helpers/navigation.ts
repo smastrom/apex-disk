@@ -39,6 +39,7 @@ export const sel = {
    rowFolder: '[data-testid="results-row-folder"]',
    rowFile: '[data-testid="results-row-file"]',
    rowCheckbox: '[data-testid="results-row-checkbox"]',
+   rowSelectedSize: '[data-testid="results-row-selected-size"]',
    resultsTruncated: '[data-testid="results-truncated"]',
    trashList: '[data-testid="trash-list"]',
    trashRow: '[data-testid="trash-list-row"]',
@@ -387,6 +388,27 @@ export async function assertCheckboxState(
    const classes = await icon.getAttribute('class')
 
    expect(classes).toContain(classMap[expected])
+}
+
+/** Assert the partial-selection size sub-label under a folder row's total size. */
+export async function assertPartialSelectedSize(
+   row: WebdriverIO.Element,
+   expected: { visible: boolean; text?: RegExp | string }
+) {
+   const label = await row.$(sel.rowSelectedSize)
+   const exists = await label.isExisting()
+
+   expect(exists).toBe(expected.visible)
+
+   if (expected.visible && expected.text !== undefined) {
+      const text = await label.getText()
+
+      if (expected.text instanceof RegExp) {
+         expect(text).toMatch(expected.text)
+      } else {
+         expect(text).toBe(expected.text)
+      }
+   }
 }
 
 /** Assert that a row appears selected (has the --selected class). */

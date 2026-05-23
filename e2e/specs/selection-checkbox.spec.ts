@@ -21,6 +21,7 @@ import {
    clickRowCheckbox,
    clickCheckboxByName,
    assertCheckboxState,
+   assertPartialSelectedSize,
    assertRowSelected,
    assertCheckboxDisabled,
    navigateIntoFolder,
@@ -293,6 +294,40 @@ describe('Selection model', () => {
          const alpha = await requireRowByName('alpha.txt')
 
          await assertCheckboxState(alpha, 'empty')
+      })
+
+      it('partial folder row shows selected descendant size under total size', async () => {
+         await navigateIntoFolder('MyData')
+         await clickCheckboxByName('big.txt')
+         await navigateBack()
+
+         const myData = await requireRowByName('MyData')
+
+         await assertCheckboxState(myData, 'partial')
+         await assertPartialSelectedSize(myData, { visible: true, text: /^-2(\.05)? KB$/ })
+      })
+
+      it('partial size sub-label is hidden for empty and fully selected folders', async () => {
+         const myData = await requireRowByName('MyData')
+
+         await assertPartialSelectedSize(myData, { visible: false })
+
+         await clickCheckboxByName('MyData')
+
+         await assertPartialSelectedSize(myData, { visible: false })
+      })
+
+      it('partial size sub-label sums multiple selected descendants', async () => {
+         await navigateIntoFolder('MyData')
+         await clickCheckboxByName('big.txt')
+         await clickCheckboxByName('small.txt')
+         await navigateBack()
+
+         const myData = await requireRowByName('MyData')
+
+         await assertCheckboxState(myData, 'partial')
+         // big.txt (2048 B) + small.txt (100 B) = 2148 B → 2.15 KB
+         await assertPartialSelectedSize(myData, { visible: true, text: /^-2\.15 KB$/ })
       })
    })
 

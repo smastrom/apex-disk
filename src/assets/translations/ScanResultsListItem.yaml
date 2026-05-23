@@ -46,6 +46,18 @@ selectItem:
    ja: '{{name}} を選択'
    ar: اختيار {{name}}
 
+selectedSizeInside:
+   en: '{{size}} selected inside'
+   it: "{{size}} selezionati all'interno"
+   es: '{{size}} seleccionados dentro'
+   fr: "{{size}} sélectionnés à l'intérieur"
+   pt: '{{size}} selecionados dentro'
+   de: '{{size}} darin ausgewählt'
+   ru: '{{size}} выбрано внутри'
+   zh: 已选择其中 {{size}}
+   ja: 内部で {{size}} を選択
+   ar: '{{size}} محدد بالداخل'
+
 fdaRequiredTooltip:
    en: >-
       This folder requires Full Disk Access to be moved to Trash. You can explore
