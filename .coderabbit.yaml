@@ -19,6 +19,7 @@ reviews:
          - 'WIP'
          - 'DO NOT MERGE'
       base_branches:
+         - development
          - main
 
    # Never edit PR title or description. Reviews go in comments only.

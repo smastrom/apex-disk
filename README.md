@@ -77,6 +77,10 @@ Enjoying ApexDisk? Support the author with a donation:
 - [Buy Me a Coffee](https://buymeacoffee.com/smastrom)
 - [Crypto (NOWPayments)](https://nowpayments.io/donation/smastrom) (BTC, ETH, USDT, etc.)
 
+## Contributing
+
+Pull requests and bug reports are welcome. Open PRs against the **`development`** branch (the repo default). Day-to-day work lands there; `main` is the release line and is updated when a version ships.
+
 ## License
 
 Copyright (C) 2026 Simone Mastromattei. This project is licensed under the [GNU General Public License v3.0](./LICENSE) (GPL-3.0).

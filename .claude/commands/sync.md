@@ -38,7 +38,7 @@ Create logical commits for all uncommitted work since the latest commit, then pu
 
    If anything fails, stop and surface the failures. Do **not** push. The user fixes forward (a follow-up commit) or asks for a revert — never bypass with `--no-verify` / `--force`.
 
-8. **Push** — `git push`. If the branch has no upstream, `git push -u origin <branch>`.
+8. **Push** — `git push` on **`development`** (or the current feature branch). If the branch has no upstream, `git push -u origin <branch>`.
 
 9. **Close the gate** — `rm -f .claude/.sync-active`. Run this on success **and** on any early-exit (failed gate, user abort, push refusal). The marker exists only for the duration of the `/sync` run.
 

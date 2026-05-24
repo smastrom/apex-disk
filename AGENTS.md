@@ -4,6 +4,8 @@
 
 ApexDisk — macOS-only Tauri 2 desktop app (Rust backend + Vue 3 frontend) for disk usage analysis and cleanup. Ships as a universal binary (Intel + Apple Silicon). Minimum macOS 10.15.
 
+**Branches:** integrate on **`development`** (default for PRs and `/sync` pushes). **`main`** is the release line; merge from `development` when shipping. See [`reference/agent-workflow.md`](reference/agent-workflow.md#branching).
+
 ## Stack
 
 | Layer                      | Tech                                                                                               |
