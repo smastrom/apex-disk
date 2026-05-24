@@ -106,7 +106,7 @@ Never edit older sections to retcon history.
 
 Both workflows prepend a single `## Release notes` heading at the top of the GitHub-release body **before publishing**:
 
-- **Stable** — `release.yml` extracts the first `## vX.Y.Z` section from `../RELEASES.md`, then writes `## Release notes` above the `###` sub-headings into `release_notes.md` (the file passed to `softprops/action-gh-release`).
+- **Stable** — `release.yml` extracts the first `## vX.Y.Z` section from `../RELEASES.md`, rewrites any repo-relative image path (`![alt](./path)`) to an absolute `raw.githubusercontent.com` URL pinned to the tag (relative paths don't resolve in release bodies), then writes `## Release notes` above the `###` sub-headings into `release_notes.md` (the file passed to `softprops/action-gh-release`).
 - **Beta** — `beta.yml` extracts the first `## YYYY-MM-DD` section from `../RELEASES_BETA.md`, then writes `## Release notes` followed by a one-line build-metadata block (version, branch, short commit link, run-id link) above it into `beta_prerelease_body.md`. The metadata block answers "which version did I just download?" without scrolling to the DMG filename.
 
 The header lives **only** on the published release. Do not add it to `../RELEASES.md` or `../RELEASES_BETA.md` — the source files keep their existing top-level (`## vX.Y.Z` / `## YYYY-MM-DD`) structure so the workflows can still grep for them, and `/release`, `/release-from-notes`, and `/beta-notes` keep authoring the same shape they always have.
