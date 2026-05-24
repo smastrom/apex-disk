@@ -4,15 +4,17 @@
 
 macOS tool to easily identify and get rid of big, unused files and folders in seconds.
 
-![ApexDisk Hero](./src/assets/images/apex-disk-hero.png)
+![ApexDisk Cover](./src/assets/images/apex-disk-cover.png)
 
-## Why ApexDisk?
+## What is ApexDisk?
 
-Your home folder quietly fills with junk that automatic cleaners may not spot or aren't meant to handle: caches and downloads from long‑forgotten apps and games, caches from niche or personal apps no cleaner knows to look for, abandoned developer files like install images, SDKs, and endless other garbage you never knew was eating your disk.
+Automatic cleaners only know about a fixed set of cache folders, and the decisions they make are limited to what they were preprogrammed for.
 
-ApexDisk scans your user folder and lays it out as a size-sorted tree, so the heaviest items surface first. Drill into any directory to see exactly what's hiding inside, select what you don't need, review, and send it all to the trash all from a single window.
+ApexDisk finds and surfaces everything else they skip: caches left behind by apps you've uninstalled or lesser-known ones no cleaner looks for, leftover installers and SDKs, stopped Docker containers, and other junk you never knew was eating your disk.
 
-Visit the [ApexDisk website](https://apexdisk.app) for more information.
+It scans your user folder and lays it out as a size-sorted tree, so the heaviest items show up first. Drill into any folder, select what you don't need, and send it all to the Trash from a single window.
+
+Visit the [ApexDisk Website](https://apexdisk.app) for more information.
 
 ## Features
 
@@ -20,11 +22,11 @@ Visit the [ApexDisk website](https://apexdisk.app) for more information.
 - **Safe by default:** Files move to Trash, system folders stay protected, sensitive directories skipped automatically
 - **Built to navigate:** Size-sorted tree with last-modified dates puts the heaviest folders first
 - **Optional Full Disk Access:** Works without it by default, prompts only when needed
-- **10 languages, 8 themes:** Including RTL support for Arabic
+- **10 languages, 8 color themes:** Including Chinese, Japanese, and Arabic
 
 ## Installation
 
-Download the latest `.dmg` from [Releases](https://github.com/smastrom/apex-disk/releases) and drag the app to your Applications folder.
+Download the latest `.dmg` (~5MB) from [Releases](https://github.com/smastrom/apex-disk/releases) and drag the app to your Applications folder.
 
 ## Building from source
 
@@ -69,11 +71,15 @@ pnpm tauri:dev
 
 ## Support ApexDisk
 
-Enjoying ApexDisk? Say thanks by supporting the author:
+Enjoying ApexDisk? Support the author with a donation:
 
 - [PayPal](https://www.paypal.com/donate/?hosted_button_id=93WKXA68W9WQJ)
 - [Buy Me a Coffee](https://buymeacoffee.com/smastrom)
-- [Crypto (NOWPayments)](https://nowpayments.io/donation/smastrom)
+- [Crypto (NOWPayments)](https://nowpayments.io/donation/smastrom) (BTC, ETH, USDT, etc.)
+
+## Contributing
+
+Pull requests and bug reports are welcome. Open PRs against the **`development`** branch (the repo default). Day-to-day work lands there; `main` is the release line and is updated when a version ships.
 
 ## License
 

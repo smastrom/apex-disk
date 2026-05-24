@@ -1,5 +1,7 @@
 <!-- Thanks for contributing to ApexDisk! -->
 
+**Base branch:** open pull requests against **`development`**, not `main`. The `main` branch is reserved for release merges.
+
 ## Summary
 
 <!-- What does this change and why? One or two sentences is fine. -->

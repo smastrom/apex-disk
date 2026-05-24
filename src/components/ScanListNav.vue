@@ -6,7 +6,7 @@ ScanListNav
 
 Purpose: Shared nav bar for scan results views. Back (and optional forward), center path/title, optional reset/abort actions.
 
-Props: isForwardShown (boolean?), isBackDisabled (boolean?), isForwardDisabled (boolean?), pathLabel (string), pathTitle (string?), pathIcon ('folder' | 'trash'?), isActionsShown (boolean?), isResetDisabled (boolean?), isResetShown (boolean?), isCancelShown (boolean?)
+Props: isForwardShown (boolean?), isBackDisabled (boolean?), isForwardDisabled (boolean?), pathLabel (string), pathTitle (string?), isActionsShown (boolean?), isResetDisabled (boolean?), isResetShown (boolean?), isCancelShown (boolean?)
 
 Example:
  <ScanListNav
@@ -25,14 +25,7 @@ Example:
 -->
 
 <script setup lang="ts">
-import {
-   PhArrowCounterClockwise,
-   PhCaretLeft,
-   PhCaretRight,
-   PhFolderSimple,
-   PhTrashSimple,
-   PhX,
-} from '@phosphor-icons/vue'
+import { PhArrowCounterClockwise, PhCaretLeft, PhCaretRight, PhX } from '@phosphor-icons/vue'
 import { useTemplateRef } from 'vue'
 
 import { useLabelPopover } from '@/lib/use-label-popover'
@@ -45,13 +38,12 @@ withDefaults(
       isForwardDisabled?: boolean
       pathLabel: string
       pathTitle?: string
-      pathIcon?: 'folder' | 'trash'
       isActionsShown?: boolean
       isResetDisabled?: boolean
       isResetShown?: boolean
       isCancelShown?: boolean
    }>(),
-   { pathIcon: 'folder', isResetShown: true, isCancelShown: true }
+   { isResetShown: true, isCancelShown: true }
 )
 
 const emit = defineEmits<{
@@ -102,20 +94,6 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
          aria-live="polite"
          aria-atomic="true"
       >
-         <PhTrashSimple
-            v-if="pathIcon === 'trash'"
-            :size="16"
-            weight="regular"
-            class="ScanListNav-pathIcon"
-            aria-hidden="true"
-         />
-         <PhFolderSimple
-            v-else
-            :size="16"
-            weight="regular"
-            class="ScanListNav-pathIcon"
-            aria-hidden="true"
-         />
          <span
             ref="pathTextRef"
             class="ScanListNav-pathText"
@@ -215,15 +193,6 @@ const { onPointerEnter, onPointerLeave } = useLabelPopover(pathTextRef, pathPopo
    font-size: var(--font-size-base);
    color: var(--color-text-muted);
    text-align: left;
-}
-
-/* Explicit 16×16 and block avoid inline SVG subpixel alignment and blur. */
-.ScanListNav-pathIcon {
-   flex-shrink: 0;
-   width: 16px;
-   height: 16px;
-   display: block;
-   color: var(--color-accent);
 }
 
 .ScanListNav-pathText {

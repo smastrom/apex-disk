@@ -31,8 +31,8 @@ Or follow these steps by hand:
    - `src-tauri/Cargo.toml` → `version`
    - `src-tauri/tauri.conf.json` → `"version"`
 2. **Prepend** a new `## v0.0.13` section at the top of `../RELEASES.md` (directly under the `---` rule). The Release workflow reads the **first** `## vX.Y.Z` heading, so appending at the bottom would make CI read the wrong version. Group the bullets under `###` subheadings — see [Authoring conventions](#authoring-conventions).
-3. Commit and push to `main`.
-4. Go to **Actions → Release → Run workflow**, leave "Mark as pre-release" **unchecked**.
+3. Commit and push to `development`, then merge into `main` via pull request.
+4. Go to **Actions → Release → Run workflow** on `main`, leave "Mark as pre-release" **unchecked**.
 5. CI builds, signs, notarizes, tags `v0.0.13`, and creates a GitHub Release with:
    - **Three `.dmg` installers** — `ApexDisk_X.Y.Z_universal.dmg` (fallback for users who don't know their architecture), `ApexDisk_X.Y.Z_aarch64.dmg` (Apple Silicon, ~50% smaller), `ApexDisk_X.Y.Z_x64.dmg` (Intel, ~50% smaller).
    - **Two `.tar.gz` + `.tar.gz.sig` pairs** — per-architecture signed update bundles consumed by the in-app updater. No universal update bundle (it would be wasted bandwidth — see `updates.md`).
@@ -45,8 +45,8 @@ Users on older stable versions pick it up on next app start (auto-updates ON) or
 A **Release-workflow** run whose GitHub release is flagged as a pre-release, so stable users don't auto-update to it. Use this when you need to validate the production updater path end-to-end before cutting a stable version. For side-by-side QA without touching the updater, use the [Beta channel](#beta-channel) below instead — this repo intentionally reserves `-beta` for that channel name and does not use it as a semver suffix.
 
 1. Set the version to something like `0.10.0-rc.1` in all three files + `../RELEASES.md`.
-2. Commit and push.
-3. **Actions → Release → Run workflow**, **check** "Mark as pre-release".
+2. Commit and push to `development`, then merge into `main`.
+3. **Actions → Release → Run workflow** on `main`, **check** "Mark as pre-release".
 4. CI produces the same artifacts and creates a GitHub **pre-release**.
 
 Stable users are unaffected: the updater fetches `https://github.com/.../releases/latest/download/latest.json`, and `/releases/latest/` resolves to the newest non-pre-release. To test the build, download the `.dmg` directly from the pre-release page.
@@ -56,7 +56,7 @@ Stable users are unaffected: the updater fetches `https://github.com/.../release
 The Beta channel is **QA-only**: dispatch-triggered, no updater, sits beside the stable app.
 
 1. (Optional) Add a dated section to `../RELEASES_BETA.md` — use the `/beta-notes` slash command or add a `## YYYY-MM-DD` section at the top with tester notes. The **first** such section becomes the pre-release body.
-2. Go to **Actions → Beta → Run workflow** and pick the **branch** to build (e.g. `main`, a feature branch).
+2. Go to **Actions → Beta → Run workflow** and pick the **branch** to build (usually `development`, or a feature branch).
 3. When the job finishes, open the **pre-release** on the Releases page (tag `beta-v<version>-<run_id>`) and download a DMG (universal, `aarch64` for Apple Silicon, or `x64` for Intel — the arch-specific DMGs are ~50% smaller), or grab the `ApexDisk-Beta-<run_id>` artifact.
 
 Config (`src-tauri/tauri.beta.conf.json`): product name **ApexDisk Beta**, bundle id `com.smastrom.apex-disk.beta`, and `bundle.createUpdaterArtifacts: false`. This lets Beta install side-by-side with stable and keeps it out of the updater channel.
@@ -71,7 +71,7 @@ Config (`src-tauri/tauri.beta.conf.json`): product name **ApexDisk Beta**, bundl
 
 Implications:
 
-- Several Beta builds can share the same version (e.g. three builds while `main` is still `0.0.13`). Beta is a branch **snapshot**, not a new release line.
+- Several Beta builds can share the same version (e.g. three builds while `development` is still `0.0.13`). Beta is a branch **snapshot**, not a new release line.
 - Tell builds apart by **run id**: it's in the release title (`ApexDisk Beta vX.Y.Z (run <id>)`), the Git tag (`beta-vX.Y.Z-<id>`), the artifact name, and the body's build-metadata line. The version on its own is not unique across runs.
 - Optional policy: bump `../RELEASES.md` / semver only when cutting a real Release, or bump right after each release so Beta builds report the _upcoming_ version early. Either way, still one source of truth — no `RELEASES_BETA` version.
 
@@ -106,7 +106,7 @@ Never edit older sections to retcon history.
 
 Both workflows prepend a single `## Release notes` heading at the top of the GitHub-release body **before publishing**:
 
-- **Stable** — `release.yml` extracts the first `## vX.Y.Z` section from `../RELEASES.md`, then writes `## Release notes` above the `###` sub-headings into `release_notes.md` (the file passed to `softprops/action-gh-release`).
+- **Stable** — `release.yml` extracts the first `## vX.Y.Z` section from `../RELEASES.md`, rewrites any repo-relative image path (`![alt](./path)`) to an absolute `raw.githubusercontent.com` URL pinned to the tag (relative paths don't resolve in release bodies), then writes `## Release notes` above the `###` sub-headings into `release_notes.md` (the file passed to `softprops/action-gh-release`).
 - **Beta** — `beta.yml` extracts the first `## YYYY-MM-DD` section from `../RELEASES_BETA.md`, then writes `## Release notes` followed by a one-line build-metadata block (version, branch, short commit link, run-id link) above it into `beta_prerelease_body.md`. The metadata block answers "which version did I just download?" without scrolling to the DMG filename.
 
 The header lives **only** on the published release. Do not add it to `../RELEASES.md` or `../RELEASES_BETA.md` — the source files keep their existing top-level (`## vX.Y.Z` / `## YYYY-MM-DD`) structure so the workflows can still grep for them, and `/release`, `/release-from-notes`, and `/beta-notes` keep authoring the same shape they always have.

@@ -172,6 +172,10 @@ jobs:
                 exit 1
               fi
 
+              # Rewrite repo-relative image paths (./foo) to absolute raw URLs
+              # pinned to this tag. Relative paths don't resolve in release bodies.
+              perl -pi -e 's{(!\[[^\]]*\]\()\./}{$1 . "https://raw.githubusercontent.com/smastrom/apex-disk/$ENV{TAG}/"}ge' release_body.md
+
               # Prepend "## Release notes" header on the GitHub release body only.
               # RELEASES.md stays flat (### sub-headings directly under ## vX.Y.Z);
               # the header is rendered once per published release. See reference/releases.md.

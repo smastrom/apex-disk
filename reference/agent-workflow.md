@@ -8,6 +8,17 @@ when you are unsure what runs automatically vs what you must do by hand.
 Task routing: [`index.md`](index.md). Suite details: [`testing.md`](testing.md).
 Commit gate and release triggers: [`.claude/rules/agent-commit-protocol.md`](../.claude/rules/agent-commit-protocol.md).
 
+## Branching
+
+| Branch            | Role                                                                                                             |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **`development`** | Default integration branch. Day-to-day work, agent `/sync` pushes, and **all external pull requests** land here. |
+| **`main`**        | Release line. Merge from `development` when shipping; the Release workflow runs against this branch.             |
+
+Feature branches branch off `development` and merge back into `development`.
+Release commits (version bumps + `RELEASES.md`) also land on `development` first,
+then merge to `main` in a separate PR before triggering **Actions → Release**.
+
 ## Three phases
 
 | Phase            | When                            | Who runs it                                | What it covers                                                                                                                                                                                              |

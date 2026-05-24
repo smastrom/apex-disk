@@ -31,7 +31,7 @@ The default theme is set on first launch via `src-tauri/src/constants.rs::DEFAUL
 
 Every themed value is a CSS variable. Components **must not hardcode colors, spacing, font sizes, or border radii** — see [`code-style.md`](code-style.md) for the rule. Examples of variable categories:
 
-- **Color** — `--color-bg`, `--color-text`, `--color-accent`, `--color-chrome`, `--color-chrome-border`, `--color-accent-glow`, …
+- **Color** — `--color-bg`, `--color-text`, `--color-text-muted`, `--color-text-dim`, `--color-icon-muted`, `--color-accent`, `--color-chrome`, `--color-chrome-border`, `--color-accent-glow`, …
 - **Spacing** — `--spacing-xs/sm/md/lg`
 - **Font size** — `--font-size-xs/sm/md/lg/xl`
 - **Border radius** — `--radius-sm/md/lg/xl/max` (`max` is a pill / fully-rounded shape)

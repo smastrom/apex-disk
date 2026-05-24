@@ -13,7 +13,9 @@ Example:
 -->
 
 <script setup lang="ts">
-import { PhCircle, PhCheckCircle } from '@phosphor-icons/vue'
+import FilledCheckCircleIcon from '@/components/ui/FilledCheckCircleIcon.vue'
+
+import { PhCircle } from '@phosphor-icons/vue'
 
 defineProps<{
    selected: boolean
@@ -23,5 +25,5 @@ defineProps<{
 
 <template>
    <PhCircle v-if="!selected" :size="size ?? 16" weight="regular" aria-hidden="true" />
-   <PhCheckCircle v-else :size="size ?? 16" weight="fill" aria-hidden="true" />
+   <FilledCheckCircleIcon v-else :size="size" />
 </template>

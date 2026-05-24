@@ -6,7 +6,7 @@ ScanResultsListItem
 
 Purpose: Single row for folder or file. Selection circle, icon, name, item count (folders), size, nav chevron (folders).
 
-Props: item (FolderInfo), isSelected (boolean), isSomeSelected (boolean?), isSelectable (boolean?), formatBytes (fn)
+Props: item (FolderInfo), isSelected (boolean), isSomeSelected (boolean?), someSelectedSize (number?), isSelectable (boolean?), formatBytes (fn)
 
 Example:
  <ScanResultsListItem
@@ -37,6 +37,7 @@ const props = defineProps<{
    item: FolderInfo
    isSelected: boolean
    isSomeSelected?: boolean
+   someSelectedSize?: number
    isSelectable?: boolean | 'deselect-only'
    formatBytes: (bytes: number) => string
 }>()
@@ -207,7 +208,21 @@ const currentLanguage = store.settings.value.language
          </span>
       </div>
       <div class="ScanResultsListItem-meta">
-         <span class="ScanResultsListItem-size">{{ formatBytes(item.size) }}</span>
+         <span class="ScanResultsListItem-sizes">
+            <span class="ScanResultsListItem-size">{{ formatBytes(item.size) }}</span>
+            <span
+               v-if="selectionState === 'partial' && someSelectedSize"
+               class="ScanResultsListItem-selectedSize"
+               data-testid="results-row-selected-size"
+               :aria-label="
+                  t('ScanResultsListItem', 'selectedSizeInside', {
+                     size: formatBytes(someSelectedSize),
+                  })
+               "
+            >
+               -{{ formatBytes(someSelectedSize) }}
+            </span>
+         </span>
          <PhCaretRight
             v-if="!item.is_file"
             :size="18"
@@ -309,7 +324,7 @@ const currentLanguage = store.settings.value.language
    justify-content: center;
    width: 24px;
    height: 24px;
-   color: var(--color-accent);
+   color: var(--color-icon-muted);
 }
 
 .ScanResultsListItem-icon--hidden {
@@ -347,9 +362,23 @@ const currentLanguage = store.settings.value.language
    gap: var(--spacing-xs);
 }
 
+.ScanResultsListItem-sizes {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-end;
+   gap: var(--spacing-xxs);
+}
+
 .ScanResultsListItem-size {
    font-size: var(--font-size-base);
    color: var(--color-text-muted);
+}
+
+.ScanResultsListItem-selectedSize {
+   /* Below --font-size-xs (the smallest token) by design, to sit quietly under the size. */
+   font-size: 0.6875rem;
+   font-weight: 600;
+   color: var(--color-accent-alt);
 }
 
 .ScanResultsListItem-chevron {

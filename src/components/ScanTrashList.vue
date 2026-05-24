@@ -279,7 +279,6 @@ async function onTrashClick() {
       <ScanListNav
          :isForwardShown="false"
          :isBackDisabled="false"
-         pathIcon="trash"
          :pathLabel="t('ScanTrashList', 'navTitle')"
          isActionsShown
          :isResetShown="true"
