@@ -32,7 +32,7 @@ Please visit the [ApexDisk Website](https://apexdisk.app) for more information a
 
 Download the latest `.dmg` (~5MB) from [Releases](https://github.com/smastrom/apex-disk/releases) or the [ApexDisk Website](https://apexdisk.app/releases) and drag the app to your Applications folder.
 
-### Links
+### Links
 
 - [ApexDisk Website](https://apexdisk.app)
 - [GitHub Repository](https://github.com/smastrom/apex-disk)
