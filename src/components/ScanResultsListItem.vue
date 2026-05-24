@@ -219,9 +219,8 @@ const currentLanguage = store.settings.value.language
                      size: formatBytes(someSelectedSize),
                   })
                "
+               >-{{ formatBytes(someSelectedSize) }}</span
             >
-               -{{ formatBytes(someSelectedSize) }}
-            </span>
          </span>
          <PhCaretRight
             v-if="!item.is_file"

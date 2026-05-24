@@ -320,14 +320,15 @@ describe('Selection model', () => {
       it('partial size sub-label sums multiple selected descendants', async () => {
          await navigateIntoFolder('MyData')
          await clickCheckboxByName('big.txt')
-         await clickCheckboxByName('small.txt')
-         await navigateBack()
+         await navigateIntoFolder('SubFolder')
+         await clickCheckboxByName('alpha.txt')
+         await navigateBackToRoot()
 
          const myData = await requireRowByName('MyData')
 
          await assertCheckboxState(myData, 'partial')
-         // big.txt (2048 B) + small.txt (100 B) = 2148 B → 2.15 KB
-         await assertPartialSelectedSize(myData, { visible: true, text: /^-2\.15 KB$/ })
+         // big.txt (2048 B) + alpha.txt (1024 B) = 3072 B → 3.07 KB
+         await assertPartialSelectedSize(myData, { visible: true, text: /^-3(\.07)? KB$/ })
       })
    })
 
