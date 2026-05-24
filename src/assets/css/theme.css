@@ -76,7 +76,7 @@
    --gbtn-glow-hover: 0 0 18px var(--color-accent-glow);
 
    /* List row state fills */
-   --color-row-idle: rgba(0, 0, 0, 0.04);
+   --color-row-idle: transparent;
    --color-row-hover: rgba(255, 255, 255, 0.05);
    --color-row-selected: rgba(255, 255, 255, 0.04);
    --color-row-selected-hover: rgba(255, 255, 255, 0.055);
