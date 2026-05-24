@@ -27,6 +27,7 @@ import { ref, toRef, useTemplateRef, watch } from 'vue'
 
 import { formatBytes } from '@/lib/format'
 import { log } from '@/lib/log'
+import { isWebDriverSession } from '@/lib/utils'
 
 const props = defineProps<{
    isActive: boolean
@@ -176,7 +177,7 @@ function onRestart() {
    <section class="ScanView-root" aria-label="Scan">
       <ScanViewHeader :usage="diskUsage" :selectedSize="selectedSize" />
 
-      <Transition name="fade" mode="out-in">
+      <Transition name="fade" mode="out-in" :css="!isWebDriverSession">
          <KeepAlive>
             <ScanLaunch
                v-if="activeView === ActiveView.LAUNCH"

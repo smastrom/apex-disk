@@ -210,11 +210,17 @@ export async function abortScanFromProgress() {
    await waitForScanLaunch()
 }
 
-/** Count visible result rows in the current scan view. */
+/** Count displayed result rows in the current scan view. */
 async function getResultRowCount(): Promise<number> {
    const rows = await $$(`${sel.rowFolder}, ${sel.rowFile}`)
 
-   return await rows.length
+   let count = 0
+
+   for (const row of rows) {
+      if (await row.isDisplayed().catch(() => false)) count++
+   }
+
+   return count
 }
 
 /** Wait for a scan attempt to either render rows or fall back to Launch. */
